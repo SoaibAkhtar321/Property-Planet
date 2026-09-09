@@ -8,7 +8,16 @@ const ProjectCard = ({ item }: { item: Project }) => {
          <figure className="image-wrapper m0 position-relative z-1 overflow-hidden">
             {item.tag && <div className="tag fw-500 text-uppercase">{item.tag}</div>}
             <Link href={`/projects/${item.slug}`} className="d-block position-relative">
-               <Image src={item.images[0]} alt={item.title} width={700} height={500} className="w-100 tran5s" />
+               {item.images[0] ? (
+                  <Image src={item.images[0]} alt={item.title} width={700} height={500} className="w-100 tran5s" />
+               ) : (
+                  <div
+                     className="w-100 d-flex align-items-center justify-content-center bg-light text-muted"
+                     style={{ aspectRatio: "7 / 5" }}
+                  >
+                     Photos coming soon
+                  </div>
+               )}
             </Link>
          </figure>
          <div className="caption">

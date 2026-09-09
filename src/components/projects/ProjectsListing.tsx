@@ -1,4 +1,4 @@
-import demoProjects from "./data/demoProjects";
+import { Project } from "./data/types";
 import ProjectCard from "./ProjectCard";
 
 // No category filter is shown here on purpose: the old template's
@@ -6,15 +6,22 @@ import ProjectCard from "./ProjectCard";
 // confirmed real project a filter would be inert/misleading. Reintroduce it
 // once real project inventory supports it.
 
-const ProjectsListing = () => {
+const ProjectsListing = ({ items }: { items: Project[] }) => {
    return (
       <div className="project-section-one mt-150 xl-mt-100 pb-150 xl-pb-100">
          <div className="container">
-            <div id="canonical-projects-grid" className="grid-2column pt-10">
-               {demoProjects.map((item) => (
-                  <ProjectCard key={item.id} item={item} />
-               ))}
-            </div>
+            {items.length > 0 ? (
+               <div id="canonical-projects-grid" className="grid-2column pt-10">
+                  {items.map((item) => (
+                     <ProjectCard key={item.id} item={item} />
+                  ))}
+               </div>
+            ) : (
+               <p className="fs-20 pt-10">
+                  No projects are published yet. Check back soon — new Property Planet projects will
+                  appear here as they&apos;re added.
+               </p>
+            )}
          </div>
       </div>
    );
