@@ -6,11 +6,10 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Image from "next/image";
-import axios from "axios";
 import { useRouter } from "next/navigation"; 
 
-
 import OpenEye from "@/assets/images/icon/icon_68.svg";
+import { createClient } from "@/lib/supabase/client";
 
 interface FormData {
   name: string;
@@ -54,15 +53,28 @@ const RegisterForm = () => {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/signup", data);
+      const supabase = createClient();
+      const { error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            full_name: data.name,
+          },
+        },
+      });
 
-      if (response.status === 201) {
+      if (!error) {
         toast.success("Registration successful! Redirecting to login...", {
           position: "top-center",
         });
 
         reset();
         setTimeout(() => router.push("/dashboard/dashboard-index"), 2000); 
+      } else {
+        toast.error(error.message || "Error during registration", {
+          position: "top-center",
+        });
       }
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Error during registration", {

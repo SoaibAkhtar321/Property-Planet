@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Image from "next/image";
 
 import OpenEye from "@/assets/images/icon/icon_68.svg";
+import { createClient } from "@/lib/supabase/client";
 
 interface FormData {
    email: string;
@@ -28,20 +29,18 @@ const LoginForm = () => {
 
    const onSubmit = async (data: FormData) => {
       try {
-         const response = await fetch("http://localhost:5000/api/auth/login", { 
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+         const supabase = createClient();
+         const { error } = await supabase.auth.signInWithPassword({
+            email: data.email,
+            password: data.password,
          });
 
-         const result = await response.json();
-
-         if (response.ok) {
+         if (!error) {
             toast.success("Login successfully", { position: "top-center" });
             reset();
             router.push("/dashboard/dashboard-index"); 
          } else {
-            toast.error(result.message || "Invalid email or password");
+            toast.error(error.message || "Invalid email or password");
          }
       } catch (error) {
          toast.error("An error occurred. Please try again.");
