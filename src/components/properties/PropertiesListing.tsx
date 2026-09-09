@@ -1,32 +1,32 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import demoProperties from "./data/demoProperties";
+import { Property } from "./data/types";
 import PropertyCard from "./PropertyCard";
 import PropertyFilters, { PropertyFilterState } from "./PropertyFilters";
 
-const PropertiesListing = () => {
+const PropertiesListing = ({ items }: { items: Property[] }) => {
    const [filters, setFilters] = useState<PropertyFilterState>({
       listingType: "all",
       propertyType: "all",
    });
 
    const listingTypes = useMemo(
-      () => Array.from(new Set(demoProperties.map((item) => item.listingType))),
-      []
+      () => Array.from(new Set(items.map((item) => item.listingType))),
+      [items]
    );
    const propertyTypes = useMemo(
-      () => Array.from(new Set(demoProperties.map((item) => item.propertyType))),
-      []
+      () => Array.from(new Set(items.map((item) => item.propertyType))),
+      [items]
    );
 
    const filtered = useMemo(() => {
-      return demoProperties.filter((item) => {
+      return items.filter((item) => {
          if (filters.listingType !== "all" && item.listingType !== filters.listingType) return false;
          if (filters.propertyType !== "all" && item.propertyType !== filters.propertyType) return false;
          return true;
       });
-   }, [filters]);
+   }, [items, filters]);
 
    return (
       <div className="property-listing-six bg-pink-two pt-110 md-pt-80 pb-150 xl-pb-120 mt-150 xl-mt-120">
@@ -37,7 +37,7 @@ const PropertiesListing = () => {
                      <div className="listing-header-filter d-sm-flex justify-content-between align-items-center mb-40 lg-mb-30">
                         <div>
                            Showing <span className="color-dark fw-500">{filtered.length}</span> of{" "}
-                           <span className="color-dark fw-500">{demoProperties.length}</span> properties
+                           <span className="color-dark fw-500">{items.length}</span> properties
                         </div>
                      </div>
 
@@ -45,7 +45,13 @@ const PropertiesListing = () => {
                         {filtered.map((item) => (
                            <PropertyCard key={item.id} item={item} />
                         ))}
-                        {filtered.length === 0 && (
+                        {items.length === 0 && (
+                           <p className="fs-20">
+                              No properties are published yet. Check back soon — new Property Planet
+                              inventory will appear here as it&apos;s added.
+                           </p>
+                        )}
+                        {items.length > 0 && filtered.length === 0 && (
                            <p className="fs-20">No properties match these filters yet.</p>
                         )}
                      </div>

@@ -1,5 +1,4 @@
 import { Property } from "./data/types";
-import demoProperties from "./data/demoProperties";
 import MediaGallery from "./detail/MediaGallery";
 import Overview from "./detail/Overview";
 import Amenities from "./detail/Amenities";
@@ -14,9 +13,7 @@ import Sidebar from "./detail/Sidebar";
 // only covers listing/detail display) — no requirement or data model exists
 // for either yet.
 
-const PropertyDetail = ({ property }: { property: Property }) => {
-   const similar = demoProperties.filter((item) => item.slug !== property.slug).slice(0, 2);
-
+const PropertyDetail = ({ property, similar }: { property: Property; similar: Property[] }) => {
    return (
       <div className="listing-details-one theme-details-one mt-130 lg-mt-100 pb-150 xl-pb-120">
          <MediaGallery images={property.images} title={property.title} />

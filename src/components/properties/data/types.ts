@@ -1,6 +1,8 @@
 // Canonical property data shape for Property Planet.
-// Phase 3 uses local demo data conforming to this shape; Phase 4 maps
-// Supabase `properties` / `property_location` / `property_media` rows to it.
+// Phase 4: src/lib/properties/mapProperty.ts maps `property_public` +
+// `property_media` rows onto this shape for the live /properties pages.
+// demoProperties.ts (same shape) is kept only as historical/dev reference
+// and is no longer imported by the canonical routes.
 
 export interface PropertyOverviewItem {
    label: string;
@@ -31,7 +33,13 @@ export interface Property {
    amenities?: string[];
    nearby?: PropertyNearbyItem[];
    floorPlanImages?: string[];
-   videoId?: string;
+   /**
+    * Public URL of an uploaded video-tour file (property_media,
+    * media_type='video'). Not a YouTube ID — the schema stores uploaded
+    * media, not embed IDs, so VideoTour renders this with a plain <video>
+    * element rather than the template's YouTube popup.
+    */
+   videoUrl?: string;
    mapEmbedUrl?: string;
    featured?: boolean;
    /**

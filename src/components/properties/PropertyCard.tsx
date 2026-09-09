@@ -18,13 +18,22 @@ const PropertyCard = ({ item }: { item: Property }) => {
                      </div>
                   )}
                   <Link href={`/properties/${item.slug}`} className="d-block">
-                     <Image
-                        src={item.images[0]}
-                        alt={item.title}
-                        width={600}
-                        height={400}
-                        className="w-100"
-                     />
+                     {item.images[0] ? (
+                        <Image
+                           src={item.images[0]}
+                           alt={item.title}
+                           width={600}
+                           height={400}
+                           className="w-100"
+                        />
+                     ) : (
+                        <div
+                           className="w-100 d-flex align-items-center justify-content-center bg-light text-muted"
+                           style={{ aspectRatio: "3 / 2" }}
+                        >
+                           Photos coming soon
+                        </div>
+                     )}
                   </Link>
                </div>
             </div>

@@ -29,7 +29,9 @@ const SimilarProperties = ({ items }: { items: Property[] }) => {
                               <div className="img-gallery p-15">
                                  <div className="position-relative border-20 overflow-hidden">
                                     {item.tag && <div className="tag bg-white text-dark fw-500 border-20">{item.tag}</div>}
-                                    <Image src={item.images[0]} alt={item.title} width={600} height={400} className="w-100 border-20" />
+                                    {item.images[0] && (
+                                       <Image src={item.images[0]} alt={item.title} width={600} height={400} className="w-100 border-20" />
+                                    )}
                                     <Link href={`/properties/${item.slug}`} className="btn-four inverse rounded-circle position-absolute">
                                        <i className="bi bi-arrow-up-right"></i>
                                     </Link>
