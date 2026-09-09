@@ -6,67 +6,87 @@ import UserAvatarSetting from "./UserAvatarSetting";
 import AddressAndLocation from "./AddressAndLocation";
 import Link from "next/link";
 import SocialMediaLink from "./SocialMediaLink";
+import { createClient } from "@/lib/supabase/client";
 
 import avatar_1 from "@/assets/images/dashboard/avatar_02.jpg";
+
+// lastName/about have no backing column in `profiles` (see 0001_profiles.sql).
+// Rather than letting the user type into them and lose the input on reload,
+// these are frozen to an empty value with a no-op setter so UserAvatarSetting
+// renders unchanged but the fields can't hold state that silently vanishes.
+const noopSetter = () => { };
 
 const ProfileBody = () => {
    const [name, setName] = useState("");
    const [email, setEmail] = useState("");
    const [firstName, setFirstName] = useState("");
-   const [lastName, setLastName] = useState("");
    const [phoneNumber, setPhoneNumber] = useState("");
-   const [about, setAbout] = useState("");
-   const token = localStorage.getItem("token"); 
+   const [loadError, setLoadError] = useState("");
 
    useEffect(() => {
-      const fetchUserData = async () => {
-         try {
-            const res = await fetch("http://localhost:5000/api/profile", {
-               headers: {
-                  Authorization: `Bearer ${token}`,
-               },
-            });
+      const supabase = createClient();
 
-            if (!res.ok) {
-               throw new Error("Failed to fetch user data");
+      const fetchProfile = async () => {
+         try {
+            const { data: userData, error: userError } = await supabase.auth.getUser();
+
+            if (userError || !userData?.user) {
+               // No active session — nothing to load; leave form blank
+               // rather than throwing, since this page assumes an
+               // authenticated user is already present.
+               setLoadError("You need to be signed in to view your profile.");
+               return;
             }
 
-            const userData = await res.json();
-            setName(userData.name);
-            setEmail(userData.email);
-            setFirstName(userData.firstName || "");
-            setLastName(userData.lastName || "");
-            setPhoneNumber(userData.phoneNumber || "");
-            setAbout(userData.about || "");
+            const user = userData.user;
+            setEmail(user.email ?? "");
+
+            const { data: profile, error: profileError } = await supabase
+               .from("profiles")
+               .select("full_name, phone")
+               .eq("id", user.id)
+               .maybeSingle();
+
+            if (profileError) {
+               throw profileError;
+            }
+
+            // profile can legitimately be null for a brand-new user if the
+            // handle_new_user() trigger hasn't run yet — fall back safely.
+            setName(profile?.full_name ?? "");
+            setFirstName(profile?.full_name ?? "");
+            setPhoneNumber(profile?.phone ?? "");
          } catch (error) {
             console.error("Error fetching user data:", error);
+            setLoadError("Failed to load your profile. Please try again.");
          }
       };
 
-      fetchUserData();
+      fetchProfile();
    }, []);
 
    const handleSave = async () => {
       try {
-         const res = await fetch("http://localhost:5000/api/profile", {
-            method: "PUT",
-            headers: {
-               "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-               firstName,
-               lastName,
-               phoneNumber,
-               about,
-            }),
-         });
+         const supabase = createClient();
+         const { data: userData, error: userError } = await supabase.auth.getUser();
 
-         if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || "Failed to update profile");
+         if (userError || !userData?.user) {
+            throw new Error("You need to be signed in to update your profile.");
          }
 
+         const { error } = await supabase
+            .from("profiles")
+            .update({
+               full_name: firstName,
+               phone: phoneNumber,
+            })
+            .eq("id", userData.user.id);
+
+         if (error) {
+            throw error;
+         }
+
+         setName(firstName);
          alert("Profile updated successfully!");
       } catch (error) {
          console.error("Error updating profile:", error);
@@ -78,6 +98,7 @@ const ProfileBody = () => {
          <div className="position-relative">
             <DashboardHeaderTwo title="Profile" />
             <h2 className="main-title d-block d-lg-none">Profile</h2>
+            {loadError && <div className="alert-text mb-20">{loadError}</div>}
 
             <div className="bg-white card-box border-20">
                <div className="user-avatar-setting d-flex align-items-center mb-30">
@@ -93,9 +114,9 @@ const ProfileBody = () => {
                   name={name}
                   email={email}
                   firstName={firstName} setFirstName={setFirstName}
-                  lastName={lastName} setLastName={setLastName}
+                  lastName={""} setLastName={noopSetter}
                   phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber}
-                  about={about} setAbout={setAbout}
+                  about={""} setAbout={noopSetter}
                />
             </div>
             <SocialMediaLink />

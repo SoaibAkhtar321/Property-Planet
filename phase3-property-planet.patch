@@ -1,0 +1,1265 @@
+diff --git a/src/app/projects/[slug]/page.tsx b/src/app/projects/[slug]/page.tsx
+new file mode 100644
+index 0000000..8f05249
+--- /dev/null
++++ b/src/app/projects/[slug]/page.tsx
+@@ -0,0 +1,31 @@
++import { notFound } from "next/navigation";
++import Wrapper from "@/layouts/Wrapper";
++import HeaderTwo from "@/layouts/headers/HeaderTwo";
++import FooterOne from "@/layouts/footers/FooterOne";
++import ProjectDetail from "@/components/projects/ProjectDetail";
++import demoProjects from "@/components/projects/data/demoProjects";
++
++export function generateMetadata({ params }: { params: { slug: string } }) {
++   const project = demoProjects.find((item) => item.slug === params.slug);
++   return {
++      title: project ? `${project.title} | Property Planet` : "Project Not Found | Property Planet",
++   };
++}
++
++const ProjectDetailPage = ({ params }: { params: { slug: string } }) => {
++   const project = demoProjects.find((item) => item.slug === params.slug);
++
++   if (!project) {
++      notFound();
++   }
++
++   return (
++      <Wrapper>
++         <HeaderTwo style_1={false} style_2={false} />
++         <ProjectDetail project={project} />
++         <FooterOne style={true} />
++      </Wrapper>
++   );
++};
++
++export default ProjectDetailPage;
+diff --git a/src/app/projects/page.tsx b/src/app/projects/page.tsx
+new file mode 100644
+index 0000000..069ba73
+--- /dev/null
++++ b/src/app/projects/page.tsx
+@@ -0,0 +1,20 @@
++import Wrapper from "@/layouts/Wrapper";
++import HeaderTwo from "@/layouts/headers/HeaderTwo";
++import FooterOne from "@/layouts/footers/FooterOne";
++import ProjectsListing from "@/components/projects/ProjectsListing";
++
++export const metadata = {
++   title: "Projects | Property Planet",
++};
++
++const ProjectsPage = () => {
++   return (
++      <Wrapper>
++         <HeaderTwo style_1={false} style_2={false} />
++         <ProjectsListing />
++         <FooterOne style={true} />
++      </Wrapper>
++   );
++};
++
++export default ProjectsPage;
+diff --git a/src/app/properties/[slug]/page.tsx b/src/app/properties/[slug]/page.tsx
+new file mode 100644
+index 0000000..d6efd90
+--- /dev/null
++++ b/src/app/properties/[slug]/page.tsx
+@@ -0,0 +1,31 @@
++import { notFound } from "next/navigation";
++import Wrapper from "@/layouts/Wrapper";
++import HeaderTwo from "@/layouts/headers/HeaderTwo";
++import FooterOne from "@/layouts/footers/FooterOne";
++import PropertyDetail from "@/components/properties/PropertyDetail";
++import demoProperties from "@/components/properties/data/demoProperties";
++
++export function generateMetadata({ params }: { params: { slug: string } }) {
++   const property = demoProperties.find((item) => item.slug === params.slug);
++   return {
++      title: property ? `${property.title} | Property Planet` : "Property Not Found | Property Planet",
++   };
++}
++
++const PropertyDetailPage = ({ params }: { params: { slug: string } }) => {
++   const property = demoProperties.find((item) => item.slug === params.slug);
++
++   if (!property) {
++      notFound();
++   }
++
++   return (
++      <Wrapper>
++         <HeaderTwo style_1={false} style_2={false} />
++         <PropertyDetail property={property} />
++         <FooterOne style={true} />
++      </Wrapper>
++   );
++};
++
++export default PropertyDetailPage;
+diff --git a/src/app/properties/page.tsx b/src/app/properties/page.tsx
+new file mode 100644
+index 0000000..587bd0e
+--- /dev/null
++++ b/src/app/properties/page.tsx
+@@ -0,0 +1,20 @@
++import Wrapper from "@/layouts/Wrapper";
++import HeaderTwo from "@/layouts/headers/HeaderTwo";
++import FooterOne from "@/layouts/footers/FooterOne";
++import PropertiesListing from "@/components/properties/PropertiesListing";
++
++export const metadata = {
++   title: "Properties | Property Planet",
++};
++
++const PropertiesPage = () => {
++   return (
++      <Wrapper>
++         <HeaderTwo style_1={false} style_2={false} />
++         <PropertiesListing />
++         <FooterOne style={true} />
++      </Wrapper>
++   );
++};
++
++export default PropertiesPage;
+diff --git a/src/components/homes/home-two/Property.tsx b/src/components/homes/home-two/Property.tsx
+index 3a0b49e..eef335b 100644
+--- a/src/components/homes/home-two/Property.tsx
++++ b/src/components/homes/home-two/Property.tsx
+@@ -26,7 +26,7 @@ const Property = () => {
+                               <div className="position-relative overflow-hidden">
+                                  <div className="tag fw-500">{item.tag}</div>
+                                  {isLandType(item.property_type) ? (
+-                                    <Link href="/listing_details_01" className="d-block">
++                                    <Link href="/properties" className="d-block">
+                                        <PropertyTypeVisual type={item.property_type as any} />
+                                     </Link>
+                                  ) : (
+@@ -39,7 +39,7 @@ const Property = () => {
+                                        <div className="carousel-inner">
+                                           {item.carousel_thumb.map((item, i) => (
+                                              <div key={i} className={`carousel-item ${item.active}`} data-bs-interval="1000000">
+-                                                <Link href="/listing_details_01" className="d-block"><Image src={item.img} className="w-100" alt="..." /></Link>
++                                                <Link href="/properties" className="d-block"><Image src={item.img} className="w-100" alt="..." /></Link>
+                                              </div>
+                                           ))}
+                                        </div>
+@@ -77,7 +77,7 @@ const Property = () => {
+                </div>
+ 
+                <div className="section-btn text-center md-mt-60">
+-                  <Link href="/listing_05" className="btn-eight"><span>Explore All</span> <i
++                  <Link href="/properties" className="btn-eight"><span>Explore All</span> <i
+                      className="bi bi-arrow-up-right"></i></Link>
+                </div>
+             </div>
+diff --git a/src/components/projects/ProjectCard.tsx b/src/components/projects/ProjectCard.tsx
+new file mode 100644
+index 0000000..96d6c89
+--- /dev/null
++++ b/src/components/projects/ProjectCard.tsx
+@@ -0,0 +1,31 @@
++import Image from "next/image";
++import Link from "next/link";
++import { Project } from "./data/types";
++
++const ProjectCard = ({ item }: { item: Project }) => {
++   return (
++      <div className="project-block-two mt-80 lg-mt-40">
++         <figure className="image-wrapper m0 position-relative z-1 overflow-hidden">
++            {item.tag && <div className="tag fw-500 text-uppercase">{item.tag}</div>}
++            <Link href={`/projects/${item.slug}`} className="d-block position-relative">
++               <Image src={item.images[0]} alt={item.title} width={700} height={500} className="w-100 tran5s" />
++            </Link>
++         </figure>
++         <div className="caption">
++            <div className="d-flex justify-content-between align-items-center">
++               <div className="title">
++                  {item.location && <div className="date position-relative">{item.location}</div>}
++                  <Link href={`/projects/${item.slug}`}>
++                     <h4 className="tran3s">{item.title}</h4>
++                  </Link>
++               </div>
++               <Link href={`/projects/${item.slug}`} className="btn-thirteen rounded-circle">
++                  <i className="bi bi-arrow-up-right"></i>
++               </Link>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default ProjectCard;
+diff --git a/src/components/projects/ProjectDetail.tsx b/src/components/projects/ProjectDetail.tsx
+new file mode 100644
+index 0000000..4888635
+--- /dev/null
++++ b/src/components/projects/ProjectDetail.tsx
+@@ -0,0 +1,68 @@
++import Image from "next/image";
++import Link from "next/link";
++import { Project } from "./data/types";
++
++// Most real-estate project sections (landmarks, connectivity, features,
++// area distribution, pricing, master plan, documents, legal/RERA) are
++// intentionally omitted here — no verified data exists for them yet, and
++// this page must not fabricate content to fill the layout.
++
++const ProjectDetail = ({ project }: { project: Project }) => {
++   return (
++      <div className="project-details-one mt-150 xl-mt-100 mb-170 xl-mb-100">
++         <div className="container">
++            <div className="row gx-xxl-5">
++               <div className="col-lg-6 order-lg-first">
++                  {project.images.map((img, index) => (
++                     <figure key={index} className="image-wrapper">
++                        <Image src={img} alt={project.title} width={700} height={500} className="lazy-img w-100" />
++                     </figure>
++                  ))}
++               </div>
++
++               <div className="col-lg-6">
++                  <div className="details-text ps-xxl-5 md-mt-40">
++                     {project.tag && <div className="tag fw-500 text-uppercase">{project.tag}</div>}
++                     <h3>{project.title}</h3>
++
++                     {(project.developer || project.location || project.projectType) && (
++                        <div className="project-info-outline mt-40">
++                           <div className="main-bg">
++                              <ul className="style-none">
++                                 {project.developer && (
++                                    <li className="position-relative z-1">
++                                       <strong>Developer</strong>
++                                       <span>{project.developer}</span>
++                                    </li>
++                                 )}
++                                 {project.location && (
++                                    <li className="position-relative z-1">
++                                       <strong>Location</strong>
++                                       <span>{project.location}</span>
++                                    </li>
++                                 )}
++                                 {project.projectType && (
++                                    <li className="position-relative z-1">
++                                       <strong>Project Type</strong>
++                                       <span>{project.projectType}</span>
++                                    </li>
++                                 )}
++                              </ul>
++                           </div>
++                        </div>
++                     )}
++
++                     <div className="mt-45">
++                        <Link href="/contact" className="btn-four">
++                           Enquire About This Project <i className="bi bi-arrow-up-right ms-2"></i>
++                        </Link>
++                     </div>
++                  </div>
++               </div>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default ProjectDetail;
+diff --git a/src/components/projects/ProjectsListing.tsx b/src/components/projects/ProjectsListing.tsx
+new file mode 100644
+index 0000000..fb4f75a
+--- /dev/null
++++ b/src/components/projects/ProjectsListing.tsx
+@@ -0,0 +1,23 @@
++import demoProjects from "./data/demoProjects";
++import ProjectCard from "./ProjectCard";
++
++// No category filter is shown here on purpose: the old template's
++// Apartments/House/Villa/Flat filter is demo-only, and with a single
++// confirmed real project a filter would be inert/misleading. Reintroduce it
++// once real project inventory supports it.
++
++const ProjectsListing = () => {
++   return (
++      <div className="project-section-one mt-150 xl-mt-100 pb-150 xl-pb-100">
++         <div className="container">
++            <div id="canonical-projects-grid" className="grid-2column pt-10">
++               {demoProjects.map((item) => (
++                  <ProjectCard key={item.id} item={item} />
++               ))}
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default ProjectsListing;
+diff --git a/src/components/projects/data/demoProjects.ts b/src/components/projects/data/demoProjects.ts
+new file mode 100644
+index 0000000..cbbb5fb
+--- /dev/null
++++ b/src/components/projects/data/demoProjects.ts
+@@ -0,0 +1,25 @@
++import { Project } from "./types";
++
++// Only one project is confirmed today. No fictional projects are added here —
++// per project decision, an honest, smaller dataset is preferred over fake
++// inventory. Do not invent RERA numbers, approvals, pricing, possession
++// dates, distances, amenities, or other unverified specifics.
++
++const demoProjects: Project[] = [
++   {
++      id: "property-planet",
++      slug: "property-planet",
++      title: "Property Planet",
++      tag: "Plotted Development",
++      developer: "Elite Infra Group",
++      location: "Kongara Khurd-A, South Hyderabad",
++      projectType: "17-acre plotted development",
++      images: [
++         "/assets/images/project/img_01.jpg",
++         "/assets/images/project/img_02.jpg",
++         "/assets/images/project/img_03.jpg",
++      ],
++   },
++];
++
++export default demoProjects;
+diff --git a/src/components/projects/data/types.ts b/src/components/projects/data/types.ts
+new file mode 100644
+index 0000000..ba744cb
+--- /dev/null
++++ b/src/components/projects/data/types.ts
+@@ -0,0 +1,18 @@
++// Canonical project data shape. Phase 4 will introduce dedicated
++// project/project_location/project_features/etc. tables — this shape is
++// kept clean enough to map onto that future schema.
++
++export interface Project {
++   id: string;
++   slug: string;
++   title: string;
++   tag?: string;
++   developer?: string;
++   location?: string;
++   projectType?: string;
++   date?: string;
++   images: string[];
++   overview?: string;
++   /** Marks non-real records used only to demonstrate the layout. */
++   isDemo?: boolean;
++}
+diff --git a/src/components/properties/PropertiesListing.tsx b/src/components/properties/PropertiesListing.tsx
+new file mode 100644
+index 0000000..c7ee3bf
+--- /dev/null
++++ b/src/components/properties/PropertiesListing.tsx
+@@ -0,0 +1,70 @@
++"use client";
++
++import { useMemo, useState } from "react";
++import demoProperties from "./data/demoProperties";
++import PropertyCard from "./PropertyCard";
++import PropertyFilters, { PropertyFilterState } from "./PropertyFilters";
++
++const PropertiesListing = () => {
++   const [filters, setFilters] = useState<PropertyFilterState>({
++      listingType: "all",
++      propertyType: "all",
++   });
++
++   const listingTypes = useMemo(
++      () => Array.from(new Set(demoProperties.map((item) => item.listingType))),
++      []
++   );
++   const propertyTypes = useMemo(
++      () => Array.from(new Set(demoProperties.map((item) => item.propertyType))),
++      []
++   );
++
++   const filtered = useMemo(() => {
++      return demoProperties.filter((item) => {
++         if (filters.listingType !== "all" && item.listingType !== filters.listingType) return false;
++         if (filters.propertyType !== "all" && item.propertyType !== filters.propertyType) return false;
++         return true;
++      });
++   }, [filters]);
++
++   return (
++      <div className="property-listing-six bg-pink-two pt-110 md-pt-80 pb-150 xl-pb-120 mt-150 xl-mt-120">
++         <div className="container container-large">
++            <div className="row">
++               <div className="col-lg-8">
++                  <div className="ps-xxl-5">
++                     <div className="listing-header-filter d-sm-flex justify-content-between align-items-center mb-40 lg-mb-30">
++                        <div>
++                           Showing <span className="color-dark fw-500">{filtered.length}</span> of{" "}
++                           <span className="color-dark fw-500">{demoProperties.length}</span> properties
++                        </div>
++                     </div>
++
++                     <div className="row gx-xxl-5">
++                        {filtered.map((item) => (
++                           <PropertyCard key={item.id} item={item} />
++                        ))}
++                        {filtered.length === 0 && (
++                           <p className="fs-20">No properties match these filters yet.</p>
++                        )}
++                     </div>
++                  </div>
++               </div>
++
++               <div className="col-lg-4 order-lg-first">
++                  <PropertyFilters
++                     listingTypes={listingTypes}
++                     propertyTypes={propertyTypes}
++                     filters={filters}
++                     onChange={setFilters}
++                     onReset={() => setFilters({ listingType: "all", propertyType: "all" })}
++                  />
++               </div>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default PropertiesListing;
+diff --git a/src/components/properties/PropertyCard.tsx b/src/components/properties/PropertyCard.tsx
+new file mode 100644
+index 0000000..e1b0f79
+--- /dev/null
++++ b/src/components/properties/PropertyCard.tsx
+@@ -0,0 +1,69 @@
++import Image from "next/image";
++import Link from "next/link";
++import { Property } from "./data/types";
++
++const PropertyCard = ({ item }: { item: Property }) => {
++   return (
++      <div className="col-md-6 col-lg-4 d-flex mb-50 wow fadeInUp">
++         <div className="listing-card-one border-25 h-100 w-100">
++            <div className="img-gallery p-15">
++               <div className="position-relative border-25 overflow-hidden">
++                  {item.tag && <div className="tag border-25">{item.tag}</div>}
++                  {item.isDemo && (
++                     <div
++                        className="tag border-25"
++                        style={{ left: "auto", right: 15, background: "#6c757d" }}
++                     >
++                        Demo
++                     </div>
++                  )}
++                  <Link href={`/properties/${item.slug}`} className="d-block">
++                     <Image
++                        src={item.images[0]}
++                        alt={item.title}
++                        width={600}
++                        height={400}
++                        className="w-100"
++                     />
++                  </Link>
++               </div>
++            </div>
++
++            <div className="property-info p-25">
++               <Link href={`/properties/${item.slug}`} className="title tran3s">
++                  {item.title}
++               </Link>
++               <div className="address">{item.address}</div>
++               <ul className="style-none feature d-flex flex-wrap align-items-center justify-content-between">
++                  {item.sqft && (
++                     <li className="d-flex align-items-center">
++                        <span className="fs-16">{item.sqft} sqft</span>
++                     </li>
++                  )}
++                  {typeof item.bed === "number" && (
++                     <li className="d-flex align-items-center">
++                        <span className="fs-16">{item.bed} bed</span>
++                     </li>
++                  )}
++                  {typeof item.bath === "number" && (
++                     <li className="d-flex align-items-center">
++                        <span className="fs-16">{item.bath} bath</span>
++                     </li>
++                  )}
++               </ul>
++               <div className="pl-footer top-border d-flex align-items-center justify-content-between">
++                  <strong className="price fw-500 color-dark">
++                     ₹{item.price.toLocaleString("en-IN")}
++                     {item.priceUnit && <sub>{item.priceUnit}</sub>}
++                  </strong>
++                  <Link href={`/properties/${item.slug}`} className="btn-four rounded-circle">
++                     <i className="bi bi-arrow-up-right"></i>
++                  </Link>
++               </div>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default PropertyCard;
+diff --git a/src/components/properties/PropertyDetail.tsx b/src/components/properties/PropertyDetail.tsx
+new file mode 100644
+index 0000000..960b50e
+--- /dev/null
++++ b/src/components/properties/PropertyDetail.tsx
+@@ -0,0 +1,96 @@
++import { Property } from "./data/types";
++import demoProperties from "./data/demoProperties";
++import MediaGallery from "./detail/MediaGallery";
++import Overview from "./detail/Overview";
++import Amenities from "./detail/Amenities";
++import NearbyList from "./detail/NearbyList";
++import FloorPlan from "./detail/FloorPlan";
++import VideoTour from "./detail/VideoTour";
++import Location from "./detail/Location";
++import SimilarProperties from "./detail/SimilarProperties";
++import Sidebar from "./detail/Sidebar";
++
++// Mortgage calculator and reviews are intentionally deferred (Phase 3 scope
++// only covers listing/detail display) — no requirement or data model exists
++// for either yet.
++
++const PropertyDetail = ({ property }: { property: Property }) => {
++   const similar = demoProperties.filter((item) => item.slug !== property.slug).slice(0, 2);
++
++   return (
++      <div className="listing-details-one theme-details-one mt-130 lg-mt-100 pb-150 xl-pb-120">
++         <MediaGallery images={property.images} title={property.title} />
++         <div className="container">
++            <div className="row">
++               <div className="col-lg-6">
++                  <h3 className="property-titlee">{property.title}</h3>
++                  <div className="d-flex flex-wrap mt-10">
++                     {property.tag && (
++                        <div className="list-type text-uppercase mt-15 me-3 bg-white text-dark fw-500">
++                           {property.tag}
++                        </div>
++                     )}
++                     <div className="address mt-15">
++                        <i className="bi bi-geo-alt"></i> {property.address}
++                     </div>
++                  </div>
++                  {property.isDemo && (
++                     <div className="fs-14 mt-15" style={{ color: "#8a6d00" }}>
++                        This is demo data for layout purposes only — not a confirmed Property Planet listing.
++                     </div>
++                  )}
++               </div>
++               <div className="col-lg-6 text-lg-end">
++                  <div className="d-inline-block md-mt-40">
++                     <div className="price color-dark fw-500">
++                        Price: ₹{property.price.toLocaleString("en-IN")}
++                        {property.priceUnit ? property.priceUnit : ""}
++                     </div>
++                  </div>
++               </div>
++            </div>
++
++            <Overview property={property} />
++
++            <div className="row">
++               <div className="col-xl-8">
++                  <div className="accordion-style-two full-accordion">
++                     <div className="accordion" id="propertyDetailAccordion">
++                        {property.overview && (
++                           <div className="accordion-item">
++                              <h2 className="accordion-header">
++                                 <button
++                                    className="accordion-button"
++                                    type="button"
++                                    data-bs-toggle="collapse"
++                                    data-bs-target="#collapsePropertyOverview"
++                                    aria-expanded="true"
++                                    aria-controls="collapsePropertyOverview"
++                                 >
++                                    Overview
++                                 </button>
++                              </h2>
++                              <div id="collapsePropertyOverview" className="accordion-collapse collapse show">
++                                 <div className="accordion-body">
++                                    <p className="fs-20 lh-lg m0">{property.overview}</p>
++                                 </div>
++                              </div>
++                           </div>
++                        )}
++                        <Amenities property={property} />
++                        <VideoTour property={property} />
++                        <FloorPlan property={property} />
++                        <NearbyList property={property} />
++                        <SimilarProperties items={similar} />
++                        <Location property={property} />
++                     </div>
++                  </div>
++               </div>
++               <Sidebar property={property} />
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default PropertyDetail;
+diff --git a/src/components/properties/PropertyFilters.tsx b/src/components/properties/PropertyFilters.tsx
+new file mode 100644
+index 0000000..b923062
+--- /dev/null
++++ b/src/components/properties/PropertyFilters.tsx
+@@ -0,0 +1,66 @@
++"use client";
++
++export interface PropertyFilterState {
++   listingType: string;
++   propertyType: string;
++}
++
++const PropertyFilters = ({
++   listingTypes,
++   propertyTypes,
++   filters,
++   onChange,
++   onReset,
++}: {
++   listingTypes: string[];
++   propertyTypes: string[];
++   filters: PropertyFilterState;
++   onChange: (next: PropertyFilterState) => void;
++   onReset: () => void;
++}) => {
++   return (
++      <div className="advance-search-panel dot-bg md-mt-80">
++         <div className="main-bg p-30">
++            <h5 className="mb-30">Filter Properties</h5>
++
++            <div className="mb-30">
++               <div className="fs-16 fw-500 mb-10">Listing Type</div>
++               <select
++                  className="nice-select w-100"
++                  value={filters.listingType}
++                  onChange={(e) => onChange({ ...filters, listingType: e.target.value })}
++               >
++                  <option value="all">All</option>
++                  {listingTypes.map((type) => (
++                     <option key={type} value={type}>
++                        {type}
++                     </option>
++                  ))}
++               </select>
++            </div>
++
++            <div className="mb-30">
++               <div className="fs-16 fw-500 mb-10">Property Type</div>
++               <select
++                  className="nice-select w-100"
++                  value={filters.propertyType}
++                  onChange={(e) => onChange({ ...filters, propertyType: e.target.value })}
++               >
++                  <option value="all">All</option>
++                  {propertyTypes.map((type) => (
++                     <option key={type} value={type}>
++                        {type}
++                     </option>
++                  ))}
++               </select>
++            </div>
++
++            <button type="button" className="btn-four w-100 justify-content-center" onClick={onReset}>
++               Reset Filters
++            </button>
++         </div>
++      </div>
++   );
++};
++
++export default PropertyFilters;
+diff --git a/src/components/properties/data/demoProperties.ts b/src/components/properties/data/demoProperties.ts
+new file mode 100644
+index 0000000..9e4e9a6
+--- /dev/null
++++ b/src/components/properties/data/demoProperties.ts
+@@ -0,0 +1,103 @@
++import { Property } from "./types";
++
++// IMPORTANT: These are development/demo records used only to exercise the
++// canonical /properties layout during Phase 3. They are NOT confirmed
++// Property Planet inventory. Every record is flagged `isDemo: true` and the
++// UI must surface that flag rather than presenting these as real listings.
++// Phase 4 replaces this file with a Supabase-backed query against
++// `properties` / `property_location` / `property_media`.
++
++const demoProperties: Property[] = [
++   {
++      id: "demo-1",
++      slug: "kongara-khurd-plot-1",
++      title: "Residential Plot, Kongara Khurd-A",
++      tag: "Plot",
++      listingType: "Sale",
++      propertyType: "Plot",
++      address: "Kongara Khurd-A, South Hyderabad",
++      price: 3500000,
++      sqft: 2000,
++      images: [
++         "/assets/images/listing/img_01.jpg",
++         "/assets/images/listing/img_02.jpg",
++         "/assets/images/listing/img_03.jpg",
++         "/assets/images/listing/img_04.jpg",
++      ],
++      overview:
++         "A sample plot record used to demonstrate the canonical listing layout while real inventory data is finalized.",
++      overviewItems: [
++         { label: "Area", value: "2,000 sqft" },
++         { label: "Type", value: "Plot" },
++         { label: "Facing", value: "East" },
++      ],
++      amenities: ["Gated Layout", "Wide Roads", "Underground Drainage"],
++      nearby: [
++         { title: "Main Road", distance: "0.5km" },
++         { title: "School", distance: "2.1km" },
++      ],
++      isDemo: true,
++   },
++   {
++      id: "demo-2",
++      slug: "future-city-villa-1",
++      title: "3BHK Independent Villa, Future City Corridor",
++      tag: "Villa",
++      listingType: "Sale",
++      propertyType: "Villa",
++      address: "Future City Corridor, Hyderabad",
++      price: 9800000,
++      sqft: 2600,
++      bed: 3,
++      bath: 3,
++      images: [
++         "/assets/images/listing/img_05.jpg",
++         "/assets/images/listing/img_06.jpg",
++         "/assets/images/listing/img_07.jpg",
++      ],
++      overview:
++         "A sample villa record used to demonstrate the canonical listing layout while real inventory data is finalized.",
++      overviewItems: [
++         { label: "Sqft", value: "2,600" },
++         { label: "Bed", value: "3" },
++         { label: "Bath", value: "3" },
++         { label: "Type", value: "Villa" },
++      ],
++      amenities: ["Car Parking", "Garden", "Power Backup"],
++      nearby: [
++         { title: "Hospital", distance: "1.7km" },
++         { title: "Metro Station", distance: "3.4km" },
++      ],
++      isDemo: true,
++   },
++   {
++      id: "demo-3",
++      slug: "hyderabad-apartment-1",
++      title: "2BHK Apartment, Hyderabad Growth Corridor",
++      tag: "Apartment",
++      listingType: "Rent",
++      propertyType: "Apartment",
++      address: "Hyderabad Growth Corridor",
++      price: 22000,
++      priceUnit: "/mo",
++      sqft: 1150,
++      bed: 2,
++      bath: 2,
++      images: [
++         "/assets/images/listing/img_08.jpg",
++         "/assets/images/listing/img_09.jpg",
++      ],
++      overview:
++         "A sample apartment record used to demonstrate the canonical listing layout while real inventory data is finalized.",
++      overviewItems: [
++         { label: "Sqft", value: "1,150" },
++         { label: "Bed", value: "2" },
++         { label: "Bath", value: "2" },
++         { label: "Type", value: "Apartment" },
++      ],
++      amenities: ["Lift", "Security", "Parking"],
++      isDemo: true,
++   },
++];
++
++export default demoProperties;
+diff --git a/src/components/properties/data/types.ts b/src/components/properties/data/types.ts
+new file mode 100644
+index 0000000..f5c7633
+--- /dev/null
++++ b/src/components/properties/data/types.ts
+@@ -0,0 +1,43 @@
++// Canonical property data shape for Property Planet.
++// Phase 3 uses local demo data conforming to this shape; Phase 4 maps
++// Supabase `properties` / `property_location` / `property_media` rows to it.
++
++export interface PropertyOverviewItem {
++   label: string;
++   value: string;
++}
++
++export interface PropertyNearbyItem {
++   title: string;
++   distance: string;
++}
++
++export interface Property {
++   id: string;
++   slug: string;
++   title: string;
++   tag?: string;
++   listingType: "Sale" | "Rent";
++   propertyType: string;
++   address: string;
++   price: number;
++   priceUnit?: string;
++   sqft?: number;
++   bed?: number;
++   bath?: number;
++   images: string[];
++   overview?: string;
++   overviewItems?: PropertyOverviewItem[];
++   amenities?: string[];
++   nearby?: PropertyNearbyItem[];
++   floorPlanImages?: string[];
++   videoId?: string;
++   mapEmbedUrl?: string;
++   featured?: boolean;
++   /**
++    * Marks records that exist only to demonstrate the template/layout and are
++    * NOT real Property Planet inventory. Always surface this in the UI so
++    * demo data is never presented as confirmed listings.
++    */
++   isDemo?: boolean;
++}
+diff --git a/src/components/properties/detail/Amenities.tsx b/src/components/properties/detail/Amenities.tsx
+new file mode 100644
+index 0000000..682093c
+--- /dev/null
++++ b/src/components/properties/detail/Amenities.tsx
+@@ -0,0 +1,33 @@
++import { Property } from "../data/types";
++
++const Amenities = ({ property }: { property: Property }) => {
++   if (!property.amenities || property.amenities.length === 0) return null;
++
++   return (
++      <div className="accordion-item">
++         <h2 className="accordion-header">
++            <button
++               className="accordion-button"
++               type="button"
++               data-bs-toggle="collapse"
++               data-bs-target="#collapseAmenities"
++               aria-expanded="true"
++               aria-controls="collapseAmenities"
++            >
++               Amenities
++            </button>
++         </h2>
++         <div id="collapseAmenities" className="accordion-collapse collapse show">
++            <div className="accordion-body">
++               <ul className="style-none d-flex flex-wrap justify-content-between list-style-two">
++                  {property.amenities.map((item, index) => (
++                     <li key={index}>{item}</li>
++                  ))}
++               </ul>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default Amenities;
+diff --git a/src/components/properties/detail/FloorPlan.tsx b/src/components/properties/detail/FloorPlan.tsx
+new file mode 100644
+index 0000000..8712aa7
+--- /dev/null
++++ b/src/components/properties/detail/FloorPlan.tsx
+@@ -0,0 +1,38 @@
++import Image from "next/image";
++import { Property } from "../data/types";
++
++const FloorPlan = ({ property }: { property: Property }) => {
++   if (!property.floorPlanImages || property.floorPlanImages.length === 0) return null;
++
++   return (
++      <div className="accordion-item">
++         <h2 className="accordion-header">
++            <button
++               className="accordion-button collapsed"
++               type="button"
++               data-bs-toggle="collapse"
++               data-bs-target="#collapseFloorPlan"
++               aria-expanded="false"
++               aria-controls="collapseFloorPlan"
++            >
++               Floor Plans
++            </button>
++         </h2>
++         <div id="collapseFloorPlan" className="accordion-collapse collapse">
++            <div className="accordion-body">
++               <div className="property-floor-plan">
++                  <div className="wrapper row">
++                     {property.floorPlanImages.map((img, index) => (
++                        <div key={index} className="col-md-6 mb-20">
++                           <Image src={img} alt={`Floor plan ${index + 1}`} width={600} height={400} className="w-100" />
++                        </div>
++                     ))}
++                  </div>
++               </div>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default FloorPlan;
+diff --git a/src/components/properties/detail/Location.tsx b/src/components/properties/detail/Location.tsx
+new file mode 100644
+index 0000000..1b106f7
+--- /dev/null
++++ b/src/components/properties/detail/Location.tsx
+@@ -0,0 +1,46 @@
++import { Property } from "../data/types";
++
++const Location = ({ property }: { property: Property }) => {
++   if (!property.mapEmbedUrl) return null;
++
++   return (
++      <div className="accordion-item">
++         <h2 className="accordion-header">
++            <button
++               className="accordion-button collapsed"
++               type="button"
++               data-bs-toggle="collapse"
++               data-bs-target="#collapseLocation"
++               aria-expanded="false"
++               aria-controls="collapseLocation"
++            >
++               Location
++            </button>
++         </h2>
++         <div id="collapseLocation" className="accordion-collapse collapse">
++            <div className="accordion-body">
++               <div className="property-location">
++                  <div className="wrapper">
++                     <div className="map-banner">
++                        <div className="gmap_canvas h-100 w-100">
++                           <iframe
++                              src={property.mapEmbedUrl}
++                              width="600"
++                              height="450"
++                              style={{ border: 0 }}
++                              allowFullScreen
++                              loading="lazy"
++                              referrerPolicy="no-referrer-when-downgrade"
++                              className="w-100 h-100"
++                           ></iframe>
++                        </div>
++                     </div>
++                  </div>
++               </div>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default Location;
+diff --git a/src/components/properties/detail/MediaGallery.tsx b/src/components/properties/detail/MediaGallery.tsx
+new file mode 100644
+index 0000000..458c8cf
+--- /dev/null
++++ b/src/components/properties/detail/MediaGallery.tsx
+@@ -0,0 +1,48 @@
++import Fancybox from "@/components/common/Fancybox";
++
++const MediaGallery = ({ images, title }: { images: string[]; title: string }) => {
++   if (!images || images.length === 0) return null;
++
++   const [main, ...rest] = images;
++
++   return (
++      <div className="media-gallery-grid mb-50">
++         <div className="row">
++            <div className="col-md-7 d-flex">
++               <div className="position-relative h-100 w-100 sm-pb-20">
++                  <a className="media-bg h-100" style={{ backgroundImage: `url(${main})` }}></a>
++                  {rest.length > 0 && (
++                     <Fancybox options={{ Carousel: { infinite: true } }}>
++                        <div className="img-fancy-btn fw-500 fs-16 color-dark">
++                           See all {images.length} photos
++                           {images.map((img, index) => (
++                              <a key={index} className="d-block" data-fancybox="property-gallery" href={img} aria-label={`${title} photo ${index + 1}`}></a>
++                           ))}
++                        </div>
++                     </Fancybox>
++                  )}
++               </div>
++            </div>
++            {rest.length > 0 && (
++               <div className="col-md-5 d-flex">
++                  <div className="w-100 h-100">
++                     <div className="row">
++                        {rest.slice(0, 4).map((img, index) => (
++                           <div key={index} className="col-6 mb-25 md-mb-20">
++                              <a
++                                 href={img}
++                                 className="media-bg sm"
++                                 style={{ backgroundImage: `url(${img})` }}
++                              ></a>
++                           </div>
++                        ))}
++                     </div>
++                  </div>
++               </div>
++            )}
++         </div>
++      </div>
++   );
++};
++
++export default MediaGallery;
+diff --git a/src/components/properties/detail/NearbyList.tsx b/src/components/properties/detail/NearbyList.tsx
+new file mode 100644
+index 0000000..403d22b
+--- /dev/null
++++ b/src/components/properties/detail/NearbyList.tsx
+@@ -0,0 +1,36 @@
++import { Property } from "../data/types";
++
++const NearbyList = ({ property }: { property: Property }) => {
++   if (!property.nearby || property.nearby.length === 0) return null;
++
++   return (
++      <div className="accordion-item">
++         <h2 className="accordion-header">
++            <button
++               className="accordion-button collapsed"
++               type="button"
++               data-bs-toggle="collapse"
++               data-bs-target="#collapseNearby"
++               aria-expanded="false"
++               aria-controls="collapseNearby"
++            >
++               What&apos;s Nearby
++            </button>
++         </h2>
++         <div id="collapseNearby" className="accordion-collapse collapse">
++            <div className="accordion-body">
++               <ul className="style-none d-flex flex-wrap justify-content-between nearby-list-item">
++                  {property.nearby.map((item, index) => (
++                     <li key={index}>
++                        {item.title}
++                        <span className="fw-500 color-dark">{item.distance}</span>
++                     </li>
++                  ))}
++               </ul>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default NearbyList;
+diff --git a/src/components/properties/detail/Overview.tsx b/src/components/properties/detail/Overview.tsx
+new file mode 100644
+index 0000000..68316d6
+--- /dev/null
++++ b/src/components/properties/detail/Overview.tsx
+@@ -0,0 +1,24 @@
++import { Property } from "../data/types";
++
++const Overview = ({ property }: { property: Property }) => {
++   const items = property.overviewItems;
++   if (!items || items.length === 0) return null;
++
++   return (
++      <div className="property-feature-list position-relative z-2 mt-65 mb-75">
++         <div className="dark-bg ps-3 ps-md-5 pe-3 pt-30 pb-30">
++            <ul className="style-none d-flex flex-wrap align-items-center justify-content-between">
++               {items.map((item, index) => (
++                  <li key={index}>
++                     <span className="fs-20 text-white">
++                        {item.label} . {item.value}
++                     </span>
++                  </li>
++               ))}
++            </ul>
++         </div>
++      </div>
++   );
++};
++
++export default Overview;
+diff --git a/src/components/properties/detail/Sidebar.tsx b/src/components/properties/detail/Sidebar.tsx
+new file mode 100644
+index 0000000..a3a4bcc
+--- /dev/null
++++ b/src/components/properties/detail/Sidebar.tsx
+@@ -0,0 +1,43 @@
++import Link from "next/link";
++import { Property } from "../data/types";
++
++const Sidebar = ({ property }: { property: Property }) => {
++   return (
++      <div className="col-xl-4 col-lg-8 me-auto ms-auto">
++         <div className="theme-sidebar-one dot-bg p-30 ms-xxl-3 lg-mt-80">
++            <div className="agent-info bg-white border-20 p-30 mb-40">
++               <h5 className="mb-20">Interested in this property?</h5>
++               <div className="price color-dark fw-500 mb-20">
++                  ₹{property.price.toLocaleString("en-IN")}
++                  {property.priceUnit ? property.priceUnit : ""}
++               </div>
++               <Link href="/contact" className="btn-four w-100 justify-content-center">
++                  Enquire Now
++               </Link>
++            </div>
++
++            <div className="feature-listing bg-white border-20 p-30">
++               <h5 className="mb-20">Key Facts</h5>
++               <ul className="style-none">
++                  <li className="d-flex justify-content-between mb-10">
++                     <span>Listing Type</span>
++                     <span className="fw-500 color-dark">{property.listingType}</span>
++                  </li>
++                  <li className="d-flex justify-content-between mb-10">
++                     <span>Property Type</span>
++                     <span className="fw-500 color-dark">{property.propertyType}</span>
++                  </li>
++                  {property.sqft && (
++                     <li className="d-flex justify-content-between mb-10">
++                        <span>Area</span>
++                        <span className="fw-500 color-dark">{property.sqft} sqft</span>
++                     </li>
++                  )}
++               </ul>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default Sidebar;
+diff --git a/src/components/properties/detail/SimilarProperties.tsx b/src/components/properties/detail/SimilarProperties.tsx
+new file mode 100644
+index 0000000..70cd981
+--- /dev/null
++++ b/src/components/properties/detail/SimilarProperties.tsx
+@@ -0,0 +1,58 @@
++import Image from "next/image";
++import Link from "next/link";
++import { Property } from "../data/types";
++
++const SimilarProperties = ({ items }: { items: Property[] }) => {
++   if (!items || items.length === 0) return null;
++
++   return (
++      <div className="accordion-item">
++         <h2 className="accordion-header">
++            <button
++               className="accordion-button collapsed"
++               type="button"
++               data-bs-toggle="collapse"
++               data-bs-target="#collapseSimilar"
++               aria-expanded="false"
++               aria-controls="collapseSimilar"
++            >
++               Similar Properties
++            </button>
++         </h2>
++         <div id="collapseSimilar" className="accordion-collapse collapse">
++            <div className="accordion-body">
++               <div className="similar-property">
++                  <div className="row">
++                     {items.map((item) => (
++                        <div key={item.id} className="col-md-6 item">
++                           <div className="listing-card-one style-three border border-30 sm-mb-40">
++                              <div className="img-gallery p-15">
++                                 <div className="position-relative border-20 overflow-hidden">
++                                    {item.tag && <div className="tag bg-white text-dark fw-500 border-20">{item.tag}</div>}
++                                    <Image src={item.images[0]} alt={item.title} width={600} height={400} className="w-100 border-20" />
++                                    <Link href={`/properties/${item.slug}`} className="btn-four inverse rounded-circle position-absolute">
++                                       <i className="bi bi-arrow-up-right"></i>
++                                    </Link>
++                                 </div>
++                              </div>
++                              <div className="property-info pe-4 ps-4">
++                                 <Link href={`/properties/${item.slug}`} className="title tran3s">
++                                    {item.title}
++                                 </Link>
++                                 <div className="address m0 pb-5">{item.address}</div>
++                                 <div className="pl-footer m0 d-flex align-items-center justify-content-between">
++                                    <strong className="price fw-500 color-dark">₹{item.price.toLocaleString("en-IN")}</strong>
++                                 </div>
++                              </div>
++                           </div>
++                        </div>
++                     ))}
++                  </div>
++               </div>
++            </div>
++         </div>
++      </div>
++   );
++};
++
++export default SimilarProperties;
+diff --git a/src/components/properties/detail/VideoTour.tsx b/src/components/properties/detail/VideoTour.tsx
+new file mode 100644
+index 0000000..43ce8f4
+--- /dev/null
++++ b/src/components/properties/detail/VideoTour.tsx
+@@ -0,0 +1,50 @@
++"use client";
++
++import { useState } from "react";
++import Image from "next/image";
++import VideoPopup from "@/modals/VideoPopup";
++import { Property } from "../data/types";
++
++const VideoTour = ({ property }: { property: Property }) => {
++   const [isVideoOpen, setIsVideoOpen] = useState(false);
++
++   if (!property.videoId) return null;
++
++   return (
++      <>
++         <div className="accordion-item">
++            <h2 className="accordion-header">
++               <button
++                  className="accordion-button collapsed"
++                  type="button"
++                  data-bs-toggle="collapse"
++                  data-bs-target="#collapseVideoTour"
++                  aria-expanded="false"
++                  aria-controls="collapseVideoTour"
++               >
++                  Video Tour
++               </button>
++            </h2>
++            <div id="collapseVideoTour" className="accordion-collapse collapse">
++               <div className="accordion-body">
++                  <div className="property-video-tour">
++                     <div className="position-relative image-bg overflow-hidden z-1">
++                        <Image src={property.images[0]} alt="" width={800} height={500} className="lazy-img w-100" />
++                        <a
++                           onClick={() => setIsVideoOpen(true)}
++                           style={{ cursor: "pointer" }}
++                           className="video-icon tran3s rounded-circle d-flex align-items-center justify-content-center"
++                        >
++                           <i className="fa-thin fa-play"></i>
++                        </a>
++                     </div>
++                  </div>
++               </div>
++            </div>
++         </div>
++         <VideoPopup isVideoOpen={isVideoOpen} setIsVideoOpen={setIsVideoOpen} videoId={property.videoId} />
++      </>
++   );
++};
++
++export default VideoTour;

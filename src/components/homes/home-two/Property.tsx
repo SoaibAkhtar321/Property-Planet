@@ -26,7 +26,7 @@ const Property = () => {
                               <div className="position-relative overflow-hidden">
                                  <div className="tag fw-500">{item.tag}</div>
                                  {isLandType(item.property_type) ? (
-                                    <Link href="/listing_details_01" className="d-block">
+                                    <Link href="/properties" className="d-block">
                                        <PropertyTypeVisual type={item.property_type as any} />
                                     </Link>
                                  ) : (
@@ -39,7 +39,7 @@ const Property = () => {
                                        <div className="carousel-inner">
                                           {item.carousel_thumb.map((item, i) => (
                                              <div key={i} className={`carousel-item ${item.active}`} data-bs-interval="1000000">
-                                                <Link href="/listing_details_01" className="d-block"><Image src={item.img} className="w-100" alt="..." /></Link>
+                                                <Link href="/properties" className="d-block"><Image src={item.img} className="w-100" alt="..." /></Link>
                                              </div>
                                           ))}
                                        </div>
@@ -77,7 +77,7 @@ const Property = () => {
                </div>
 
                <div className="section-btn text-center md-mt-60">
-                  <Link href="/listing_05" className="btn-eight"><span>Explore All</span> <i
+                  <Link href="/properties" className="btn-eight"><span>Explore All</span> <i
                      className="bi bi-arrow-up-right"></i></Link>
                </div>
             </div>
