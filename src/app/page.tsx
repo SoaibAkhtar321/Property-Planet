@@ -2,7 +2,7 @@
 import Wrapper from "@/layouts/Wrapper";
 import HomeTwo from "@/components/homes/home-two";
 export const metadata = {
-  title: "FCITY.ai — Hyderabad Property Advisory",
+  title: "Property Planet — Hyderabad Property Advisory",
 };
 const index = () => {
   return (

@@ -7,7 +7,7 @@ import UseSticky from "@/hooks/UseSticky"
 import LoginModal from "@/modals/LoginModal"
 import Offcanvas from "./Menu/Offcanvas"
 import HeaderSearchbar from "./Menu/HeaderSearchbar"
-import { openFcityAI } from "@/utils/fcityAIBus"
+import { openPropertyPlanetAI } from "@/utils/propertyPlanetAIBus"
 
 import logo_1 from "@/assets/images/logo/logo_02.svg";
 import logo_2 from "@/assets/images/logo/logo_04.svg";
@@ -40,11 +40,11 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
                               <li className="d-none d-md-inline-block ms-3 ms-xl-4 me-xl-4">
                                  <button
                                     type="button"
-                                    onClick={() => openFcityAI()}
+                                    onClick={() => openPropertyPlanetAI()}
                                     style={{ cursor: "pointer" }}
                                     className={style_1 ? "btn-ten" : "btn-two rounded-0"}
                                  >
-                                    <span>Talk to FCITY AI</span> <i className="fa-thin fa-arrow-up-right"></i>
+                                    <span>Talk to Property Planet AI</span> <i className="fa-thin fa-arrow-up-right"></i>
                                  </button>
                               </li>
                               <li className="d-none d-xl-block">

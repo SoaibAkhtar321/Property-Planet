@@ -50,11 +50,11 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
    { featureType: "transit", stylers: [{ visibility: "off" }] },
 ];
 
-const FcityMapIntelligence = () => {
+const PropertyPlanetMapIntelligence = () => {
    const [active, setActive] = useState<MarkerType>(markers[0]);
 
    const { isLoaded, loadError } = useJsApiLoader({
-      id: "fcity-google-map-script",
+      id: "property-planet-google-map-script",
       googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
    });
 
@@ -97,10 +97,10 @@ const FcityMapIntelligence = () => {
    const hasApiKey = Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
 
    return (
-      <div className="fcity-map-intel position-relative z-1 mt-150 xl-mt-120 md-mt-80">
+      <div className="property-planet-map-intel position-relative z-1 mt-150 xl-mt-120 md-mt-80">
          <div className="container">
             <div className="title-one text-center mb-50 lg-mb-30 wow fadeInUp">
-               <h2 className="font-garamond">FCITY Property Intelligence</h2>
+               <h2 className="font-garamond">Property Planet Property Intelligence</h2>
                <p className="fs-22 mt-xs">Southern Hyderabad&apos;s growth corridors, centred on Future City.</p>
             </div>
 
@@ -155,7 +155,7 @@ const FcityMapIntelligence = () => {
                </div>
 
                <div className="intel-panel">
-                  <div className="intel-title fw-500">FCITY PROPERTY INTELLIGENCE</div>
+                  <div className="intel-title fw-500">PROPERTY PLANET PROPERTY INTELLIGENCE</div>
                   <div className="intel-location fs-20 fw-500 mt-2">{active.name}</div>
                   <ul className="style-none intel-stats mt-3">
                      <li><span>Verified Opportunities</span><strong>{12 + (active.id % 5) * 4}</strong></li>
@@ -247,4 +247,4 @@ const FcityMapIntelligence = () => {
    )
 }
 
-export default FcityMapIntelligence
+export default PropertyPlanetMapIntelligence

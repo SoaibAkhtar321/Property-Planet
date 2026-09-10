@@ -2,7 +2,7 @@ import HomeTwo from "@/components/homes/home-two";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-  title: "FCITY.ai — Home Two",
+  title: "Property Planet — Home Two",
 };
 const index = () => {
   return (

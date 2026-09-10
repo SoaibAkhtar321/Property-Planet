@@ -1,0 +1,1831 @@
+diff --git a/.env.example b/.env.example
+index 19c9510..7a9e41c 100644
+--- a/.env.example
++++ b/.env.example
+@@ -1,5 +1,5 @@
+-# Google Maps JavaScript API key, used by FcityMapIntelligence
+-# (srccomponentshomeshome-twoFcityMapIntelligence.tsx) to render the
++# Google Maps JavaScript API key, used by PropertyPlanetMapIntelligence
++# (srccomponentshomeshome-twoPropertyPlanetMapIntelligence.tsx) to render the
+ # real corridor map. Create a key in Google Cloud Console with the Maps
+ # JavaScript API enabled, then restrict it to your domain(s).
+ # httpsconsole.cloud.google.comgooglemaps-apiscredentials
+diff --git a/package-lock.json b/package-lock.json
+index 46a7c86..ea9c2ad 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,11 +1,11 @@
+ {
+-  "name": "FCity",
++  "name": "property-planet",
+   "version": "0.1.0",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+-      "name": "FCity",
++      "name": "property-planet",
+       "version": "0.1.0",
+       "dependencies": {
+         "@emailjs/browser": "^4.1.0",
+diff --git a/package.json b/package.json
+index b529d9f..aff32ba 100644
+--- a/package.json
++++ b/package.json
+@@ -1,5 +1,5 @@
+ {
+-  "name": "FCity",
++  "name": "property-planet",
+   "version": "0.1.0",
+   "private": true,
+   "scripts": {
+diff --git a/public/assets/scss/_banner.scss b/public/assets/scss/_banner.scss
+index cc33685..617359e 100644
+--- a/public/assets/scss/_banner.scss
++++ b/public/assets/scss/_banner.scss
+@@ -45,7 +45,7 @@
+         position: relative;
+         z-index: 2;
+     }
+-    // Dedicated "Ask FCITY AI" hero CTA -- visually distinct from the
++    // Dedicated "Ask Property Planet AI" hero CTA -- visually distinct from the
+     // generic .video-icon (play button) pattern used elsewhere on the site,
+     // so it clearly reads as an AI assistant entry point rather than a
+     // contact/advisor or video trigger.
+diff --git a/src/app/[...not-found]/page.tsx b/src/app/[...not-found]/page.tsx
+index c43bf47..96ecf45 100644
+--- a/src/app/[...not-found]/page.tsx
++++ b/src/app/[...not-found]/page.tsx
+@@ -2,7 +2,7 @@ import Error from "@/components/inner-pages/error";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — 404 error ||",
++   title: "Property Planet — 404 error ||",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/about_us_01/page.tsx b/src/app/about_us_01/page.tsx
+index 94c44c6..1be22ed 100644
+--- a/src/app/about_us_01/page.tsx
++++ b/src/app/about_us_01/page.tsx
+@@ -2,7 +2,7 @@ import AboutUsOne from "@/components/inner-pages/about-us/about-us-one";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — About Us One",
++   title: "Property Planet — About Us One",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/about_us_02/page.tsx b/src/app/about_us_02/page.tsx
+index f254b78..8158080 100644
+--- a/src/app/about_us_02/page.tsx
++++ b/src/app/about_us_02/page.tsx
+@@ -2,7 +2,7 @@ import AboutUsTwo from "@/components/inner-pages/about-us/about-us-two";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — About Us Two",
++   title: "Property Planet — About Us Two",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/agency/page.tsx b/src/app/agency/page.tsx
+index c37d72e..b07acf0 100644
+--- a/src/app/agency/page.tsx
++++ b/src/app/agency/page.tsx
+@@ -2,7 +2,7 @@ import Agency from "@/components/inner-pages/agency/agency";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Agency",
++   title: "Property Planet — Agency",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/agency_details/page.tsx b/src/app/agency_details/page.tsx
+index aaef1c8..2d5db34 100644
+--- a/src/app/agency_details/page.tsx
++++ b/src/app/agency_details/page.tsx
+@@ -2,7 +2,7 @@ import AgencyDetails from "@/components/inner-pages/agency/agency-details";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Agency Details",
++   title: "Property Planet — Agency Details",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/agent/page.tsx b/src/app/agent/page.tsx
+index 50fb2b0..c6d0d39 100644
+--- a/src/app/agent/page.tsx
++++ b/src/app/agent/page.tsx
+@@ -2,7 +2,7 @@ import Agent from "@/components/inner-pages/agent/agent";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Agent",
++   title: "Property Planet — Agent",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/agent_details/page.tsx b/src/app/agent_details/page.tsx
+index b763192..106cf76 100644
+--- a/src/app/agent_details/page.tsx
++++ b/src/app/agent_details/page.tsx
+@@ -2,7 +2,7 @@ import AgentDetails from "@/components/inner-pages/agent/agent-details";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Agent Details",
++   title: "Property Planet — Agent Details",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/blog_01/page.tsx b/src/app/blog_01/page.tsx
+index 40ad869..b6e227a 100644
+--- a/src/app/blog_01/page.tsx
++++ b/src/app/blog_01/page.tsx
+@@ -2,7 +2,7 @@ import BlogOne from "@/components/blogs/blog-one";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Blog One",
++   title: "Property Planet — Blog One",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/blog_02/page.tsx b/src/app/blog_02/page.tsx
+index a4d9579..21b9532 100644
+--- a/src/app/blog_02/page.tsx
++++ b/src/app/blog_02/page.tsx
+@@ -2,7 +2,7 @@ import BlogTwo from "@/components/blogs/blog-two";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Blog Two",
++   title: "Property Planet — Blog Two",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/blog_03/page.tsx b/src/app/blog_03/page.tsx
+index b163a52..e9ae9bf 100644
+--- a/src/app/blog_03/page.tsx
++++ b/src/app/blog_03/page.tsx
+@@ -2,7 +2,7 @@ import BlogThree from "@/components/blogs/blog-three";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Blog Three",
++   title: "Property Planet — Blog Three",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/blog_details/page.tsx b/src/app/blog_details/page.tsx
+index 00258d1..8602201 100644
+--- a/src/app/blog_details/page.tsx
++++ b/src/app/blog_details/page.tsx
+@@ -2,7 +2,7 @@ import BlogDetails from "@/components/blogs/blog-details";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Blog Details",
++   title: "Property Planet — Blog Details",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/compare/page.tsx b/src/app/compare/page.tsx
+index 5a66769..59fcb90 100644
+--- a/src/app/compare/page.tsx
++++ b/src/app/compare/page.tsx
+@@ -2,7 +2,7 @@ import Compare from "@/components/inner-pages/compare";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Compare",
++   title: "Property Planet — Compare",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/contact/page.tsx b/src/app/contact/page.tsx
+index 5a68787..fa55ba1 100644
+--- a/src/app/contact/page.tsx
++++ b/src/app/contact/page.tsx
+@@ -2,7 +2,7 @@ import Contact from "@/components/inner-pages/contact";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Contact",
++   title: "Property Planet — Contact",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/account-settings/page.tsx b/src/app/dashboard/account-settings/page.tsx
+index d82875c..5b50dec 100644
+--- a/src/app/dashboard/account-settings/page.tsx
++++ b/src/app/dashboard/account-settings/page.tsx
+@@ -2,7 +2,7 @@ import DashboardAccountSetting from "@/components/dashboard/account-settings";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Account Setting",
++   title: "Property Planet — Dashboard Account Setting",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/account-settings/password-change/page.tsx b/src/app/dashboard/account-settings/password-change/page.tsx
+index f79eb24..7d64c5b 100644
+--- a/src/app/dashboard/account-settings/password-change/page.tsx
++++ b/src/app/dashboard/account-settings/password-change/page.tsx
+@@ -2,7 +2,7 @@ import PasswordChange from "@/components/dashboard/account-settings/password-cha
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Account Password Change",
++   title: "Property Planet — Dashboard Account Password Change",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/add-property/page.tsx b/src/app/dashboard/add-property/page.tsx
+index 4236c5a..8f9f510 100644
+--- a/src/app/dashboard/add-property/page.tsx
++++ b/src/app/dashboard/add-property/page.tsx
+@@ -2,7 +2,7 @@ import DashboardAddProperty from "@/components/dashboard/add-property";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Add Property",
++   title: "Property Planet — Dashboard Add Property",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/dashboard-index/page.tsx b/src/app/dashboard/dashboard-index/page.tsx
+index 81ed08c..03bef62 100644
+--- a/src/app/dashboard/dashboard-index/page.tsx
++++ b/src/app/dashboard/dashboard-index/page.tsx
+@@ -2,7 +2,7 @@ import DashboardIndex from "@/components/dashboard/index";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Index",
++   title: "Property Planet — Dashboard Index",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/favourites/page.tsx b/src/app/dashboard/favourites/page.tsx
+index 19dd7f6..f73e0f6 100644
+--- a/src/app/dashboard/favourites/page.tsx
++++ b/src/app/dashboard/favourites/page.tsx
+@@ -2,7 +2,7 @@ import DashboardFavourite from "@/components/dashboard/favourites";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Favourite",
++   title: "Property Planet — Dashboard Favourite",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/membership/page.tsx b/src/app/dashboard/membership/page.tsx
+index 2309ac9..a8f222d 100644
+--- a/src/app/dashboard/membership/page.tsx
++++ b/src/app/dashboard/membership/page.tsx
+@@ -2,7 +2,7 @@ import DashboardMembership from "@/components/dashboard/membership";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Membership",
++   title: "Property Planet — Dashboard Membership",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/message/page.tsx b/src/app/dashboard/message/page.tsx
+index c82f97a..fe5fd60 100644
+--- a/src/app/dashboard/message/page.tsx
++++ b/src/app/dashboard/message/page.tsx
+@@ -2,7 +2,7 @@ import DashboardMessage from "@/components/dashboard/message";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Message",
++   title: "Property Planet — Dashboard Message",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/profile/page.tsx b/src/app/dashboard/profile/page.tsx
+index dce279d..19989f2 100644
+--- a/src/app/dashboard/profile/page.tsx
++++ b/src/app/dashboard/profile/page.tsx
+@@ -2,7 +2,7 @@ import DashboardProfile from "@/components/dashboard/profile";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Profile",
++   title: "Property Planet — Dashboard Profile",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/properties-list/page.tsx b/src/app/dashboard/properties-list/page.tsx
+index ee0e2e0..62a9568 100644
+--- a/src/app/dashboard/properties-list/page.tsx
++++ b/src/app/dashboard/properties-list/page.tsx
+@@ -2,7 +2,7 @@ import PropertyList from "@/components/dashboard/properties-list";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Property List",
++   title: "Property Planet — Dashboard Property List",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/review/page.tsx b/src/app/dashboard/review/page.tsx
+index 6ba1cf2..e8f4b72 100644
+--- a/src/app/dashboard/review/page.tsx
++++ b/src/app/dashboard/review/page.tsx
+@@ -2,7 +2,7 @@ import DashboardReview from "@/components/dashboard/review";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Review",
++   title: "Property Planet — Dashboard Review",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/dashboard/saved-search/page.tsx b/src/app/dashboard/saved-search/page.tsx
+index 3bbcf5b..597cc92 100644
+--- a/src/app/dashboard/saved-search/page.tsx
++++ b/src/app/dashboard/saved-search/page.tsx
+@@ -2,7 +2,7 @@ import DashboardSavedSearch from "@/components/dashboard/saved-search";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Dashboard Saved Search",
++   title: "Property Planet — Dashboard Saved Search",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/faq/page.tsx b/src/app/faq/page.tsx
+index 9a7083b..3a53a88 100644
+--- a/src/app/faq/page.tsx
++++ b/src/app/faq/page.tsx
+@@ -2,7 +2,7 @@ import Faq from "@/components/inner-pages/faq";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Faq",
++   title: "Property Planet — Faq",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/home-two/page.tsx b/src/app/home-two/page.tsx
+index eb79915..61feb3f 100644
+--- a/src/app/home-two/page.tsx
++++ b/src/app/home-two/page.tsx
+@@ -2,7 +2,7 @@ import HomeTwo from "@/components/homes/home-two";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-  title: "FCITY.ai — Home Two",
++  title: "Property Planet — Home Two",
+ };
+ const index = () => {
+   return (
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index 2a4a424..fbbf37a 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -15,11 +15,11 @@ export default function RootLayout({
+     <html lang="en" suppressHydrationWarning={isDev}>
+       <head>
+         <meta name="keywords" content="Hyderabad real estate, Future City, land advisory, plots, villas, apartments, commercial property, corporate land, AI property platform" />
+-        <meta name="description" content="FCITY.ai is Hyderabad's AI-powered land and property advisory platform, connecting landowners, developers and buyers across Future City and the southern growth corridors." />
+-        <meta property="og:site_name" content="FCITY.ai" />
++        <meta name="description" content="Property Planet is Hyderabad's AI-powered land and property advisory platform, connecting landowners, developers and buyers across Future City and the southern growth corridors." />
++        <meta property="og:site_name" content="Property Planet" />
+         <meta property="og:url" content="https://fcity.ai" />
+         <meta property="og:type" content="website" />
+-        <meta property="og:title" content="FCITY.ai — Hyderabad's AI-Powered Land & Property Advisory Platform" />
++        <meta property="og:title" content="Property Planet — Hyderabad's AI-Powered Land & Property Advisory Platform" />
+         <meta name='og:image' content='images/assets/ogg.png' />
+         {/* For IE  */}
+         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+diff --git a/src/app/listing_01/page.tsx b/src/app/listing_01/page.tsx
+index f3bea1f..2f30020 100644
+--- a/src/app/listing_01/page.tsx
++++ b/src/app/listing_01/page.tsx
+@@ -2,7 +2,7 @@ import ListingOne from "@/components/inner-listing/listing-01";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing One",
++   title: "Property Planet — Listing One",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_02/page.tsx b/src/app/listing_02/page.tsx
+index 8e073fa..ad26994 100644
+--- a/src/app/listing_02/page.tsx
++++ b/src/app/listing_02/page.tsx
+@@ -2,7 +2,7 @@ import ListingTwo from "@/components/inner-listing/listing-02";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Two",
++   title: "Property Planet — Listing Two",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_03/page.tsx b/src/app/listing_03/page.tsx
+index bfc9057..4d4b058 100644
+--- a/src/app/listing_03/page.tsx
++++ b/src/app/listing_03/page.tsx
+@@ -2,7 +2,7 @@ import ListingThree from "@/components/inner-listing/listing-03";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Three",
++   title: "Property Planet — Listing Three",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_04/page.tsx b/src/app/listing_04/page.tsx
+index 45b8be2..5e26740 100644
+--- a/src/app/listing_04/page.tsx
++++ b/src/app/listing_04/page.tsx
+@@ -2,7 +2,7 @@ import ListingFour from "@/components/inner-listing/listing-04";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Four",
++   title: "Property Planet — Listing Four",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_05/page.tsx b/src/app/listing_05/page.tsx
+index 507cc52..fafa50c 100644
+--- a/src/app/listing_05/page.tsx
++++ b/src/app/listing_05/page.tsx
+@@ -2,7 +2,7 @@ import ListingFive from "@/components/inner-listing/listing-05";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Five",
++   title: "Property Planet — Listing Five",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_06/page.tsx b/src/app/listing_06/page.tsx
+index d0a1e1d..381fc0a 100644
+--- a/src/app/listing_06/page.tsx
++++ b/src/app/listing_06/page.tsx
+@@ -2,7 +2,7 @@ import ListingSix from "@/components/inner-listing/listing-06";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Six",
++   title: "Property Planet — Listing Six",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_07/page.tsx b/src/app/listing_07/page.tsx
+index b43add7..68e2427 100644
+--- a/src/app/listing_07/page.tsx
++++ b/src/app/listing_07/page.tsx
+@@ -2,7 +2,7 @@ import ListingSeven from "@/components/inner-listing/listing-07";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Seven",
++   title: "Property Planet — Listing Seven",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_08/page.tsx b/src/app/listing_08/page.tsx
+index 9ab81b7..e119fee 100644
+--- a/src/app/listing_08/page.tsx
++++ b/src/app/listing_08/page.tsx
+@@ -2,7 +2,7 @@ import ListingEight from "@/components/inner-listing/listing-08";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Eight",
++   title: "Property Planet — Listing Eight",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_09/page.tsx b/src/app/listing_09/page.tsx
+index 5543d95..91335a1 100644
+--- a/src/app/listing_09/page.tsx
++++ b/src/app/listing_09/page.tsx
+@@ -2,7 +2,7 @@ import ListingNine from "@/components/inner-listing/listing-09";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Nine",
++   title: "Property Planet — Listing Nine",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_10/page.tsx b/src/app/listing_10/page.tsx
+index 7833263..8216cec 100644
+--- a/src/app/listing_10/page.tsx
++++ b/src/app/listing_10/page.tsx
+@@ -2,7 +2,7 @@ import ListingTen from "@/components/inner-listing/listing-10";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Ten",
++   title: "Property Planet — Listing Ten",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_11/page.tsx b/src/app/listing_11/page.tsx
+index 1fd38dc..7f7aef8 100644
+--- a/src/app/listing_11/page.tsx
++++ b/src/app/listing_11/page.tsx
+@@ -2,7 +2,7 @@ import ListingEleven from "@/components/inner-listing/listing-11";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Eleven",
++   title: "Property Planet — Listing Eleven",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_12/page.tsx b/src/app/listing_12/page.tsx
+index 100b50f..4d70484 100644
+--- a/src/app/listing_12/page.tsx
++++ b/src/app/listing_12/page.tsx
+@@ -2,7 +2,7 @@ import ListingTwelve from "@/components/inner-listing/listing-12";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Twelve",
++   title: "Property Planet — Listing Twelve",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_13/page.tsx b/src/app/listing_13/page.tsx
+index 150d82d..a84dbd3 100644
+--- a/src/app/listing_13/page.tsx
++++ b/src/app/listing_13/page.tsx
+@@ -2,7 +2,7 @@ import ListingThirteen from "@/components/inner-listing/listing-13";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Thirteen",
++   title: "Property Planet — Listing Thirteen",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_14/page.tsx b/src/app/listing_14/page.tsx
+index 2e764e2..f2bc8bf 100644
+--- a/src/app/listing_14/page.tsx
++++ b/src/app/listing_14/page.tsx
+@@ -2,7 +2,7 @@ import ListingFourteen from "@/components/inner-listing/listing-14";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Fourteen",
++   title: "Property Planet — Listing Fourteen",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_15/page.tsx b/src/app/listing_15/page.tsx
+index 62192b6..05ce543 100644
+--- a/src/app/listing_15/page.tsx
++++ b/src/app/listing_15/page.tsx
+@@ -2,7 +2,7 @@ import ListingFifteen from "@/components/inner-listing/listing-15";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Fifteen",
++   title: "Property Planet — Listing Fifteen",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_16/page.tsx b/src/app/listing_16/page.tsx
+index fea0fc7..66b0858 100644
+--- a/src/app/listing_16/page.tsx
++++ b/src/app/listing_16/page.tsx
+@@ -2,7 +2,7 @@ import ListingSixteen from "@/components/inner-listing/listing-16";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Sixteen",
++   title: "Property Planet — Listing Sixteen",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_17/page.tsx b/src/app/listing_17/page.tsx
+index d1b217c..3512271 100644
+--- a/src/app/listing_17/page.tsx
++++ b/src/app/listing_17/page.tsx
+@@ -2,7 +2,7 @@ import ListingSeventeen from "@/components/inner-listing/listing-17";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Seventeen",
++   title: "Property Planet — Listing Seventeen",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_details_01/page.tsx b/src/app/listing_details_01/page.tsx
+index 35ea749..194d97e 100644
+--- a/src/app/listing_details_01/page.tsx
++++ b/src/app/listing_details_01/page.tsx
+@@ -2,7 +2,7 @@ import ListingDetailsOne from "@/components/ListingDetails/listing-details-1";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Details One",
++   title: "Property Planet — Listing Details One",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_details_02/page.tsx b/src/app/listing_details_02/page.tsx
+index a72b285..9e1568e 100644
+--- a/src/app/listing_details_02/page.tsx
++++ b/src/app/listing_details_02/page.tsx
+@@ -2,7 +2,7 @@ import ListingDetailsTwo from "@/components/ListingDetails/listing-details-2";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Details Two",
++   title: "Property Planet — Listing Details Two",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_details_03/page.tsx b/src/app/listing_details_03/page.tsx
+index 524dfe3..1f7d7cd 100644
+--- a/src/app/listing_details_03/page.tsx
++++ b/src/app/listing_details_03/page.tsx
+@@ -2,7 +2,7 @@ import ListingDetailsThree from "@/components/ListingDetails/listing-details-3";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Details Three",
++   title: "Property Planet — Listing Details Three",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_details_04/page.tsx b/src/app/listing_details_04/page.tsx
+index 5ee1449..6e9cc7f 100644
+--- a/src/app/listing_details_04/page.tsx
++++ b/src/app/listing_details_04/page.tsx
+@@ -2,7 +2,7 @@ import ListingDetailsFour from "@/components/ListingDetails/listing-details-4";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Details Four",
++   title: "Property Planet — Listing Details Four",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_details_05/page.tsx b/src/app/listing_details_05/page.tsx
+index 94448a0..c4f3a26 100644
+--- a/src/app/listing_details_05/page.tsx
++++ b/src/app/listing_details_05/page.tsx
+@@ -2,7 +2,7 @@ import ListingDetailsFive from "@/components/ListingDetails/listing-details-5";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Details Five",
++   title: "Property Planet — Listing Details Five",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/listing_details_06/page.tsx b/src/app/listing_details_06/page.tsx
+index 6e934d2..965bb60 100644
+--- a/src/app/listing_details_06/page.tsx
++++ b/src/app/listing_details_06/page.tsx
+@@ -2,7 +2,7 @@ import ListingDetailsSix from "@/components/ListingDetails/listing-details-6";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Listing Details Six",
++   title: "Property Planet — Listing Details Six",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index bb9ef3e..c027949 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -2,7 +2,7 @@
+ import Wrapper from "@/layouts/Wrapper";
+ import HomeTwo from "@/components/homes/home-two";
+ export const metadata = {
+-  title: "FCITY.ai — Hyderabad Property Advisory",
++  title: "Property Planet — Hyderabad Property Advisory",
+ };
+ const index = () => {
+   return (
+diff --git a/src/app/pricing_01/page.tsx b/src/app/pricing_01/page.tsx
+index aa80cc6..555b23a 100644
+--- a/src/app/pricing_01/page.tsx
++++ b/src/app/pricing_01/page.tsx
+@@ -2,7 +2,7 @@ import PricingOne from "@/components/inner-pages/pricing/pricing-one";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Pricing One",
++   title: "Property Planet — Pricing One",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/pricing_02/page.tsx b/src/app/pricing_02/page.tsx
+index b7865fe..8d8fa8c 100644
+--- a/src/app/pricing_02/page.tsx
++++ b/src/app/pricing_02/page.tsx
+@@ -2,7 +2,7 @@ import PricingTwo from "@/components/inner-pages/pricing/pricing-two";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Pricing Two",
++   title: "Property Planet — Pricing Two",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/project_01/page.tsx b/src/app/project_01/page.tsx
+index 37a62bf..8e26360 100644
+--- a/src/app/project_01/page.tsx
++++ b/src/app/project_01/page.tsx
+@@ -2,7 +2,7 @@ import ProjectOne from "@/components/inner-pages/projects/project-one";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-  title: "FCITY.ai — Project One",
++  title: "Property Planet — Project One",
+ };
+ const index = () => {
+   return (
+diff --git a/src/app/project_02/page.tsx b/src/app/project_02/page.tsx
+index 75d843a..d6ee4eb 100644
+--- a/src/app/project_02/page.tsx
++++ b/src/app/project_02/page.tsx
+@@ -2,7 +2,7 @@ import ProjectTwo from "@/components/inner-pages/projects/project-two";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-  title: "FCITY.ai — Project Two",
++  title: "Property Planet — Project Two",
+ };
+ const index = () => {
+   return (
+diff --git a/src/app/project_03/page.tsx b/src/app/project_03/page.tsx
+index 7ff086f..01f45f7 100644
+--- a/src/app/project_03/page.tsx
++++ b/src/app/project_03/page.tsx
+@@ -2,7 +2,7 @@ import ProjectThree from "@/components/inner-pages/projects/project-three";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Project Three",
++   title: "Property Planet — Project Three",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/project_04/page.tsx b/src/app/project_04/page.tsx
+index 324a3c9..0909bde 100644
+--- a/src/app/project_04/page.tsx
++++ b/src/app/project_04/page.tsx
+@@ -2,7 +2,7 @@ import ProjectFour from "@/components/inner-pages/projects/project-four";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Project Four",
++   title: "Property Planet — Project Four",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/project_details_01/page.tsx b/src/app/project_details_01/page.tsx
+index f718989..031e0a7 100644
+--- a/src/app/project_details_01/page.tsx
++++ b/src/app/project_details_01/page.tsx
+@@ -2,7 +2,7 @@ import ProjectDetails from "@/components/inner-pages/projects/project-details";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Project Details",
++   title: "Property Planet — Project Details",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/sell-property/page.tsx b/src/app/sell-property/page.tsx
+index 0696404..0d69a17 100644
+--- a/src/app/sell-property/page.tsx
++++ b/src/app/sell-property/page.tsx
+@@ -2,7 +2,7 @@ import SellProperty from "@/components/inner-pages/sell-property";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Sell / List Your Property",
++   title: "Property Planet — Sell / List Your Property",
+ };
+ 
+ const index = () => {
+diff --git a/src/app/service_01/page.tsx b/src/app/service_01/page.tsx
+index deadd30..97d77b2 100644
+--- a/src/app/service_01/page.tsx
++++ b/src/app/service_01/page.tsx
+@@ -2,7 +2,7 @@ import ServiceOne from "@/components/inner-pages/services/service-one";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Service One",
++   title: "Property Planet — Service One",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/service_02/page.tsx b/src/app/service_02/page.tsx
+index 0a926ef..2314bdb 100644
+--- a/src/app/service_02/page.tsx
++++ b/src/app/service_02/page.tsx
+@@ -2,7 +2,7 @@ import ServiceTwo from "@/components/inner-pages/services/service-two";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Service Two",
++   title: "Property Planet — Service Two",
+ };
+ const index = () => {
+    return (
+diff --git a/src/app/service_details/page.tsx b/src/app/service_details/page.tsx
+index 68cb846..1a13927 100644
+--- a/src/app/service_details/page.tsx
++++ b/src/app/service_details/page.tsx
+@@ -2,7 +2,7 @@ import ServiceDetails from "@/components/inner-pages/services/service-details";
+ import Wrapper from "@/layouts/Wrapper";
+ 
+ export const metadata = {
+-   title: "FCITY.ai — Service Details",
++   title: "Property Planet — Service Details",
+ };
+ const index = () => {
+    return (
+diff --git a/src/components/common/FcityAIWidget.tsx b/src/components/common/PropertyPlanetAIWidget.tsx
+similarity index 63%
+rename from src/components/common/FcityAIWidget.tsx
+rename to src/components/common/PropertyPlanetAIWidget.tsx
+index 70bb4a6..ba56c47 100644
+--- a/src/components/common/FcityAIWidget.tsx
++++ b/src/components/common/PropertyPlanetAIWidget.tsx
+@@ -1,18 +1,18 @@
+ "use client"
+ import { useEffect, useRef, useState } from "react"
+ import Link from "next/link"
+-import { generateAIResponse, formatINR, type FcityProperty } from "@/utils/fcityAIEngine"
+-import { onFcityAIOpen } from "@/utils/fcityAIBus"
++import { generateAIResponse, formatINR, type PropertyPlanetProperty } from "@/utils/propertyPlanetAIEngine"
++import { onPropertyPlanetAIOpen } from "@/utils/propertyPlanetAIBus"
+ 
+ interface ChatMessage {
+    role: "user" | "ai";
+    text: string;
+-   properties?: FcityProperty[];
++   properties?: PropertyPlanetProperty[];
+ }
+ 
+ const WELCOME_MESSAGE: ChatMessage = {
+    role: "ai",
+-   text: "Hi \uD83D\uDC4B I'm FCITY AI. I can help you discover verified plots, compare locations and find opportunities based on your budget.",
++   text: "Hi \uD83D\uDC4B I'm Property Planet AI. I can help you discover verified plots, compare locations and find opportunities based on your budget.",
+ };
+ 
+ const SUGGESTED_PROMPTS = [
+@@ -39,7 +39,7 @@ const typeIcon = (type?: string): string => {
+    }
+ };
+ 
+-const FcityAIWidget = () => {
++const PropertyPlanetAIWidget = () => {
+    const [open, setOpen] = useState(false);
+    const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
+    const [input, setInput] = useState("");
+@@ -48,7 +48,7 @@ const FcityAIWidget = () => {
+ 
+    // Let the header CTA / hero link / anything else open this widget.
+    useEffect(() => {
+-      return onFcityAIOpen((prefill) => {
++      return onPropertyPlanetAIOpen((prefill) => {
+          setOpen(true);
+          if (prefill) {
+             // slight delay so the panel is mounted/visible before we "type"
+@@ -83,45 +83,45 @@ const FcityAIWidget = () => {
+       <>
+          <button
+             type="button"
+-            aria-label={open ? "Close FCITY AI assistant" : "Open FCITY AI assistant"}
+-            className={`fcity-ai-fab d-flex align-items-center justify-content-center ${open ? "is-open" : ""}`}
++            aria-label={open ? "Close Property Planet AI assistant" : "Open Property Planet AI assistant"}
++            className={`property-planet-ai-fab d-flex align-items-center justify-content-center ${open ? "is-open" : ""}`}
+             onClick={() => setOpen((v) => !v)}
+          >
+             <i className={`fa-regular ${open ? "fa-xmark" : "fa-sparkles"}`}></i>
+          </button>
+ 
+-         <div className={`fcity-ai-panel ${open ? "is-open" : ""}`}>
+-            <div className="fcity-ai-panel-header d-flex align-items-center">
+-               <span className="fcity-ai-avatar d-flex align-items-center justify-content-center">
++         <div className={`property-planet-ai-panel ${open ? "is-open" : ""}`}>
++            <div className="property-planet-ai-panel-header d-flex align-items-center">
++               <span className="property-planet-ai-avatar d-flex align-items-center justify-content-center">
+                   <i className="fa-regular fa-sparkles"></i>
+                </span>
+                <div className="ms-2">
+-                  <div className="fw-500">FCITY AI Advisor</div>
+-                  <div className="fcity-ai-subtitle">Property intelligence, on demand</div>
++                  <div className="fw-500">Property Planet AI Advisor</div>
++                  <div className="property-planet-ai-subtitle">Property intelligence, on demand</div>
+                </div>
+-               <button type="button" aria-label="Close" className="fcity-ai-close ms-auto" onClick={() => setOpen(false)}>
++               <button type="button" aria-label="Close" className="property-planet-ai-close ms-auto" onClick={() => setOpen(false)}>
+                   <i className="fa-regular fa-xmark"></i>
+                </button>
+             </div>
+ 
+-            <div className="fcity-ai-body" ref={bodyRef}>
++            <div className="property-planet-ai-body" ref={bodyRef}>
+                {messages.map((m, i) => (
+-                  <div key={i} className={`fcity-ai-row ${m.role}`}>
+-                     <div className="fcity-ai-bubble">{m.text}</div>
++                  <div key={i} className={`property-planet-ai-row ${m.role}`}>
++                     <div className="property-planet-ai-bubble">{m.text}</div>
+                      {m.properties && m.properties.length > 0 && (
+-                        <div className="fcity-ai-cards">
++                        <div className="property-planet-ai-cards">
+                            {m.properties.map((p) => (
+-                              <div key={p.id} className="fcity-ai-card">
++                              <div key={p.id} className="property-planet-ai-card">
+                                  <div className="d-flex align-items-start">
+-                                    <span className="fcity-ai-card-icon d-flex align-items-center justify-content-center">
++                                    <span className="property-planet-ai-card-icon d-flex align-items-center justify-content-center">
+                                        <i className={`fa-regular ${typeIcon(p.property_type)}`}></i>
+                                     </span>
+                                     <div className="ms-2 flex-grow-1">
+-                                       <div className="fcity-ai-card-title">{p.title}</div>
+-                                       <div className="fcity-ai-card-meta">{p.address}</div>
++                                       <div className="property-planet-ai-card-title">{p.title}</div>
++                                       <div className="property-planet-ai-card-meta">{p.address}</div>
+                                     </div>
+                                  </div>
+-                                 <div className="fcity-ai-card-tags">
++                                 <div className="property-planet-ai-card-tags">
+                                     {p.property_type && <span className="tag-type">{p.property_type}</span>}
+                                     {p.verification_status && (
+                                        <span className={`tag-verify ${p.verification_status === "Verified" ? "is-verified" : ""}`}>
+@@ -131,8 +131,8 @@ const FcityAIWidget = () => {
+                                     {typeof p.trust_score === "number" && <span className="tag-trust">Trust {p.trust_score}</span>}
+                                  </div>
+                                  <div className="d-flex align-items-center justify-content-between mt-2">
+-                                    <strong className="fcity-ai-card-price">{formatINR(p.price)}</strong>
+-                                    <Link href="/listing_05" className="fcity-ai-card-cta">View Property</Link>
++                                    <strong className="property-planet-ai-card-price">{formatINR(p.price)}</strong>
++                                    <Link href="/listing_05" className="property-planet-ai-card-cta">View Property</Link>
+                                  </div>
+                               </div>
+                            ))}
+@@ -142,15 +142,15 @@ const FcityAIWidget = () => {
+                ))}
+ 
+                {typing && (
+-                  <div className="fcity-ai-row ai">
+-                     <div className="fcity-ai-bubble fcity-ai-typing">
++                  <div className="property-planet-ai-row ai">
++                     <div className="property-planet-ai-bubble property-planet-ai-typing">
+                         <span></span><span></span><span></span>
+                      </div>
+                   </div>
+                )}
+ 
+                {messages.length === 1 && !typing && (
+-                  <ul className="style-none fcity-ai-chips d-flex flex-wrap">
++                  <ul className="style-none property-planet-ai-chips d-flex flex-wrap">
+                      {SUGGESTED_PROMPTS.map((q, i) => (
+                         <li key={i}><button type="button" onClick={() => send(q)}>{q}</button></li>
+                      ))}
+@@ -159,7 +159,7 @@ const FcityAIWidget = () => {
+             </div>
+ 
+             <form
+-               className="fcity-ai-input d-flex align-items-center"
++               className="property-planet-ai-input d-flex align-items-center"
+                onSubmit={(e) => { e.preventDefault(); send(input); }}
+             >
+                <input
+@@ -172,13 +172,13 @@ const FcityAIWidget = () => {
+                   <i className="bi bi-arrow-up-right"></i>
+                </button>
+             </form>
+-            <div className="fcity-ai-footer-note">
++            <div className="property-planet-ai-footer-note">
+                Prefer a human advisor? <Link href="/contact">Contact our team.</Link>
+             </div>
+          </div>
+ 
+          <style jsx>{`
+-            .fcity-ai-fab {
++            .property-planet-ai-fab {
+                position: fixed;
+                right: 24px;
+                bottom: 24px;
+@@ -194,10 +194,10 @@ const FcityAIWidget = () => {
+                cursor: pointer;
+                transition: transform 0.25s ease, background 0.25s ease;
+             }
+-            .fcity-ai-fab:hover { transform: translateY(-2px); background: #c19a4b; color: #1c1c1c; }
+-            .fcity-ai-fab.is-open { background: #c19a4b; color: #1c1c1c; }
++            .property-planet-ai-fab:hover { transform: translateY(-2px); background: #c19a4b; color: #1c1c1c; }
++            .property-planet-ai-fab.is-open { background: #c19a4b; color: #1c1c1c; }
+ 
+-            .fcity-ai-panel {
++            .property-planet-ai-panel {
+                position: fixed;
+                right: 24px;
+                bottom: 96px;
+@@ -218,18 +218,18 @@ const FcityAIWidget = () => {
+                pointer-events: none;
+                transition: opacity 0.22s ease, transform 0.22s ease;
+             }
+-            .fcity-ai-panel.is-open {
++            .property-planet-ai-panel.is-open {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                pointer-events: auto;
+             }
+ 
+-            .fcity-ai-panel-header {
++            .property-planet-ai-panel-header {
+                padding: 16px 16px;
+                border-bottom: 1px solid #f0efe6;
+                background: #faf9f3;
+             }
+-            .fcity-ai-avatar {
++            .property-planet-ai-avatar {
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+@@ -237,50 +237,50 @@ const FcityAIWidget = () => {
+                color: #c19a4b;
+                flex: 0 0 auto;
+             }
+-            .fcity-ai-subtitle { font-size: 12px; opacity: 0.65; }
+-            .fcity-ai-close {
++            .property-planet-ai-subtitle { font-size: 12px; opacity: 0.65; }
++            .property-planet-ai-close {
+                border: none;
+                background: transparent;
+                font-size: 16px;
+                opacity: 0.6;
+                cursor: pointer;
+             }
+-            .fcity-ai-close:hover { opacity: 1; }
++            .property-planet-ai-close:hover { opacity: 1; }
+ 
+-            .fcity-ai-body {
++            .property-planet-ai-body {
+                flex: 1 1 auto;
+                overflow-y: auto;
+                padding: 16px;
+                background: #fff;
+             }
+ 
+-            .fcity-ai-row { margin-bottom: 14px; display: flex; flex-direction: column; }
+-            .fcity-ai-row.user { align-items: flex-end; }
+-            .fcity-ai-row.ai { align-items: flex-start; }
++            .property-planet-ai-row { margin-bottom: 14px; display: flex; flex-direction: column; }
++            .property-planet-ai-row.user { align-items: flex-end; }
++            .property-planet-ai-row.ai { align-items: flex-start; }
+ 
+-            .fcity-ai-bubble {
++            .property-planet-ai-bubble {
+                max-width: 88%;
+                padding: 10px 14px;
+                border-radius: 14px;
+                font-size: 14px;
+                line-height: 1.5;
+             }
+-            .fcity-ai-row.ai .fcity-ai-bubble { background: #f3f1e7; color: #262620; border-bottom-left-radius: 4px; }
+-            .fcity-ai-row.user .fcity-ai-bubble { background: #1c1c1c; color: #fff; border-bottom-right-radius: 4px; }
++            .property-planet-ai-row.ai .property-planet-ai-bubble { background: #f3f1e7; color: #262620; border-bottom-left-radius: 4px; }
++            .property-planet-ai-row.user .property-planet-ai-bubble { background: #1c1c1c; color: #fff; border-bottom-right-radius: 4px; }
+ 
+-            .fcity-ai-typing { display: flex; gap: 4px; align-items: center; }
+-            .fcity-ai-typing span {
++            .property-planet-ai-typing { display: flex; gap: 4px; align-items: center; }
++            .property-planet-ai-typing span {
+                width: 6px; height: 6px; border-radius: 50%;
+                background: #999; display: inline-block;
+-               animation: fcity-blink 1.2s infinite ease-in-out;
++               animation: property-planet-blink 1.2s infinite ease-in-out;
+             }
+-            .fcity-ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+-            .fcity-ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+-            @keyframes fcity-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
++            .property-planet-ai-typing span:nth-child(2) { animation-delay: 0.2s; }
++            .property-planet-ai-typing span:nth-child(3) { animation-delay: 0.4s; }
++            @keyframes property-planet-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+ 
+-            .fcity-ai-chips { margin-top: 8px; }
+-            .fcity-ai-chips li { margin: 0 8px 8px 0; }
+-            .fcity-ai-chips button {
++            .property-planet-ai-chips { margin-top: 8px; }
++            .property-planet-ai-chips li { margin: 0 8px 8px 0; }
++            .property-planet-ai-chips button {
+                border: 1px solid #ddd7c4;
+                background: #fff;
+                border-radius: 30px;
+@@ -290,40 +290,40 @@ const FcityAIWidget = () => {
+                cursor: pointer;
+                transition: all 0.2s ease;
+             }
+-            .fcity-ai-chips button:hover { background: #f3f1e7; border-color: #c19a4b; }
++            .property-planet-ai-chips button:hover { background: #f3f1e7; border-color: #c19a4b; }
+ 
+-            .fcity-ai-cards { margin-top: 8px; width: 100%; display: flex; flex-direction: column; gap: 8px; }
+-            .fcity-ai-card {
++            .property-planet-ai-cards { margin-top: 8px; width: 100%; display: flex; flex-direction: column; gap: 8px; }
++            .property-planet-ai-card {
+                border: 1px solid #ecebe3;
+                border-radius: 12px;
+                padding: 12px;
+                background: #fff;
+                width: 100%;
+             }
+-            .fcity-ai-card-icon {
++            .property-planet-ai-card-icon {
+                width: 30px; height: 30px; border-radius: 8px;
+                background: #eef0e6; color: #6b7d52; flex: 0 0 auto; font-size: 13px;
+             }
+-            .fcity-ai-card-title { font-size: 13.5px; font-weight: 500; color: #1c1c1c; }
+-            .fcity-ai-card-meta { font-size: 12px; opacity: 0.65; }
+-            .fcity-ai-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+-            .fcity-ai-card-tags span {
++            .property-planet-ai-card-title { font-size: 13.5px; font-weight: 500; color: #1c1c1c; }
++            .property-planet-ai-card-meta { font-size: 12px; opacity: 0.65; }
++            .property-planet-ai-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
++            .property-planet-ai-card-tags span {
+                font-size: 11px; padding: 3px 8px; border-radius: 20px;
+                background: #f3f1e7; color: #555;
+             }
+             .tag-verify.is-verified { background: rgba(0,181,121,0.12); color: #00B579; }
+-            .fcity-ai-card-price { font-size: 14px; color: #1c1c1c; }
+-            .fcity-ai-card-cta {
++            .property-planet-ai-card-price { font-size: 14px; color: #1c1c1c; }
++            .property-planet-ai-card-cta {
+                font-size: 12px; font-weight: 500; color: #c19a4b;
+                text-decoration: underline;
+             }
+ 
+-            .fcity-ai-input {
++            .property-planet-ai-input {
+                border-top: 1px solid #f0efe6;
+                padding: 10px 12px;
+                background: #fff;
+             }
+-            .fcity-ai-input input {
++            .property-planet-ai-input input {
+                flex: 1 1 auto;
+                border: none;
+                outline: none;
+@@ -331,7 +331,7 @@ const FcityAIWidget = () => {
+                padding: 8px 6px;
+                background: transparent;
+             }
+-            .fcity-ai-input button {
++            .property-planet-ai-input button {
+                border: none;
+                background: #1c1c1c;
+                color: #fff;
+@@ -341,18 +341,18 @@ const FcityAIWidget = () => {
+                flex: 0 0 auto;
+                cursor: pointer;
+             }
+-            .fcity-ai-input button:hover { background: #c19a4b; color: #1c1c1c; }
++            .property-planet-ai-input button:hover { background: #c19a4b; color: #1c1c1c; }
+ 
+-            .fcity-ai-footer-note {
++            .property-planet-ai-footer-note {
+                font-size: 11px;
+                text-align: center;
+                opacity: 0.6;
+                padding: 6px 0 12px;
+             }
+-            .fcity-ai-footer-note :global(a) { color: #c19a4b; text-decoration: underline; }
++            .property-planet-ai-footer-note :global(a) { color: #c19a4b; text-decoration: underline; }
+ 
+             @media (max-width: 575px) {
+-               .fcity-ai-panel {
++               .property-planet-ai-panel {
+                   right: 12px;
+                   left: 12px;
+                   bottom: 88px;
+@@ -360,11 +360,11 @@ const FcityAIWidget = () => {
+                   max-width: none;
+                   height: calc(100vh - 120px);
+                }
+-               .fcity-ai-fab { right: 16px; bottom: 16px; }
++               .property-planet-ai-fab { right: 16px; bottom: 16px; }
+             }
+          `}</style>
+       </>
+    )
+ }
+ 
+-export default FcityAIWidget
++export default PropertyPlanetAIWidget
+diff --git a/src/components/homes/home-one/BLockFeatureOne.tsx b/src/components/homes/home-one/BLockFeatureOne.tsx
+index 22bb7c7..63b1259 100644
+--- a/src/components/homes/home-one/BLockFeatureOne.tsx
++++ b/src/components/homes/home-one/BLockFeatureOne.tsx
+@@ -8,7 +8,7 @@ const BLockFeatureOne = () => {
+       <div className="block-feature-one mt-130 xl-mt-100 lg-mt-80 mb-150 xl-mb-100 lg-mb-80">
+          <div className="container">
+             <div className="title-one text-center mb-50 xl-mb-30 lg-mb-20 wow fadeInUp">
+-               <h3>Unlock FCITY.ai&apos;s <span>advantages <Image src={titleShape} alt="" className="lazy-img" /></span></h3>
++               <h3>Unlock Property Planet&apos;s <span>advantages <Image src={titleShape} alt="" className="lazy-img" /></span></h3>
+                <p className="fs-24">Your trusted real estate partner in every transaction.</p>
+             </div>
+ 
+diff --git a/src/components/homes/home-two/HeroBanner.tsx b/src/components/homes/home-two/HeroBanner.tsx
+index 0a3ce33..7fa54ee 100644
+--- a/src/components/homes/home-two/HeroBanner.tsx
++++ b/src/components/homes/home-two/HeroBanner.tsx
+@@ -2,7 +2,7 @@
+ import Image from "next/image"
+ import Link from "next/link";
+ import DropdownTwo from "@/components/search-dropdown/home-dropdown/DropdownTwo";
+-import { openFcityAI } from "@/utils/fcityAIBus";
++import { openPropertyPlanetAI } from "@/utils/propertyPlanetAIBus";
+ 
+ import titleShape from "@/assets/images/shape/shape_11.svg"
+ import bannerImg_1 from "@/assets/images/assets/ils_03.png"
+@@ -24,7 +24,7 @@ const HeroBanner = () => {
+                            <Link href="/listing_07" className="btn-seven mb-20 me-4 me-xxl5"><span>Explore Properties</span> <i className="bi bi-arrow-up-right"></i></Link>
+                            <button
+                               type="button"
+-                              onClick={() => openFcityAI()}
++                              onClick={() => openPropertyPlanetAI()}
+                               style={{ cursor: "pointer" }}
+                               className="ai-assistant-cta tran3s d-flex align-items-center mb-20 border-0"
+                            >
+@@ -34,7 +34,7 @@ const HeroBanner = () => {
+                               </span>
+                               <span className="ai-assistant-cta__text text-start">
+                                  <span className="ai-assistant-cta__eyebrow">Ask</span>
+-                                 <strong className="ai-assistant-cta__title">FCITY AI</strong>
++                                 <strong className="ai-assistant-cta__title">Property Planet AI</strong>
+                               </span>
+                            </button>
+                         </div>
+diff --git a/src/components/homes/home-two/FcityAIAdvisor.tsx b/src/components/homes/home-two/PropertyPlanetAIAdvisor.tsx
+similarity index 95%
+rename from src/components/homes/home-two/FcityAIAdvisor.tsx
+rename to src/components/homes/home-two/PropertyPlanetAIAdvisor.tsx
+index 47b9f54..cfa065d 100644
+--- a/src/components/homes/home-two/FcityAIAdvisor.tsx
++++ b/src/components/homes/home-two/PropertyPlanetAIAdvisor.tsx
+@@ -78,9 +78,9 @@ const mockResponse = (question: string): ChatMessage => {
+    };
+ }
+ 
+-const FcityAIAdvisor = () => {
++const PropertyPlanetAIAdvisor = () => {
+    const [messages, setMessages] = useState<ChatMessage[]>([
+-      { role: "ai", text: "Hi, I'm FCITY AI. Tell me what you're looking for — a plot, land, villa, apartment or commercial opportunity — and I'll suggest verified matches." },
++      { role: "ai", text: "Hi, I'm Property Planet AI. Tell me what you're looking for — a plot, land, villa, apartment or commercial opportunity — and I'll suggest verified matches." },
+    ]);
+    const [input, setInput] = useState("");
+    const [typing, setTyping] = useState(false);
+@@ -97,12 +97,12 @@ const FcityAIAdvisor = () => {
+    }
+ 
+    return (
+-      <div className="fcity-ai-advisor position-relative z-1 mt-150 xl-mt-120 md-mt-80">
++      <div className="property-planet-ai-advisor position-relative z-1 mt-150 xl-mt-120 md-mt-80">
+          <div className="container">
+             <div className="row align-items-center">
+                <div className="col-lg-5 wow fadeInLeft">
+                   <div className="title-one mb-25">
+-                     <h2 className="font-garamond">Ask FCITY AI</h2>
++                     <h2 className="font-garamond">Ask Property Planet AI</h2>
+                      <p className="fs-22 mt-xs">A prototype AI property advisor. Describe what you need and get matched, verified opportunities — reviewed by our human advisory team.</p>
+                   </div>
+                   <ul className="style-none faq-chips d-flex flex-wrap">
+@@ -116,7 +116,7 @@ const FcityAIAdvisor = () => {
+                   <div className="ai-chat-window">
+                      <div className="ai-chat-header d-flex align-items-center">
+                         <i className="fa-regular fa-sparkles me-2"></i>
+-                        <span className="fw-500">FCITY AI</span>
++                        <span className="fw-500">Property Planet AI</span>
+                         <span className="prototype-badge ms-auto">Prototype</span>
+                      </div>
+ 
+@@ -309,4 +309,4 @@ const FcityAIAdvisor = () => {
+    )
+ }
+ 
+-export default FcityAIAdvisor
++export default PropertyPlanetAIAdvisor
+diff --git a/src/components/homes/home-two/FcityHowItWorks.tsx b/src/components/homes/home-two/PropertyPlanetHowItWorks.tsx
+similarity index 89%
+rename from src/components/homes/home-two/FcityHowItWorks.tsx
+rename to src/components/homes/home-two/PropertyPlanetHowItWorks.tsx
+index 1eba13a..53aa33c 100644
+--- a/src/components/homes/home-two/FcityHowItWorks.tsx
++++ b/src/components/homes/home-two/PropertyPlanetHowItWorks.tsx
+@@ -8,7 +8,7 @@ const steps = [
+    },
+    {
+       icon: "fa-regular fa-shield-check",
+-      label: "FCITY.ai",
++      label: "Property Planet",
+       desc: "Verifies details, scores trust, and uses AI to match demand — backed by our advisory team.",
+    },
+    {
+@@ -19,16 +19,16 @@ const steps = [
+    {
+       icon: "fa-regular fa-handshake",
+       label: "Site Visit / Enquiry / Transaction",
+-      desc: "FCITY.ai manages the advisory process through to closure.",
++      desc: "Property Planet manages the advisory process through to closure.",
+    },
+ ]
+ 
+-const FcityHowItWorks = () => {
++const PropertyPlanetHowItWorks = () => {
+    return (
+-      <div className="fcity-how-it-works position-relative z-1 mt-150 xl-mt-120 md-mt-80">
++      <div className="property-planet-how-it-works position-relative z-1 mt-150 xl-mt-120 md-mt-80">
+          <div className="container">
+             <div className="title-one text-center mb-60 lg-mb-40 wow fadeInUp">
+-               <h2 className="font-garamond">How FCITY.ai Works</h2>
++               <h2 className="font-garamond">How Property Planet Works</h2>
+                <p className="fs-22 mt-xs">Not just a listing site — a verified, AI-assisted advisory layer between landowners and buyers.</p>
+             </div>
+ 
+@@ -92,4 +92,4 @@ const FcityHowItWorks = () => {
+    )
+ }
+ 
+-export default FcityHowItWorks
++export default PropertyPlanetHowItWorks
+diff --git a/src/components/homes/home-two/FcityMapIntelligence.tsx b/src/components/homes/home-two/PropertyPlanetMapIntelligence.tsx
+similarity index 95%
+rename from src/components/homes/home-two/FcityMapIntelligence.tsx
+rename to src/components/homes/home-two/PropertyPlanetMapIntelligence.tsx
+index cba36d0..25b2c23 100644
+--- a/src/components/homes/home-two/FcityMapIntelligence.tsx
++++ b/src/components/homes/home-two/PropertyPlanetMapIntelligence.tsx
+@@ -50,11 +50,11 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
+    { featureType: "transit", stylers: [{ visibility: "off" }] },
+ ];
+ 
+-const FcityMapIntelligence = () => {
++const PropertyPlanetMapIntelligence = () => {
+    const [active, setActive] = useState<MarkerType>(markers[0]);
+ 
+    const { isLoaded, loadError } = useJsApiLoader({
+-      id: "fcity-google-map-script",
++      id: "property-planet-google-map-script",
+       googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    });
+ 
+@@ -97,10 +97,10 @@ const FcityMapIntelligence = () => {
+    const hasApiKey = Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
+ 
+    return (
+-      <div className="fcity-map-intel position-relative z-1 mt-150 xl-mt-120 md-mt-80">
++      <div className="property-planet-map-intel position-relative z-1 mt-150 xl-mt-120 md-mt-80">
+          <div className="container">
+             <div className="title-one text-center mb-50 lg-mb-30 wow fadeInUp">
+-               <h2 className="font-garamond">FCITY Property Intelligence</h2>
++               <h2 className="font-garamond">Property Planet Property Intelligence</h2>
+                <p className="fs-22 mt-xs">Southern Hyderabad&apos;s growth corridors, centred on Future City.</p>
+             </div>
+ 
+@@ -155,7 +155,7 @@ const FcityMapIntelligence = () => {
+                </div>
+ 
+                <div className="intel-panel">
+-                  <div className="intel-title fw-500">FCITY PROPERTY INTELLIGENCE</div>
++                  <div className="intel-title fw-500">PROPERTY PLANET PROPERTY INTELLIGENCE</div>
+                   <div className="intel-location fs-20 fw-500 mt-2">{active.name}</div>
+                   <ul className="style-none intel-stats mt-3">
+                      <li><span>Verified Opportunities</span><strong>{12 + (active.id % 5) * 4}</strong></li>
+@@ -247,4 +247,4 @@ const FcityMapIntelligence = () => {
+    )
+ }
+ 
+-export default FcityMapIntelligence
++export default PropertyPlanetMapIntelligence
+diff --git a/src/components/homes/home-two/index.tsx b/src/components/homes/home-two/index.tsx
+index 433e5e6..c0f3a42 100644
+--- a/src/components/homes/home-two/index.tsx
++++ b/src/components/homes/home-two/index.tsx
+@@ -10,9 +10,9 @@ import Blog from "./Blog"
+ import FAQ from "./FAQ"
+ import FancyBannerTwo from "./FancyBannerTwo"
+ import HeaderTwo from "@/layouts/headers/HeaderTwo"
+-import FcityHowItWorks from "./FcityHowItWorks"
+-import FcityMapIntelligence from "./FcityMapIntelligence"
+-import FcityAIAdvisor from "./FcityAIAdvisor"
++import PropertyPlanetHowItWorks from "./PropertyPlanetHowItWorks"
++import PropertyPlanetMapIntelligence from "./PropertyPlanetMapIntelligence"
++import PropertyPlanetAIAdvisor from "./PropertyPlanetAIAdvisor"
+ 
+ const HomeTwo = () => {
+   return (
+@@ -21,11 +21,11 @@ const HomeTwo = () => {
+       <HeroBanner />
+       <FeedbackOne />
+       <Property />
+-      <FcityHowItWorks />
++      <PropertyPlanetHowItWorks />
+       <BLockFeatureOne />
+       <FancyBannerOne />
+-      <FcityMapIntelligence />
+-      <FcityAIAdvisor />
++      <PropertyPlanetMapIntelligence />
++      <PropertyPlanetAIAdvisor />
+       <BLockFeatureTwo />
+       <FeedbackTwo />
+       <Blog style={false} />
+diff --git a/src/components/inner-pages/sell-property/SellPropertyArea.tsx b/src/components/inner-pages/sell-property/SellPropertyArea.tsx
+index f116e17..2539df9 100644
+--- a/src/components/inner-pages/sell-property/SellPropertyArea.tsx
++++ b/src/components/inner-pages/sell-property/SellPropertyArea.tsx
+@@ -30,7 +30,7 @@ const SellPropertyArea = () => {
+                         <i className="fa-regular fa-check"></i>
+                      </div>
+                      <h3 className="mb-20">Property Submitted</h3>
+-                     <p className="fs-20 opacity-75">Your opportunity has been received by FCITY.ai. Our team will review the information before it is presented to relevant buyers, developers or companies.</p>
++                     <p className="fs-20 opacity-75">Your opportunity has been received by Property Planet. Our team will review the information before it is presented to relevant buyers, developers or companies.</p>
+                      <Link href="/" className="btn-seven mt-30 d-inline-flex"><span>Back to Home</span> <i className="bi bi-arrow-up-right"></i></Link>
+                   </div>
+                </div>
+@@ -54,7 +54,7 @@ const SellPropertyArea = () => {
+             <div className="row justify-content-center">
+                <div className="col-xl-8 col-lg-9">
+                   <div className="title-one text-center mb-20 wow fadeInUp">
+-                     <h2 className="font-garamond">Sell Through FCITY.ai</h2>
++                     <h2 className="font-garamond">Sell Through Property Planet</h2>
+                      <p className="fs-22 mt-xs">Submit your land or property. Our team reviews the opportunity and connects it with relevant buyers, developers or companies — you don&apos;t get exposed directly to buyers.</p>
+                   </div>
+                </div>
+diff --git a/src/data/home-data/FeatureData.ts b/src/data/home-data/FeatureData.ts
+index 72038a6..13599fc 100644
+--- a/src/data/home-data/FeatureData.ts
++++ b/src/data/home-data/FeatureData.ts
+@@ -52,7 +52,7 @@ const feature_data: DataType[] = [
+       icon: featureIcon_1,
+       title: "Buy a home",
+       btn:"Find Home",
+-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
++      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
+    },
+    {
+       id: 2,
+@@ -60,7 +60,7 @@ const feature_data: DataType[] = [
+       icon: featureIcon_2,
+       title: "RENT A HOME",
+       btn:"Rent Home",
+-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters and tailored keywords.",
++      desc: "Discover the right property with Property Planet, thanks to 35+ filters and tailored keywords.",
+    },
+    {
+       id: 3,
+@@ -236,7 +236,7 @@ const feature_data: DataType[] = [
+       icon: feature5Icon_1,
+       title: "Buy a home",
+       btn: "Find Home",
+-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
++      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
+    },
+    {
+       id: 2,
+@@ -244,7 +244,7 @@ const feature_data: DataType[] = [
+       icon: feature5Icon_2,
+       title: "Buy a home",
+       btn: "Rent Home",
+-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters and tailored keywords.",
++      desc: "Discover the right property with Property Planet, thanks to 35+ filters and tailored keywords.",
+       data_delay_time: "0.1s",
+    },
+    {
+@@ -290,7 +290,7 @@ const feature_data: DataType[] = [
+       icon: feature6Icon_1,
+       title: "Buy a home",
+       btn: "Find Home",
+-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
++      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
+    },
+    {
+       id: 2,
+@@ -298,7 +298,7 @@ const feature_data: DataType[] = [
+       icon: feature6Icon_2,
+       title: "Rent a home",
+       btn: "Rent Home",
+-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters and tailored keywords.",
++      desc: "Discover the right property with Property Planet, thanks to 35+ filters and tailored keywords.",
+       data_delay_time: "0.1s",
+    },
+    {
+diff --git a/src/data/home-data/MenuData.ts b/src/data/home-data/MenuData.ts
+index a6d74aa..b96a2e4 100644
+--- a/src/data/home-data/MenuData.ts
++++ b/src/data/home-data/MenuData.ts
+@@ -52,7 +52,7 @@ const menu_data: MenuItem[] = [
+         title: "Company",
+         link: "#",
+         sub_menus: [
+-            { link: "/about_us_02", title: "About FCITY.ai" },
++            { link: "/about_us_02", title: "About Property Planet" },
+             { link: "/contact", title: "Contact Us" },
+             { link: "/faq", title: "FAQ's" },
+             
+diff --git a/src/data/inner-data/ServiceData.ts b/src/data/inner-data/ServiceData.ts
+index ff83913..fa3e39b 100644
+--- a/src/data/inner-data/ServiceData.ts
++++ b/src/data/inner-data/ServiceData.ts
+@@ -21,7 +21,7 @@ const service_data: DataType[] = [
+       icon: serviceIcon_1,
+       title: "Buy a home",
+       btn: "Buy Home",
+-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
++      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
+    },
+    {
+       id: 2,
+@@ -29,7 +29,7 @@ const service_data: DataType[] = [
+       icon: serviceIcon_2,
+       title: "Rent a Home",
+       btn: "Rent Home",
+-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters.",
++      desc: "Discover the right property with Property Planet, thanks to 35+ filters.",
+       data_delay_time: "0.1s",
+    },
+    {
+@@ -47,7 +47,7 @@ const service_data: DataType[] = [
+       icon: serviceIcon_1,
+       title: "Mortgage",
+       btn: "Buy Home",
+-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
++      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
+    },
+    {
+       id: 5,
+@@ -55,7 +55,7 @@ const service_data: DataType[] = [
+       icon: serviceIcon_2,
+       title: "Consulting",
+       btn: "Rent Home",
+-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters.",
++      desc: "Discover the right property with Property Planet, thanks to 35+ filters.",
+       data_delay_time: "0.1s",
+    },
+    {
+diff --git a/src/layouts/Wrapper.tsx b/src/layouts/Wrapper.tsx
+index 92a0960..f8719b4 100644
+--- a/src/layouts/Wrapper.tsx
++++ b/src/layouts/Wrapper.tsx
+@@ -4,7 +4,7 @@ import { useEffect } from "react";
+ import { ToastContainer } from "react-toastify";
+ import { animationCreate } from "@/utils/utils";
+ import ScrollToTop from "@/components/common/ScrollToTop";
+-import FcityAIWidget from "@/components/common/FcityAIWidget";
++import PropertyPlanetAIWidget from "@/components/common/PropertyPlanetAIWidget";
+ 
+ if (typeof window !== "undefined") {
+     require("bootstrap/dist/js/bootstrap");
+@@ -24,7 +24,7 @@ const Wrapper = ({ children }: any) => {
+     return <>
+         {children}
+         <ScrollToTop />
+-        <FcityAIWidget />
++        <PropertyPlanetAIWidget />
+         <ToastContainer position="top-center" />
+     </>;
+ }
+diff --git a/src/layouts/footers/FooterFive.tsx b/src/layouts/footers/FooterFive.tsx
+index d62fea9..57169e0 100644
+--- a/src/layouts/footers/FooterFive.tsx
++++ b/src/layouts/footers/FooterFive.tsx
+@@ -65,7 +65,7 @@ const FooterFive = () => {
+                </div>
+             </div>
+             <div className="bottom-footer">
+-               <p className="m0 text-center fs-16">Copyright @2025 FCITY.ai.</p>
++               <p className="m0 text-center fs-16">Copyright @2025 Property Planet.</p>
+             </div>
+          </div>
+       </div>
+diff --git a/src/layouts/footers/FooterFour.tsx b/src/layouts/footers/FooterFour.tsx
+index d8dabfd..5fb0796 100644
+--- a/src/layouts/footers/FooterFour.tsx
++++ b/src/layouts/footers/FooterFour.tsx
+@@ -42,7 +42,7 @@ const FooterFour = () => {
+                </div>
+             </div>
+             <div className="bottom-footer">
+-               <p className="m0 text-center fs-16">Copyright @2025 FCITY.ai.</p>
++               <p className="m0 text-center fs-16">Copyright @2025 Property Planet.</p>
+             </div>
+          </div>
+          <Image src={footerShape} alt="" className="lazy-img shapes shape_01" />
+diff --git a/src/layouts/footers/FooterOne.tsx b/src/layouts/footers/FooterOne.tsx
+index 66261e8..b149458 100644
+--- a/src/layouts/footers/FooterOne.tsx
++++ b/src/layouts/footers/FooterOne.tsx
+@@ -31,7 +31,7 @@ const FooterOne = ({ style }: any) => {
+                                  <li key={i}><Link href="#"><i className={`fa-brands fa${style ? "" : "-square"}-${icon}`}></i></Link></li>
+                               ))}
+                            </ul>
+-                           <p className="fs-14 opacity-75 lh-md">FCITY.ai is a technology and facilitation platform. Buyers should independently verify original title documents and legal status before any transaction.</p>
++                           <p className="fs-14 opacity-75 lh-md">Property Planet is a technology and facilitation platform. Buyers should independently verify original title documents and legal status before any transaction.</p>
+                         </div>
+                         {style && <Image src={footerShape_1} alt="" className="lazy-img shapes shape_01" />}
+                      </div>
+diff --git a/src/layouts/footers/FooterThree.tsx b/src/layouts/footers/FooterThree.tsx
+index 83fef12..9d67bb2 100644
+--- a/src/layouts/footers/FooterThree.tsx
++++ b/src/layouts/footers/FooterThree.tsx
+@@ -60,7 +60,7 @@ const FooterThree = () => {
+                      <li><Link href="/faq">Privacy &amp; Terms</Link></li>
+                      <li><Link href="/contact">Contact Us</Link></li>
+                   </ul>
+-                  <p className="mb-15 text-center text-lg-start fs-16 order-md-first">Copyright @2025 FCITY.ai.</p>
++                  <p className="mb-15 text-center text-lg-start fs-16 order-md-first">Copyright @2025 Property Planet.</p>
+                </div>
+             </div>
+          </div>
+diff --git a/src/layouts/footers/FooterTwo.tsx b/src/layouts/footers/FooterTwo.tsx
+index b1642a2..26db0b2 100644
+--- a/src/layouts/footers/FooterTwo.tsx
++++ b/src/layouts/footers/FooterTwo.tsx
+@@ -113,7 +113,7 @@ const FooterTwo = () => {
+                      <li><Link href="/faq">Cookies</Link></li>
+                      <li><Link href="/contact">Contact Us</Link></li>
+                   </ul>
+-                  <p className="mb-15 text-center text-lg-start order-md-first">Copyright @2025 FCITY.ai.</p>
++                  <p className="mb-15 text-center text-lg-start order-md-first">Copyright @2025 Property Planet.</p>
+                </div>
+             </div>
+          </div>
+diff --git a/src/layouts/headers/HeaderTwo.tsx b/src/layouts/headers/HeaderTwo.tsx
+index 6b46feb..9ad4433 100644
+--- a/src/layouts/headers/HeaderTwo.tsx
++++ b/src/layouts/headers/HeaderTwo.tsx
+@@ -7,7 +7,7 @@ import UseSticky from "@/hooks/UseSticky"
+ import LoginModal from "@/modals/LoginModal"
+ import Offcanvas from "./Menu/Offcanvas"
+ import HeaderSearchbar from "./Menu/HeaderSearchbar"
+-import { openFcityAI } from "@/utils/fcityAIBus"
++import { openPropertyPlanetAI } from "@/utils/propertyPlanetAIBus"
+ 
+ import logo_1 from "@/assets/images/logo/logo_02.svg";
+ import logo_2 from "@/assets/images/logo/logo_04.svg";
+@@ -40,11 +40,11 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
+                               <li className="d-none d-md-inline-block ms-3 ms-xl-4 me-xl-4">
+                                  <button
+                                     type="button"
+-                                    onClick={() => openFcityAI()}
++                                    onClick={() => openPropertyPlanetAI()}
+                                     style={{ cursor: "pointer" }}
+                                     className={style_1 ? "btn-ten" : "btn-two rounded-0"}
+                                  >
+-                                    <span>Talk to FCITY AI</span> <i className="fa-thin fa-arrow-up-right"></i>
++                                    <span>Talk to Property Planet AI</span> <i className="fa-thin fa-arrow-up-right"></i>
+                                  </button>
+                               </li>
+                               <li className="d-none d-xl-block">
+diff --git a/src/utils/fcityAIBus.ts b/src/utils/propertyPlanetAIBus.ts
+similarity index 64%
+rename from src/utils/fcityAIBus.ts
+rename to src/utils/propertyPlanetAIBus.ts
+index 1a2a786..188d4c5 100644
+--- a/src/utils/fcityAIBus.ts
++++ b/src/utils/propertyPlanetAIBus.ts
+@@ -1,19 +1,19 @@
+-// fcityAIBus.ts
++// propertyPlanetAIBus.ts
+ //
+ // Minimal, dependency-free pub/sub so any component (header CTA, hero link,
+ // suggested-question chip elsewhere on the site, etc.) can open the global
+-// FCITY AI widget without needing to be a parent/child of it or wired
++// Property Planet AI widget without needing to be a parent/child of it or wired
+ // through Redux. The widget itself is mounted once in src/layouts/Wrapper.tsx.
+ 
+ type Listener = (prefillQuestion?: string) => void;
+ 
+ const listeners = new Set<Listener>();
+ 
+-export const openFcityAI = (prefillQuestion?: string): void => {
++export const openPropertyPlanetAI = (prefillQuestion?: string): void => {
+    listeners.forEach((listener) => listener(prefillQuestion));
+ };
+ 
+-export const onFcityAIOpen = (listener: Listener): (() => void) => {
++export const onPropertyPlanetAIOpen = (listener: Listener): (() => void) => {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+ };
+diff --git a/src/utils/fcityAIEngine.ts b/src/utils/propertyPlanetAIEngine.ts
+similarity index 92%
+rename from src/utils/fcityAIEngine.ts
+rename to src/utils/propertyPlanetAIEngine.ts
+index 8466a60..f17e748 100644
+--- a/src/utils/fcityAIEngine.ts
++++ b/src/utils/propertyPlanetAIEngine.ts
+@@ -1,6 +1,6 @@
+-// fcityAIEngine.ts
++// propertyPlanetAIEngine.ts
+ //
+-// Deterministic, rule-based "AI" response engine for the FCITY AI assistant
++// Deterministic, rule-based "AI" response engine for the Property Planet AI assistant
+ // prototype. It reads ONLY from the existing property_data source (the
+ // "home_2" records, which already carry verification_status / trust_score /
+ // suitable_for / last_verified — i.e. the same records rendered in the
+@@ -14,7 +14,7 @@
+ 
+ import property_data from "@/data/home-data/PropertyData";
+ 
+-export interface FcityProperty {
++export interface PropertyPlanetProperty {
+    id: number;
+    title: string;
+    address: string;
+@@ -28,9 +28,9 @@ export interface FcityProperty {
+    tag: string;
+ }
+ 
+-export interface FcityAIResponse {
++export interface PropertyPlanetAIResponse {
+    text: string;
+-   properties?: FcityProperty[];
++   properties?: PropertyPlanetProperty[];
+ }
+ 
+ // ---------------------------------------------------------------------------
+@@ -40,7 +40,7 @@ export interface FcityAIResponse {
+ // Only the "home_2" records carry the property-intelligence fields
+ // (verification, trust score, suitable-for, last verified). That is the
+ // canonical set the assistant is allowed to search and recommend from.
+-const AI_DATASET: FcityProperty[] = property_data
++const AI_DATASET: PropertyPlanetProperty[] = property_data
+    .filter((item) => item.page === "home_2")
+    .map((item) => ({
+       id: item.id,
+@@ -56,7 +56,7 @@ const AI_DATASET: FcityProperty[] = property_data
+       tag: item.tag,
+    }));
+ 
+-export const getAllProperties = (): FcityProperty[] => AI_DATASET;
++export const getAllProperties = (): PropertyPlanetProperty[] => AI_DATASET;
+ 
+ // Known growth-corridor locations (mirrors the search dropdown + map
+ // intelligence markers). Used only to recognise a location mentioned in a
+@@ -93,21 +93,21 @@ const LOCATION_NOTES: Record<string, string> = {
+ // like "Future City" often appears in a listing's title (e.g. "Future City
+ // Premium Plot") rather than its literal address (e.g. "Mucherla,
+ // Hyderabad") — both are legitimately "near Future City" for a buyer.
+-export const filterByLocation = (query: string, data: FcityProperty[] = AI_DATASET): FcityProperty[] => {
++export const filterByLocation = (query: string, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] => {
+    const q = query.toLowerCase();
+    return data.filter((p) => p.address.toLowerCase().includes(q) || p.title.toLowerCase().includes(q));
+ };
+ 
+-export const filterByType = (type: string, data: FcityProperty[] = AI_DATASET): FcityProperty[] => {
++export const filterByType = (type: string, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] => {
+    const q = type.toLowerCase();
+    return data.filter((p) => (p.property_type ?? "").toLowerCase().includes(q));
+ };
+ 
+-export const filterByVerified = (data: FcityProperty[] = AI_DATASET): FcityProperty[] =>
++export const filterByVerified = (data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] =>
+    data.filter((p) => p.verification_status === "Verified");
+ 
+ // maxAmount is a plain rupee value (already converted from lakh/crore).
+-export const filterByBudget = (maxAmount: number, data: FcityProperty[] = AI_DATASET): FcityProperty[] =>
++export const filterByBudget = (maxAmount: number, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] =>
+    data.filter((p) => p.price <= maxAmount);
+ 
+ // ---------------------------------------------------------------------------
+@@ -157,7 +157,7 @@ const findType = (text: string): string | null => {
+    return null;
+ };
+ 
+-const summarise = (list: FcityProperty[]): string =>
++const summarise = (list: PropertyPlanetProperty[]): string =>
+    list
+       .map((p) => `${p.title} in ${p.address.split(",")[0]} (${formatINR(p.price)})`)
+       .join(", ");
+@@ -166,7 +166,7 @@ const summarise = (list: FcityProperty[]): string =>
+ // Main entry point
+ // ---------------------------------------------------------------------------
+ 
+-export const generateAIResponse = (question: string): FcityAIResponse => {
++export const generateAIResponse = (question: string): PropertyPlanetAIResponse => {
+    const q = question.toLowerCase().trim();
+ 
+    if (!q) {

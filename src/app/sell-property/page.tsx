@@ -2,7 +2,7 @@ import SellProperty from "@/components/inner-pages/sell-property";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Sell / List Your Property",
+   title: "Property Planet — Sell / List Your Property",
 };
 
 const index = () => {

@@ -78,9 +78,9 @@ const mockResponse = (question: string): ChatMessage => {
    };
 }
 
-const FcityAIAdvisor = () => {
+const PropertyPlanetAIAdvisor = () => {
    const [messages, setMessages] = useState<ChatMessage[]>([
-      { role: "ai", text: "Hi, I'm FCITY AI. Tell me what you're looking for — a plot, land, villa, apartment or commercial opportunity — and I'll suggest verified matches." },
+      { role: "ai", text: "Hi, I'm Property Planet AI. Tell me what you're looking for — a plot, land, villa, apartment or commercial opportunity — and I'll suggest verified matches." },
    ]);
    const [input, setInput] = useState("");
    const [typing, setTyping] = useState(false);
@@ -97,12 +97,12 @@ const FcityAIAdvisor = () => {
    }
 
    return (
-      <div className="fcity-ai-advisor position-relative z-1 mt-150 xl-mt-120 md-mt-80">
+      <div className="property-planet-ai-advisor position-relative z-1 mt-150 xl-mt-120 md-mt-80">
          <div className="container">
             <div className="row align-items-center">
                <div className="col-lg-5 wow fadeInLeft">
                   <div className="title-one mb-25">
-                     <h2 className="font-garamond">Ask FCITY AI</h2>
+                     <h2 className="font-garamond">Ask Property Planet AI</h2>
                      <p className="fs-22 mt-xs">A prototype AI property advisor. Describe what you need and get matched, verified opportunities — reviewed by our human advisory team.</p>
                   </div>
                   <ul className="style-none faq-chips d-flex flex-wrap">
@@ -116,7 +116,7 @@ const FcityAIAdvisor = () => {
                   <div className="ai-chat-window">
                      <div className="ai-chat-header d-flex align-items-center">
                         <i className="fa-regular fa-sparkles me-2"></i>
-                        <span className="fw-500">FCITY AI</span>
+                        <span className="fw-500">Property Planet AI</span>
                         <span className="prototype-badge ms-auto">Prototype</span>
                      </div>
 
@@ -309,4 +309,4 @@ const FcityAIAdvisor = () => {
    )
 }
 
-export default FcityAIAdvisor
+export default PropertyPlanetAIAdvisor

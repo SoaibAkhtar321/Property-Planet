@@ -52,7 +52,7 @@ const feature_data: DataType[] = [
       icon: featureIcon_1,
       title: "Buy a home",
       btn:"Find Home",
-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
+      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
    },
    {
       id: 2,
@@ -60,7 +60,7 @@ const feature_data: DataType[] = [
       icon: featureIcon_2,
       title: "RENT A HOME",
       btn:"Rent Home",
-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters and tailored keywords.",
+      desc: "Discover the right property with Property Planet, thanks to 35+ filters and tailored keywords.",
    },
    {
       id: 3,
@@ -236,7 +236,7 @@ const feature_data: DataType[] = [
       icon: feature5Icon_1,
       title: "Buy a home",
       btn: "Find Home",
-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
+      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
    },
    {
       id: 2,
@@ -244,7 +244,7 @@ const feature_data: DataType[] = [
       icon: feature5Icon_2,
       title: "Buy a home",
       btn: "Rent Home",
-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters and tailored keywords.",
+      desc: "Discover the right property with Property Planet, thanks to 35+ filters and tailored keywords.",
       data_delay_time: "0.1s",
    },
    {
@@ -290,7 +290,7 @@ const feature_data: DataType[] = [
       icon: feature6Icon_1,
       title: "Buy a home",
       btn: "Find Home",
-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
+      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
    },
    {
       id: 2,
@@ -298,7 +298,7 @@ const feature_data: DataType[] = [
       icon: feature6Icon_2,
       title: "Rent a home",
       btn: "Rent Home",
-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters and tailored keywords.",
+      desc: "Discover the right property with Property Planet, thanks to 35+ filters and tailored keywords.",
       data_delay_time: "0.1s",
    },
    {

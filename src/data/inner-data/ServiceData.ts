@@ -21,7 +21,7 @@ const service_data: DataType[] = [
       icon: serviceIcon_1,
       title: "Buy a home",
       btn: "Buy Home",
-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
+      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
    },
    {
       id: 2,
@@ -29,7 +29,7 @@ const service_data: DataType[] = [
       icon: serviceIcon_2,
       title: "Rent a Home",
       btn: "Rent Home",
-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters.",
+      desc: "Discover the right property with Property Planet, thanks to 35+ filters.",
       data_delay_time: "0.1s",
    },
    {
@@ -47,7 +47,7 @@ const service_data: DataType[] = [
       icon: serviceIcon_1,
       title: "Mortgage",
       btn: "Buy Home",
-      desc: "Explore FCITY.ai’s verified land, plots and homes and uncover your ideal opportunity.",
+      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
    },
    {
       id: 5,
@@ -55,7 +55,7 @@ const service_data: DataType[] = [
       icon: serviceIcon_2,
       title: "Consulting",
       btn: "Rent Home",
-      desc: "Discover the right property with FCITY.ai, thanks to 35+ filters.",
+      desc: "Discover the right property with Property Planet, thanks to 35+ filters.",
       data_delay_time: "0.1s",
    },
    {

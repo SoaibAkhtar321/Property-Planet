@@ -2,7 +2,7 @@ import PricingTwo from "@/components/inner-pages/pricing/pricing-two";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Pricing Two",
+   title: "Property Planet — Pricing Two",
 };
 const index = () => {
    return (

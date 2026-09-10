@@ -2,7 +2,7 @@ import ServiceDetails from "@/components/inner-pages/services/service-details";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Service Details",
+   title: "Property Planet — Service Details",
 };
 const index = () => {
    return (

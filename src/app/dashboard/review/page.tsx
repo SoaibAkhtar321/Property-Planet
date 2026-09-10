@@ -2,7 +2,7 @@ import DashboardReview from "@/components/dashboard/review";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Dashboard Review",
+   title: "Property Planet — Dashboard Review",
 };
 const index = () => {
    return (

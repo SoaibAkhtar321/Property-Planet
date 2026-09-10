@@ -2,7 +2,7 @@ import Contact from "@/components/inner-pages/contact";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Contact",
+   title: "Property Planet — Contact",
 };
 const index = () => {
    return (

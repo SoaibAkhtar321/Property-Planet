@@ -2,7 +2,7 @@ import ProjectThree from "@/components/inner-pages/projects/project-three";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Project Three",
+   title: "Property Planet — Project Three",
 };
 const index = () => {
    return (

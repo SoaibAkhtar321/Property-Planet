@@ -1,6 +1,6 @@
-// fcityAIEngine.ts
+// propertyPlanetAIEngine.ts
 //
-// Deterministic, rule-based "AI" response engine for the FCITY AI assistant
+// Deterministic, rule-based "AI" response engine for the Property Planet AI assistant
 // prototype. It reads ONLY from the existing property_data source (the
 // "home_2" records, which already carry verification_status / trust_score /
 // suitable_for / last_verified — i.e. the same records rendered in the
@@ -14,7 +14,7 @@
 
 import property_data from "@/data/home-data/PropertyData";
 
-export interface FcityProperty {
+export interface PropertyPlanetProperty {
    id: number;
    title: string;
    address: string;
@@ -28,9 +28,9 @@ export interface FcityProperty {
    tag: string;
 }
 
-export interface FcityAIResponse {
+export interface PropertyPlanetAIResponse {
    text: string;
-   properties?: FcityProperty[];
+   properties?: PropertyPlanetProperty[];
 }
 
 // ---------------------------------------------------------------------------
@@ -40,7 +40,7 @@ export interface FcityAIResponse {
 // Only the "home_2" records carry the property-intelligence fields
 // (verification, trust score, suitable-for, last verified). That is the
 // canonical set the assistant is allowed to search and recommend from.
-const AI_DATASET: FcityProperty[] = property_data
+const AI_DATASET: PropertyPlanetProperty[] = property_data
    .filter((item) => item.page === "home_2")
    .map((item) => ({
       id: item.id,
@@ -56,7 +56,7 @@ const AI_DATASET: FcityProperty[] = property_data
       tag: item.tag,
    }));
 
-export const getAllProperties = (): FcityProperty[] => AI_DATASET;
+export const getAllProperties = (): PropertyPlanetProperty[] => AI_DATASET;
 
 // Known growth-corridor locations (mirrors the search dropdown + map
 // intelligence markers). Used only to recognise a location mentioned in a
@@ -93,21 +93,21 @@ const LOCATION_NOTES: Record<string, string> = {
 // like "Future City" often appears in a listing's title (e.g. "Future City
 // Premium Plot") rather than its literal address (e.g. "Mucherla,
 // Hyderabad") — both are legitimately "near Future City" for a buyer.
-export const filterByLocation = (query: string, data: FcityProperty[] = AI_DATASET): FcityProperty[] => {
+export const filterByLocation = (query: string, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] => {
    const q = query.toLowerCase();
    return data.filter((p) => p.address.toLowerCase().includes(q) || p.title.toLowerCase().includes(q));
 };
 
-export const filterByType = (type: string, data: FcityProperty[] = AI_DATASET): FcityProperty[] => {
+export const filterByType = (type: string, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] => {
    const q = type.toLowerCase();
    return data.filter((p) => (p.property_type ?? "").toLowerCase().includes(q));
 };
 
-export const filterByVerified = (data: FcityProperty[] = AI_DATASET): FcityProperty[] =>
+export const filterByVerified = (data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] =>
    data.filter((p) => p.verification_status === "Verified");
 
 // maxAmount is a plain rupee value (already converted from lakh/crore).
-export const filterByBudget = (maxAmount: number, data: FcityProperty[] = AI_DATASET): FcityProperty[] =>
+export const filterByBudget = (maxAmount: number, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] =>
    data.filter((p) => p.price <= maxAmount);
 
 // ---------------------------------------------------------------------------
@@ -157,7 +157,7 @@ const findType = (text: string): string | null => {
    return null;
 };
 
-const summarise = (list: FcityProperty[]): string =>
+const summarise = (list: PropertyPlanetProperty[]): string =>
    list
       .map((p) => `${p.title} in ${p.address.split(",")[0]} (${formatINR(p.price)})`)
       .join(", ");
@@ -166,7 +166,7 @@ const summarise = (list: FcityProperty[]): string =>
 // Main entry point
 // ---------------------------------------------------------------------------
 
-export const generateAIResponse = (question: string): FcityAIResponse => {
+export const generateAIResponse = (question: string): PropertyPlanetAIResponse => {
    const q = question.toLowerCase().trim();
 
    if (!q) {

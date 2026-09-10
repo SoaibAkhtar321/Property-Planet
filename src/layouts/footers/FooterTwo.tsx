@@ -113,7 +113,7 @@ const FooterTwo = () => {
                      <li><Link href="/faq">Cookies</Link></li>
                      <li><Link href="/contact">Contact Us</Link></li>
                   </ul>
-                  <p className="mb-15 text-center text-lg-start order-md-first">Copyright @2025 FCITY.ai.</p>
+                  <p className="mb-15 text-center text-lg-start order-md-first">Copyright @2025 Property Planet.</p>
                </div>
             </div>
          </div>

@@ -2,7 +2,7 @@ import DashboardProfile from "@/components/dashboard/profile";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Dashboard Profile",
+   title: "Property Planet — Dashboard Profile",
 };
 const index = () => {
    return (

@@ -2,7 +2,7 @@
 import Image from "next/image"
 import Link from "next/link";
 import DropdownTwo from "@/components/search-dropdown/home-dropdown/DropdownTwo";
-import { openFcityAI } from "@/utils/fcityAIBus";
+import { openPropertyPlanetAI } from "@/utils/propertyPlanetAIBus";
 
 import titleShape from "@/assets/images/shape/shape_11.svg"
 import bannerImg_1 from "@/assets/images/assets/ils_03.png"
@@ -24,7 +24,7 @@ const HeroBanner = () => {
                            <Link href="/listing_07" className="btn-seven mb-20 me-4 me-xxl5"><span>Explore Properties</span> <i className="bi bi-arrow-up-right"></i></Link>
                            <button
                               type="button"
-                              onClick={() => openFcityAI()}
+                              onClick={() => openPropertyPlanetAI()}
                               style={{ cursor: "pointer" }}
                               className="ai-assistant-cta tran3s d-flex align-items-center mb-20 border-0"
                            >
@@ -34,7 +34,7 @@ const HeroBanner = () => {
                               </span>
                               <span className="ai-assistant-cta__text text-start">
                                  <span className="ai-assistant-cta__eyebrow">Ask</span>
-                                 <strong className="ai-assistant-cta__title">FCITY AI</strong>
+                                 <strong className="ai-assistant-cta__title">Property Planet AI</strong>
                               </span>
                            </button>
                         </div>

@@ -65,7 +65,7 @@ const FooterFive = () => {
                </div>
             </div>
             <div className="bottom-footer">
-               <p className="m0 text-center fs-16">Copyright @2025 FCITY.ai.</p>
+               <p className="m0 text-center fs-16">Copyright @2025 Property Planet.</p>
             </div>
          </div>
       </div>

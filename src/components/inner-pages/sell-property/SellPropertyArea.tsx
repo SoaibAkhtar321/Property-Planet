@@ -30,7 +30,7 @@ const SellPropertyArea = () => {
                         <i className="fa-regular fa-check"></i>
                      </div>
                      <h3 className="mb-20">Property Submitted</h3>
-                     <p className="fs-20 opacity-75">Your opportunity has been received by FCITY.ai. Our team will review the information before it is presented to relevant buyers, developers or companies.</p>
+                     <p className="fs-20 opacity-75">Your opportunity has been received by Property Planet. Our team will review the information before it is presented to relevant buyers, developers or companies.</p>
                      <Link href="/" className="btn-seven mt-30 d-inline-flex"><span>Back to Home</span> <i className="bi bi-arrow-up-right"></i></Link>
                   </div>
                </div>
@@ -54,7 +54,7 @@ const SellPropertyArea = () => {
             <div className="row justify-content-center">
                <div className="col-xl-8 col-lg-9">
                   <div className="title-one text-center mb-20 wow fadeInUp">
-                     <h2 className="font-garamond">Sell Through FCITY.ai</h2>
+                     <h2 className="font-garamond">Sell Through Property Planet</h2>
                      <p className="fs-22 mt-xs">Submit your land or property. Our team reviews the opportunity and connects it with relevant buyers, developers or companies — you don&apos;t get exposed directly to buyers.</p>
                   </div>
                </div>

@@ -8,7 +8,7 @@ const steps = [
    },
    {
       icon: "fa-regular fa-shield-check",
-      label: "FCITY.ai",
+      label: "Property Planet",
       desc: "Verifies details, scores trust, and uses AI to match demand — backed by our advisory team.",
    },
    {
@@ -19,16 +19,16 @@ const steps = [
    {
       icon: "fa-regular fa-handshake",
       label: "Site Visit / Enquiry / Transaction",
-      desc: "FCITY.ai manages the advisory process through to closure.",
+      desc: "Property Planet manages the advisory process through to closure.",
    },
 ]
 
-const FcityHowItWorks = () => {
+const PropertyPlanetHowItWorks = () => {
    return (
-      <div className="fcity-how-it-works position-relative z-1 mt-150 xl-mt-120 md-mt-80">
+      <div className="property-planet-how-it-works position-relative z-1 mt-150 xl-mt-120 md-mt-80">
          <div className="container">
             <div className="title-one text-center mb-60 lg-mb-40 wow fadeInUp">
-               <h2 className="font-garamond">How FCITY.ai Works</h2>
+               <h2 className="font-garamond">How Property Planet Works</h2>
                <p className="fs-22 mt-xs">Not just a listing site — a verified, AI-assisted advisory layer between landowners and buyers.</p>
             </div>
 
@@ -92,4 +92,4 @@ const FcityHowItWorks = () => {
    )
 }
 
-export default FcityHowItWorks
+export default PropertyPlanetHowItWorks

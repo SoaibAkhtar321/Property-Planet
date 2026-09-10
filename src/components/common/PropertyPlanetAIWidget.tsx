@@ -1,18 +1,18 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { generateAIResponse, formatINR, type FcityProperty } from "@/utils/fcityAIEngine"
-import { onFcityAIOpen } from "@/utils/fcityAIBus"
+import { generateAIResponse, formatINR, type PropertyPlanetProperty } from "@/utils/propertyPlanetAIEngine"
+import { onPropertyPlanetAIOpen } from "@/utils/propertyPlanetAIBus"
 
 interface ChatMessage {
    role: "user" | "ai";
    text: string;
-   properties?: FcityProperty[];
+   properties?: PropertyPlanetProperty[];
 }
 
 const WELCOME_MESSAGE: ChatMessage = {
    role: "ai",
-   text: "Hi \uD83D\uDC4B I'm FCITY AI. I can help you discover verified plots, compare locations and find opportunities based on your budget.",
+   text: "Hi \uD83D\uDC4B I'm Property Planet AI. I can help you discover verified plots, compare locations and find opportunities based on your budget.",
 };
 
 const SUGGESTED_PROMPTS = [
@@ -39,7 +39,7 @@ const typeIcon = (type?: string): string => {
    }
 };
 
-const FcityAIWidget = () => {
+const PropertyPlanetAIWidget = () => {
    const [open, setOpen] = useState(false);
    const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
    const [input, setInput] = useState("");
@@ -48,7 +48,7 @@ const FcityAIWidget = () => {
 
    // Let the header CTA / hero link / anything else open this widget.
    useEffect(() => {
-      return onFcityAIOpen((prefill) => {
+      return onPropertyPlanetAIOpen((prefill) => {
          setOpen(true);
          if (prefill) {
             // slight delay so the panel is mounted/visible before we "type"
@@ -83,45 +83,45 @@ const FcityAIWidget = () => {
       <>
          <button
             type="button"
-            aria-label={open ? "Close FCITY AI assistant" : "Open FCITY AI assistant"}
-            className={`fcity-ai-fab d-flex align-items-center justify-content-center ${open ? "is-open" : ""}`}
+            aria-label={open ? "Close Property Planet AI assistant" : "Open Property Planet AI assistant"}
+            className={`property-planet-ai-fab d-flex align-items-center justify-content-center ${open ? "is-open" : ""}`}
             onClick={() => setOpen((v) => !v)}
          >
             <i className={`fa-regular ${open ? "fa-xmark" : "fa-sparkles"}`}></i>
          </button>
 
-         <div className={`fcity-ai-panel ${open ? "is-open" : ""}`}>
-            <div className="fcity-ai-panel-header d-flex align-items-center">
-               <span className="fcity-ai-avatar d-flex align-items-center justify-content-center">
+         <div className={`property-planet-ai-panel ${open ? "is-open" : ""}`}>
+            <div className="property-planet-ai-panel-header d-flex align-items-center">
+               <span className="property-planet-ai-avatar d-flex align-items-center justify-content-center">
                   <i className="fa-regular fa-sparkles"></i>
                </span>
                <div className="ms-2">
-                  <div className="fw-500">FCITY AI Advisor</div>
-                  <div className="fcity-ai-subtitle">Property intelligence, on demand</div>
+                  <div className="fw-500">Property Planet AI Advisor</div>
+                  <div className="property-planet-ai-subtitle">Property intelligence, on demand</div>
                </div>
-               <button type="button" aria-label="Close" className="fcity-ai-close ms-auto" onClick={() => setOpen(false)}>
+               <button type="button" aria-label="Close" className="property-planet-ai-close ms-auto" onClick={() => setOpen(false)}>
                   <i className="fa-regular fa-xmark"></i>
                </button>
             </div>
 
-            <div className="fcity-ai-body" ref={bodyRef}>
+            <div className="property-planet-ai-body" ref={bodyRef}>
                {messages.map((m, i) => (
-                  <div key={i} className={`fcity-ai-row ${m.role}`}>
-                     <div className="fcity-ai-bubble">{m.text}</div>
+                  <div key={i} className={`property-planet-ai-row ${m.role}`}>
+                     <div className="property-planet-ai-bubble">{m.text}</div>
                      {m.properties && m.properties.length > 0 && (
-                        <div className="fcity-ai-cards">
+                        <div className="property-planet-ai-cards">
                            {m.properties.map((p) => (
-                              <div key={p.id} className="fcity-ai-card">
+                              <div key={p.id} className="property-planet-ai-card">
                                  <div className="d-flex align-items-start">
-                                    <span className="fcity-ai-card-icon d-flex align-items-center justify-content-center">
+                                    <span className="property-planet-ai-card-icon d-flex align-items-center justify-content-center">
                                        <i className={`fa-regular ${typeIcon(p.property_type)}`}></i>
                                     </span>
                                     <div className="ms-2 flex-grow-1">
-                                       <div className="fcity-ai-card-title">{p.title}</div>
-                                       <div className="fcity-ai-card-meta">{p.address}</div>
+                                       <div className="property-planet-ai-card-title">{p.title}</div>
+                                       <div className="property-planet-ai-card-meta">{p.address}</div>
                                     </div>
                                  </div>
-                                 <div className="fcity-ai-card-tags">
+                                 <div className="property-planet-ai-card-tags">
                                     {p.property_type && <span className="tag-type">{p.property_type}</span>}
                                     {p.verification_status && (
                                        <span className={`tag-verify ${p.verification_status === "Verified" ? "is-verified" : ""}`}>
@@ -131,8 +131,8 @@ const FcityAIWidget = () => {
                                     {typeof p.trust_score === "number" && <span className="tag-trust">Trust {p.trust_score}</span>}
                                  </div>
                                  <div className="d-flex align-items-center justify-content-between mt-2">
-                                    <strong className="fcity-ai-card-price">{formatINR(p.price)}</strong>
-                                    <Link href="/listing_05" className="fcity-ai-card-cta">View Property</Link>
+                                    <strong className="property-planet-ai-card-price">{formatINR(p.price)}</strong>
+                                    <Link href="/listing_05" className="property-planet-ai-card-cta">View Property</Link>
                                  </div>
                               </div>
                            ))}
@@ -142,15 +142,15 @@ const FcityAIWidget = () => {
                ))}
 
                {typing && (
-                  <div className="fcity-ai-row ai">
-                     <div className="fcity-ai-bubble fcity-ai-typing">
+                  <div className="property-planet-ai-row ai">
+                     <div className="property-planet-ai-bubble property-planet-ai-typing">
                         <span></span><span></span><span></span>
                      </div>
                   </div>
                )}
 
                {messages.length === 1 && !typing && (
-                  <ul className="style-none fcity-ai-chips d-flex flex-wrap">
+                  <ul className="style-none property-planet-ai-chips d-flex flex-wrap">
                      {SUGGESTED_PROMPTS.map((q, i) => (
                         <li key={i}><button type="button" onClick={() => send(q)}>{q}</button></li>
                      ))}
@@ -159,7 +159,7 @@ const FcityAIWidget = () => {
             </div>
 
             <form
-               className="fcity-ai-input d-flex align-items-center"
+               className="property-planet-ai-input d-flex align-items-center"
                onSubmit={(e) => { e.preventDefault(); send(input); }}
             >
                <input
@@ -172,13 +172,13 @@ const FcityAIWidget = () => {
                   <i className="bi bi-arrow-up-right"></i>
                </button>
             </form>
-            <div className="fcity-ai-footer-note">
+            <div className="property-planet-ai-footer-note">
                Prefer a human advisor? <Link href="/contact">Contact our team.</Link>
             </div>
          </div>
 
          <style jsx>{`
-            .fcity-ai-fab {
+            .property-planet-ai-fab {
                position: fixed;
                right: 24px;
                bottom: 24px;
@@ -194,10 +194,10 @@ const FcityAIWidget = () => {
                cursor: pointer;
                transition: transform 0.25s ease, background 0.25s ease;
             }
-            .fcity-ai-fab:hover { transform: translateY(-2px); background: #c19a4b; color: #1c1c1c; }
-            .fcity-ai-fab.is-open { background: #c19a4b; color: #1c1c1c; }
+            .property-planet-ai-fab:hover { transform: translateY(-2px); background: #c19a4b; color: #1c1c1c; }
+            .property-planet-ai-fab.is-open { background: #c19a4b; color: #1c1c1c; }
 
-            .fcity-ai-panel {
+            .property-planet-ai-panel {
                position: fixed;
                right: 24px;
                bottom: 96px;
@@ -218,18 +218,18 @@ const FcityAIWidget = () => {
                pointer-events: none;
                transition: opacity 0.22s ease, transform 0.22s ease;
             }
-            .fcity-ai-panel.is-open {
+            .property-planet-ai-panel.is-open {
                opacity: 1;
                transform: translateY(0) scale(1);
                pointer-events: auto;
             }
 
-            .fcity-ai-panel-header {
+            .property-planet-ai-panel-header {
                padding: 16px 16px;
                border-bottom: 1px solid #f0efe6;
                background: #faf9f3;
             }
-            .fcity-ai-avatar {
+            .property-planet-ai-avatar {
                width: 34px;
                height: 34px;
                border-radius: 50%;
@@ -237,50 +237,50 @@ const FcityAIWidget = () => {
                color: #c19a4b;
                flex: 0 0 auto;
             }
-            .fcity-ai-subtitle { font-size: 12px; opacity: 0.65; }
-            .fcity-ai-close {
+            .property-planet-ai-subtitle { font-size: 12px; opacity: 0.65; }
+            .property-planet-ai-close {
                border: none;
                background: transparent;
                font-size: 16px;
                opacity: 0.6;
                cursor: pointer;
             }
-            .fcity-ai-close:hover { opacity: 1; }
+            .property-planet-ai-close:hover { opacity: 1; }
 
-            .fcity-ai-body {
+            .property-planet-ai-body {
                flex: 1 1 auto;
                overflow-y: auto;
                padding: 16px;
                background: #fff;
             }
 
-            .fcity-ai-row { margin-bottom: 14px; display: flex; flex-direction: column; }
-            .fcity-ai-row.user { align-items: flex-end; }
-            .fcity-ai-row.ai { align-items: flex-start; }
+            .property-planet-ai-row { margin-bottom: 14px; display: flex; flex-direction: column; }
+            .property-planet-ai-row.user { align-items: flex-end; }
+            .property-planet-ai-row.ai { align-items: flex-start; }
 
-            .fcity-ai-bubble {
+            .property-planet-ai-bubble {
                max-width: 88%;
                padding: 10px 14px;
                border-radius: 14px;
                font-size: 14px;
                line-height: 1.5;
             }
-            .fcity-ai-row.ai .fcity-ai-bubble { background: #f3f1e7; color: #262620; border-bottom-left-radius: 4px; }
-            .fcity-ai-row.user .fcity-ai-bubble { background: #1c1c1c; color: #fff; border-bottom-right-radius: 4px; }
+            .property-planet-ai-row.ai .property-planet-ai-bubble { background: #f3f1e7; color: #262620; border-bottom-left-radius: 4px; }
+            .property-planet-ai-row.user .property-planet-ai-bubble { background: #1c1c1c; color: #fff; border-bottom-right-radius: 4px; }
 
-            .fcity-ai-typing { display: flex; gap: 4px; align-items: center; }
-            .fcity-ai-typing span {
+            .property-planet-ai-typing { display: flex; gap: 4px; align-items: center; }
+            .property-planet-ai-typing span {
                width: 6px; height: 6px; border-radius: 50%;
                background: #999; display: inline-block;
-               animation: fcity-blink 1.2s infinite ease-in-out;
+               animation: property-planet-blink 1.2s infinite ease-in-out;
             }
-            .fcity-ai-typing span:nth-child(2) { animation-delay: 0.2s; }
-            .fcity-ai-typing span:nth-child(3) { animation-delay: 0.4s; }
-            @keyframes fcity-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+            .property-planet-ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+            .property-planet-ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+            @keyframes property-planet-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
 
-            .fcity-ai-chips { margin-top: 8px; }
-            .fcity-ai-chips li { margin: 0 8px 8px 0; }
-            .fcity-ai-chips button {
+            .property-planet-ai-chips { margin-top: 8px; }
+            .property-planet-ai-chips li { margin: 0 8px 8px 0; }
+            .property-planet-ai-chips button {
                border: 1px solid #ddd7c4;
                background: #fff;
                border-radius: 30px;
@@ -290,40 +290,40 @@ const FcityAIWidget = () => {
                cursor: pointer;
                transition: all 0.2s ease;
             }
-            .fcity-ai-chips button:hover { background: #f3f1e7; border-color: #c19a4b; }
+            .property-planet-ai-chips button:hover { background: #f3f1e7; border-color: #c19a4b; }
 
-            .fcity-ai-cards { margin-top: 8px; width: 100%; display: flex; flex-direction: column; gap: 8px; }
-            .fcity-ai-card {
+            .property-planet-ai-cards { margin-top: 8px; width: 100%; display: flex; flex-direction: column; gap: 8px; }
+            .property-planet-ai-card {
                border: 1px solid #ecebe3;
                border-radius: 12px;
                padding: 12px;
                background: #fff;
                width: 100%;
             }
-            .fcity-ai-card-icon {
+            .property-planet-ai-card-icon {
                width: 30px; height: 30px; border-radius: 8px;
                background: #eef0e6; color: #6b7d52; flex: 0 0 auto; font-size: 13px;
             }
-            .fcity-ai-card-title { font-size: 13.5px; font-weight: 500; color: #1c1c1c; }
-            .fcity-ai-card-meta { font-size: 12px; opacity: 0.65; }
-            .fcity-ai-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-            .fcity-ai-card-tags span {
+            .property-planet-ai-card-title { font-size: 13.5px; font-weight: 500; color: #1c1c1c; }
+            .property-planet-ai-card-meta { font-size: 12px; opacity: 0.65; }
+            .property-planet-ai-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+            .property-planet-ai-card-tags span {
                font-size: 11px; padding: 3px 8px; border-radius: 20px;
                background: #f3f1e7; color: #555;
             }
             .tag-verify.is-verified { background: rgba(0,181,121,0.12); color: #00B579; }
-            .fcity-ai-card-price { font-size: 14px; color: #1c1c1c; }
-            .fcity-ai-card-cta {
+            .property-planet-ai-card-price { font-size: 14px; color: #1c1c1c; }
+            .property-planet-ai-card-cta {
                font-size: 12px; font-weight: 500; color: #c19a4b;
                text-decoration: underline;
             }
 
-            .fcity-ai-input {
+            .property-planet-ai-input {
                border-top: 1px solid #f0efe6;
                padding: 10px 12px;
                background: #fff;
             }
-            .fcity-ai-input input {
+            .property-planet-ai-input input {
                flex: 1 1 auto;
                border: none;
                outline: none;
@@ -331,7 +331,7 @@ const FcityAIWidget = () => {
                padding: 8px 6px;
                background: transparent;
             }
-            .fcity-ai-input button {
+            .property-planet-ai-input button {
                border: none;
                background: #1c1c1c;
                color: #fff;
@@ -341,18 +341,18 @@ const FcityAIWidget = () => {
                flex: 0 0 auto;
                cursor: pointer;
             }
-            .fcity-ai-input button:hover { background: #c19a4b; color: #1c1c1c; }
+            .property-planet-ai-input button:hover { background: #c19a4b; color: #1c1c1c; }
 
-            .fcity-ai-footer-note {
+            .property-planet-ai-footer-note {
                font-size: 11px;
                text-align: center;
                opacity: 0.6;
                padding: 6px 0 12px;
             }
-            .fcity-ai-footer-note :global(a) { color: #c19a4b; text-decoration: underline; }
+            .property-planet-ai-footer-note :global(a) { color: #c19a4b; text-decoration: underline; }
 
             @media (max-width: 575px) {
-               .fcity-ai-panel {
+               .property-planet-ai-panel {
                   right: 12px;
                   left: 12px;
                   bottom: 88px;
@@ -360,11 +360,11 @@ const FcityAIWidget = () => {
                   max-width: none;
                   height: calc(100vh - 120px);
                }
-               .fcity-ai-fab { right: 16px; bottom: 16px; }
+               .property-planet-ai-fab { right: 16px; bottom: 16px; }
             }
          `}</style>
       </>
    )
 }
 
-export default FcityAIWidget
+export default PropertyPlanetAIWidget

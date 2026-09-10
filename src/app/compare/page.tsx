@@ -2,7 +2,7 @@ import Compare from "@/components/inner-pages/compare";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Compare",
+   title: "Property Planet — Compare",
 };
 const index = () => {
    return (

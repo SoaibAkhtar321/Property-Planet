@@ -2,7 +2,7 @@ import BlogDetails from "@/components/blogs/blog-details";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Blog Details",
+   title: "Property Planet — Blog Details",
 };
 const index = () => {
    return (

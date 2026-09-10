@@ -2,7 +2,7 @@ import Faq from "@/components/inner-pages/faq";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Faq",
+   title: "Property Planet — Faq",
 };
 const index = () => {
    return (

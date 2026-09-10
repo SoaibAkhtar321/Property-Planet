@@ -2,7 +2,7 @@ import ListingSixteen from "@/components/inner-listing/listing-16";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Listing Sixteen",
+   title: "Property Planet — Listing Sixteen",
 };
 const index = () => {
    return (

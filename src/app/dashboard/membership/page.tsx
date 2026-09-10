@@ -2,7 +2,7 @@ import DashboardMembership from "@/components/dashboard/membership";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Dashboard Membership",
+   title: "Property Planet — Dashboard Membership",
 };
 const index = () => {
    return (

@@ -2,7 +2,7 @@ import AgentDetails from "@/components/inner-pages/agent/agent-details";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Agent Details",
+   title: "Property Planet — Agent Details",
 };
 const index = () => {
    return (

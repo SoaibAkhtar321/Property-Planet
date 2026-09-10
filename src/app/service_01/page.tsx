@@ -2,7 +2,7 @@ import ServiceOne from "@/components/inner-pages/services/service-one";
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "FCITY.ai — Service One",
+   title: "Property Planet — Service One",
 };
 const index = () => {
    return (

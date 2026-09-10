@@ -60,7 +60,7 @@ const FooterThree = () => {
                      <li><Link href="/faq">Privacy &amp; Terms</Link></li>
                      <li><Link href="/contact">Contact Us</Link></li>
                   </ul>
-                  <p className="mb-15 text-center text-lg-start fs-16 order-md-first">Copyright @2025 FCITY.ai.</p>
+                  <p className="mb-15 text-center text-lg-start fs-16 order-md-first">Copyright @2025 Property Planet.</p>
                </div>
             </div>
          </div>

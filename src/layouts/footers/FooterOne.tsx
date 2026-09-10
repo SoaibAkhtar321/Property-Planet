@@ -31,7 +31,7 @@ const FooterOne = ({ style }: any) => {
                                  <li key={i}><Link href="#"><i className={`fa-brands fa${style ? "" : "-square"}-${icon}`}></i></Link></li>
                               ))}
                            </ul>
-                           <p className="fs-14 opacity-75 lh-md">FCITY.ai is a technology and facilitation platform. Buyers should independently verify original title documents and legal status before any transaction.</p>
+                           <p className="fs-14 opacity-75 lh-md">Property Planet is a technology and facilitation platform. Buyers should independently verify original title documents and legal status before any transaction.</p>
                         </div>
                         {style && <Image src={footerShape_1} alt="" className="lazy-img shapes shape_01" />}
                      </div>
