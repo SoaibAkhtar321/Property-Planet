@@ -16,6 +16,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <div className="fw-bold mb-4">Property Planet Admin</div>
             <ul className="list-unstyled d-flex flex-column gap-2">
                <li>
+                  <Link href="/admin">Overview</Link>
+               </li>
+               <li>
+                  <Link href="/admin/leads">Leads</Link>
+               </li>
+               <li>
+                  <Link href="/admin/properties">Properties</Link>
+               </li>
+               <li>
+                  <Link href="/admin/users">Users</Link>
+               </li>
+               <li>
                   <Link href="/admin/projects">Projects</Link>
                </li>
             </ul>
