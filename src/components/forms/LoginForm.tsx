@@ -38,7 +38,26 @@ const LoginForm = () => {
          if (!error) {
             toast.success("Login successfully", { position: "top-center" });
             reset();
-            router.push("/dashboard/dashboard-index"); 
+
+            const { data: userData } = await supabase.auth.getUser();
+            let destination = "/dashboard/dashboard-index";
+
+            if (userData?.user) {
+               const { data: profile } = await supabase
+                  .from("profiles")
+                  .select("role")
+                  .eq("id", userData.user.id)
+                  .maybeSingle();
+
+               // Only ever route to /admin when the trusted profiles row
+               // says so. Any missing/unreadable profile falls back to the
+               // buyer/seller dashboard — never an elevated destination.
+               if (profile?.role === "admin") {
+                  destination = "/admin";
+               }
+            }
+
+            router.push(destination);
          } else {
             toast.error(error.message || "Invalid email or password");
          }
