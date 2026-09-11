@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Property } from "../data/types";
+import InquiryForm from "./InquiryForm";
 
 const Sidebar = ({ property }: { property: Property }) => {
    return (
@@ -11,9 +11,7 @@ const Sidebar = ({ property }: { property: Property }) => {
                   ₹{property.price.toLocaleString("en-IN")}
                   {property.priceUnit ? property.priceUnit : ""}
                </div>
-               <Link href="/contact" className="btn-four w-100 justify-content-center">
-                  Enquire Now
-               </Link>
+               <InquiryForm propertyId={property.id} />
             </div>
 
             <div className="feature-listing bg-white border-20 p-30">
