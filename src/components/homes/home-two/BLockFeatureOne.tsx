@@ -22,7 +22,7 @@ const BLockFeatureOne = () => {
                            <div className="content">
                               <h5 className="text-white font-garamond">{item.title}</h5>
                            </div>
-                           <Link href="/listing_05" className="stretched-link"></Link>
+                           <Link href="/properties" className="stretched-link"></Link>
                         </div>
                      </div>
                   ))}

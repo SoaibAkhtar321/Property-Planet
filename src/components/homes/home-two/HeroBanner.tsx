@@ -21,7 +21,7 @@ const HeroBanner = () => {
                         <h1 className="hero-heading font-garamond wow fadeInUp">The next city is being built <span><Image src={titleShape} alt="" className="lazy-img icon d-inline-block" /></span></h1>
                         <p className="fs-24 color-dark pt-35 md-pt-30 pb-35 mb-pb-20 wow fadeInUp" data-wow-delay="0.1s">Discover verified land, plots, villas, apartments and commercial opportunities across Future City and Hyderabad&apos;s emerging southern corridors — guided by AI and backed by human expertise.</p>
                         <div className="d-inline-flex align-items-center flex-wrap hero-cta-group">
-                           <Link href="/listing_07" className="btn-seven mb-20 me-4 me-xxl5"><span>Explore Properties</span> <i className="bi bi-arrow-up-right"></i></Link>
+                           <Link href="/properties" className="btn-seven mb-20 me-4 me-xxl5"><span>Explore Properties</span> <i className="bi bi-arrow-up-right"></i></Link>
                            <button
                               type="button"
                               onClick={() => openPropertyPlanetAI()}

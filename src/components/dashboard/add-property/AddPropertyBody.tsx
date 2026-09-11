@@ -40,9 +40,10 @@ const AddPropertyBody = () => {
             <AddressAndLocation />
 
             <div className="button-group d-inline-flex align-items-center mt-30">
-               <Link href="#" className="dash-btn-two tran3s me-3">Submit Property</Link>
+               <button type="button" disabled className="dash-btn-two tran3s me-3" aria-disabled="true">Coming Soon</button>
                <Link href="#" className="dash-cancel-btn tran3s">Cancel</Link>
             </div>
+            <p className="fs-14 opacity-65 mt-15">Property submission isn&apos;t available yet — this dashboard section is a preview.</p>
          </div>
       </div>
    )

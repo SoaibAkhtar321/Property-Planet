@@ -37,10 +37,10 @@ const menu_data: MenuItem[] = [
         link: "#",
         sub_menus: [
             
-            { link: "/listing_07", title: "All Properties" },
-            { link: "/listing_05", title: "Browse by Type" },
-            { link: "/listing_details_06", title: "Property Details" },
-            { link: "/listing_09", title: "Featured Opportunities" },
+            { link: "/properties", title: "All Properties" },
+            { link: "/properties", title: "Browse by Type" },
+            { link: "/properties", title: "Property Details" },
+            { link: "/properties", title: "Featured Opportunities" },
             
         ],
     },

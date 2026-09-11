@@ -45,7 +45,7 @@ const BLockFeatureTwo = () => {
                               <div className="content text-center">
                                  <h5 className="mb-25">{item.title}</h5>
                                  <div className="btn tran3s fw-500 text-uppercase">{item.tag}</div>
-                                 <Link href="/listing_03" className="stretched-link"></Link>
+                                 <Link href="/properties" className="stretched-link"></Link>
                               </div>
                            </div>
                         </div>

@@ -1,51 +1,15 @@
 "use client"
-import { useState } from "react"
-import Link from "next/link"
 
 const sellerTypes = ["Landowner", "Developer", "Property Owner", "Agent", "Company"];
 const propertyTypes = ["Plot", "Land", "Villa", "Apartment", "Commercial", "Corporate Land"];
 const purposes = ["Sell", "Developer Partnership", "Corporate Sale", "Investment Opportunity"];
 
 const SellPropertyArea = () => {
-   const [submitted, setSubmitted] = useState(false);
-   const [submitting, setSubmitting] = useState(false);
-
    const handleSubmit = (e: React.FormEvent) => {
+      // Seller submission is not available yet — this flow is implemented
+      // in a later phase. Prevent the native form post; do not claim the
+      // property was submitted or that any data was persisted.
       e.preventDefault();
-      setSubmitting(true);
-      // Prototype only — no backend/document storage yet.
-      setTimeout(() => {
-         setSubmitting(false);
-         setSubmitted(true);
-      }, 900);
-   }
-
-   if (submitted) {
-      return (
-         <div className="sell-property-area position-relative z-1 pt-200 md-pt-150 pb-150 xl-pb-120">
-            <div className="container">
-               <div className="row justify-content-center">
-                  <div className="col-lg-7 text-center wow fadeInUp">
-                     <div className="success-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-30">
-                        <i className="fa-regular fa-check"></i>
-                     </div>
-                     <h3 className="mb-20">Property Submitted</h3>
-                     <p className="fs-20 opacity-75">Your opportunity has been received by Property Planet. Our team will review the information before it is presented to relevant buyers, developers or companies.</p>
-                     <Link href="/" className="btn-seven mt-30 d-inline-flex"><span>Back to Home</span> <i className="bi bi-arrow-up-right"></i></Link>
-                  </div>
-               </div>
-            </div>
-            <style jsx>{`
-               .success-icon {
-                  width: 84px;
-                  height: 84px;
-                  background: #eef4ea;
-                  color: #3f7a52;
-                  font-size: 32px;
-               }
-            `}</style>
-         </div>
-      )
    }
 
    return (
@@ -158,9 +122,10 @@ const SellPropertyArea = () => {
                   </div>
 
                   <div className="col-12 mt-20">
-                     <button type="submit" disabled={submitting} className="btn-nine text-uppercase rounded-3 fw-normal w-100">
-                        {submitting ? "Submitting..." : "Submit Property for Review"}
+                     <button type="submit" disabled className="btn-nine text-uppercase rounded-3 fw-normal w-100">
+                        Coming Soon — Submissions Not Yet Open
                      </button>
+                     <span className="fs-12 opacity-65 d-block mt-2">This form is a preview. Property submission isn&apos;t available yet — check back soon.</span>
                   </div>
                </div>
             </form>
