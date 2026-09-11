@@ -94,3 +94,96 @@ export async function getSimilarProperties(property: Property, limit = 2): Promi
 
    return attachMedia(supabase, (data ?? []) as PropertyPublicRow[]);
 }
+
+// ---------------------------------------------------------------------------
+// Seller-side reads (Phase 2). These read the base `properties` table, not
+// `property_public` — a seller needs to see their own draft/pending/etc
+// rows, which the public view never includes (it's `where status =
+// 'published'`). Authorized by "sellers can read own properties any
+// status" (0002); requireRole(["seller"]) at the call site is the
+// app-level check in front of that RLS policy.
+// ---------------------------------------------------------------------------
+
+export interface SellerPropertyRow {
+   id: string;
+   title: string;
+   slug: string;
+   property_type: string;
+   listing_type: "sale" | "rent";
+   price: number;
+   city: string;
+   locality: string;
+   status: "draft" | "pending" | "published" | "rejected" | "sold" | "archived";
+   created_at: string;
+   updated_at: string;
+}
+
+/** The caller's own listings, newest-updated first, excluding archived ones. */
+export async function getOwnActivePropertyListings(): Promise<SellerPropertyRow[]> {
+   const supabase = await createClient();
+   const {
+      data: { user },
+   } = await supabase.auth.getUser();
+
+   if (!user) return [];
+
+   const { data, error } = await supabase
+      .from("properties")
+      .select("id, title, slug, property_type, listing_type, price, city, locality, status, created_at, updated_at")
+      .eq("owner_id", user.id)
+      .neq("status", "archived")
+      .order("updated_at", { ascending: false });
+
+   if (error) {
+      console.error("Failed to load seller properties:", error.message);
+      return [];
+   }
+
+   return (data ?? []) as SellerPropertyRow[];
+}
+
+/** One of the caller's own properties by id, or null if it doesn't exist / isn't theirs. */
+export async function getOwnPropertyById(id: string): Promise<SellerPropertyRow & { description: string | null; area: number | string | null; area_unit: string | null; bedrooms: number | null; bathrooms: number | null } | null> {
+   const supabase = await createClient();
+   const {
+      data: { user },
+   } = await supabase.auth.getUser();
+
+   if (!user) return null;
+
+   const { data, error } = await supabase
+      .from("properties")
+      .select("id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, city, locality, status, created_at, updated_at")
+      .eq("id", id)
+      .eq("owner_id", user.id)
+      .maybeSingle();
+
+   if (error || !data) return null;
+   return data;
+}
+
+export interface OwnPropertyMediaRow {
+   id: string;
+   storage_path: string;
+   media_type: "image" | "video" | "floorplan" | "document";
+   sort_order: number;
+   publicUrl: string;
+}
+
+/** Media rows for one of the caller's own properties, with public URLs resolved. */
+export async function getOwnPropertyMedia(propertyId: string): Promise<OwnPropertyMediaRow[]> {
+   const supabase = await createClient();
+
+   const { data, error } = await supabase
+      .from("property_media")
+      .select("id, storage_path, media_type, sort_order")
+      .eq("property_id", propertyId)
+      .order("sort_order", { ascending: true });
+
+   if (error || !data) return [];
+
+   return data.map((row) => ({
+      ...row,
+      publicUrl: propertyMediaPublicUrl(supabase, row.storage_path),
+   }));
+}

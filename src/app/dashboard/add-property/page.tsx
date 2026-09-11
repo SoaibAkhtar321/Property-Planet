@@ -5,12 +5,14 @@ import { requireRole } from "@/lib/auth/session";
 export const metadata = {
    title: "Property Planet — Dashboard Add Property",
 };
-const index = async () => {
+
+const index = async ({ searchParams }: { searchParams: { error?: string } }) => {
    await requireRole(["seller"]);
+   const { error } = searchParams;
 
    return (
       <Wrapper>
-         <DashboardAddProperty />
+         <DashboardAddProperty error={error} />
       </Wrapper>
    )
 }
