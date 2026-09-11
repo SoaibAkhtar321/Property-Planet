@@ -15,10 +15,13 @@ const PropertiesListing = ({ items }: { items: Property[] }) => {
       () => Array.from(new Set(items.map((item) => item.listingType))),
       [items]
    );
-   const propertyTypes = useMemo(
-      () => Array.from(new Set(items.map((item) => item.propertyType))),
-      [items]
-   );
+   const propertyTypes = useMemo(() => {
+      // Plot/Land first: Property Planet is primarily a plot/land
+      // marketplace, with other types supported as secondary categories.
+      const types = Array.from(new Set(items.map((item) => item.propertyType)));
+      const rank = (type: string) => (/^(plot|land)/i.test(type) ? 0 : 1);
+      return types.sort((a, b) => rank(a) - rank(b));
+   }, [items]);
 
    const filtered = useMemo(() => {
       return items.filter((item) => {

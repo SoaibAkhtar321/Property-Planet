@@ -19,10 +19,12 @@ export interface OverviewDefaults {
    price?: number | string;
 }
 
+// Plot listed first: Property Planet is primarily a plot/land marketplace,
+// with villas and apartments supported as secondary categories.
 const propertyTypeOptions = [
-   { value: "apartment", text: "Apartment" },
+   { value: "plot", text: "Plot / Land" },
    { value: "villa", text: "Villa" },
-   { value: "plot", text: "Plot" },
+   { value: "apartment", text: "Apartment" },
    { value: "commercial", text: "Commercial" },
 ];
 const listingTypeOptions = [
@@ -31,7 +33,7 @@ const listingTypeOptions = [
 ];
 
 const Overview = ({ defaults }: { defaults?: OverviewDefaults }) => {
-   const [propertyType, setPropertyType] = useState(defaults?.property_type ?? "apartment");
+   const [propertyType, setPropertyType] = useState(defaults?.property_type ?? "plot");
    const [listingType, setListingType] = useState(defaults?.listing_type ?? "sale");
    const propertyTypeIndex = Math.max(0, propertyTypeOptions.findIndex((o) => o.value === propertyType));
    const listingTypeIndex = Math.max(0, listingTypeOptions.findIndex((o) => o.value === listingType));
