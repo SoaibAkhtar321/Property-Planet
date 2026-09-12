@@ -4,12 +4,14 @@ import Link from "next/link.js";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
+import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 
 import logo from "@/assets/images/logo/logo_01.svg";
 
 const NavMenu = () => {
     const pathname = usePathname();
     const [navTitle, setNavTitle] = useState("");
+    const { user, role, loading } = useSupabaseUser();
 
     const openMobileMenu = (menu: any) => {
         if (navTitle === menu) {
@@ -17,6 +19,19 @@ const NavMenu = () => {
         } else {
             setNavTitle(menu);
         }
+    };
+
+    // "Become a Seller" (src/data/home-data/MenuData.ts, class_name
+    // sell-property-nav-item) is the one nav item that isn't a static
+    // destination -- see BecomeSellerNav.tsx for the same logic used in
+    // the header buttons. Kept in sync manually since this item is
+    // rendered from the generic menu_data.map() below rather than through
+    // that component directly.
+    const resolveSellerNavTarget = () => {
+        if (loading || role === "admin") return null;
+        if (user && role === "seller") return { href: "/dashboard/add-property", label: "Add Listing" };
+        if (user && role === "buyer") return { href: "/seller/register", label: "Become a Seller" };
+        return { href: "/seller/login", label: "Become a Seller" };
     };
 
     return (
@@ -28,12 +43,20 @@ const NavMenu = () => {
                     </Link>
                 </div>
             </li>
-            <li className="nav-item dashboard-menu">
-                <Link className="nav-link" href="/dashboard/dashboard-index" target="_blank">
-                    Dashboard
-                </Link>
-            </li>
-            {menu_data.map((menu: any) => (
+            {menu_data.map((menu: any) => {
+                if (menu.class_name === "sell-property-nav-item") {
+                    const target = resolveSellerNavTarget();
+                    if (!target) return null;
+                    return (
+                        <li key={menu.id} className={`nav-item ${menu.class_name}`}>
+                            <Link href={target.href} className={`nav-link ${pathname === target.href ? "active" : ""}`}>
+                                {target.label}
+                            </Link>
+                        </li>
+                    );
+                }
+
+                return (
                 <li
                     key={menu.id}
                     className={`nav-item dropdown ${menu.class_name} ${menu.title === "Home" ? "no-dropdown" : ""}`}
@@ -85,7 +108,8 @@ const NavMenu = () => {
                         </ul>
                     )}
                 </li>
-            ))}
+                );
+            })}
         </ul>
     );
 };

@@ -73,9 +73,9 @@ const menu_data: MenuItem[] = [
     {
         id: 5,
         has_dropdown: false,
-        title: "Sell Property",
+        title: "Become a Seller",
         class_name: "sell-property-nav-item",
-        link: "/sell-property",
+        link: "/seller/login",
     },
 ];
 export default menu_data;

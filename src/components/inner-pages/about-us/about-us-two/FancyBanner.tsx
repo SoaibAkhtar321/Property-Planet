@@ -18,7 +18,7 @@ const FancyBanner = () => {
                             platform role — this CTA now routes to the real seller flow
                             instead of the unlinked legacy /agent template page. */}
                         <div className="d-inline-flex flex-wrap align-items-center position-relative mt-15">
-                           <Link href="/sell-property" className="btn-eight mt-10 me-4"><span>List Your Property</span></Link>
+                           <Link href="/seller/login" className="btn-eight mt-10 me-4"><span>List Your Property</span></Link>
                            <Link href="/contact" className="btn-two rounded-0 border-0 mt-10"><span>Contact us</span></Link>
                            <Image src={fanchyBannerShape_1} alt="" className="lazy-img shapes shape_02 wow fadeInRight" />
                         </div>
