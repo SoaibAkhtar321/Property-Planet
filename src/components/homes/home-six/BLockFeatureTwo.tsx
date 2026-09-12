@@ -23,7 +23,6 @@ const BLockFeatureTwo = () => {
                            </div>
                         </div>
                         <div className="d-inline-flex flex-wrap align-items-center mt-70 xl-mt-50 lg-mt-30">
-                           <Link href="/about_us_01" className="btn-five md rounded-0 mt-20 me-5"><span>More Details</span></Link>
                            <Link href="/contact" className="btn-three mt-20"><span>Request a Callback</span> <i className="fa-light fa-arrow-right-long"></i></Link>
                         </div>
                      </div>

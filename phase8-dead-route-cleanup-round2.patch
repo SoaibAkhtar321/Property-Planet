@@ -1,0 +1,1350 @@
+diff --git a/src/app/about_us_01/page.tsx b/src/app/about_us_01/page.tsx
+deleted file mode 100644
+index 1be22ed..0000000
+--- a/src/app/about_us_01/page.tsx
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import AboutUsOne from "@/components/inner-pages/about-us/about-us-one";
+-import Wrapper from "@/layouts/Wrapper";
+-
+-export const metadata = {
+-   title: "Property Planet — About Us One",
+-};
+-const index = () => {
+-   return (
+-      <Wrapper>
+-         <AboutUsOne />
+-      </Wrapper>
+-   )
+-}
+-
+-export default index
+\ No newline at end of file
+diff --git a/src/app/blog_01/page.tsx b/src/app/blog_01/page.tsx
+deleted file mode 100644
+index b6e227a..0000000
+--- a/src/app/blog_01/page.tsx
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import BlogOne from "@/components/blogs/blog-one";
+-import Wrapper from "@/layouts/Wrapper";
+-
+-export const metadata = {
+-   title: "Property Planet — Blog One",
+-};
+-const index = () => {
+-   return (
+-      <Wrapper>
+-         <BlogOne />
+-      </Wrapper>
+-   )
+-}
+-
+-export default index
+\ No newline at end of file
+diff --git a/src/app/blog_02/page.tsx b/src/app/blog_02/page.tsx
+deleted file mode 100644
+index 21b9532..0000000
+--- a/src/app/blog_02/page.tsx
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import BlogTwo from "@/components/blogs/blog-two";
+-import Wrapper from "@/layouts/Wrapper";
+-
+-export const metadata = {
+-   title: "Property Planet — Blog Two",
+-};
+-const index = () => {
+-   return (
+-      <Wrapper>
+-         <BlogTwo />
+-      </Wrapper>
+-   )
+-}
+-
+-export default index
+\ No newline at end of file
+diff --git a/src/app/blog_details/page.tsx b/src/app/blog_details/page.tsx
+deleted file mode 100644
+index 8602201..0000000
+--- a/src/app/blog_details/page.tsx
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import BlogDetails from "@/components/blogs/blog-details";
+-import Wrapper from "@/layouts/Wrapper";
+-
+-export const metadata = {
+-   title: "Property Planet — Blog Details",
+-};
+-const index = () => {
+-   return (
+-      <Wrapper>
+-         <BlogDetails />
+-      </Wrapper>
+-   )
+-}
+-
+-export default index
+\ No newline at end of file
+diff --git a/src/components/blogs/blog-details/BlogDetailsArea.tsx b/src/components/blogs/blog-details/BlogDetailsArea.tsx
+deleted file mode 100644
+index 518afaa..0000000
+--- a/src/components/blogs/blog-details/BlogDetailsArea.tsx
++++ /dev/null
+@@ -1,109 +0,0 @@
+-"use client"
+-import Image from "next/image";
+-import Link from "next/link";
+-import BlogComment from "../common-blog/BlogComment";
+-import BlogForm from "@/components/forms/BlogForm";
+-import BlogSidebar from "../common-blog/BlogSidebar";
+-
+-import blogDetailsIcon from "@/assets/images/icon/icon_67.svg";
+-import blogDetailsThumb_1 from "@/assets/images/blog/blog_img_16.jpg";
+-
+-interface ContentType {
+-   title_1: string;
+-   title_2: string;
+-   desc_1: JSX.Element;
+-   desc_2: JSX.Element;
+-   desc_3: JSX.Element;
+-   desc_4: JSX.Element;
+-   desc_5: JSX.Element;
+-   desc_6: JSX.Element;
+-   blog_details_list: string[];
+-   icon: string[];
+-}
+-
+-const content_data: ContentType = {
+-   title_1: "Print, publishing qui visual ux layout mockups.",
+-   title_2: "Easy Process for Buy an Apartments",
+-   desc_1: (<>Tomfoolery crikey bits and bobs brilliant bamboozled down the pub amongst brolly hanky panky, cack bonnet arse over tit burke bugger all mate bodge. cillum dolore fugiat pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui official deserunt mollit anim id est laborum.Suspendisse interdum consectetur libero id faucib nisl. Lacus vel facilisis volutpat est velit egestas.</>),
+-   desc_2: (<>Tempus imperdiet nulla malesuada pellentesque elit eget gravida cum. Sit amet ris nullam eget felis. Enim praesent elementum facilisis leo. Ultricies leo integer.</>),
+-   desc_3: (<>Quick solutions coupled with extraordinary nice performance—a recommendation that&apos;s great.</>),
+-   desc_4: (<>One touch of a red-hot stove is usually all we need to avoid that kind of discomfort in quis elit future. The same Duis aute irure dolor in reprehenderit .</>),
+-   desc_5: (<>One touch of a red-hot stove is usually all we need to avoid that kind of discomfort in quis future. The same Duis aute irure dolor in reprehenderit. sunt in culpa qui official deserunt mollit anim id avoid est laborum.</>),
+-   desc_6: (<>Tomfoolery crikey bits and bobs brilliant bamboozled down the pub amongst brolly hanky panky, cack bonnet arse over tit burke bugger all mate bodge. cillum dolore fugiat pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui official deserunt mollit anim Tempus imperdiet nulla malesuada pellentesque elit eget gravida cum. Sit amet ris nullam eget felis.</>),
+-   blog_details_list: ["Find the problem first", "Make research and find out the solution", "Finalize the solution & apply."],
+-   icon: ["fa-brands fa-whatsapp", "fa-brands fa-x-twitter", "fa-brands fa-instagram", "fa-brands fa-viber"]
+-}
+-
+-const { title_1, title_2, desc_1, desc_2, desc_3, desc_4, desc_5, desc_6, blog_details_list, icon } = content_data;
+-
+-const BlogDetailsArea = () => {
+-   return (
+-      <div className="blog-details border-top mt-130 xl-mt-100 pt-100 xl-pt-80 mb-150 xl-mb-100">
+-         <div className="container">
+-            <div className="row gx-xl-5">
+-               <div className="col-lg-8">
+-                  <div className="blog-post-meta mb-60 lg-mb-40">
+-                     <div className="post-info"><Link href="/blog_02">Rashed Kabir .</Link> 6 min</div>
+-                     <h3 className="blog-title">{title_1}</h3>
+-                  </div>
+-               </div>
+-            </div>
+-            <div className="row gx-xl-5">
+-               <div className="col-lg-8">
+-                  <article className="blog-post-meta">
+-                     <figure className="post-img position-relative m0"
+-                        style={{ backgroundImage: `url(/assets/images/blog/blog_img_11.jpg)` }}>
+-                        <div className="fw-500 date d-inline-block">17 SEP</div>
+-                     </figure>
+-                     <div className="post-data pt-50 md-pt-30">
+-                        <p>{desc_1}</p>
+-                        <p>{desc_2}</p>
+-                        <div className="quote-wrapper">
+-                           <div className="icon rounded-circle d-flex align-items-center justify-content-center m-auto">
+-                              <Image src={blogDetailsIcon} alt="" className="lazy-img" /></div>
+-                           <div className="row">
+-                              <div className="col-xxl-10 col-xl-11 col-lg-12 col-md-9 m-auto">
+-                                 <h4>{desc_3}</h4>
+-                              </div>
+-                           </div>
+-                           <h6>Ahmad Aljamal. <span>EGP</span></h6>
+-                        </div>
+-                        <h5>{title_2}</h5>
+-                        <p>{desc_4}</p>
+-                        <ul className="style-none list-item">
+-                           {blog_details_list.map((list, i) => (
+-                              <li key={i}>{list}</li>
+-                           ))}
+-                        </ul>
+-                        <p>{desc_5}</p>
+-                        <div className="img-meta"><Image src={blogDetailsThumb_1} alt="" className="lazy-img w-100" /></div>
+-                        <div className="img-caption">Buy or rent properties with no commission</div>
+-                        <p>{desc_6}</p>
+-                     </div>
+-                     <div className="bottom-widget d-sm-flex align-items-center justify-content-between">
+-                        <ul className="d-flex align-items-center tags style-none pt-20">
+-                           <li>Tag:</li>
+-                           <li><Link href="#">Apartments,</Link></li>
+-                           <li><Link href="#">loan,</Link></li>
+-                           <li><Link href="#">Sale</Link></li>
+-                        </ul>
+-                        <ul className="d-flex share-icon align-items-center style-none pt-20">
+-                           <li>Share:</li>
+-                           {icon.map((icon, index) => (
+-                              <li key={index}><Link href="#"><i className={icon}></i></Link></li>
+-                           ))}
+-                        </ul>
+-                     </div>
+-                  </article>
+-
+-                  <BlogComment />
+-                  <BlogForm />
+-               </div>
+-               <BlogSidebar style={true} />
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default BlogDetailsArea
+diff --git a/src/components/blogs/blog-details/index.tsx b/src/components/blogs/blog-details/index.tsx
+deleted file mode 100644
+index a9c99f7..0000000
+--- a/src/components/blogs/blog-details/index.tsx
++++ /dev/null
+@@ -1,17 +0,0 @@
+-import FooterFour from "@/layouts/footers/FooterFour"
+-import HeaderFour from "@/layouts/headers/HeaderFour"
+-import BlogDetailsArea from "./BlogDetailsArea"
+-import FancyBanner from "@/components/common/FancyBanner"
+-
+-const BlogDetails = () => {
+-   return (
+-      <>
+-         <HeaderFour />
+-         <BlogDetailsArea />
+-         <FancyBanner />
+-         <FooterFour />
+-      </>
+-   )
+-}
+-
+-export default BlogDetails
+diff --git a/src/components/homes/home-seven/HeroBanner.tsx b/src/components/homes/home-seven/HeroBanner.tsx
+deleted file mode 100644
+index 3449464..0000000
+--- a/src/components/homes/home-seven/HeroBanner.tsx
++++ /dev/null
+@@ -1,30 +0,0 @@
+-import DropdownSeven from "@/components/search-dropdown/home-dropdown/DropdownSeven"
+-
+-const HeroBanner = () => {
+-   return (
+-      <div className="hero-banner-seven position-relative mt-120 lg-mt-100">
+-         <div id="" className="h-100">
+-            <div className="google-map-home" id="contact-google-map" data-map-lat="40.925372" data-map-lng="-74.276544" data-icon-path="/assetes/images/home2/map-icon.png" data-map-title="Awesome Place" data-map-zoom="12"></div>
+-            <iframe
+-               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d83088.3595592641!2d-105.54557276330914!3d39.29302101722867!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x874014749b1856b7%3A0xc75483314990a7ff!2sColorado%2C%20USA!5e0!3m2!1sen!2sbd!4v1699764452737!5m2!1sen!2sbd"
+-               width="600" height="450" style={{ border: 0 }} allowFullScreen={true} loading="lazy"
+-               referrerPolicy="no-referrer-when-downgrade" className="w-100 h-100">
+-            </iframe>
+-         </div>
+-
+-         <div className="search-wrapper-overlay">
+-            <div className="container container-large">
+-               <div className="position-relative">
+-                  <div className="row">
+-                     <div className="col-12">
+-                        <DropdownSeven />
+-                     </div>
+-                  </div>
+-               </div>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default HeroBanner
+diff --git a/src/components/homes/home-seven/VideoBanner.tsx b/src/components/homes/home-seven/VideoBanner.tsx
+deleted file mode 100644
+index cc3ebd1..0000000
+--- a/src/components/homes/home-seven/VideoBanner.tsx
++++ /dev/null
+@@ -1,31 +0,0 @@
+-"use client"
+-import { useState } from "react";
+-import VideoPopup from "@/modals/VideoPopup";
+-
+-const VideoBanner = () => {
+-
+-   const [isVideoOpen, setIsVideoOpen] = useState(false);
+-
+-   return (
+-      <>
+-         <div className="video-banner-one mt-150 xl-mt-120 md-mt-80">
+-            <div className="container">
+-               <div className="bg-wrapper position-relative z-1 overflow-hidden d-flex align-items-center justify-content-center" style={{ backgroundImage: `url(/assets/images/media/img_50.jpg)` }}>
+-                  <a onClick={() => setIsVideoOpen(true)} style={{ cursor: "pointer" }} className="fancybox video-icon d-flex align-items-center justify-content-center rounded-circle tran3s">
+-                     <i className="fa-solid fa-play"></i>
+-                  </a>
+-               </div>
+-            </div>
+-         </div>
+-         {/* video modal start */}
+-         <VideoPopup
+-            isVideoOpen={isVideoOpen}
+-            setIsVideoOpen={setIsVideoOpen}
+-            videoId={"tUP5S4YdEJo"}
+-         />
+-         {/* video modal end */}
+-      </>
+-   )
+-}
+-
+-export default VideoBanner
+diff --git a/src/components/homes/home-seven/index.tsx b/src/components/homes/home-seven/index.tsx
+deleted file mode 100644
+index 13680d1..0000000
+--- a/src/components/homes/home-seven/index.tsx
++++ /dev/null
+@@ -1,33 +0,0 @@
+-import FooterFour from "@/layouts/footers/FooterFour"
+-import FancyBanner from "../home-four/FancyBanner"
+-import BLockFeatureOne from "../home-one/BLockFeatureOne"
+-import BLockFeatureThree from "../home-one/BLockFeatureThree"
+-import FancyBannerOne from "../home-one/FancyBannerOne"
+-import Category from "../home-three/Category"
+-import PropertyTwo from "../home-three/PropertyTwo"
+-import Blog from "../home-two/Blog"
+-import HeroBanner from "./HeroBanner"
+-import VideoBanner from "./VideoBanner"
+-import Feedback from "../home-three/Feedback"
+-import HeaderOne from "@/layouts/headers/HeaderOne"
+-
+-const HomeSeven = () => {
+-   return (
+-      <>
+-         <HeaderOne style={true} />
+-         <HeroBanner />
+-         <Category style={true} />
+-         <BLockFeatureOne />
+-         <VideoBanner />
+-         <BLockFeatureThree />
+-         <PropertyTwo style={true} />
+-         <FancyBannerOne style={false} />
+-         <Feedback style={true} />
+-         <Blog style={true} />
+-         <FancyBanner style={true} />
+-         <FooterFour />
+-      </>
+-   )
+-}
+-
+-export default HomeSeven
+diff --git a/src/components/homes/home-six/BLockFeatureTwo.tsx b/src/components/homes/home-six/BLockFeatureTwo.tsx
+index 4fd1fcd..8056181 100644
+--- a/src/components/homes/home-six/BLockFeatureTwo.tsx
++++ b/src/components/homes/home-six/BLockFeatureTwo.tsx
+@@ -23,7 +23,6 @@ const BLockFeatureTwo = () => {
+                            </div>
+                         </div>
+                         <div className="d-inline-flex flex-wrap align-items-center mt-70 xl-mt-50 lg-mt-30">
+-                           <Link href="/about_us_01" className="btn-five md rounded-0 mt-20 me-5"><span>More Details</span></Link>
+                            <Link href="/contact" className="btn-three mt-20"><span>Request a Callback</span> <i className="fa-light fa-arrow-right-long"></i></Link>
+                         </div>
+                      </div>
+diff --git a/src/components/homes/home-three/BLockFeatureOne.tsx b/src/components/homes/home-three/BLockFeatureOne.tsx
+deleted file mode 100644
+index e785529..0000000
+--- a/src/components/homes/home-three/BLockFeatureOne.tsx
++++ /dev/null
+@@ -1,45 +0,0 @@
+-import feature_data from "@/data/home-data/FeatureData"
+-import Image from "next/image"
+-import Link from "next/link"
+-
+-import titleShape from "@/assets/images/shape/shape_37.svg"
+-
+-const icon: string[] = ["fa-sharp fa-solid fa-star", "fa-sharp fa-solid fa-star", "fa-sharp fa-solid fa-star", "fa-sharp fa-solid fa-star", "fa-sharp fa-solid fa-star",]
+-
+-const BLockFeatureOne = () => {
+-   return (
+-      <div className="block-feature-seven position-relative z-1 mt-120 xl-mt-100">
+-         <div className="container container-large">
+-            <div className="position-relative">
+-               <div className="text-center mb-30 wow fadeInUp">
+-                  <div className="title-one mb-30 lg-mb-20">
+-                     <h2 className="font-garamond star-shape">How our clients get <em>benefited</em> by us <span className="star-shape"><Image src={titleShape} alt="" className="lazy-img" /></span></h2>
+-                     <p className="fs-24 mt-xs">“Outstanding service, bought my dream home quickly!”</p>
+-                  </div>
+-                  <ul className="rating style-none d-flex justify-content-center">
+-                     {icon.map((icon, i) => (
+-                        <li key={i}><i className={icon}></i></li>
+-                     ))}
+-                     <li><span className="color-dark fw-500">4.7</span> (18k Reviews)</li>
+-                  </ul>
+-               </div>
+-
+-               <div className="row justify-content-center gx-xxl-5">
+-                  {feature_data.filter((items) => items.page === "home_1_feature_1").map((item) => (
+-                     <div key={item.id} className="col-lg-4 col-md-6 mt-30 d-flex wow fadeInUp" data-wow-delay={item.data_delay_time}>
+-                        <div className="card-style-five text-center d-inline-flex flex-column align-items-center tran3s h-100 w-100">
+-                           <Image src={item.icon ? item.icon : ""} alt="" className="lazy-img icon" />
+-                           <h5 className="mt-35 mb-20">{item.title}</h5>
+-                           <p className="fs-22 mb-50">{item.desc}</p>
+-                           <Link href="listing_10" className="btn-twelve mt-auto">{item.btn}</Link>
+-                        </div>
+-                     </div>
+-                  ))}
+-               </div>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default BLockFeatureOne
+diff --git a/src/components/homes/home-three/BLockFeatureTwo.tsx b/src/components/homes/home-three/BLockFeatureTwo.tsx
+deleted file mode 100644
+index e5864aa..0000000
+--- a/src/components/homes/home-three/BLockFeatureTwo.tsx
++++ /dev/null
+@@ -1,83 +0,0 @@
+-import Image from "next/image"
+-import Link from "next/link"
+-import Count from "@/components/common/Count"
+-import CardStyleTwo from "@/components/common/CardStyleTwo"
+-
+-import featureimg_1 from "@/assets/images/shape/shape_37.svg"
+-import featureimg_2 from "@/assets/images/media/img_29.jpg"
+-import featureimg_3 from "@/assets/images/assets/screen_03.jpg"
+-import featureimg_4 from "@/assets/images/shape/shape_40.svg"
+-import featureimg_5 from "@/assets/images/media/img_30.jpg"
+-import featureimg_6 from "@/assets/images/assets/screen_04.png"
+-
+-const BLockFeatureTwo = () => {
+-   return (
+-      <div className="block-feature-eight position-relative z-1 mt-170 xl-mt-140 lg-mt-120">
+-         <div className="container container-large">
+-            <div className="position-relative">
+-               <div className="row align-items-xl-end">
+-                  <div className="col-xl-7 col-lg-6">
+-                     <div className="pe-xl-5 me-xxl-3 wow fadeInLeft">
+-                        <div className="title-one pe-xl-5">
+-                           <h2 className="font-garamond">Explore & Find your <em>Dream</em> home <span className="star-shape"><Image src={featureimg_1} alt="" className="lazy-img" /></span></h2>
+-                        </div>
+-
+-                        <div className="row gx-xl-4 align-items-end">
+-                           <div className="col-7">
+-                              <div className="media-block position-relative z-1">
+-                                 <Image src={featureimg_2} alt="" className="lazy-img main-img w-100" />
+-                                 <Image src={featureimg_3} alt="" className="lazy-img shapes screen_01" />
+-                                 <Image src={featureimg_4} alt="" className="lazy-img shapes shape_01" />
+-                              </div>
+-                           </div>
+-                           <div className="col-5">
+-                              <div className="media-block position-relative z-1">
+-                                 <Image src={featureimg_5} alt="" className="lazy-img main-img w-100" />
+-                                 <Image src={featureimg_6} alt="" className="lazy-img shapes screen_02" />
+-                              </div>
+-                           </div>
+-                        </div>
+-                     </div>
+-                  </div>
+-                  
+-                  <div className="col-xl-5 col-lg-6">
+-                     <div className="block-two ps-xxl-5 md-mt-100">
+-                        <div className="bg-wrapper wow fadeInRight">
+-                           <p className="fs-24 fst-italic pe-xl-5">“Your premier partner in real estate. Transforming properties into dreams. Let us guide you home with expertise.”</p>
+-                           <div className="counter-wrapper pb-40 mt-45 lg-mt-20 mb-60 lg-mb-20">
+-                              <div className="row">
+-                                 <div className="col-6">
+-                                    <div className="counter-block-one mt-20">
+-                                       <div className="main-count fw-500 color-dark">$<span className="counter"><Count number={7} /></span>bil+</div>
+-                                       <span>Project Handover</span>
+-                                    </div>
+-                                 </div>
+-                                 <div className="col-6">
+-                                    <div className="counter-block-one mt-20">
+-                                       <div className="main-count fw-500 color-dark"><span className="counter"><Count number={1.9} /></span>mil+</div>
+-                                       <span>Happy Customers</span>
+-                                    </div>
+-                                 </div>
+-                              </div>
+-                           </div>
+-                           <ul className="list-style-one fs-22 color-dark style-none">
+-                              <li>Loan &amp; low Interest facility</li>
+-                              <li>100k+ Property Listing  added & updated</li>
+-                              <li>Expert agent consultation</li>
+-                           </ul>
+-                           <div className="mt-70 lg-mt-50">
+-                              <Link href="/about_us_02" className="btn-five md"><span>Learn More</span> <i className="bi bi-arrow-up-right"></i></Link>
+-                           </div>
+-                        </div>
+-                     </div>
+-                  </div>
+-               </div>
+-
+-               <CardStyleTwo />
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default BLockFeatureTwo
+diff --git a/src/components/homes/home-three/Brand.tsx b/src/components/homes/home-three/Brand.tsx
+deleted file mode 100644
+index 5b1a01b..0000000
+--- a/src/components/homes/home-three/Brand.tsx
++++ /dev/null
+@@ -1,18 +0,0 @@
+-import BrandTwo from '@/components/common/brand/BrandTwo'
+-
+-const Brand = () => {
+-   return (
+-      <div className="partner-section-one mt-45">
+-         <div className="container">
+-            <h6 className="text-center fs-20 mb-50 lg-mb-30">100+ Company trusted by us.</h6>
+-         </div>
+-         <div className="bg-wrapper bg-white">
+-            <div className="container">
+-               <BrandTwo />
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default Brand
+diff --git a/src/components/homes/home-three/Category.tsx b/src/components/homes/home-three/Category.tsx
+deleted file mode 100644
+index ee185d5..0000000
+--- a/src/components/homes/home-three/Category.tsx
++++ /dev/null
+@@ -1,32 +0,0 @@
+-import category_data from "@/data/home-data/CategoryData"
+-import Image from "next/image"
+-import Link from "next/link"
+-
+-const Category = ({ style }: any) => {
+-   return (
+-      <div className={`category-section-one ${style ? "grey-bg pt-130 pb-110 xl-pb-80" : "mt-65"}`}>
+-         <div className="container container-large">
+-            <div className={`position-relative z-1 ${style ? "" : "border-bottom pb-65 xl-pb-40"}`}>
+-               <h4 className="mb-50 xl-mb-30 text-center text-md-start">Popular Categories.</h4>
+-               <div className="wrapper">
+-                  <ul className="d-flex flex-wrap justify-content-center justify-content-xxl-between style-none">
+-                     {category_data.filter((items) => items.page === "home_3").map((item) => (
+-                        <li key={item.id}>
+-                           <Link href="/listing_01" className="d-flex align-items-center fw-500 tran3s">
+-                              <Image src={item.icon ? item.icon : ""} alt="" className="lazy-img invert" />
+-                              <span>{item.text}</span>
+-                           </Link>
+-                        </li>
+-                     ))}
+-                  </ul>
+-               </div>
+-               <div className="section-btn text-center sm-mt-40">
+-                  <Link href="/listing_08" className="btn-eleven"><span>See all categories</span> <i className="bi bi-chevron-right"></i></Link>
+-               </div>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default Category
+diff --git a/src/components/homes/home-three/FancyBannerOne.tsx b/src/components/homes/home-three/FancyBannerOne.tsx
+deleted file mode 100644
+index 3c9fa76..0000000
+--- a/src/components/homes/home-three/FancyBannerOne.tsx
++++ /dev/null
+@@ -1,141 +0,0 @@
+-import Image, { StaticImageData } from "next/image"
+-
+-import titleShape from "@/assets/images/shape/shape_37.svg";
+-import fancyImg_1 from "@/assets/images/assets/map_01.svg";
+-
+-import flag_1 from "@/assets/images/logo/flag_01.png";
+-import flag_2 from "@/assets/images/logo/flag_02.png";
+-import flag_3 from "@/assets/images/logo/flag_03.png";
+-import flag_4 from "@/assets/images/logo/flag_04.png";
+-import flag_5 from "@/assets/images/logo/flag_05.png";
+-import flag_6 from "@/assets/images/logo/flag_06.png";
+-
+-interface DataType {
+-   id: number;
+-   flag: StaticImageData;
+-   title: string;
+-   desc: string;
+-}[]
+-
+-const location_data: DataType[] = [
+-   {
+-      id: 1,
+-      flag: flag_1,
+-      title: "United States",
+-      desc: "32 link road, Mega Mall. California, USA",
+-   },
+-   {
+-      id: 2,
+-      flag: flag_2,
+-      title: "Brazil",
+-      desc: "32 link road, Mega Mall. California, USA",
+-   },
+-   {
+-      id: 3,
+-      flag: flag_3,
+-      title: "Russia",
+-      desc: "32 link road, Mega Mall. California, USA",
+-   },
+-   {
+-      id: 4,
+-      flag: flag_4,
+-      title: "Congo",
+-      desc: "32 link road, Mega Mall. California, USA",
+-   },
+-   {
+-      id: 5,
+-      flag: flag_5,
+-      title: "India",
+-      desc: "32 link road, Mega Mall. California, USA",
+-   },
+-   {
+-      id: 6,
+-      flag: flag_6,
+-      title: "Australia",
+-      desc: "32 link road, Mega Mall. California, USA",
+-   },
+-]
+-
+-interface CountryDataType {
+-   title: string;
+-   class_name?: string;
+-   country: string[];
+-}[]
+-
+-const country_data: CountryDataType[] = [
+-   {
+-      title: "Asia Pacific",
+-      class_name: "d-flex flex-wrap",
+-      country: ["Australia", "Dubai", "India", "Singapore", "Hong Kong"],
+-   },
+-   {
+-      title: "South America",
+-      country: ["United States", "Canada", "Argentina",],
+-   },
+-   {
+-      title: "European",
+-      class_name: "d-flex flex-wrap",
+-      country: ["Germany", "France", "Italy", "Netherlands", "Switzerland", "Spain"],
+-   },
+-   {
+-      title: "South America",
+-      country: ["Morocco", "South Africa"],
+-   },
+-]
+-
+-const FancyBannerOne = () => {
+-   return (
+-      <div className="fancy-banner-six wow fadeInUp mt-160 xl-mt-140 lg-mt-100">
+-         <div className="container container-large">
+-            <div className="bg-wrapper position-relative z-1 pt-85 md-pt-50 pb-140 md-pb-100 ps-4 pe-4">
+-               <div className="row">
+-                  <div className="col-xl-7 col-lg-8 m-auto">
+-                     <div className="title-one text-center pe-xxl-2 ps-xxl-2">
+-                        <h2 className="font-garamond text-white">Where you are, You will find us every <em>where <span>easily</span></em> <span className="star-shape"><Image src={titleShape} alt="" className="lazy-img" /></span></h2>
+-                     </div>
+-                  </div>
+-               </div>
+-               <div className="map-wrapper position-relative me-auto ms-auto mt-100 xl-mt-50 mb-50">
+-                  <Image src={fancyImg_1} alt="" className="lazy-img w-100" />
+-                  {location_data.map((item) => (
+-                     <div key={item.id} className="location-pin">
+-                        <div className="dot-marker rounded-circle"></div>
+-                        <div className="map-info tran3s d-flex">
+-                           <Image src={item.flag} alt="" className="lazy-img flag" />
+-                           <div className="info">
+-                              <h6>{item.title}</h6>
+-                              <span>{item.desc}</span>
+-                           </div>
+-                        </div>
+-                     </div>
+-                  ))}
+-               </div>
+-
+-               <div className="country-list d-flex flex-wrap">
+-                  {country_data.map((item, i) => (
+-                     <div key={i} className="list-block">
+-                        <div className="title">{item.title}</div>
+-                        <ul className="style-none d-flex flex-wrap">
+-                           {item.country.map((country, index) => (<li key={index}>{country}</li>))}
+-                        </ul>
+-                     </div>
+-                  ))}
+-               </div>
+-
+-               <div className="text-slide-wrapper">
+-						<div className="marquee">
+-						  <p>
+-							Dubai . America . Canada .
+-						  </p>
+-						  <p>
+-							Dubai . America . Canada .
+-						  </p>
+-						</div>
+-					</div>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default FancyBannerOne
+diff --git a/src/components/homes/home-three/FancyBannerTwo.tsx b/src/components/homes/home-three/FancyBannerTwo.tsx
+deleted file mode 100644
+index 6cc7e94..0000000
+--- a/src/components/homes/home-three/FancyBannerTwo.tsx
++++ /dev/null
+@@ -1,27 +0,0 @@
+-import Image from 'next/image'
+-import Link from 'next/link'
+-
+-import fancyShape_1 from "@/assets/images/shape/shape_44.svg"
+-import fancyShape_2 from "@/assets/images/shape/shape_45.svg"
+-
+-const FancyBannerTwo = () => {
+-   return (
+-      <div className="fancy-banner-seven mt-110 xl-mt-80 mb-130 xl-mb-100 lg-mb-80">
+-         <div className="container container-large">
+-            <div className="bg-wrapper position-relative z-1 pt-85 lg-pt-70 pb-100 xl-pb-80 lg-pb-70">
+-               <div className="row">
+-                  <div className="col-xl-7 col-lg-8 col-md-10 m-auto text-center">
+-                     <h2 className="font-garamond text-white">Find the right home for your family</h2>
+-                     <p className="fs-24 text-white mt-30 mb-45 lg-mb-30">We’ve more than 745,000 apartments, place & plot.</p>
+-                     <Link href="/about_us_01" className="btn-two"><span>Get Started</span></Link>
+-                  </div>
+-               </div>
+-               <Image src={fancyShape_1} alt="" className="lazy-img shapes shape_01 wow fadeInLeft" data-wow-delay="0.2s" />
+-               <Image src={fancyShape_2} alt="" className="lazy-img shapes shape_02 wow fadeInRight" />
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default FancyBannerTwo
+diff --git a/src/components/homes/home-three/Feedback.tsx b/src/components/homes/home-three/Feedback.tsx
+deleted file mode 100644
+index f56bbe8..0000000
+--- a/src/components/homes/home-three/Feedback.tsx
++++ /dev/null
+@@ -1,105 +0,0 @@
+-"use client"
+-import Image from "next/image"
+-import { Rating } from 'react-simple-star-rating';
+-import feedback_data from "@/data/home-data/FeedbackData"
+-import Link from "next/link"
+-import Slider from "react-slick";
+-import { useRef } from "react";
+-
+-import titleShape_1 from "@/assets/images/shape/title_shape_01.svg"
+-import titleShape_2 from "@/assets/images/shape/shape_37.svg"
+-import feedbackShape_1 from "@/assets/images/shape/shape_42.svg"
+-import feedbackShape_2 from "@/assets/images/shape/shape_43.svg"
+-
+-const setting = {
+-   dots: false,
+-   arrows: false,
+-   centerPadding: '0px',
+-   slidesToShow: 3,
+-   slidesToScroll: 1,
+-   centerMode: true,
+-   autoplay: true,
+-   autoplaySpeed: 3000,
+-   responsive: [
+-      {
+-         breakpoint: 1200,
+-         settings: {
+-            slidesToShow: 2
+-         }
+-      },
+-      {
+-         breakpoint: 768,
+-         settings: {
+-            slidesToShow: 1
+-         }
+-      }
+-   ]
+-}
+-
+-const Feedback = ({ style }: any) => {
+-
+-   const sliderRef = useRef<Slider | null>(null);
+-
+-   const handlePrevClick = () => {
+-      if (sliderRef.current) {
+-         sliderRef.current.slickPrev();
+-      }
+-   };
+-
+-   const handleNextClick = () => {
+-      if (sliderRef.current) {
+-         sliderRef.current.slickNext();
+-      }
+-   };
+-
+-   return (
+-      <div className={`feedback-section-four position-relative overflow-hidden z-1 pt-150 lg-pt-120 ${style ? "" : "pb-110 lg-pb-80"}`}>
+-         <div className={`container ${style ? "" : "container-large"}`}>
+-            <div className="position-relative z-1">
+-               <div className="row">
+-                  <div className="col-xl-6 col-lg-8">
+-                     <div className="title-one pe-xxl-5 mb-75 xl-mb-50 wow fadeInUp">
+-                        {style ? <h3>Client <span>Feedback <Image src={titleShape_1} alt="" className="lazy-img" /></span></h3> :
+-                           <h2 className="font-garamond">Don’t Trust Us, Trust <em>our clients</em> <span className="star-shape"><Image src={titleShape_2} alt="" className="lazy-img" /></span></h2>}
+-                        <p className={`fs-20 ${style ? "mt-xs" : "m0"}`}>Client satisfaction speaks louder than our words. Hear from them.</p>
+-                     </div>
+-                  </div>
+-               </div>
+-
+-               <Slider {...setting} ref={sliderRef} className="feedback-slider-two">
+-                  {feedback_data.filter((items) => items.page === "home_3").map((item) => (
+-                     <div key={item.id} className="item">
+-                        <div className={`feedback-block-four ${style ? "ps-lg-4 pe-lg-4" : ""}`}>
+-                           <div className="d-flex align-items-center">
+-                              <Image src={item.thumb} alt="" className="rounded-circle avatar" />
+-                              <div className="ps-3">
+-                                 <h6 className="fs-20 m0">{item.title}</h6>
+-                                 <span className="fs-16">{item.country}</span>
+-                              </div>
+-                           </div>
+-                           <blockquote>&quot;{item.desc}&quot;</blockquote>
+-                           <ul className="rating style-none d-flex">
+-                              <li><Rating initialValue={5} size={20} readonly={true} /></li>
+-                           </ul>
+-                           <Image src={item.quote_icon} alt="" className="icon" />
+-                        </div>
+-                     </div>
+-                  ))}
+-               </Slider>
+-
+-               <ul className="slider-arrows slick-arrow-two d-flex justify-content-center style-none md-mt-30">
+-                  <li onClick={handlePrevClick} className="prev_c slick-arrow"><i className="bi bi-arrow-left"></i></li>
+-                  <li onClick={handleNextClick} className="next_c slick-arrow"><i className="bi bi-arrow-right"></i></li>
+-               </ul>
+-               <div className="section-btn text-center md-mt-30">
+-                  <Link href="#" className="btn-eleven fst-italic"><span>See all Feedback</span></Link>
+-               </div>
+-            </div>
+-         </div>
+-         {!style && <><Image src={feedbackShape_1} alt="" className="lazy-img shapes shape_01 wow fadeInDown" data-wow-delay="0.2s" />
+-            <Image src={feedbackShape_2} alt="" className="lazy-img shapes shape_02 wow fadeInUp" /></>}
+-      </div>
+-   )
+-}
+-
+-export default Feedback
+diff --git a/src/components/homes/home-three/HeroBanner.tsx b/src/components/homes/home-three/HeroBanner.tsx
+deleted file mode 100644
+index 97436b2..0000000
+--- a/src/components/homes/home-three/HeroBanner.tsx
++++ /dev/null
+@@ -1,52 +0,0 @@
+-"use client"
+-import Image from "next/image";
+-import titleShape from "@/assets/images/shape/shape_34.svg";
+-import bannerShape_1 from "@/assets/images/shape/shape_35.svg";
+-import bannerShape_2 from "@/assets/images/shape/shape_36.svg";
+-import Slider from "react-slick";
+-import DropdownOne from "@/components/search-dropdown/home-dropdown/DropdownOne";
+-
+-const setting = {
+-   dots: false,
+-   arrows: false,
+-   centerPadding: '0px',
+-   slidesToShow: 1,
+-   slidesToScroll: 1,
+-   autoplay: true,
+-   fade: true,
+-   autoplaySpeed: 7000,
+-}
+-
+-const HeroBanner = () => {
+-   return (
+-      <div className="hero-banner-three position-relative z-1 pt-130 lg-pt-100 pb-170 xl-pb-130 lg-pb-100">
+-         <Slider {...setting} className="hero-slider-one m0">
+-            <div className="item m0"><div className="hero-img" style={{ backgroundImage: `url(/assets/images/media/img_26.jpg)` }}></div></div>
+-            <div className="item m0"><div className="hero-img" style={{ backgroundImage: `url(/assets/images/media/img_27.jpg)` }}></div></div>
+-            <div className="item m0"><div className="hero-img" style={{ backgroundImage: `url(/assets/images/media/img_28.jpg)` }}></div></div>
+-         </Slider>
+-
+-         <div className="container position-relative z-2">
+-            <div className="row">
+-               <div className="col-lg-10 m-auto">
+-                  <h1 className="hero-heading text-center text-white font-garamond fw-500 wow fadeInUp"><span><Image src={titleShape} alt="" className="lazy-img" /> Find the Right</span> <br /> Home for Your Family</h1>
+-                  <p className="fs-24 text-white text-center pt-35 md-pt-20 pb-55 lg-pb-40 wow fadeInUp" data-wow-delay="0.1s">We’ve more than 745,000 apartments, place & plot.</p>
+-               </div>
+-            </div>
+-				<div className="row">
+-					<div className="col-xxl-10 m-auto">
+-						<div className="search-wrapper-one layout-one position-relative wow fadeInUp" data-wow-delay="0.2s">
+-							<div className="bg-wrapper">
+-                        <DropdownOne style={true} />
+-                     </div>
+-                  </div>
+-               </div>
+-            </div>
+-         </div>
+-         <Image src={bannerShape_1} alt="" className="lazy-img shapes shape_01" />
+-         <Image src={bannerShape_2} alt="" className="lazy-img shapes shape_02" />
+-      </div>
+-   )
+-}
+-
+-export default HeroBanner
+diff --git a/src/components/homes/home-three/PropertyOne.tsx b/src/components/homes/home-three/PropertyOne.tsx
+deleted file mode 100644
+index f3df023..0000000
+--- a/src/components/homes/home-three/PropertyOne.tsx
++++ /dev/null
+@@ -1,122 +0,0 @@
+-import Link from "next/link"
+-import Image from "next/image"
+-
+-import lineShape from "@/assets/images/shape/shape_37.svg";
+-
+-interface DataType {
+-   id: number;
+-   tag: string;
+-   title: string;
+-   address: string;
+-   property_info?: JSX.Element[];
+-   icon?: string[];
+-   item_bg_img:string;
+-   class_name?:string;
+-}
+-
+-const property_data: DataType[] = [
+-   {
+-      id: 1,
+-      tag: "FOR SELL",
+-      title: "Super luxury duplex orkit villa.",
+-      address: "Mirpur 10, Stadium dhaka 1210",
+-      property_info: [(<><span>2137</span> sqft</>), (<><span>03</span> beds</>), (<><span>01</span> kitchen</>), (<><span>02</span> baths</>),],
+-      icon: ["heart", "bookmark", "circle-plus"],
+-      item_bg_img:"property-item-1"
+-   },
+-   {
+-      id: 2,
+-      tag: "FOR SELL",
+-      title: "Swimming Pool Villa",
+-      address: "127 green road, California, USA",
+-      item_bg_img:"property-item-2",
+-      class_name:"md-mt-40",
+-   },
+-   {
+-      id: 3,
+-      tag: "FOR Rent",
+-      title: "Modern Duplex",
+-      address: "Twin tower, 32 street, Florida",
+-      item_bg_img:"property-item-3",
+-      class_name:"mt-40",
+-   },
+-]
+-
+-const PropertyOne = () => {
+-   return (
+-      <div className="property-listing-three position-relative z-1 mt-170 xl-mt-140 lg-mt-120">
+-         <div className="container container-large">
+-            <div className="position-relative">
+-               <div className="title-one mb-60 lg-mb-40 wow fadeInUp">
+-                  <h2 className="font-garamond star-shape">Featured <em>Listing</em> <span className="star-shape"><Image src={lineShape} alt="" className="lazy-img" /></span></h2>
+-                  <p className="fs-22 m0">Explore featured properties for sale.</p>
+-               </div>
+-
+-               <div className="row gx-xxl-5">
+-                  {property_data.slice(0, 1).map((item) => (
+-                     <div key={item.id} className="col-lg-8 d-flex">
+-                        <div className="listing-card-three w-100 h-100 position-relative z-1 wow fadeInUp" style={{ backgroundImage: `url(/assets/images/listing/img_12.jpg)` }}>
+-                           <div className="w-100 h-100 d-flex flex-column">
+-                              <div className="tag fw-500 text-uppercase">{item.tag}</div>
+-                              <div className="mt-100 mt-sm-auto wrapper d-flex flex-wrap justify-content-between align-items-center">
+-                                 <div className="property-name h-100">
+-                                    <h5 className="text-white mb-15">{item.title}</h5>
+-                                    <p className="m0 text-white">{item.address}</p>
+-                                 </div>
+-                                 <div className="property-info h-100">
+-                                    <ul className="style-none feature d-flex flex-wrap align-items-center justify-content-between pb-5">
+-                                       {item.property_info?.map((list, i) => (
+-                                          <li key={i} className="d-flex align-items-center">
+-                                             <div className="fs-16">{list}</div>
+-                                          </li>
+-                                       ))}
+-                                    </ul>
+-                                    <div className="d-sm-flex justify-content-between align-items-center mt-10">
+-                                       <ul className="style-none d-flex action-icons">
+-                                          {item.icon?.map((icon, index) => (
+-                                             <li key={index}><Link href="#"><i className={`fa-light fa-${icon}`}></i></Link></li>
+-                                          ))}
+-                                       </ul>
+-                                       <Link href="/listing_details_05" className="btn-ten xs-mt-20"><span>Full Details</span> <i className="bi bi-arrow-up-right"></i></Link>
+-                                    </div>
+-                                 </div>
+-                              </div>
+-                           </div>
+-                        </div>
+-                     </div>
+-                  ))}
+-
+-                  <div className="col-lg-4 d-flex">
+-                     <div className="w-100 h-100">
+-                        <div className="row h-100">
+-                           {property_data.slice(1, 3).map((item) => (
+-                              <div key={item.id} className="col-lg-12 col-md-6">
+-                                 <div className={`listing-card-two w-100 position-relative z-1 ${item.class_name} wow fadeInUp ${item.item_bg_img}`}>
+-                                    <div className="w-100 h-100 d-flex flex-column">
+-                                       <div className="tag fw-500 text-uppercase">{item.tag}</div>
+-                                       <div className="mt-auto d-lg-flex justify-content-between align-items-center">
+-                                          <div className="md-mb-20">
+-                                             <h5 className="text-white">{item.title}</h5>
+-                                             <p className="m0 text-white">{item.address}</p>
+-                                          </div>
+-                                          <Link href="/listing_details_05" className="btn-four rounded-circle inverse stretched-link"><i className="bi bi-arrow-up-right"></i></Link>
+-                                       </div>
+-                                    </div>
+-                                 </div>
+-                              </div>
+-                           ))}
+-                        </div>
+-                     </div>
+-                  </div>
+-               </div>
+-
+-               <div className="section-btn text-center md-mt-60">
+-                  <Link href="/listing_04" className="btn-five md"><span>Explore All</span> <i className="bi bi-arrow-up-right"></i></Link>
+-               </div>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default PropertyOne
+diff --git a/src/components/homes/home-three/PropertyTwo.tsx b/src/components/homes/home-three/PropertyTwo.tsx
+deleted file mode 100644
+index 6027691..0000000
+--- a/src/components/homes/home-three/PropertyTwo.tsx
++++ /dev/null
+@@ -1,136 +0,0 @@
+-"use client"
+-import property_data from "@/data/home-data/PropertyData"
+-import Image from "next/image"
+-import Link from "next/link"
+-import { useRef } from "react"
+-import Slider from "react-slick"
+-import Fancybox from "@/components/common/Fancybox"
+-
+-import propertyShape_1 from "@/assets/images/shape/shape_37.svg"
+-import propertyShape_2 from "@/assets/images/shape/shape_38.svg"
+-import propertyShape_3 from "@/assets/images/shape/shape_39.svg"
+-
+-const setting = {
+-   dots: false,
+-   arrows: false,
+-   centerPadding: '0px',
+-   slidesToShow: 4,
+-   slidesToScroll: 4,
+-   autoplay: true,
+-   autoplaySpeed: 3000,
+-   responsive: [
+-      {
+-         breakpoint: 1400,
+-         settings: {
+-            slidesToShow: 3
+-         }
+-      },
+-      {
+-         breakpoint: 992,
+-         settings: {
+-            slidesToShow: 2
+-         }
+-      },
+-      {
+-         breakpoint: 768,
+-         settings: {
+-            slidesToShow: 1
+-         }
+-      }
+-   ]
+-}
+-
+-const PropertyTwo = ({ style }: any) => {
+-
+-   const sliderRef = useRef<Slider | null>(null);
+-
+-   const handlePrevClick = () => {
+-      if (sliderRef.current) {
+-         sliderRef.current.slickPrev();
+-      }
+-   };
+-
+-   const handleNextClick = () => {
+-      if (sliderRef.current) {
+-         sliderRef.current.slickNext();
+-      }
+-   };
+-
+-   return (
+-      <div className="property-listing-four bg-pink-three position-relative z-1 overflow-hidden pt-120 xl-pt-80 pb-110 xl-pb-60 mt-170 xl-mt-140 lg-mt-120">
+-         <div className="container container-large">
+-            <div className="position-relative z-1">
+-               <div className="title-one mb-60 lg-mb-40 wow fadeInUp">
+-                  <h2 className="font-garamond">New <em>Listings</em> <span className="star-shape"><Image src={propertyShape_1} alt="" className="lazy-img" /></span></h2>
+-                  <p className="fs-22 m0">Explore latest & featured properties for sale.</p>
+-               </div>
+-
+-               <Slider {...setting} ref={sliderRef} className={`listing-slider-one ${style ? "vw-100" : ""}`}>
+-                  {property_data.filter((items) => items.page == "home_3_property_2").map((item) => (
+-                     <div key={item.id} className="item">
+-                        <div className="listing-card-one style-three border-30 mb-50">
+-                           <div className="img-gallery p-15">
+-                              <div className="position-relative border-20 overflow-hidden">
+-                                 <div className="tag bg-white text-dark fw-500 border-20">{item.tag}</div>
+-                                 <Image src={item.thumb ? item.thumb : ""} className="w-100 border-20" alt="..." />
+-                                 <Link href="/listing_details_04" className="btn-four inverse rounded-circle position-absolute"><i className="bi bi-arrow-up-right"></i></Link>
+-                                 <div className="img-slider-btn">
+-                                    {item.carousel} <i className="fa-regular fa-image"></i>
+-                                    <Fancybox
+-                                       options={{
+-                                          Carousel: {
+-                                             infinite: true,
+-                                          },
+-                                       }}
+-                                    >
+-                                       {item.carousel_thumb.map((thumb, index) => (
+-                                          <a key={index} className="d-block" data-fancybox="gallery" href={`/assets/images/listing/img_large_0${thumb.id}.jpg`}></a>
+-                                       ))}
+-                                    </Fancybox>
+-                                 </div>
+-                              </div>
+-                           </div>
+-                           <div className="property-info pe-4 ps-4">
+-                              <Link href="/listing_details_04" className="title tran3s">{item.title}</Link>
+-                              <div className="address">{item.address}</div>
+-                              <ul className="style-none feature d-flex flex-wrap align-items-center justify-content-between">
+-                                 {item.property_info.map((info, i) => (
+-                                    <li key={i} className="d-flex align-items-center">
+-                                       <span className="fs-16"><strong className="fw-500 color-dark">{info.feature}</strong> {info.total_feature}</span>
+-                                    </li>
+-                                 ))}
+-                              </ul>
+-                              <div className="pl-footer top-border d-flex align-items-center justify-content-between">
+-                                 <strong className="price fw-500 color-dark">${item.price}</strong>
+-                                 <ul className="style-none d-flex action-icons">
+-                                    <li><Link href="#"><i className="fa-light fa-heart"></i></Link></li>
+-                                    <li><Link href="#"><i className="fa-light fa-bookmark"></i></Link></li>
+-                                    <li><Link href="#"><i className="fa-light fa-circle-plus"></i></Link></li>
+-                                 </ul>
+-                              </div>
+-                           </div>
+-                        </div>
+-                     </div>
+-                  ))}
+-               </Slider>
+-
+-               <div className="section-btn text-center">
+-                  <Link href="/listing_04" className="btn-eleven fst-italic"><span>See all properties</span></Link>
+-               </div>
+-               <ul className="slider-arrows slick-arrow-two d-flex justify-content-center style-none md-mt-30">
+-                  <li onClick={handlePrevClick} className="prev_b slick-arrow"><i className="bi bi-arrow-left"></i></li>
+-                  <li onClick={handleNextClick} className="next_b slick-arrow"><i className="bi bi-arrow-right"></i></li>
+-               </ul>
+-            </div>
+-         </div>
+-         {!style &&
+-            <>
+-               <Image src={propertyShape_2} alt="" className="lazy-img shapes shape_01 wow fadeInDown" />
+-               <Image src={propertyShape_3} alt="" className="lazy-img shapes shape_02 wow fadeInUp" />
+-            </>
+-         }
+-      </div>
+-   )
+-}
+-
+-export default PropertyTwo
+diff --git a/src/components/homes/home-three/index.tsx b/src/components/homes/home-three/index.tsx
+deleted file mode 100644
+index 9c6587f..0000000
+--- a/src/components/homes/home-three/index.tsx
++++ /dev/null
+@@ -1,33 +0,0 @@
+-import HeroBanner from "./HeroBanner"
+-import Category from "./Category"
+-import BLockFeatureOne from "./BLockFeatureOne"
+-import PropertyOne from "./PropertyOne"
+-import BLockFeatureTwo from "./BLockFeatureTwo"
+-import FancyBannerOne from "./FancyBannerOne"
+-import Brand from "./Brand"
+-import FancyBannerTwo from "./FancyBannerTwo"
+-import FooterTwo from "@/layouts/footers/FooterTwo"
+-import PropertyTwo from "./PropertyTwo"
+-import Feedback from "./Feedback"
+-import HeaderTwo from "@/layouts/headers/HeaderTwo"
+-
+-const HomeThree = () => {
+-  return (
+-    <>
+-      <HeaderTwo style_1={true} style_2={false} />
+-      <HeroBanner />
+-      <Category style={false} />
+-      <BLockFeatureOne />
+-      <PropertyOne />
+-      <PropertyTwo style={false} />
+-      <BLockFeatureTwo />
+-      <FancyBannerOne />
+-      <Feedback style={false} />
+-      <Brand />
+-      <FancyBannerTwo />
+-      <FooterTwo />
+-    </>
+-  )
+-}
+-
+-export default HomeThree
+diff --git a/src/components/inner-pages/about-us/about-us-one/BLockFeatureOne.tsx b/src/components/inner-pages/about-us/about-us-one/BLockFeatureOne.tsx
+deleted file mode 100644
+index f2c36ca..0000000
+--- a/src/components/inner-pages/about-us/about-us-one/BLockFeatureOne.tsx
++++ /dev/null
+@@ -1,75 +0,0 @@
+-import Image from "next/image"
+-import Link from "next/link"
+-
+-import titleShape from "@/assets/images/shape/title_shape_06.svg";
+-import Count from "@/components/common/Count";
+-
+-interface ContentType {
+-   sub_title: string;
+-   desc_1: JSX.Element;
+-   title_1: string;
+-   title_2: string;
+-   desc_2: JSX.Element;
+-   desc_3: JSX.Element;
+-}
+-
+-const feature_content: ContentType = {
+-   sub_title: "About us",
+-   desc_1: (<>Our founders Dustin Moskovitz and Justin Rosenstein met while leading Engineering .</>),
+-   title_1: "Who we are?",
+-   title_2: "Our Mission",
+-   desc_2: (<>Our founders Dustin Moskovitz & Justin Rosenstein met  leading Engineering teams at Facebook. As operations scaled, they grew frustrated by how difficult coordinate</>),
+-   desc_3: (<>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod incididunt ut labore et dolore aliqua.</>),
+-}
+-
+-const { sub_title, desc_1, title_1, title_2, desc_2, desc_3 } = feature_content;
+-
+-const BLockFeatureOne = () => {
+-   return (
+-      <div className="block-feature-two mt-150 xl-mt-100">
+-         <div className="container">
+-            <div className="row gx-xl-5">
+-               <div className="col-lg-6 wow fadeInLeft">
+-                  <div className="me-xxl-4">
+-                     <div className="title-one mb-60 lg-mb-40">
+-                        <div className="upper-title">{sub_title}</div>
+-                        <h3>Secure your <span>family&apos;s<Image src={titleShape} alt="" className="lazy-img" /></span> Dream home.</h3>
+-                        <p className="fs-22">{desc_1}</p>
+-                     </div>
+-                     <Link href="/contact" className="btn-two">Contact Us</Link>
+-                     <div className="counter-wrapper border-top pt-40 md-pt-10 mt-65 md-mt-40">
+-                        <div className="row">
+-                           <div className="col-xxl-6 col-sm-5">
+-                              <div className="counter-block-one mt-20">
+-                                 <div className="main-count fw-500 color-dark"><span className="counter"><Count number={1.2} /></span>%</div>
+-                                 <span>Low interest rate</span>
+-                              </div>
+-                           </div>
+-                           <div className="col-xxl-6 col-sm-7">
+-                              <div className="counter-block-one mt-20">
+-                                 <div className="main-count fw-500 color-dark">$<span className="counter"><Count number={1.3} /></span>b+</div>
+-                                 <span>Cumulative trading volume</span>
+-                              </div>
+-                           </div>
+-                        </div>
+-                     </div>
+-                  </div>
+-               </div>
+-
+-               <div className="col-lg-6 wow fadeInRight">
+-                  <div className="block-two md-mt-40">
+-                     <div className="bg-wrapper">
+-                        <h5>{title_1}</h5>
+-                        <p className="fs-22 lh-lg mt-20">{desc_2}</p>
+-                        <h5 className="top-line">{title_2} </h5>
+-                        <p className="fs-22 lh-lg mt-20">{desc_3}</p>
+-                     </div>
+-                  </div>
+-               </div>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default BLockFeatureOne
+diff --git a/src/components/inner-pages/about-us/about-us-one/Brand.tsx b/src/components/inner-pages/about-us/about-us-one/Brand.tsx
+deleted file mode 100644
+index 0f54eca..0000000
+--- a/src/components/inner-pages/about-us/about-us-one/Brand.tsx
++++ /dev/null
+@@ -1,18 +0,0 @@
+-import BrandTwo from '@/components/common/brand/BrandTwo'
+-
+-const Brand = () => {
+-   return (
+-      <div className="partner-section-one mt-150 xl-mt-120 lg-mt-100 mb-130 xl-mb-100 lg-mb-60">
+-         <div className="container">
+-            <h6 className="text-center fs-20 mb-50 lg-mb-20">100+ Company trusted by us.</h6>
+-         </div>
+-         <div className="bg-wrapper bg-white">
+-            <div className="container">
+-               <BrandTwo />
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default Brand
+diff --git a/src/components/inner-pages/about-us/about-us-one/index.tsx b/src/components/inner-pages/about-us/about-us-one/index.tsx
+deleted file mode 100644
+index bec602a..0000000
+--- a/src/components/inner-pages/about-us/about-us-one/index.tsx
++++ /dev/null
+@@ -1,29 +0,0 @@
+-import BreadcrumbOne from "@/components/common/breadcrumb/BreadcrumbOne"
+-import HeaderOne from "@/layouts/headers/HeaderOne"
+-import BLockFeatureOne from "./BLockFeatureOne"
+-import VideoBanner from "@/components/homes/home-seven/VideoBanner"
+-import BLockFeatureFive from "@/components/homes/home-one/BLockFeatureFive"
+-import Feedback from "@/components/homes/home-five/Feedback"
+-import AgentArea from "@/components/homes/home-one/AgentArea"
+-import Brand from "./Brand"
+-import FooterFour from "@/layouts/footers/FooterFour"
+-import FancyBanner from "@/components/common/FancyBanner"
+-
+-const AboutUsOne = () => {
+-   return (
+-      <>
+-         <HeaderOne style={true} />
+-         <BreadcrumbOne title="About Agency" sub_title="About us" style={false} />
+-         <BLockFeatureOne />
+-         <VideoBanner />
+-         <BLockFeatureFive style={true} />
+-         <Feedback style={true} />
+-         <AgentArea style={false} />
+-         <Brand />
+-         <FancyBanner style={false} />
+-         <FooterFour />
+-      </>
+-   )
+-}
+-
+-export default AboutUsOne
