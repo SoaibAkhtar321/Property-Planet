@@ -26,6 +26,22 @@
 // role. So this action never attempts an upsert/update — it does a plain
 // insert and treats a unique-violation (23505) as "you already inquired",
 // not an error.
+//
+// createInquiry also now copies properties.project_id (if any) onto the
+// lead it creates, so a plot enquiry preserves project context per section
+// 27 of the master prompt. See createInquiry's own doc comment for why
+// that lookup queries `properties` directly rather than `property_public`.
+//
+// createProjectInquiry (added alongside 0013_leads_project_id.sql): a
+// project-level counterpart to createInquiry, for a buyer enquiring about a
+// project in general rather than a specific plot/listing. Same pattern:
+// identity from requireRole(["buyer"]), the id re-validated against
+// `project_public` (not `projects`) so a draft/unpublished project can never
+// be inquired against, and a unique-violation on the new partial index
+// (leads_buyer_project_unique) is treated as "you already inquired", not an
+// error. It always inserts property_id: null — it is not used for, and does
+// not touch, plot-level leads (createInquiry, above, handles those and now
+// separately backfills project_id onto them).
 
 import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
@@ -55,6 +71,24 @@ const MAX_INQUIRY_MESSAGE_LENGTH = 1000;
 /**
  * Creates (or, if one already exists, safely no-ops on) a buyer inquiry for
  * a published property. Called from InquiryForm on the property detail page.
+ *
+ * project_id: if the property belongs to a project (properties.project_id,
+ * see 0007_properties_project_id.sql), that project_id is copied onto the
+ * lead too — per section 27 of the Property Planet master prompt, a plot
+ * enquiry should preserve both project context and exact property context
+ * (project_id set AND property_id set), not just the property.
+ *
+ * This second lookup queries the `properties` base table directly, not
+ * `property_public` (property_public does not expose project_id — adding
+ * it would be a schema change, deferred). This is still safe: the row was
+ * already confirmed published via property_public immediately above, and
+ * the "published properties are public" RLS policy on `properties` grants
+ * an equivalent unconditional read of every column (including project_id)
+ * on a published row to any authenticated caller, buyer or otherwise —
+ * this lookup can't see anything a buyer isn't already entitled to see.
+ * If this second query fails for any reason, project_id is simply left
+ * NULL rather than failing the whole inquiry — the property/property_id
+ * side of the lead is unaffected either way.
  */
 export async function createInquiry(propertyId: string, message?: string): Promise<ActionResult> {
    if (!propertyId || typeof propertyId !== "string") {
@@ -79,6 +113,16 @@ export async function createInquiry(propertyId: string, message?: string): Promi
       return { success: false, error: "This property is no longer available." };
    }
 
+   // Best-effort project-context lookup — see function doc comment above.
+   // Deliberately non-fatal: a failure here should never block the buyer's
+   // actual inquiry, just leave the lead's project_id NULL, same as it is
+   // today for a projectless property.
+   const { data: propertyRow } = await supabase
+      .from("properties")
+      .select("project_id")
+      .eq("id", propertyId)
+      .maybeSingle();
+
    const trimmedMessage = message?.trim();
    if (trimmedMessage && trimmedMessage.length > MAX_INQUIRY_MESSAGE_LENGTH) {
       return { success: false, error: `Message must be ${MAX_INQUIRY_MESSAGE_LENGTH} characters or fewer.` };
@@ -87,6 +131,7 @@ export async function createInquiry(propertyId: string, message?: string): Promi
    const { error: insertError } = await supabase.from("leads").insert({
       buyer_id: ctx.userId,
       property_id: propertyId,
+      project_id: propertyRow?.project_id ?? null,
       message: trimmedMessage ? trimmedMessage : null,
       // status intentionally omitted — column default is 'new'. There is no
       // buyer-facing update path to this row afterward (see file header), so
@@ -308,4 +353,80 @@ export async function revealExactLocation(leadId: string): Promise<RevealLocatio
       exactLng: row.exact_lng,
       exactAddress: row.exact_address,
    };
+}
+
+const MAX_PROJECT_INQUIRY_MESSAGE_LENGTH = 1000;
+
+/**
+ * Creates (or, if one already exists, safely no-ops on) a buyer inquiry for
+ * a published project as a whole — not any specific plot/listing. Called
+ * from a project detail page's "Interested in <Project>?" enquiry form
+ * (see section 26 of the Property Planet master prompt: project_id set,
+ * property_id NULL).
+ *
+ * Mirrors createInquiry() above field-for-field:
+ *   - identity (buyer_id) is always requireRole(["buyer"]).userId, never
+ *     client input;
+ *   - the id is re-validated against `project_public`, not `projects`, so
+ *     an unpublished/draft project id can never be inquired against, the
+ *     same way an unpublished property id can't via property_public;
+ *   - a unique-violation is treated as "you already inquired", not an
+ *     error — this relies on the leads_buyer_project_unique partial index
+ *     added in 0013_leads_project_id.sql (unique on (buyer_id, project_id)
+ *     where property_id is null), which is the project-level equivalent of
+ *     the existing (buyer_id, property_id) uniqueness createInquiry()
+ *     already depends on.
+ *
+ * property_id is always omitted (column default NULL) — this action never
+ * creates or touches a plot-level lead.
+ */
+export async function createProjectInquiry(projectId: string, message?: string): Promise<ActionResult> {
+   if (!projectId || typeof projectId !== "string") {
+      return { success: false, error: "A project is required." };
+   }
+
+   // requireRole redirects (rather than returning) if there is no session or
+   // the caller isn't a buyer — same fail-closed behavior as createInquiry().
+   const ctx = await requireRole(["buyer"]);
+   const supabase = await createClient();
+
+   // Re-derive that the project is real AND published — never trust that
+   // the id the client posted corresponds to a live, public project, same
+   // reasoning as createInquiry()'s property_public lookup above.
+   const { data: project, error: projectError } = await supabase
+      .from("project_public")
+      .select("id")
+      .eq("id", projectId)
+      .maybeSingle();
+
+   if (projectError || !project) {
+      return { success: false, error: "This project is no longer available." };
+   }
+
+   const trimmedMessage = message?.trim();
+   if (trimmedMessage && trimmedMessage.length > MAX_PROJECT_INQUIRY_MESSAGE_LENGTH) {
+      return { success: false, error: `Message must be ${MAX_PROJECT_INQUIRY_MESSAGE_LENGTH} characters or fewer.` };
+   }
+
+   const { error: insertError } = await supabase.from("leads").insert({
+      buyer_id: ctx.userId,
+      project_id: projectId,
+      property_id: null,
+      message: trimmedMessage ? trimmedMessage : null,
+      // status intentionally omitted — column default is 'new', same as
+      // createInquiry(). Buyers have no UPDATE policy on leads at all (see
+      // file header), so this insert is the only write this function ever
+      // performs.
+   });
+
+   if (insertError) {
+      if (insertError.code === UNIQUE_VIOLATION) {
+         // Buyer already has a project-level lead on this project. Same
+         // neutral, non-error treatment as createInquiry()'s duplicate case.
+         return { success: true, alreadyExists: true };
+      }
+      return { success: false, error: "Failed to send inquiry. Please try again." };
+   }
+
+   return { success: true };
 }

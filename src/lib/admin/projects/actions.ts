@@ -15,11 +15,12 @@
 // front of that database-level backstop, not a replacement for it.
 //
 // Only fields that exist in 0006_projects.sql are handled. Landmarks,
-// connectivity, features, area distribution, pricing, and media
-// (project_landmarks / project_connectivity / project_features /
-// project_area_distribution / project_pricing / project_media) are not
-// managed here yet — left for a follow-up admin screen, see the Phase 6
-// report. project_legal is never written from this file.
+// connectivity, features, area distribution, and media (project_landmarks
+// / project_connectivity / project_features / project_area_distribution /
+// project_media) are not managed here yet — left for a follow-up admin
+// screen, see the Phase 6 report. project_pricing is now handled (see
+// addProjectPricingRow / updateProjectPricingRow / deleteProjectPricingRow
+// below). project_legal is never written from this file.
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -171,6 +172,107 @@ export async function setProjectStatus(id: string, status: ProjectStatus): Promi
 
    revalidatePath("/admin/projects");
    revalidatePath(`/admin/projects/${id}`);
+   revalidatePath("/projects");
+   return { success: true };
+}
+
+/**
+ * Adds one project_pricing row. Pricing is repeatable per project (see
+ * table comment in 0006_projects.sql — "different projects, or plot sizes
+ * within a project, can carry different pricing shapes"), so this is an
+ * insert, not an upsert: label + price_unit together identify a row for
+ * display purposes, but nothing in the schema enforces their uniqueness,
+ * so duplicates are the admin's call, not something this action guards
+ * against.
+ */
+export async function addProjectPricingRow(projectId: string, formData: FormData): Promise<ActionResult> {
+   await requireAdmin();
+   const supabase = await createClient();
+
+   const label = String(formData.get("label") ?? "").trim();
+   if (!label) {
+      return { success: false, error: "Label is required." };
+   }
+
+   const { error } = await supabase.from("project_pricing").insert({
+      project_id: projectId,
+      label,
+      price: numberOrNull(formData.get("price")),
+      price_unit: textOrNull(formData.get("price_unit")),
+      currency: textOrNull(formData.get("currency")) ?? "INR",
+      note: textOrNull(formData.get("note")),
+      display_order: numberOrNull(formData.get("display_order")) ?? 0,
+   });
+
+   if (error) {
+      return { success: false, error: error.message };
+   }
+
+   revalidatePath(`/admin/projects/${projectId}`);
+   // /projects/[slug] is force-dynamic (src/app/projects/[slug]/page.tsx),
+   // so it always reads fresh regardless; revalidating /projects here just
+   // covers the listing page's own cache.
+   revalidatePath("/projects");
+   return { success: true };
+}
+
+/** Updates one existing project_pricing row by its own id. */
+export async function updateProjectPricingRow(
+   projectId: string,
+   pricingRowId: string,
+   formData: FormData
+): Promise<ActionResult> {
+   await requireAdmin();
+   const supabase = await createClient();
+
+   const label = String(formData.get("label") ?? "").trim();
+   if (!label) {
+      return { success: false, error: "Label is required." };
+   }
+
+   const { error } = await supabase
+      .from("project_pricing")
+      .update({
+         label,
+         price: numberOrNull(formData.get("price")),
+         price_unit: textOrNull(formData.get("price_unit")),
+         currency: textOrNull(formData.get("currency")) ?? "INR",
+         note: textOrNull(formData.get("note")),
+         display_order: numberOrNull(formData.get("display_order")) ?? 0,
+      })
+      .eq("id", pricingRowId)
+      // Defense-in-depth: scope the update to the project this row is
+      // shown under, on top of the "admins can update project pricing" RLS
+      // policy (which is unconditional for any admin) — this just prevents
+      // a copy-paste bug in a future caller from updating a row under the
+      // wrong project's form action.
+      .eq("project_id", projectId);
+
+   if (error) {
+      return { success: false, error: error.message };
+   }
+
+   revalidatePath(`/admin/projects/${projectId}`);
+   revalidatePath("/projects");
+   return { success: true };
+}
+
+/** Deletes one project_pricing row by its own id. */
+export async function deleteProjectPricingRow(projectId: string, pricingRowId: string): Promise<ActionResult> {
+   await requireAdmin();
+   const supabase = await createClient();
+
+   const { error } = await supabase
+      .from("project_pricing")
+      .delete()
+      .eq("id", pricingRowId)
+      .eq("project_id", projectId);
+
+   if (error) {
+      return { success: false, error: error.message };
+   }
+
+   revalidatePath(`/admin/projects/${projectId}`);
    revalidatePath("/projects");
    return { success: true };
 }

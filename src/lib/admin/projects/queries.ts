@@ -49,6 +49,17 @@ export interface AdminProjectLocationRow {
    lng: number | null;
 }
 
+export interface AdminProjectPricingRow {
+   id: string;
+   project_id: string;
+   label: string;
+   price: number | string | null;
+   price_unit: string | null;
+   currency: string;
+   note: string | null;
+   display_order: number;
+}
+
 /** All projects regardless of status, for the /admin/projects list. */
 export async function getAllProjectsForAdmin(): Promise<AdminProjectListRow[]> {
    const supabase = await createClient();
@@ -97,4 +108,29 @@ export async function getProjectForAdmin(
    }
 
    return { project: project as AdminProjectRow, location: (location as AdminProjectLocationRow | null) ?? null };
+}
+
+/**
+ * All pricing rows for a project, in display order. Reads the base
+ * `project_pricing` table directly (not a `*_public` view — there isn't
+ * one for pricing) since every call site here is behind requireAdmin();
+ * the "project pricing follows project visibility" RLS policy already
+ * lets an admin read pricing for a project of any status, same as every
+ * other admin project read in this file.
+ */
+export async function getProjectPricing(projectId: string): Promise<AdminProjectPricingRow[]> {
+   const supabase = await createClient();
+
+   const { data, error } = await supabase
+      .from("project_pricing")
+      .select("id, project_id, label, price, price_unit, currency, note, display_order")
+      .eq("project_id", projectId)
+      .order("display_order", { ascending: true });
+
+   if (error) {
+      console.error("Failed to load project pricing for admin:", error.message);
+      return [];
+   }
+
+   return (data ?? []) as AdminProjectPricingRow[];
 }

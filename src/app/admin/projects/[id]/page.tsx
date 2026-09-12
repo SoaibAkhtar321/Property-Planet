@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProjectForAdmin } from "@/lib/admin/projects/queries";
-import { setProjectStatus, updateProjectBasics, updateProjectLocation, type ProjectStatus } from "@/lib/admin/projects/actions";
+import { getProjectForAdmin, getProjectPricing } from "@/lib/admin/projects/queries";
+import {
+   setProjectStatus,
+   updateProjectBasics,
+   updateProjectLocation,
+   addProjectPricingRow,
+   updateProjectPricingRow,
+   deleteProjectPricingRow,
+   type ProjectStatus,
+} from "@/lib/admin/projects/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -9,9 +17,11 @@ export default async function EditProjectPage({ params }: { params: { id: string
    const result = await getProjectForAdmin(params.id);
    if (!result) notFound();
    const { project, location } = result;
+   const pricingRows = await getProjectPricing(project.id);
 
    const updateBasics = updateProjectBasics.bind(null, project.id);
    const updateLocation = updateProjectLocation.bind(null, project.id);
+   const addPricingRow = addProjectPricingRow.bind(null, project.id);
 
    const changeStatus = async (status: ProjectStatus) => {
       "use server";
@@ -163,10 +173,126 @@ export default async function EditProjectPage({ params }: { params: { id: string
             </div>
          </form>
 
+         <h5 className="mt-5 mb-3">Pricing</h5>
+         <p className="text-muted small">
+            Repeatable rows — add one per price point (e.g. &quot;Early-Bird Price&quot;, &quot;Official Price&quot;). Nothing here is
+            pre-filled or guessed; only what you enter is shown publicly.
+         </p>
+
+         {pricingRows.length > 0 && (
+            <div className="d-flex flex-column gap-4 mb-4">
+               {pricingRows.map((row) => {
+                  const updateRow = updateProjectPricingRow.bind(null, project.id, row.id);
+                  const deleteRow = async () => {
+                     "use server";
+                     await deleteProjectPricingRow(project.id, row.id);
+                  };
+                  return (
+                     <form key={row.id} action={updateRow} className="border rounded p-3 d-flex flex-column gap-2">
+                        <div className="row">
+                           <div className="col">
+                              <label className="form-label">Label *</label>
+                              <input name="label" defaultValue={row.label} className="form-control" required />
+                           </div>
+                           <div className="col">
+                              <label className="form-label">Display order</label>
+                              <input
+                                 name="display_order"
+                                 type="number"
+                                 defaultValue={row.display_order}
+                                 className="form-control"
+                              />
+                           </div>
+                        </div>
+                        <div className="row">
+                           <div className="col">
+                              <label className="form-label">Price</label>
+                              <input
+                                 name="price"
+                                 type="number"
+                                 step="0.01"
+                                 defaultValue={row.price ?? ""}
+                                 className="form-control"
+                              />
+                           </div>
+                           <div className="col">
+                              <label className="form-label">Price unit</label>
+                              <input
+                                 name="price_unit"
+                                 defaultValue={row.price_unit ?? ""}
+                                 placeholder="per_sqyd, per_acre, total"
+                                 className="form-control"
+                              />
+                           </div>
+                           <div className="col">
+                              <label className="form-label">Currency</label>
+                              <input name="currency" defaultValue={row.currency} className="form-control" />
+                           </div>
+                        </div>
+                        <div>
+                           <label className="form-label">Note</label>
+                           <input
+                              name="note"
+                              defaultValue={row.note ?? ""}
+                              placeholder="e.g. applicable conditions"
+                              className="form-control"
+                           />
+                        </div>
+                        <div className="d-flex gap-2">
+                           <button type="submit" className="btn btn-primary btn-sm">
+                              Save
+                           </button>
+                           <button type="submit" formAction={deleteRow} className="btn btn-outline-danger btn-sm">
+                              Delete
+                           </button>
+                        </div>
+                     </form>
+                  );
+               })}
+            </div>
+         )}
+
+         <form action={addPricingRow} className="border rounded p-3 d-flex flex-column gap-2">
+            <h6 className="m-0">Add a pricing row</h6>
+            <div className="row">
+               <div className="col">
+                  <label className="form-label">Label *</label>
+                  <input name="label" className="form-control" required placeholder="e.g. Early-Bird Price" />
+               </div>
+               <div className="col">
+                  <label className="form-label">Display order</label>
+                  <input name="display_order" type="number" defaultValue={0} className="form-control" />
+               </div>
+            </div>
+            <div className="row">
+               <div className="col">
+                  <label className="form-label">Price</label>
+                  <input name="price" type="number" step="0.01" className="form-control" />
+               </div>
+               <div className="col">
+                  <label className="form-label">Price unit</label>
+                  <input name="price_unit" placeholder="per_sqyd, per_acre, total" className="form-control" />
+               </div>
+               <div className="col">
+                  <label className="form-label">Currency</label>
+                  <input name="currency" defaultValue="INR" className="form-control" />
+               </div>
+            </div>
+            <div>
+               <label className="form-label">Note</label>
+               <input name="note" placeholder="e.g. applicable conditions" className="form-control" />
+            </div>
+            <div>
+               <button type="submit" className="btn btn-primary">
+                  Add pricing row
+               </button>
+            </div>
+         </form>
+
          <p className="text-muted small mt-5">
-            Landmarks, connectivity, features, area distribution, pricing, and media (gallery / master plan / floor plan / video /
-            documents) are not yet manageable here — left for a follow-up admin screen. Legal/compliance info (RERA, approvals) is
-            intentionally not exposed in this admin UI yet either.
+            Landmarks, connectivity, features, area distribution, and media (gallery / master plan / floor plan / video /
+            documents) are not yet manageable here — left for a follow-up admin screen. Legal/compliance info (RERA,
+            approvals) is intentionally not exposed in this admin UI yet either.
          </p>
       </div>
    );
