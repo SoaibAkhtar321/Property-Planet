@@ -30,6 +30,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                <li>
                   <Link href="/admin/projects">Projects</Link>
                </li>
+               <li>
+                  <Link href="/admin/blog">Blog</Link>
+               </li>
             </ul>
          </nav>
          <main className="flex-grow-1 p-4">{children}</main>

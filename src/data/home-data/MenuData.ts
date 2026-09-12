@@ -65,15 +65,9 @@ const menu_data: MenuItem[] = [
 
     {
         id: 4,
-        has_dropdown: true,
+        has_dropdown: false,
         title: "Insights",
-        link: "#",
-        sub_menus: [
-            { link: "/blog_01", title: "Market Insights" },
-            { link: "/blog_02", title: "Guides" },
-            { link: "/blog_03", title: "Future City Updates" },
-            { link: "/blog_details", title: "Article" },
-        ],
+        link: "/blog",
     },
 
     {
