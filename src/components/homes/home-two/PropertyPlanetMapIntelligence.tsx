@@ -37,14 +37,14 @@ const HYDERABAD_AIRPORT = { lat: 17.2403, lng: 78.4294, name: "Hyderabad Airport
 
 const MAP_CONTAINER_STYLE = { width: "100%", height: "100%" };
 
-// Muted "ivory/stone" map styling so the live map matches the site's
-// existing gold/ivory/charcoal palette instead of Google's default blue/grey.
+// Muted cream map styling so the live map matches the site's
+// existing Property Planet orange/cream palette instead of Google's default blue/grey.
 const MAP_STYLES: google.maps.MapTypeStyle[] = [
-   { elementType: "geometry", stylers: [{ color: "#f4f2e9" }] },
-   { elementType: "labels.text.fill", stylers: [{ color: "#5f5a48" }] },
-   { elementType: "labels.text.stroke", stylers: [{ color: "#f4f2e9" }] },
-   { featureType: "road", elementType: "geometry", stylers: [{ color: "#e4dfc9" }] },
-   { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#c9a76b" }] },
+   { elementType: "geometry", stylers: [{ color: "#FFF8F4" }] },
+   { elementType: "labels.text.fill", stylers: [{ color: "#6b6255" }] },
+   { elementType: "labels.text.stroke", stylers: [{ color: "#FFF8F4" }] },
+   { featureType: "road", elementType: "geometry", stylers: [{ color: "#F5EDE8" }] },
+   { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#FF6725" }] },
    { featureType: "water", elementType: "geometry", stylers: [{ color: "#cfd9bd" }] },
    { featureType: "poi", stylers: [{ visibility: "off" }] },
    { featureType: "transit", stylers: [{ visibility: "off" }] },
@@ -63,7 +63,7 @@ const PropertyPlanetMapIntelligence = () => {
       return {
          path: google.maps.SymbolPath.CIRCLE,
          scale: 10,
-         fillColor: "#c19a4b",
+         fillColor: "#FF6725",
          fillOpacity: 1,
          strokeColor: "#fff",
          strokeWeight: 2,
@@ -75,7 +75,7 @@ const PropertyPlanetMapIntelligence = () => {
       return (selected: boolean) => ({
          path: google.maps.SymbolPath.CIRCLE,
          scale: 7,
-         fillColor: selected ? "#8a6d2f" : "#3f7a52",
+         fillColor: selected ? "#FF3F25" : "#00B579",
          fillOpacity: 1,
          strokeColor: "#fff",
          strokeWeight: 2,
@@ -174,7 +174,7 @@ const PropertyPlanetMapIntelligence = () => {
             .map-frame {
                position: relative;
                background: #fff;
-               border: 1px solid #ecebe3;
+               border: 1px solid #F5EDE8;
                border-radius: 16px;
                padding: 18px;
                box-shadow: 0 20px 50px rgba(20, 20, 10, 0.06);
@@ -184,17 +184,17 @@ const PropertyPlanetMapIntelligence = () => {
                height: 420px;
                border-radius: 10px;
                overflow: hidden;
-               background: #f4f2e9;
+               background: #FFF8F4;
             }
             .map-fallback {
                width: 100%;
                height: 100%;
                font-size: 13px;
-               color: #7a7360;
+               color: #6b6255;
                padding: 20px;
             }
             .map-fallback code {
-               background: #f3f1e7;
+               background: #FFF8F4;
                padding: 2px 6px;
                border-radius: 4px;
                font-size: 12px;
@@ -205,7 +205,7 @@ const PropertyPlanetMapIntelligence = () => {
                left: 28px;
                background: rgba(255, 255, 255, 0.92);
                backdrop-filter: blur(6px);
-               border: 1px solid #ecebe3;
+               border: 1px solid #F5EDE8;
                border-radius: 12px;
                padding: 18px 22px;
                width: 240px;
@@ -215,7 +215,7 @@ const PropertyPlanetMapIntelligence = () => {
             .intel-title {
                font-size: 11px;
                letter-spacing: 1px;
-               color: #8a6d2f;
+               color: #FF3F25;
             }
             .intel-stats li {
                display: flex;

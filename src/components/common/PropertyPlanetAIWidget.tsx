@@ -194,8 +194,8 @@ const PropertyPlanetAIWidget = () => {
                cursor: pointer;
                transition: transform 0.25s ease, background 0.25s ease;
             }
-            .property-planet-ai-fab:hover { transform: translateY(-2px); background: #c19a4b; color: #1c1c1c; }
-            .property-planet-ai-fab.is-open { background: #c19a4b; color: #1c1c1c; }
+            .property-planet-ai-fab:hover { transform: translateY(-2px); background: #FF6725; color: #fff; }
+            .property-planet-ai-fab.is-open { background: #FF6725; color: #fff; }
 
             .property-planet-ai-panel {
                position: fixed;
@@ -207,7 +207,7 @@ const PropertyPlanetAIWidget = () => {
                max-height: calc(100vh - 140px);
                background: #fff;
                border-radius: 18px;
-               border: 1px solid #ecebe3;
+               border: 1px solid #F5EDE8;
                box-shadow: 0 24px 60px rgba(20, 20, 10, 0.22);
                display: flex;
                flex-direction: column;
@@ -226,7 +226,7 @@ const PropertyPlanetAIWidget = () => {
 
             .property-planet-ai-panel-header {
                padding: 16px 16px;
-               border-bottom: 1px solid #f0efe6;
+               border-bottom: 1px solid #F5EDE8;
                background: #faf9f3;
             }
             .property-planet-ai-avatar {
@@ -234,7 +234,7 @@ const PropertyPlanetAIWidget = () => {
                height: 34px;
                border-radius: 50%;
                background: #1c1c1c;
-               color: #c19a4b;
+               color: #FF6725;
                flex: 0 0 auto;
             }
             .property-planet-ai-subtitle { font-size: 12px; opacity: 0.65; }
@@ -265,7 +265,7 @@ const PropertyPlanetAIWidget = () => {
                font-size: 14px;
                line-height: 1.5;
             }
-            .property-planet-ai-row.ai .property-planet-ai-bubble { background: #f3f1e7; color: #262620; border-bottom-left-radius: 4px; }
+            .property-planet-ai-row.ai .property-planet-ai-bubble { background: #FFF8F4; color: #262620; border-bottom-left-radius: 4px; }
             .property-planet-ai-row.user .property-planet-ai-bubble { background: #1c1c1c; color: #fff; border-bottom-right-radius: 4px; }
 
             .property-planet-ai-typing { display: flex; gap: 4px; align-items: center; }
@@ -281,7 +281,7 @@ const PropertyPlanetAIWidget = () => {
             .property-planet-ai-chips { margin-top: 8px; }
             .property-planet-ai-chips li { margin: 0 8px 8px 0; }
             .property-planet-ai-chips button {
-               border: 1px solid #ddd7c4;
+               border: 1px solid #F5EDE8;
                background: #fff;
                border-radius: 30px;
                padding: 7px 14px;
@@ -290,11 +290,11 @@ const PropertyPlanetAIWidget = () => {
                cursor: pointer;
                transition: all 0.2s ease;
             }
-            .property-planet-ai-chips button:hover { background: #f3f1e7; border-color: #c19a4b; }
+            .property-planet-ai-chips button:hover { background: #FFF8F4; border-color: #FF6725; }
 
             .property-planet-ai-cards { margin-top: 8px; width: 100%; display: flex; flex-direction: column; gap: 8px; }
             .property-planet-ai-card {
-               border: 1px solid #ecebe3;
+               border: 1px solid #F5EDE8;
                border-radius: 12px;
                padding: 12px;
                background: #fff;
@@ -309,17 +309,17 @@ const PropertyPlanetAIWidget = () => {
             .property-planet-ai-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
             .property-planet-ai-card-tags span {
                font-size: 11px; padding: 3px 8px; border-radius: 20px;
-               background: #f3f1e7; color: #555;
+               background: #FFF8F4; color: #555;
             }
             .tag-verify.is-verified { background: rgba(0,181,121,0.12); color: #00B579; }
             .property-planet-ai-card-price { font-size: 14px; color: #1c1c1c; }
             .property-planet-ai-card-cta {
-               font-size: 12px; font-weight: 500; color: #c19a4b;
+               font-size: 12px; font-weight: 500; color: #FF6725;
                text-decoration: underline;
             }
 
             .property-planet-ai-input {
-               border-top: 1px solid #f0efe6;
+               border-top: 1px solid #F5EDE8;
                padding: 10px 12px;
                background: #fff;
             }
@@ -341,7 +341,7 @@ const PropertyPlanetAIWidget = () => {
                flex: 0 0 auto;
                cursor: pointer;
             }
-            .property-planet-ai-input button:hover { background: #c19a4b; color: #1c1c1c; }
+            .property-planet-ai-input button:hover { background: #FF6725; color: #fff; }
 
             .property-planet-ai-footer-note {
                font-size: 11px;
@@ -349,7 +349,7 @@ const PropertyPlanetAIWidget = () => {
                opacity: 0.6;
                padding: 6px 0 12px;
             }
-            .property-planet-ai-footer-note :global(a) { color: #c19a4b; text-decoration: underline; }
+            .property-planet-ai-footer-note :global(a) { color: #FF6725; text-decoration: underline; }
 
             @media (max-width: 575px) {
                .property-planet-ai-panel {

@@ -136,10 +136,10 @@ const SellPropertyArea = () => {
                font-size: 13px;
                letter-spacing: 1px;
                text-transform: uppercase;
-               color: #8a6d2f;
+               color: #FF6725;
                margin-bottom: 18px;
                padding-bottom: 10px;
-               border-bottom: 1px solid #ecebe3;
+               border-bottom: 1px solid #F5EDE8;
             }
             .sell-form select,
             .sell-form textarea {

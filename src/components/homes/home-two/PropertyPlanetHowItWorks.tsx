@@ -55,7 +55,7 @@ const PropertyPlanetHowItWorks = () => {
                position: relative;
                flex: 1 1 220px;
                background: #fff;
-               border: 1px solid #ecebe3;
+               border: 1px solid #F5EDE8;
                border-radius: 12px;
                padding: 30px 24px;
                box-shadow: 0 10px 30px rgba(20, 20, 10, 0.04);
@@ -70,9 +70,9 @@ const PropertyPlanetHowItWorks = () => {
             .step-icon {
                width: 54px;
                height: 54px;
-               background: #f3f1e7;
+               background: #FFF8F4;
                font-size: 20px;
-               color: #8a6d2f;
+               color: #FF6725;
             }
             .step-arrow {
                position: absolute;

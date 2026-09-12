@@ -169,7 +169,7 @@ const PropertyPlanetAIAdvisor = () => {
          <style jsx>{`
             .faq-chips li { margin: 0 8px 10px 0; }
             .faq-chips button {
-               border: 1px solid #ddd7c4;
+               border: 1px solid #F5EDE8;
                background: #fff;
                border-radius: 30px;
                padding: 8px 16px;
@@ -179,11 +179,11 @@ const PropertyPlanetAIAdvisor = () => {
                transition: all 0.2s ease;
             }
             .faq-chips button:hover {
-               background: #f3f1e7;
-               border-color: #c19a4b;
+               background: #FFF8F4;
+               border-color: #FF6725;
             }
             .ai-chat-window {
-               border: 1px solid #ecebe3;
+               border: 1px solid #F5EDE8;
                border-radius: 16px;
                background: #fff;
                box-shadow: 0 20px 50px rgba(20, 20, 10, 0.07);
@@ -194,13 +194,13 @@ const PropertyPlanetAIAdvisor = () => {
             }
             .ai-chat-header {
                padding: 16px 20px;
-               border-bottom: 1px solid #f0efe6;
+               border-bottom: 1px solid #F5EDE8;
                font-size: 15px;
             }
             .prototype-badge {
                font-size: 11px;
-               background: #f3f1e7;
-               color: #8a6d2f;
+               background: #FFF8F4;
+               color: #FF3F25;
                padding: 3px 10px;
                border-radius: 20px;
             }
@@ -233,7 +233,7 @@ const PropertyPlanetAIAdvisor = () => {
                border-bottom-right-radius: 4px;
             }
             .chat-bubble-row.ai .chat-bubble {
-               background: #f3f1e7;
+               background: #FFF8F4;
                color: #2a2a24;
                border-bottom-left-radius: 4px;
             }
@@ -258,7 +258,7 @@ const PropertyPlanetAIAdvisor = () => {
                max-width: 82%;
             }
             .reco-card {
-               border: 1px solid #ecebe3;
+               border: 1px solid #F5EDE8;
                border-radius: 10px;
                padding: 10px 14px;
                position: relative;
@@ -271,8 +271,8 @@ const PropertyPlanetAIAdvisor = () => {
                top: 10px;
                right: 12px;
                font-size: 11px;
-               background: #eef4ea;
-               color: #3f7a52;
+               background: #e9f9f2;
+               color: #00B579;
                padding: 2px 8px;
                border-radius: 20px;
             }
@@ -284,7 +284,7 @@ const PropertyPlanetAIAdvisor = () => {
                font-weight: 500;
             }
             .ai-chat-input {
-               border-top: 1px solid #f0efe6;
+               border-top: 1px solid #F5EDE8;
                padding: 12px 14px;
             }
             .ai-chat-input input {
