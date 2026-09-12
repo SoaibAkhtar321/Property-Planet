@@ -53,7 +53,7 @@ export async function middleware(request: NextRequest) {
 
    const { data: profile, error } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, phone")
       .eq("id", user.id)
       .maybeSingle();
 
@@ -73,6 +73,19 @@ export async function middleware(request: NextRequest) {
       // No readable profile row: fail closed, same as the admin branch —
       // never an elevated or default-access fallback.
       return NextResponse.redirect(new URL("/", request.url));
+   }
+
+   // Buyer profile-completion gate, first line: a buyer's `profiles.phone`
+   // is only ever null right after their first Google sign-in (Google
+   // OAuth never supplies one — see 0012_signup_phone.sql). Block them
+   // from any /dashboard/** page until they complete it at
+   // /auth/complete-profile (that route lives outside this matcher, so it
+   // is never caught by this redirect). requireDashboardUser() in
+   // src/lib/auth/session.ts re-checks the same condition server-side as
+   // defense-in-depth, exactly like the existing admin/seller checks
+   // here are backed by requireAdmin()/requireRole().
+   if (profile.role === "buyer" && !profile.phone) {
+      return NextResponse.redirect(new URL("/auth/complete-profile", request.url));
    }
 
    const isSellerOnlyPath = SELLER_ONLY_DASHBOARD_PATHS.some(

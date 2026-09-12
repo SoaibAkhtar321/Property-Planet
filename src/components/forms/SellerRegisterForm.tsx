@@ -33,14 +33,24 @@ import { createClient } from "@/lib/supabase/client";
 interface FormData {
   name: string;
   email: string;
+  phone: string;
   password: string;
   termsAccepted: boolean;
 }
+
+// Basic sanity check only -- accepts optional +country code and 7-15
+// digits, no SMS/OTP verification (explicitly out of scope for this
+// change; see the migration this form pairs with).
+const PHONE_PATTERN = /^\+?[0-9]{7,15}$/;
 
 const schema = yup
   .object({
     name: yup.string().required("Name is required"),
     email: yup.string().required("Email is required").email("Invalid email"),
+    phone: yup
+      .string()
+      .required("Phone number is required")
+      .matches(PHONE_PATTERN, "Enter a valid phone number"),
     password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
     termsAccepted: yup
       .boolean()
@@ -73,6 +83,7 @@ const SellerRegisterForm = () => {
         options: {
           data: {
             full_name: data.name,
+            phone: data.phone,
             role: "seller",
           },
         },
@@ -154,6 +165,13 @@ const SellerRegisterForm = () => {
             <label>Email*</label>
             <input type="email" {...register("email")} placeholder="Youremail@gmail.com" />
             <p className="form_error">{errors.email?.message}</p>
+          </div>
+        </div>
+        <div className="col-12">
+          <div className="input-group-meta position-relative mb-25">
+            <label>Phone*</label>
+            <input type="tel" {...register("phone")} placeholder="+91 98765 43210" />
+            <p className="form_error">{errors.phone?.message}</p>
           </div>
         </div>
         <div className="col-12">

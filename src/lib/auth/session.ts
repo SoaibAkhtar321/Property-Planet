@@ -19,11 +19,12 @@ export interface AuthContext {
    userId: string;
    email: string | null;
    role: UserRole;
+   phone: string | null;
 }
 
 /**
- * Returns the authenticated user's id/email/role, or null if there is no
- * session or no matching `profiles` row. Never throws, never trusts
+ * Returns the authenticated user's id/email/role/phone, or null if there
+ * is no session or no matching `profiles` row. Never throws, never trusts
  * anything but the server-side Supabase session + `profiles` table.
  */
 export async function getAuthContext(): Promise<AuthContext | null> {
@@ -39,7 +40,7 @@ export async function getAuthContext(): Promise<AuthContext | null> {
 
    const { data: profile, error } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, phone")
       .eq("id", user.id)
       .maybeSingle();
 
@@ -49,7 +50,12 @@ export async function getAuthContext(): Promise<AuthContext | null> {
       return null;
    }
 
-   return { userId: user.id, email: user.email ?? null, role: profile.role as UserRole };
+   return {
+      userId: user.id,
+      email: user.email ?? null,
+      role: profile.role as UserRole,
+      phone: profile.phone ?? null,
+   };
 }
 
 /**
@@ -57,12 +63,29 @@ export async function getAuthContext(): Promise<AuthContext | null> {
  * public). Redirects to "/" (same convention as requireAdmin() — there is
  * no standalone /login route, login is the LoginModal) if there is no
  * session or no valid profile.
+ *
+ * Buyer profile-completion gate: a buyer only ever gets a `profiles` row
+ * with a null `phone` immediately after their first Google sign-in (see
+ * 0011/0012's handle_new_user() -- Google OAuth never supplies a phone).
+ * Every dashboard page and every buyer-only server action funnels through
+ * here (requireRole() below calls this first), so this is the single
+ * choke point that redirects such a buyer to /auth/complete-profile
+ * instead of letting them through to a dashboard page, a buyer-only
+ * action like createInquiry(), or anywhere else gated by this function --
+ * consistent with src/middleware.ts's first-line check for the same
+ * condition on /dashboard/** requests. Sellers/admins are never affected:
+ * their `phone` is set at signup (sellers) or by manual admin grant, and
+ * this check only ever fires for role === "buyer".
  */
 export async function requireDashboardUser(): Promise<AuthContext> {
    const ctx = await getAuthContext();
 
    if (!ctx) {
       redirect("/");
+   }
+
+   if (ctx.role === "buyer" && !ctx.phone) {
+      redirect("/auth/complete-profile");
    }
 
    return ctx;
