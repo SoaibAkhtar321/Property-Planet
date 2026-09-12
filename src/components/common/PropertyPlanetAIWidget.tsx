@@ -132,7 +132,6 @@ const PropertyPlanetAIWidget = () => {
                                  </div>
                                  <div className="d-flex align-items-center justify-content-between mt-2">
                                     <strong className="property-planet-ai-card-price">{formatINR(p.price)}</strong>
-                                    <Link href="/listing_05" className="property-planet-ai-card-cta">View Property</Link>
                                  </div>
                               </div>
                            ))}

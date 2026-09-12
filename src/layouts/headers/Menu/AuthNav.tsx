@@ -46,25 +46,55 @@ const AuthNav = ({ style_2 }: AuthNavProps) => {
       );
    }
 
-   const dashboardHref = role === "admin" ? "/admin" : "/dashboard/dashboard-index";
-   const dashboardLabel = role === "admin" ? "Admin Panel" : "Dashboard";
    const displayName = fullName || user.email || "Account";
 
-   if (style_2) {
-      return (
-         <li className="d-none d-md-flex align-items-center me-4 me-xxl-5">
-            <span className="me-3 fw-500">{displayName}</span>
-            <Link href={dashboardHref} className="me-3">{dashboardLabel}</Link>
-            <button type="button" onClick={handleLogout} style={{ cursor: "pointer" }} className="tran3s border-0 bg-transparent p-0">Logout</button>
-         </li>
-      );
+   // Buyer gets Dashboard + Profile. Seller gets those plus listing
+   // management — one unified dropdown, since a seller account keeps
+   // full buyer functionality rather than switching modes. Admin gets
+   // just the admin panel: none of the buyer/seller dashboard routes
+   // apply to an admin account.
+   const menuItems: { href: string; label: string }[] = [];
+   if (role === "admin") {
+      menuItems.push({ href: "/admin", label: "Admin Panel" });
+   } else {
+      menuItems.push({ href: "/dashboard/dashboard-index", label: "My Dashboard" });
+      if (role === "seller") {
+         menuItems.push({ href: "/dashboard/properties-list", label: "My Properties" });
+         menuItems.push({ href: "/dashboard/add-property", label: "Add Listing" });
+      }
+      menuItems.push({ href: "/dashboard/profile", label: "Profile" });
    }
 
+   const dropdown = (
+      <ul className="dropdown-menu dropdown-menu-end">
+         {menuItems.map((item) => (
+            <li key={item.href}>
+               <Link className="dropdown-item" href={item.href}>{item.label}</Link>
+            </li>
+         ))}
+         <li>
+            <button type="button" onClick={handleLogout} className="dropdown-item border-0 bg-transparent w-100 text-start" style={{ cursor: "pointer" }}>Logout</button>
+         </li>
+      </ul>
+   );
+
+   const wrapperClass = style_2
+      ? "d-none d-md-flex align-items-center me-4 me-xxl-5 position-relative"
+      : "d-none d-md-flex align-items-center ms-3 ms-xl-4 me-xl-4 position-relative";
+
    return (
-      <li className="d-none d-md-flex align-items-center ms-3 ms-xl-4 me-xl-4">
-         <span className="me-3 fw-500">{displayName}</span>
-         <Link href={dashboardHref} className="me-3 fw-500 tran3s">{dashboardLabel}</Link>
-         <button type="button" onClick={handleLogout} style={{ cursor: "pointer" }} className="fw-500 tran3s border-0 bg-transparent p-0">Logout</button>
+      <li className={wrapperClass}>
+         <button
+            type="button"
+            className="fw-500 tran3s border-0 bg-transparent p-0 dropdown-toggle"
+            id="auth-nav-dropdown"
+            data-bs-toggle="dropdown"
+            data-bs-auto-close="outside"
+            aria-expanded="false"
+         >
+            {displayName}
+         </button>
+         {dropdown}
       </li>
    );
 }

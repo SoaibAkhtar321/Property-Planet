@@ -7,13 +7,21 @@ import featureShape_1 from "@/assets/images/shape/shape_71.svg"
 import featureShape_2 from "@/assets/images/shape/shape_39.svg"
 import featureShape_3 from "@/assets/images/shape/shape_37.svg"
 
+// Each card's CTA used to point at the same hardcoded /listing_10
+// (a dead template route) regardless of which card it was on. Routed
+// to the real destination that matches what each button says instead.
+const ctaHrefForBtn = (btn?: string): string => {
+   if (btn === "Sell Property") return "/seller/register";
+   return "/properties";
+}
+
 const BLockFeatureTwo = () => {
    return (
       <div className="block-feature-sixteen">
          <div className="bg-pink-two position-relative z-1 pt-140 xl-pt-100 lg-pt-80 pb-150 xl-pb-120 lg-pb-100">
             <div className="container">
                <div className="title-one text-center mb-70 xl-mb-40 lg-mb-20">
-                  <h2 className="font-garamond star-shape"><span className="star-shape"><Image src={titleShape} alt="" className="lazy-img" /></span> Buy, Rend & Sell</h2>
+                  <h2 className="font-garamond star-shape"><span className="star-shape"><Image src={titleShape} alt="" className="lazy-img" /></span> Buy, Rent & Sell</h2>
                   <p className="fs-22 mt-xs color-dark">Over 745K listings of apartments, lots, plots - available today.</p>
                </div>
 
@@ -24,7 +32,7 @@ const BLockFeatureTwo = () => {
                            <Image src={item.icon ? item.icon : ""} alt="" className="lazy-img icon" />
                            <h5 className="mt-35 mb-20">{item.title}</h5>
                            <p className="fs-22 mb-50">{item.desc}</p>
-                           <Link href="/listing_10" className="btn-twelve mt-auto">{item.btn}</Link>
+                           <Link href={ctaHrefForBtn(item.btn)} className="btn-twelve mt-auto">{item.btn}</Link>
                         </div>
                      </div>
                   ))}
