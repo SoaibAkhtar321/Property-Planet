@@ -1,20 +1,43 @@
+"use client"
+// src/modals/LoginModal.tsx
+//
+// Buyer auth only. A buyer never sees email/password -- registering and
+// logging in are the same action: "Continue with Google". Supabase creates
+// the auth.users row (and, via handle_new_user(), the profiles row with
+// role 'buyer') automatically the first time someone uses it, so there is
+// no separate buyer "register" step to build.
+//
+// Sellers/agents are a deliberately separate, deliberately different flow
+// (email/password + email confirmation) at /seller/register and
+// /seller/login -- see those routes -- because unlike a buyer, a seller
+// account needs a verifiable email before anyone should trust them to
+// receive buyer leads or list a property.
+
 import Image from "next/image"
 import Link from "next/link"
-import LoginForm from "@/components/forms/LoginForm"
 import { useState } from "react"
+import { createClient } from "@/lib/supabase/client"
 
-import loginIcon_1 from "@/assets/images/icon/google.png"
-import loginIcon_2 from "@/assets/images/icon/facebook.png"
-import RegisterForm from "@/components/forms/RegisterForm"
+import googleIcon from "@/assets/images/icon/google.png"
 
-const tab_title: string[] = ["Login", "Signup",];
+// Several existing callers (ListingDetailsFourArea, CommonReviewForm, etc.)
+// still pass loginModal/setLoginModal from before this component managed
+// its own state. Accepted-but-unused here, same as the old file, so those
+// call sites don't need to change.
+const LoginModal = (_props: any) => {
+   const [isLoading, setIsLoading] = useState(false);
 
-const LoginModal = ({ loginModal, setLoginModal }: any) => {
-
-   const [activeTab, setActiveTab] = useState(0);
-
-   const handleTabClick = (index: any) => {
-      setActiveTab(index);
+   const handleGoogleContinue = async () => {
+      setIsLoading(true);
+      const supabase = createClient();
+      await supabase.auth.signInWithOAuth({
+         provider: "google",
+         options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+         },
+      });
+      // No need to reset isLoading -- a successful call navigates the
+      // whole page away to Google immediately.
    };
 
    return (
@@ -25,49 +48,28 @@ const LoginModal = ({ loginModal, setLoginModal }: any) => {
                   <div className="user-data-form modal-content">
                      <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                      <div className="form-wrapper m-auto">
-                        <ul className="nav nav-tabs w-100">
-                           {tab_title.map((tab, index) => (
-                              <li key={index} onClick={() => handleTabClick(index)} className="nav-item">
-                                 <button className={`nav-link ${activeTab === index ? "active" : ""}`}>{tab}</button>
-                              </li>
-                           ))}
-                        </ul>
-                        <div className="tab-content mt-30">
-                           <div className={`tab-pane fade ${activeTab === 0 ? 'show active' : ''}`}>
-                              <div className="text-center mb-20">
-                                 <h2>Welcome Back!</h2>
-                                 <p className="fs-20 color-dark">Still don&apos;t have an account? <Link href="#">Sign up</Link></p>
-                              </div>
-                              <LoginForm />
-                           </div>
-
-                           <div className={`tab-pane fade ${activeTab === 1 ? 'show active' : ''}`}>
-                              <div className="text-center mb-20">
-                                 <h2>Register</h2>
-                                 <p className="fs-20 color-dark">Already have an account? <Link href="#">Login</Link></p>
-                              </div>
-                              <RegisterForm />
-                           </div>
+                        <div className="text-center mb-30">
+                           <h2>Welcome to Property Planet</h2>
+                           <p className="fs-20 color-dark">Continue with Google to browse and enquire about properties.</p>
                         </div>
 
-                        <div className="d-flex align-items-center mt-30 mb-10">
-                           <div className="line"></div>
-                           <span className="pe-3 ps-3 fs-6">OR</span>
-                           <div className="line"></div>
-                        </div>
-                        <div className="row">
-                           <div className="col-sm-6">
-                              <Link href="#" className="social-use-btn d-flex align-items-center justify-content-center tran3s w-100 mt-10">
-                                 <Image src={loginIcon_1} alt="" />
-                                 <span className="ps-3">Signup with Google</span>
-                              </Link>
-                           </div>
-                           <div className="col-sm-6">
-                              <Link href="#" className="social-use-btn d-flex align-items-center justify-content-center tran3s w-100 mt-10">
-                                 <Image src={loginIcon_2} alt="" />
-                                 <span className="ps-3">Signup with Facebook</span>
-                              </Link>
-                           </div>
+                        <button
+                           type="button"
+                           onClick={handleGoogleContinue}
+                           disabled={isLoading}
+                           className="social-use-btn d-flex align-items-center justify-content-center tran3s w-100 mt-10"
+                        >
+                           <Image src={googleIcon} alt="" />
+                           <span className="ps-3">{isLoading ? "Redirecting..." : "Continue with Google"}</span>
+                        </button>
+
+                        <div className="text-center mt-30">
+                           <p className="fs-16 color-dark">
+                              Are you a seller or agent?{" "}
+                              <Link href="/seller/login" data-bs-dismiss="modal">Login</Link>
+                              {" "}or{" "}
+                              <Link href="/seller/register" data-bs-dismiss="modal">register here</Link>.
+                           </p>
                         </div>
                      </div>
                   </div>
