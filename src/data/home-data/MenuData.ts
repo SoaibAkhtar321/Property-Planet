@@ -38,9 +38,6 @@ const menu_data: MenuItem[] = [
         sub_menus: [
             
             { link: "/properties", title: "All Properties" },
-            { link: "/properties", title: "Browse by Type" },
-            { link: "/properties", title: "Property Details" },
-            { link: "/properties", title: "Featured Opportunities" },
             
         ],
     },
