@@ -48,7 +48,7 @@ const Property = () => {
                               </div>
                            </div>
                            <div className="property-info p-25">
-                              <Link href="#" className="title tran3s">{item.title}</Link>
+                              <Link href="/properties" className="title tran3s">{item.title}</Link>
                               <div className="address">{item.address}</div>
                               {(item.verification_status || item.suitable_for) && (
                                  <div className="fs-14 mt-1 mb-2">
@@ -68,7 +68,7 @@ const Property = () => {
                               </ul>
                               <div className="pl-footer top-border d-flex align-items-center justify-content-between">
                                  <strong className="price fw-500 color-dark">₹{item.price.toLocaleString('en-IN')}{item.price_text ? ` ${item.price_text}` : ""}</strong>
-                                 <Link href="#" className="btn-four"><i className="bi bi-arrow-up-right"></i></Link>
+                                 <Link href="/properties" className="btn-four"><i className="bi bi-arrow-up-right"></i></Link>
                               </div>
                            </div>
                         </div>
