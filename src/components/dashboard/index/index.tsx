@@ -1,9 +1,14 @@
 import DashboardBody from "./DashboardBody"
+import type { DashboardStat } from "@/lib/dashboard/queries"
 
-const DashboardIndex = () => {
+interface DashboardIndexProps {
+  stats: DashboardStat[];
+}
+
+const DashboardIndex = ({ stats }: DashboardIndexProps) => {
   return (
     <>
-      <DashboardBody/>
+      <DashboardBody stats={stats} />
     </>
   )
 }

@@ -1,5 +1,5 @@
 "use client"
-import Image, { StaticImageData } from "next/image"
+import Image from "next/image"
 import NiceSelect from "@/ui/NiceSelect"
 import RecentMessage from "./RecentMessage"
 import DashboardHeaderTwo from "@/layouts/headers/dashboard/DashboardHeaderTwo"
@@ -9,44 +9,18 @@ import icon_2 from "@/assets/images/dashboard/icon/icon_13.svg"
 import icon_3 from "@/assets/images/dashboard/icon/icon_14.svg"
 import icon_4 from "@/assets/images/dashboard/icon/icon_15.svg"
 import DashboardChart from "./DashboardChart"
+import type { DashboardStat } from "@/lib/dashboard/queries"
 
-interface DataType {
-   id: number;
-   icon: StaticImageData;
-   title: string;
-   value: string;
-   class_name?: string;
+// Cycled by position rather than mapped 1:1, since the stat list is now
+// real and role-dependent (2 cards for a buyer, 6 for a seller) instead
+// of a fixed hardcoded 4.
+const card_icons = [icon_1, icon_2, icon_3, icon_4];
+
+interface DashboardBodyProps {
+   stats: DashboardStat[];
 }
 
-const dashboard_card_data: DataType[] = [
-   {
-      id: 1,
-      icon: icon_1,
-      title: "All Properties",
-      value: "1.7k+",
-      class_name: "skew-none",
-   },
-   {
-      id: 2,
-      icon: icon_2,
-      title: "Total Pending",
-      value: "03",
-   },
-   {
-      id: 3,
-      icon: icon_3,
-      title: "Total Views",
-      value: "4.8k",
-   },
-   {
-      id: 4,
-      icon: icon_4,
-      title: "Total Favourites",
-      value: "07",
-   },
-]
-
-const DashboardBody = () => {
+const DashboardBody = ({ stats }: DashboardBodyProps) => {
 
    const selectHandler = (e: any) => { };
 
@@ -58,11 +32,11 @@ const DashboardBody = () => {
             <h2 className="main-title d-block d-lg-none">Dashboard</h2>
             <div className="bg-white border-20">
                <div className="row">
-                  {dashboard_card_data.map((item) => (
+                  {stats.map((item, index) => (
                      <div key={item.id} className="col-lg-3 col-6">
-                        <div className={`dash-card-one bg-white border-30 position-relative mb-15 ${item.class_name}`}>
+                        <div className={`dash-card-one bg-white border-30 position-relative mb-15 ${index === 0 ? "skew-none" : ""}`}>
                            <div className="d-sm-flex align-items-center justify-content-between">
-                              <div className="icon rounded-circle d-flex align-items-center justify-content-center order-sm-1"><Image src={item.icon} alt="" className="lazy-img" /></div>
+                              <div className="icon rounded-circle d-flex align-items-center justify-content-center order-sm-1"><Image src={card_icons[index % card_icons.length]} alt="" className="lazy-img" /></div>
                               <div className="order-sm-0">
                                  <span>{item.title}</span>
                                  <div className="value fw-500">{item.value}</div>
