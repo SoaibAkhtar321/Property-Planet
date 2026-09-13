@@ -15,12 +15,14 @@
 // front of that database-level backstop, not a replacement for it.
 //
 // Only fields that exist in 0006_projects.sql are handled. Landmarks,
-// connectivity, features, area distribution, and media (project_landmarks
-// / project_connectivity / project_features / project_area_distribution /
-// project_media) are not managed here yet — left for a follow-up admin
-// screen, see the Phase 6 report. project_pricing is now handled (see
-// addProjectPricingRow / updateProjectPricingRow / deleteProjectPricingRow
-// below). project_legal is never written from this file.
+// connectivity, features, area distribution (project_landmarks /
+// project_connectivity / project_features / project_area_distribution) are
+// not managed here yet — left for a follow-up admin screen, see the Phase 6
+// report. project_pricing is handled (see addProjectPricingRow /
+// updateProjectPricingRow / deleteProjectPricingRow below), and so is
+// project_media (see addProjectMediaRow / updateProjectMediaRow /
+// deleteProjectMediaRow below). project_legal is never written from this
+// file.
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -270,6 +272,183 @@ export async function deleteProjectPricingRow(projectId: string, pricingRowId: s
 
    if (error) {
       return { success: false, error: error.message };
+   }
+
+   revalidatePath(`/admin/projects/${projectId}`);
+   revalidatePath("/projects");
+   return { success: true };
+}
+
+// ===========================================================================
+// project_media
+//
+// The actual file bytes are uploaded straight from the browser to the
+// `project-media` Storage bucket (see ProjectMediaUpload.tsx — same
+// client-side-upload pattern as FeaturedImageUpload.tsx /
+// PropertyMediaUpload.tsx), authorized by the "admins can upload project
+// media objects" storage RLS policy. These actions only ever persist/edit
+// the *metadata row* pointing at an already-uploaded storage_path — they
+// never receive or handle file bytes themselves.
+//
+// is_primary note: project_media_one_primary_idx (0006_projects.sql) is a
+// single partial unique index on (project_id) where is_primary = true —
+// i.e. at most one primary media row per *project*, not one per
+// media_type. So whenever a row is being set as primary, any existing
+// primary row for the project must be cleared first in a separate
+// statement, or the insert/update would hit that unique index.
+// ===========================================================================
+
+const MEDIA_TYPES = ["gallery", "master_plan", "floor_plan", "video", "document"] as const;
+type ProjectMediaType = (typeof MEDIA_TYPES)[number];
+
+const isProjectMediaType = (value: FormDataEntryValue | null): value is ProjectMediaType =>
+   typeof value === "string" && (MEDIA_TYPES as readonly string[]).includes(value);
+
+/**
+ * Persists one already-uploaded file's metadata as a new project_media
+ * row. Called by ProjectMediaUpload.tsx immediately after its client-side
+ * storage upload succeeds — storagePath must already exist in the
+ * `project-media` bucket under `{projectId}/...` by the time this runs.
+ */
+export async function addProjectMediaRow(projectId: string, formData: FormData): Promise<ActionResult> {
+   await requireAdmin();
+   const supabase = await createClient();
+
+   const storagePath = textOrNull(formData.get("storage_path"));
+   if (!storagePath) {
+      return { success: false, error: "No uploaded file to save." };
+   }
+
+   const mediaTypeValue = formData.get("media_type");
+   if (!isProjectMediaType(mediaTypeValue)) {
+      return { success: false, error: "Invalid media type." };
+   }
+
+   const makePrimary = formData.get("is_primary") === "on";
+
+   if (makePrimary) {
+      // Clear any existing primary row for this project first — see the
+      // is_primary note above. Scoped to this project only, so it can
+      // never touch another project's primary flag.
+      const { error: clearError } = await supabase
+         .from("project_media")
+         .update({ is_primary: false })
+         .eq("project_id", projectId)
+         .eq("is_primary", true);
+
+      if (clearError) {
+         return { success: false, error: `Failed to update existing primary media: ${clearError.message}` };
+      }
+   }
+
+   const { error } = await supabase.from("project_media").insert({
+      project_id: projectId,
+      storage_path: storagePath,
+      media_type: mediaTypeValue,
+      caption: textOrNull(formData.get("caption")),
+      sort_order: numberOrNull(formData.get("sort_order")) ?? 0,
+      is_primary: makePrimary,
+   });
+
+   if (error) {
+      return { success: false, error: error.message };
+   }
+
+   revalidatePath(`/admin/projects/${projectId}`);
+   revalidatePath("/projects");
+   return { success: true };
+}
+
+/** Updates one existing project_media row's editable metadata (not the file itself). */
+export async function updateProjectMediaRow(
+   projectId: string,
+   mediaRowId: string,
+   formData: FormData
+): Promise<ActionResult> {
+   await requireAdmin();
+   const supabase = await createClient();
+
+   const makePrimary = formData.get("is_primary") === "on";
+
+   if (makePrimary) {
+      // Clear any other row's primary flag first (see is_primary note
+      // above) — excluding this row so a no-op re-save of an already-
+      // primary row doesn't unset itself before the update below.
+      const { error: clearError } = await supabase
+         .from("project_media")
+         .update({ is_primary: false })
+         .eq("project_id", projectId)
+         .eq("is_primary", true)
+         .neq("id", mediaRowId);
+
+      if (clearError) {
+         return { success: false, error: `Failed to update existing primary media: ${clearError.message}` };
+      }
+   }
+
+   const { error } = await supabase
+      .from("project_media")
+      .update({
+         caption: textOrNull(formData.get("caption")),
+         sort_order: numberOrNull(formData.get("sort_order")) ?? 0,
+         is_primary: makePrimary,
+      })
+      .eq("id", mediaRowId)
+      // Defense-in-depth, same reasoning as updateProjectPricingRow above.
+      .eq("project_id", projectId);
+
+   if (error) {
+      return { success: false, error: error.message };
+   }
+
+   revalidatePath(`/admin/projects/${projectId}`);
+   revalidatePath("/projects");
+   return { success: true };
+}
+
+/**
+ * Deletes one project_media row AND its underlying storage object.
+ * Storage is deleted first: if that fails, the row is left intact (a
+ * still-existing file with a working row beats a dangling row pointing at
+ * nothing), and the caller is told to retry rather than being told it
+ * succeeded. If storage deletion succeeds but the row delete then fails,
+ * that is also surfaced explicitly rather than swallowed, since it leaves
+ * a broken (file-less) row behind that the admin needs to know about.
+ */
+export async function deleteProjectMediaRow(projectId: string, mediaRowId: string): Promise<ActionResult> {
+   await requireAdmin();
+   const supabase = await createClient();
+
+   const { data: row, error: fetchError } = await supabase
+      .from("project_media")
+      .select("id, storage_path")
+      .eq("id", mediaRowId)
+      .eq("project_id", projectId)
+      .maybeSingle();
+
+   if (fetchError) {
+      return { success: false, error: fetchError.message };
+   }
+   if (!row) {
+      return { success: false, error: "Media item not found." };
+   }
+
+   const { error: storageError } = await supabase.storage.from("project-media").remove([row.storage_path]);
+   if (storageError) {
+      return { success: false, error: `Failed to delete file from storage: ${storageError.message}` };
+   }
+
+   const { error: deleteError } = await supabase
+      .from("project_media")
+      .delete()
+      .eq("id", mediaRowId)
+      .eq("project_id", projectId);
+
+   if (deleteError) {
+      return {
+         success: false,
+         error: `File was removed from storage, but the record could not be deleted: ${deleteError.message}`,
+      };
    }
 
    revalidatePath(`/admin/projects/${projectId}`);

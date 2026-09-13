@@ -60,6 +60,17 @@ export interface AdminProjectPricingRow {
    display_order: number;
 }
 
+export interface AdminProjectMediaRow {
+   id: string;
+   project_id: string;
+   storage_path: string;
+   media_type: "gallery" | "master_plan" | "floor_plan" | "video" | "document";
+   is_primary: boolean;
+   caption: string | null;
+   sort_order: number;
+   created_at: string;
+}
+
 /** All projects regardless of status, for the /admin/projects list. */
 export async function getAllProjectsForAdmin(): Promise<AdminProjectListRow[]> {
    const supabase = await createClient();
@@ -133,4 +144,34 @@ export async function getProjectPricing(projectId: string): Promise<AdminProject
    }
 
    return (data ?? []) as AdminProjectPricingRow[];
+}
+
+/**
+ * All media rows for a project, across every media_type. Reads the base
+ * `project_media` table directly (same reasoning as getProjectPricing
+ * above) — the "project media follows project visibility" RLS policy
+ * already lets an admin read media for a project of any status.
+ *
+ * Ordered by media_type then sort_order then created_at so the admin UI
+ * can group rows per type (Master Plan, Gallery, Floor Plan, Documents,
+ * Video) and render each group in a stable, predictable order without
+ * having to re-sort client-side.
+ */
+export async function getProjectMedia(projectId: string): Promise<AdminProjectMediaRow[]> {
+   const supabase = await createClient();
+
+   const { data, error } = await supabase
+      .from("project_media")
+      .select("id, project_id, storage_path, media_type, is_primary, caption, sort_order, created_at")
+      .eq("project_id", projectId)
+      .order("media_type", { ascending: true })
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+   if (error) {
+      console.error("Failed to load project media for admin:", error.message);
+      return [];
+   }
+
+   return (data ?? []) as AdminProjectMediaRow[];
 }

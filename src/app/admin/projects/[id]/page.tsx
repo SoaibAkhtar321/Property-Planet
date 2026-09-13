@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProjectForAdmin, getProjectPricing } from "@/lib/admin/projects/queries";
+import { getProjectForAdmin, getProjectPricing, getProjectMedia, type AdminProjectMediaRow } from "@/lib/admin/projects/queries";
 import {
    setProjectStatus,
    updateProjectBasics,
@@ -8,8 +8,20 @@ import {
    addProjectPricingRow,
    updateProjectPricingRow,
    deleteProjectPricingRow,
+   addProjectMediaRow,
+   updateProjectMediaRow,
+   deleteProjectMediaRow,
    type ProjectStatus,
 } from "@/lib/admin/projects/actions";
+import ProjectMediaUpload from "@/components/admin/projects/ProjectMediaUpload";
+
+const MEDIA_SECTIONS: { type: AdminProjectMediaRow["media_type"]; label: string; multiple: boolean }[] = [
+   { type: "master_plan", label: "Master Plan", multiple: true },
+   { type: "gallery", label: "Gallery", multiple: true },
+   { type: "floor_plan", label: "Floor Plan", multiple: true },
+   { type: "document", label: "Documents", multiple: true },
+   { type: "video", label: "Video", multiple: false },
+];
 
 export const dynamic = "force-dynamic";
 
@@ -18,10 +30,12 @@ export default async function EditProjectPage({ params }: { params: { id: string
    if (!result) notFound();
    const { project, location } = result;
    const pricingRows = await getProjectPricing(project.id);
+   const mediaRows = await getProjectMedia(project.id);
 
    const updateBasics = updateProjectBasics.bind(null, project.id);
    const updateLocation = updateProjectLocation.bind(null, project.id);
    const addPricingRow = addProjectPricingRow.bind(null, project.id);
+   const addMediaRow = addProjectMediaRow.bind(null, project.id);
 
    const changeStatus = async (status: ProjectStatus) => {
       "use server";
@@ -289,10 +303,87 @@ export default async function EditProjectPage({ params }: { params: { id: string
             </div>
          </form>
 
+         <h5 className="mt-5 mb-3">Media</h5>
+         <p className="text-muted small">
+            The master plan is the highest priority — it becomes the source of truth for the public project page. Only one
+            item across the whole project can be marked &quot;Primary&quot; at a time.
+         </p>
+
+         {MEDIA_SECTIONS.map(({ type, label, multiple }) => {
+            const rowsForType = mediaRows.filter((r) => r.media_type === type);
+            return (
+               <div key={type} className="border rounded p-3 mb-4">
+                  <h6 className="mb-3">{label}</h6>
+
+                  {rowsForType.length > 0 && (
+                     <div className="d-flex flex-column gap-3 mb-3">
+                        {rowsForType.map((row) => {
+                           const updateRow = updateProjectMediaRow.bind(null, project.id, row.id);
+                           const deleteRow = async () => {
+                              "use server";
+                              await deleteProjectMediaRow(project.id, row.id);
+                           };
+                           return (
+                              <form key={row.id} action={updateRow} className="border rounded p-2 d-flex flex-column gap-2">
+                                 <div className="small text-muted text-truncate">{row.storage_path}</div>
+                                 <div className="row g-2">
+                                    <div className="col">
+                                       <label className="form-label">Caption</label>
+                                       <input name="caption" defaultValue={row.caption ?? ""} className="form-control form-control-sm" />
+                                    </div>
+                                    <div className="col-auto">
+                                       <label className="form-label">Sort order</label>
+                                       <input
+                                          name="sort_order"
+                                          type="number"
+                                          defaultValue={row.sort_order}
+                                          className="form-control form-control-sm"
+                                          style={{ width: 90 }}
+                                       />
+                                    </div>
+                                    <div className="col-auto d-flex align-items-end">
+                                       <div className="form-check">
+                                          <input
+                                             type="checkbox"
+                                             name="is_primary"
+                                             defaultChecked={row.is_primary}
+                                             className="form-check-input"
+                                             id={`primary-${row.id}`}
+                                          />
+                                          <label className="form-check-label small" htmlFor={`primary-${row.id}`}>
+                                             Primary
+                                          </label>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div className="d-flex gap-2">
+                                    <button type="submit" className="btn btn-primary btn-sm">
+                                       Save
+                                    </button>
+                                    <button type="submit" formAction={deleteRow} className="btn btn-outline-danger btn-sm">
+                                       Delete
+                                    </button>
+                                 </div>
+                              </form>
+                           );
+                        })}
+                     </div>
+                  )}
+
+                  <ProjectMediaUpload
+                     projectId={project.id}
+                     mediaType={type}
+                     multiple={multiple}
+                     nextSortOrder={rowsForType.length}
+                     addMediaAction={addMediaRow}
+                  />
+               </div>
+            );
+         })}
+
          <p className="text-muted small mt-5">
-            Landmarks, connectivity, features, area distribution, and media (gallery / master plan / floor plan / video /
-            documents) are not yet manageable here — left for a follow-up admin screen. Legal/compliance info (RERA,
-            approvals) is intentionally not exposed in this admin UI yet either.
+            Landmarks, connectivity, features, and area distribution are not yet manageable here — left for a follow-up
+            admin screen. Legal/compliance info (RERA, approvals) is intentionally not exposed in this admin UI yet either.
          </p>
       </div>
    );

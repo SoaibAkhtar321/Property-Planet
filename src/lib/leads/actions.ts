@@ -240,12 +240,21 @@ export async function createSiteVisit(
 
    const { data: lead, error: leadError } = await supabase
       .from("leads")
-      .select("id, buyer_id")
+      .select("id, buyer_id, property_id")
       .eq("id", leadId)
       .maybeSingle();
 
    if (leadError || !lead || lead.buyer_id !== ctx.userId) {
       return { success: false, error: "This inquiry could not be found." };
+   }
+
+   // Site visits are inherently plot-specific — you visit a physical
+   // property, not an abstract project. A project-only lead (property_id
+   // NULL, see 0013_leads_project_id.sql / createProjectInquiry()) has
+   // nothing to visit, so reject it here rather than letting it silently
+   // create a visit request with no plot behind it.
+   if (!lead.property_id) {
+      return { success: false, error: "Site visits require a specific plot." };
    }
 
    const { data: existingVisits, error: existingError } = await supabase
