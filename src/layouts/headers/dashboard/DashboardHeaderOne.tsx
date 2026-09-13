@@ -1,6 +1,7 @@
 "use client"
 import Image from "next/image"
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from "@/lib/supabase/client";
 
@@ -30,6 +31,38 @@ import dashboardIcon_11 from "@/assets/images/dashboard/icon/icon_41.svg";
 const DashboardHeaderOne = ({ isActive, setIsActive }: any) => {
    const pathname = usePathname();
    const router = useRouter();
+
+   // The "Listing" nav section (My Properties / Add New Property) is
+   // seller-only -- src/middleware.ts and requireRole() already block a
+   // buyer from those pages server-side, but the sidebar itself used to
+   // show the links to every role regardless, which made a freshly
+   // signed-up buyer's dashboard look like a seller dashboard. This is
+   // read-only, client-side, and permitted by the existing "users can
+   // read own profile" RLS policy (0001_profiles.sql) -- it does not
+   // change how role is assigned or enforced anywhere.
+   const [isSeller, setIsSeller] = useState(false);
+
+   useEffect(() => {
+      let cancelled = false;
+      const supabase = createClient();
+
+      (async () => {
+         const { data: { user } } = await supabase.auth.getUser();
+         if (!user) return;
+
+         const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .maybeSingle();
+
+         if (!cancelled && profile?.role === "seller") {
+            setIsSeller(true);
+         }
+      })();
+
+      return () => { cancelled = true; };
+   }, []);
 
    const handleLogout = async () => {
       const supabase = createClient();
@@ -71,16 +104,20 @@ const DashboardHeaderOne = ({ isActive, setIsActive }: any) => {
                      <Image src={pathname === '/dashboard/membership' ? dashboardIconActive_5 : dashboardIcon_5} alt="" />
                      <span>Membership</span>
                   </Link></li>
-                  <li className="bottom-line pt-30 lg-pt-20 mb-40 lg-mb-30"></li>
-                  <li><div className="nav-title">Listing</div></li>
-                  <li className="plr"><Link href="/dashboard/properties-list" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/properties-list' ? 'active' : ''}`}>
-                     <Image src={pathname === '/dashboard/properties-list' ? dashboardIconActive_6 : dashboardIcon_6} alt="" />
-                     <span>My Properties</span>
-                  </Link></li>
-                  <li className="plr"><Link href="/dashboard/add-property" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/add-property' ? 'active' : ''}`}>
-                     <Image src={pathname === '/dashboard/add-property' ? dashboardIconActive_7 : dashboardIcon_7} alt="" />
-                     <span>Add New Property</span>
-                  </Link></li>
+                  {isSeller && (
+                     <>
+                        <li className="bottom-line pt-30 lg-pt-20 mb-40 lg-mb-30"></li>
+                        <li><div className="nav-title">Listing</div></li>
+                        <li className="plr"><Link href="/dashboard/properties-list" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/properties-list' ? 'active' : ''}`}>
+                           <Image src={pathname === '/dashboard/properties-list' ? dashboardIconActive_6 : dashboardIcon_6} alt="" />
+                           <span>My Properties</span>
+                        </Link></li>
+                        <li className="plr"><Link href="/dashboard/add-property" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/add-property' ? 'active' : ''}`}>
+                           <Image src={pathname === '/dashboard/add-property' ? dashboardIconActive_7 : dashboardIcon_7} alt="" />
+                           <span>Add New Property</span>
+                        </Link></li>
+                     </>
+                  )}
                   <li className="plr"><Link href="/dashboard/favourites" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/favourites' ? 'active' : ''}`}>
                      <Image src={pathname === '/dashboard/favourites' ? dashboardIconActive_8 : dashboardIcon_8} alt="" />
                      <span>Favourites</span>

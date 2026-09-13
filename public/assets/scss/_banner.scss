@@ -50,17 +50,19 @@
     // so it clearly reads as an AI assistant entry point rather than a
     // contact/advisor or video trigger.
     .ai-assistant-cta {
-        background: rgba(255, 255, 255, 0.65);
-        border: 1px solid rgba(15, 42, 55, 0.12) !important;
+        background: #fff;
+        border: 2px solid $color-one !important;
         border-radius: 60px;
-        padding: 6px 24px 6px 6px;
+        padding: 8px 28px 8px 8px;
         cursor: pointer;
+        box-shadow: 0 10px 30px rgba(255, 103, 37, 0.25);
+        animation: aiAssistantPulse 2.4s ease-in-out infinite;
         @include transition(0.3s);
         &__icon {
             position: relative;
-            width: 52px;
-            height: 52px;
-            min-width: 52px;
+            width: 58px;
+            height: 58px;
+            min-width: 58px;
             border-radius: 50%;
             background: linear-gradient(135deg, #0F2A37 0%, #23505F 100%);
             border: 2px solid $color-one;
@@ -70,7 +72,7 @@
             @include transition(0.3s);
             i {
                 color: #fff;
-                font-size: 20px;
+                font-size: 22px;
             }
         }
         &__tag {
@@ -88,32 +90,37 @@
             border: 2px solid #fff;
         }
         &__text {
-            padding-left: 16px;
+            padding-left: 18px;
             display: flex;
             flex-direction: column;
         }
         &__eyebrow {
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
             color: $color-one;
             line-height: 1.4;
         }
         &__title {
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
             color: $text-dark;
             line-height: 1.3;
         }
         &:hover, &:focus {
             background: #fff;
-            border-color: rgba(15, 42, 55, 0.25) !important;
-            box-shadow: 0 15px 35px rgba(15, 42, 55, 0.12);
+            border-color: $color-two !important;
+            box-shadow: 0 15px 35px rgba(255, 103, 37, 0.35);
+            animation-play-state: paused;
             .ai-assistant-cta__icon {
                 background: $color-one;
             }
         }
+    }
+    @keyframes aiAssistantPulse {
+        0%, 100% { box-shadow: 0 10px 30px rgba(255, 103, 37, 0.25); }
+        50% { box-shadow: 0 10px 30px rgba(255, 103, 37, 0.5); }
     }
     // Legacy .video-icon rules retained for any other markup on this hero
     // that still relies on the shared play-button pattern.

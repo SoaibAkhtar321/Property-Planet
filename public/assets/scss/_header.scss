@@ -300,6 +300,36 @@
             }
         }
     }
+    // Orange "Login / Sign up" pill CTA -- replaces the plain black
+    // login-btn-one text link in the top-right slot previously occupied
+    // by the "Talk to Property Planet AI" button.
+    .auth-cta-btn {
+        background: $color-one;
+        color: #fff;
+        font-weight: 500;
+        padding: 12px 22px;
+        border-radius: 40px;
+        i {
+            margin-right: 8px;
+        }
+        &:hover, &:focus {
+            background: $color-two;
+            color: #fff;
+        }
+    }
+    // Round profile icon shown in the same slot once a user is logged in.
+    .auth-avatar-btn {
+        width: 44px;
+        height: 44px;
+        background: $color-one;
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.1em;
+        &:hover, &:focus {
+            background: $color-two;
+            color: #fff;
+        }
+    }
     .login-btn-two {
         width: 60px;
         height: 60px;

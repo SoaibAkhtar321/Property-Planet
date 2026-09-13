@@ -38,10 +38,11 @@ const AuthNav = ({ style_2 }: AuthNavProps) => {
             <Link href="#" data-bs-toggle="modal" data-bs-target="#loginModal" className="login-btn-two rounded-circle tran3s d-flex align-items-center justify-content-center"><i className="fa-regular fa-lock"></i></Link>
          </li>
       ) : (
-         <li className="d-flex align-items-center login-btn-one">
-            <i className="fa-regular fa-lock"></i>
-            <Link href="#" data-bs-toggle="modal" data-bs-target="#loginModal" className="fw-500 tran3s">
-               Login <span className="d-none d-sm-inline-block"> {""} / Sign up</span></Link>
+         <li className="d-none d-md-inline-block ms-3 ms-xl-4 me-xl-4">
+            <Link href="#" data-bs-toggle="modal" data-bs-target="#loginModal" className="auth-cta-btn tran3s d-inline-flex align-items-center">
+               <i className="fa-regular fa-lock"></i>
+               <span>Login <span className="d-none d-sm-inline">/ Sign up</span></span>
+            </Link>
          </li>
       );
    }
@@ -82,17 +83,21 @@ const AuthNav = ({ style_2 }: AuthNavProps) => {
       ? "d-none d-md-flex align-items-center me-4 me-xxl-5 position-relative"
       : "d-none d-md-flex align-items-center ms-3 ms-xl-4 me-xl-4 position-relative";
 
+   const initial = displayName.trim().charAt(0).toUpperCase() || "U";
+
    return (
       <li className={wrapperClass}>
          <button
             type="button"
-            className="fw-500 tran3s border-0 bg-transparent p-0 dropdown-toggle"
+            className="auth-avatar-btn rounded-circle border-0 d-flex align-items-center justify-content-center dropdown-toggle"
             id="auth-nav-dropdown"
             data-bs-toggle="dropdown"
             data-bs-auto-close="outside"
             aria-expanded="false"
+            aria-label={displayName}
+            title={displayName}
          >
-            {displayName}
+            {initial}
          </button>
          {dropdown}
       </li>

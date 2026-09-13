@@ -8,7 +8,6 @@ import LoginModal from "@/modals/LoginModal"
 import AuthNav from "./Menu/AuthNav"
 import Offcanvas from "./Menu/Offcanvas"
 import HeaderSearchbar from "./Menu/HeaderSearchbar"
-import { openPropertyPlanetAI } from "@/utils/propertyPlanetAIBus"
 
 import logo_1 from "@/assets/images/logo/logo_02.svg";
 import logo_2 from "@/assets/images/logo/logo_04.svg";
@@ -34,16 +33,6 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
                      <div className="right-widget ms-auto me-3 me-lg-0 order-lg-3">
                         <ul className="d-flex align-items-center style-none">
                            {!style_2 ? (<><AuthNav />
-                              <li className="d-none d-md-inline-block ms-3 ms-xl-4 me-xl-4">
-                                 <button
-                                    type="button"
-                                    onClick={() => openPropertyPlanetAI()}
-                                    style={{ cursor: "pointer" }}
-                                    className={style_1 ? "btn-ten" : "btn-two rounded-0"}
-                                 >
-                                    <span>Talk to Property Planet AI</span> <i className="fa-thin fa-arrow-up-right"></i>
-                                 </button>
-                              </li>
                               <li className="d-none d-xl-block">
                                  <button onClick={() => setOffCanvas(true)} style={{ cursor: "pointer" }} className="btn-one d-inline-flex align-items-center" type="button">
                                     <i className="fa-sharp fa-light fa-bars-filter"></i> Menu
