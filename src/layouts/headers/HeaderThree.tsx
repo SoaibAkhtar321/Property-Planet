@@ -38,7 +38,7 @@ const HeaderThree = () => {
                      </div>
 
                      <div className="order-lg-2 d-none d-xxl-block">
-                        <p className="m0 email-text ps-5 pe-5">Our Email <Link href="#" className="tran3s fw-500 ms-2">hello@fcity.ai</Link></p>
+                        <p className="m0 email-text ps-5 pe-5">Our Email <Link href="#" className="tran3s fw-500 ms-2">hello@propertyplanet.in</Link></p>
                      </div>
 
                      <nav className="navbar navbar-expand-lg p0 ms-lg-5 order-lg-3">

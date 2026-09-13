@@ -17,7 +17,7 @@ export default function RootLayout({
         <meta name="keywords" content="Hyderabad real estate, Future City, land advisory, plots, villas, apartments, commercial property, corporate land, AI property platform" />
         <meta name="description" content="Property Planet is Hyderabad's AI-powered land and property advisory platform, connecting landowners, developers and buyers across Future City and the southern growth corridors." />
         <meta property="og:site_name" content="Property Planet" />
-        <meta property="og:url" content="https://fcity.ai" />
+        <meta property="og:url" content="https://propertyplanet.in" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Property Planet — Hyderabad's AI-Powered Land & Property Advisory Platform" />
         <meta name='og:image' content='images/assets/ogg.png' />

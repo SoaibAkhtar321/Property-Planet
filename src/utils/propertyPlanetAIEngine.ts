@@ -157,10 +157,30 @@ const findType = (text: string): string | null => {
    return null;
 };
 
-const summarise = (list: PropertyPlanetProperty[]): string =>
-   list
-      .map((p) => `${p.title} in ${p.address.split(",")[0]} (${formatINR(p.price)})`)
-      .join(", ");
+// ---------------------------------------------------------------------------
+// Keyword understanding
+// ---------------------------------------------------------------------------
+//
+// A lightweight synonym layer so the assistant reacts to how people actually
+// phrase things ("cheap", "genuine", "EMI", "tour") instead of only the exact
+// words used in the four canned suggestion chips. Still fully rule-based —
+// no external API — but it lets one question carry several signals at once
+// (location + type + budget + verified) instead of matching only the first
+// branch that happens to fire.
+
+const GREETING_WORDS = ["hi", "hello", "hey", "hii", "helo", "yo", "namaste"];
+const THANKS_WORDS = ["thanks", "thank you", "thnx", "thx", "ty"];
+
+const INVESTMENT_WORDS = ["invest", "investment", "returns", "appreciation", "roi", "resale"];
+const VERIFIED_WORDS = ["verified", "verification", "genuine", "authentic", "trusted", "trust", "safe", "legit", "legal check", "clear title"];
+const CHEAP_WORDS = ["cheap", "affordable", "budget-friendly", "lowest price", "low budget"];
+const LOAN_WORDS = ["loan", "emi", "finance", "financing", "mortgage", "bank loan"];
+const VISIT_WORDS = ["site visit", "book a visit", "schedule a visit", "site tour", "visit the site", "book visit"];
+const CORRIDOR_WORDS = ["future city corridor", "what is future city", "about future city", "corridor mean", "what is the corridor"];
+const COMPARE_TYPE_WORDS = ["plots vs villas", "plot vs villa", "plot or villa", "villa or plot", "which is better"];
+
+const includesAny = (q: string, words: string[]): boolean =>
+   words.some((w) => new RegExp(`(^|[^a-z])${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z]|$)`).test(q));
 
 // ---------------------------------------------------------------------------
 // Main entry point
@@ -171,6 +191,16 @@ export const generateAIResponse = (question: string): PropertyPlanetAIResponse =
 
    if (!q) {
       return { text: "Ask me about a location, a budget, a property type, or verified opportunities — for example \"plots in Mucherla under ₹1 crore\"." };
+   }
+
+   // 0a. Greeting.
+   if (GREETING_WORDS.some((w) => q === w || q.startsWith(w + " ") || q.startsWith(w + "!"))) {
+      return { text: "Hey! I can help you find plots, villas, apartments or commercial land across the Future City corridor — tell me a location, a budget, or what you're looking for." };
+   }
+
+   // 0b. Thanks / closing.
+   if (includesAny(q, THANKS_WORDS)) {
+      return { text: "Happy to help! If you want a human touch too, our team is a message away on the Contact page." };
    }
 
    // 1. "Tell me about this property" — no property context in a global widget.
@@ -195,6 +225,35 @@ export const generateAIResponse = (question: string): PropertyPlanetAIResponse =
       }
    }
 
+   // 2b. "Plots vs villas — which is better?" — a type-level comparison, not a
+   // location comparison, so it needs its own honest, non-fabricated answer.
+   if (includesAny(q, COMPARE_TYPE_WORDS)) {
+      return {
+         text: "It depends on your goal. Plots suit buyers focused on long-horizon land appreciation and flexibility to build later, with generally lower entry cost. Villas suit buyers who want a ready or near-ready home and are willing to pay more upfront for construction and amenities. Tell me your budget and I can show what's currently available in each.",
+      };
+   }
+
+   // 2c. "What is Future City corridor?" — explainer, not a listing search.
+   if (includesAny(q, CORRIDOR_WORDS)) {
+      return {
+         text: "The Future City corridor is the southern growth belt of Hyderabad anchored by the upcoming Future City master-planned zone, stretching through nodes like Mucherla, Adibatla and Maheshwaram along NH-44. It's where most of the plotted-land and industrial-land activity on this platform is concentrated. Ask me about a specific node and I'll tell you more.",
+      };
+   }
+
+   // 2d. Site visit process.
+   if (includesAny(q, VISIT_WORDS)) {
+      return {
+         text: "Open any listing and use the \"Request Site Visit\" option on the property page — our team will confirm a slot and share the contact once approved. Want me to pull up a specific property or location first?",
+      };
+   }
+
+   // 2e. Home loan / financing.
+   if (includesAny(q, LOAN_WORDS)) {
+      return {
+         text: "Financing availability depends on the property type and lender — villas and apartments are generally easier to get a home loan against, while plot/land loans are a separate (and sometimes more limited) category with most banks. Worth confirming with your bank for the specific property before you commit.",
+      };
+   }
+
    // 3. Proximity to upcoming infrastructure (NH-44, ORR, airport, Future City).
    if (q.includes("infrastructure") || q.includes("closest") || q.includes("nearest")) {
       return {
@@ -203,86 +262,61 @@ export const generateAIResponse = (question: string): PropertyPlanetAIResponse =
       };
    }
 
-   // 4. Best-for-investment / good investment areas.
-   if (q.includes("investment") || q.includes("invest")) {
-      const investable = AI_DATASET.filter((p) => (p.suitable_for ?? "").toLowerCase().includes("investor"))
-         .sort((a, b) => (b.trust_score ?? 0) - (a.trust_score ?? 0));
-      if (investable.length === 0) {
-         return { text: "I couldn't find a matching property in the current listings for investment-focused buyers right now." };
+   // 4. Combined-signal search — the core "understands keywords, not just one
+   // exact phrase" behaviour. Collects every signal present in the question
+   // (location, type, budget, verified-only, investment-suited, cheapest)
+   // and applies them together, then reflects back what it understood so the
+   // person can see it's reading the whole sentence, not pattern-matching.
+   const loc = findLocation(q);
+   const type = findType(q);
+   const budget = parseBudget(q);
+   const wantsVerified = includesAny(q, VERIFIED_WORDS);
+   const wantsInvestment = includesAny(q, INVESTMENT_WORDS);
+   const wantsCheapest = includesAny(q, CHEAP_WORDS);
+   const wantsGeneric = q.includes("show me") || q.includes("plots") || q.includes("properties") || q.includes("available") || q.includes("looking for");
+
+   if (loc || type || budget !== null || wantsVerified || wantsInvestment || wantsCheapest || wantsGeneric) {
+      let pool = AI_DATASET;
+      const understood: string[] = [];
+
+      if (loc) { pool = filterByLocation(loc, pool); understood.push(cap(loc)); }
+      if (type) { pool = filterByType(type, pool); understood.push(type); }
+      if (budget !== null) { pool = filterByBudget(budget, pool); understood.push(`under ${formatINR(budget)}`); }
+      if (wantsVerified) { pool = pool.filter((p) => p.verification_status === "Verified"); understood.push("verified only"); }
+      if (wantsInvestment) {
+         pool = pool.filter((p) => (p.suitable_for ?? "").toLowerCase().includes("investor"));
+         pool = [...pool].sort((a, b) => (b.trust_score ?? 0) - (a.trust_score ?? 0));
+         understood.push("investor-suited");
       }
+      if (wantsCheapest && pool.length > 0) {
+         pool = [...pool].sort((a, b) => a.price - b.price).slice(0, 1);
+         understood.push("lowest price first");
+      }
+
+      if (pool.length === 0) {
+         const what = understood.length > 0 ? understood.join(", ") : "that";
+         return { text: `I couldn't find a matching property in the current listings for ${what}. Try widening the budget or location.` };
+      }
+
+      const prefix = understood.length > 0 ? `Looking for ${understood.join(", ")} — ` : "";
       return {
-         text: `Based on verification status and trust score, the strongest investor-suited opportunities right now are: ${summarise(investable)}.`,
-         properties: investable,
+         text: `${prefix}I found ${pool.length} matching opportunit${pool.length === 1 ? "y" : "ies"}.`,
+         properties: pool,
       };
    }
 
-   // 5. Verified properties.
-   if (q.includes("verified") || q.includes("verification")) {
-      const verified = filterByVerified();
-      if (verified.length === 0) {
-         return { text: "I couldn't find any fully verified listings in the current data set — some may still be under review." };
-      }
-      return { text: `Here ${verified.length === 1 ? "is" : "are"} our currently verified opportunit${verified.length === 1 ? "y" : "ies"}, each backed by a trust score.`, properties: verified };
-   }
-
-   // 6. Price range for a location.
-   if (q.includes("price range") || (q.includes("price") && findLocation(q))) {
-      const loc = findLocation(q);
-      const pool = loc ? filterByLocation(loc) : AI_DATASET;
-      if (pool.length === 0) {
-         return { text: `I couldn't find a matching property in the current listings for ${loc ? cap(loc) : "that area"}. Try expanding the location.` };
-      }
+   // 5. Price range for a location, with no other filters detected above.
+   if (q.includes("price range") || q.includes("price")) {
+      const pool = AI_DATASET;
       const prices = pool.map((p) => p.price);
       const min = Math.min(...prices);
       const max = Math.max(...prices);
-      return {
-         text: `${loc ? cap(loc) : "Current listed"} opportunities range from ${formatINR(min)} to ${formatINR(max)} in our current listings.`,
-         properties: pool,
-      };
+      return { text: `Current listed opportunities range from ${formatINR(min)} to ${formatINR(max)}.`, properties: pool };
    }
 
-   // 7. Budget-driven query, e.g. "I have a budget of ₹50 lakh. What can I buy?"
-   const budget = parseBudget(q);
-   if (budget !== null) {
-      const withinBudget = filterByBudget(budget);
-      if (withinBudget.length === 0) {
-         return { text: `I couldn't find a matching property in the current listings under ${formatINR(budget)}. Try increasing your budget or expanding the location.` };
-      }
-      return {
-         text: `Within ${formatINR(budget)}, here ${withinBudget.length === 1 ? "is" : "are"} ${withinBudget.length} matching opportunit${withinBudget.length === 1 ? "y" : "ies"}.`,
-         properties: withinBudget,
-      };
-   }
-
-   // 8. Location-driven query, e.g. "What plots are available in Mucherla?"
-   const loc = findLocation(q);
-   const type = findType(q);
-   if (loc || type) {
-      let pool = AI_DATASET;
-      if (loc) pool = filterByLocation(loc, pool);
-      if (type) pool = filterByType(type, pool);
-
-      if (pool.length === 0) {
-         const where = loc ? cap(loc) : "";
-         const what = type ? type.toLowerCase() : "properties";
-         return {
-            text: `I couldn't find a matching property in the current listings for ${what}${where ? ` in ${where}` : ""}. Try increasing your budget or expanding the location.`,
-         };
-      }
-      return {
-         text: `I found ${pool.length} matching opportunit${pool.length === 1 ? "y" : "ies"}${loc ? ` in ${cap(loc)}` : ""}.`,
-         properties: pool,
-      };
-   }
-
-   // 9. "Show me plots" / generic listing / show properties.
-   if (q.includes("show me") || q.includes("plots") || q.includes("properties") || q.includes("available")) {
-      return { text: `Here ${AI_DATASET.length === 1 ? "is" : "are"} our currently listed, verified-in-progress opportunities.`, properties: AI_DATASET };
-   }
-
-   // 10. Fallback — nudge toward what the assistant can actually do.
+   // 6. Fallback — nudge toward what the assistant can actually do.
    return {
-      text: "I can help with locations (Future City, Mucherla, Shamshabad, Kollur, Maheshwaram, Adibatla, Shankarpally), budget, property type, or verified listings. Try something like \"plots under ₹1 crore in Mucherla\".",
+      text: "I can help with locations (Future City, Mucherla, Shamshabad, Kollur, Maheshwaram, Adibatla, Shankarpally), budget, property type, verified listings, site visits or financing. Try something like \"verified plots under ₹1 crore in Mucherla\".",
    };
 };
 

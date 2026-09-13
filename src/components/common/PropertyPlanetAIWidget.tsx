@@ -20,6 +20,10 @@ const SUGGESTED_PROMPTS = [
    "Best investment areas",
    "Properties under ₹50L",
    "Show verified plots",
+   "What is Future City corridor?",
+   "Plots vs villas — which is better?",
+   "How do I book a site visit?",
+   "Is home loan available for plots?",
 ];
 
 const typeIcon = (type?: string): string => {
@@ -103,6 +107,7 @@ const PropertyPlanetAIWidget = () => {
                   <i className="fa-regular fa-xmark"></i>
                </button>
             </div>
+            <div className="property-planet-ai-demo-note">Preview assistant — answers from sample listings. Live AI coming soon.</div>
 
             <div className="property-planet-ai-body" ref={bodyRef}>
                {messages.map((m, i) => (
@@ -237,6 +242,14 @@ const PropertyPlanetAIWidget = () => {
                flex: 0 0 auto;
             }
             .property-planet-ai-subtitle { font-size: 12px; opacity: 0.65; }
+            .property-planet-ai-demo-note {
+               font-size: 11px;
+               text-align: center;
+               padding: 6px 12px;
+               background: #FFF8F4;
+               color: #8a5a3a;
+               border-bottom: 1px solid #F5EDE8;
+            }
             .property-planet-ai-close {
                border: none;
                background: transparent;

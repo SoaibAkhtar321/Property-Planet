@@ -4,13 +4,7 @@ import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import { animationCreate } from "@/utils/utils";
 import ScrollToTop from "@/components/common/ScrollToTop";
-// TODO(ai-widget): PropertyPlanetAIWidget is disabled — its current dataset
-// (src/data/home-data/PropertyData.ts via src/utils/propertyPlanetAIEngine.ts)
-// is static template/demo data with fabricated verification status, trust
-// scores, and prices. Do not re-enable until it is wired to real Supabase
-// property/project data. Component and data files are intentionally left
-// in place for that future work.
-// import PropertyPlanetAIWidget from "@/components/common/PropertyPlanetAIWidget";
+import PropertyPlanetAIWidget from "@/components/common/PropertyPlanetAIWidget";
 
 if (typeof window !== "undefined") {
     require("bootstrap/dist/js/bootstrap");
@@ -30,7 +24,11 @@ const Wrapper = ({ children }: any) => {
     return <>
         {children}
         <ScrollToTop />
-        {/* PropertyPlanetAIWidget disabled — see TODO(ai-widget) above */}
+        {/* PropertyPlanetAIWidget: enabled with sample/reference Q&A only.
+            Verification/trust badges are intentionally not rendered here —
+            see PropertyPlanetAIWidget.tsx — until this is wired to real
+            Supabase property data and a real AI backend. */}
+        <PropertyPlanetAIWidget />
         <ToastContainer position="top-center" />
     </>;
 }

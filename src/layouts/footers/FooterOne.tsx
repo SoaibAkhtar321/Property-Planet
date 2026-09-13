@@ -25,7 +25,7 @@ const FooterOne = ({ style }: any) => {
                            </div>
                            <p className="mb-20 lg-mb-15 md-mb-10">Hyderabad, Telangana</p>
                            <h6>CONTACT</h6>
-                           <Link href="mailto:hello@fcity.ai" className={`email tran3s mb-40 lg-mb-30 ${style ? "font-garamond" : "fs-24 text-decoration-underline"}`}>hello@fcity.ai</Link>
+                           <Link href="mailto:hello@propertyplanet.in" className={`email tran3s mb-40 lg-mb-30 ${style ? "font-garamond" : "fs-24 text-decoration-underline"}`}>hello@propertyplanet.in</Link>
                            <ul className="style-none d-flex align-items-center social-icon mb-30">
                               {icon_1.map((icon, i) => (
                                  <li key={i}><Link href="#"><i className={`fa-brands fa${style ? "" : "-square"}-${icon}`}></i></Link></li>

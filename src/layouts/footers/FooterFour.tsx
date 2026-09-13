@@ -19,7 +19,7 @@ const FooterFour = () => {
                            </Link>
                         </div>
                         <p className="mb-30 xs-mb-20">Hyderabad, Telangana</p>
-                        <Link href="#" className="email tran3s mb-60 md-mb-30">hello@fcity.ai</Link>
+                        <Link href="#" className="email tran3s mb-60 md-mb-30">hello@propertyplanet.in</Link>
                         <ul className="style-none d-flex align-items-center social-icon">
                            <li><Link href="#"><i className="fa-brands fa-facebook-f"></i></Link></li>
                            <li><Link href="#"><i className="fa-brands fa-twitter"></i></Link></li>
