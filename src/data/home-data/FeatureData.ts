@@ -210,22 +210,22 @@ const feature_data: DataType[] = [
       id: 1,
       page: "home_two_feature_3",
       icon: feature4Icon_1,
-      title: "Property Insurance",
-      desc: "Elit esse cillum dolo fugiat nulla tur nos ullamo.",
+      title: "Verified Listings",
+      desc: "Every property and project is reviewed by our admin team before it goes live.",
    },
    {
       id: 2,
       page: "home_two_feature_3",
       icon: feature4Icon_2,
-      title: "Easy Payments",
-      desc: "quis nostrud exerct ullamo sucirity finibus ne derived.",
+      title: "Direct Enquiries",
+      desc: "Send an enquiry straight from any listing or project page — no sign-up friction, no middlemen.",
    },
    {
       id: 3,
       page: "home_two_feature_3",
       icon: feature4Icon_3,
       title: "Quick Process",
-      desc: "Duis aute irure dolor reprehe de Cicero's voluptat velit.",
+      desc: "Enquire, connect with a verified seller, and schedule a site visit — all in a few simple steps.",
    },
 
    // home_3_feature_1

@@ -34,29 +34,49 @@ const faq_data:DataType[] = [
    {
       id: 1,
       page: "home_2_faq_2",
-      question: "How does the free trial work?",
-      answer: "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commo consequat. Duis aute in voluptate nulla pariatur.",
+      question: "What is Property Planet?",
+      answer:
+         "Property Planet is a real estate platform connecting buyers and sellers, with admin-verified projects and plotted developments across South Hyderabad. Every listing and project shown here goes through admin moderation before it's published.",
       showAnswer: false,
    },
    {
       id: 2,
       page: "home_2_faq_2",
-      question: "How find different criteria in your process?",
-      answer: "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commo consequat. Duis aute in voluptate nulla pariatur.",
+      question: "What is Urban Crest?",
+      answer:
+         "Urban Crest is a 17-acre plotted development by Elite Infra Group, located at Kongara Khurd-A in South Hyderabad. You can view available plots, pricing, master plan, and other project details on its dedicated project page.",
       showAnswer: false,
    },
    {
       id: 3,
       page: "home_2_faq_2",
-      question: "What do you look for in a founding team?",
-      answer: "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commo consequat. Duis aute in voluptate nulla pariatur.",
+      question: "How do I enquire about a plot or a project?",
+      answer:
+         "Simply send an enquiry from the plot's listing page or the project's page. Your enquiry is routed to our team, who will follow up with the information and next steps you need.",
       showAnswer: false,
    },
    {
       id: 4,
       page: "home_2_faq_2",
-      question: "Do you recommend Pay as you go or Pre pay?",
-      answer: "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commo consequat. Duis aute in voluptate nulla pariatur.",
+      question: "How can I schedule a site visit?",
+      answer:
+         "Once you've sent an enquiry for a specific plot, you can request a site visit from your buyer dashboard. Visits are confirmed by our team, and the exact location is shared once your visit is set up.",
+      showAnswer: false,
+   },
+   {
+      id: 5,
+      page: "home_2_faq_2",
+      question: "Is my contact information kept private?",
+      answer:
+         "Yes. Seller and buyer contact details are only exchanged once a genuine enquiry has been made and confirmed, so you can browse listings and projects without your information being shared upfront.",
+      showAnswer: false,
+   },
+   {
+      id: 6,
+      page: "home_2_faq_2",
+      question: "How can I reach Property Planet directly?",
+      answer:
+         "For any questions about listings, projects, or ongoing enquiries, you can call us directly at +91 80967 86351.",
       showAnswer: false,
    },
 
