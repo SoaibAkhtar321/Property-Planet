@@ -1,19 +1,19 @@
-<svg width="440" height="110" viewBox="0 0 440 110" xmlns="http://www.w3.org/2000/svg">
+<svg width="380" height="95" viewBox="0 0 440 110" xmlns="http://www.w3.org/2000/svg">
   <g transform="translate(10,5)">
     <circle cx="50" cy="50" r="44" fill="#e7f4f1"/>
     <circle cx="50" cy="50" r="44" fill="none" stroke="#157567" stroke-width="5"/>
-    <ellipse cx="50" cy="50" rx="52" ry="18" fill="none" stroke="#d99a34" stroke-width="5.5" transform="rotate(-18 50 50)"/>
-    <circle cx="96" cy="41" r="5.5" fill="#d99a34" transform="rotate(-18 50 50)"/>
-    <polygon points="50,22 80,50 20,50" fill="#d99a34"/>
+    <ellipse cx="50" cy="50" rx="52" ry="18" fill="none" stroke="#FF6725" stroke-width="5.5" transform="rotate(-18 50 50)"/>
+    <circle cx="96" cy="41" r="5.5" fill="#FF6725" transform="rotate(-18 50 50)"/>
+    <polygon points="50,22 80,50 20,50" fill="#FF6725"/>
     <rect x="28" y="50" width="44" height="34" fill="#157567"/>
     <rect x="44" y="62" width="14" height="22" fill="#e7f4f1"/>
   </g>
   <g font-family="Arial, Helvetica, sans-serif" font-weight="800">
     <text x="125" y="48" font-size="34">
-      <tspan fill="#157567">PROPER</tspan><tspan fill="#d99a34">ty</tspan>
+      <tspan fill="#157567">PROPER</tspan><tspan fill="#FF6725">ty</tspan>
     </text>
     <text x="125" y="86" font-size="34">
-      <tspan fill="#157567">PLAN</tspan><tspan fill="#d99a34">et</tspan>
+      <tspan fill="#157567">PLAN</tspan><tspan fill="#FF6725">et</tspan>
     </text>
   </g>
 </svg>

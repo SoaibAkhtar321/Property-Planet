@@ -45,8 +45,8 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
                                  </button>
                               </li>
                               <li className="d-none d-xl-block">
-                                 <button onClick={() => setOffCanvas(true)} style={{ cursor: "pointer" }} className="sidenavbtn rounded-circle tran3s" type="button">
-                                    <i className="fa-sharp fa-light fa-bars-filter"></i>
+                                 <button onClick={() => setOffCanvas(true)} style={{ cursor: "pointer" }} className="btn-one d-inline-flex align-items-center" type="button">
+                                    <i className="fa-sharp fa-light fa-bars-filter"></i> Menu
                                  </button>
                               </li></>) : (<>
                                  <li className="d-none d-md-flex align-items-center login-btn-one me-4 me-xxl-5">

@@ -1,0 +1,30 @@
+From d6e5e3157c3f347d25818d84663670668ea209dc Mon Sep 17 00:00:00 2001
+From: Soaib Akhtar <soaib@example.com>
+Date: Sun, 13 Sep 2026 16:46:11 +0000
+Subject: [PATCH] Replace circular menu toggle with a labeled orange button
+
+- Removed the .sidenavbtn circle icon from HeaderTwo (the header actually used on the live site)
+- New 'Menu' button uses the existing .btn-one style: outlined, theme orange (#FF6725), 10px rounded corners - same visual language as the Explore Properties button
+- Avoids the circular button's sizing/revert issues entirely
+---
+ src/layouts/headers/HeaderTwo.tsx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/layouts/headers/HeaderTwo.tsx b/src/layouts/headers/HeaderTwo.tsx
+index a046ad4..c90d1ad 100644
+--- a/src/layouts/headers/HeaderTwo.tsx
++++ b/src/layouts/headers/HeaderTwo.tsx
+@@ -45,8 +45,8 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
+                                  </button>
+                               </li>
+                               <li className="d-none d-xl-block">
+-                                 <button onClick={() => setOffCanvas(true)} style={{ cursor: "pointer" }} className="sidenavbtn rounded-circle tran3s" type="button">
+-                                    <i className="fa-sharp fa-light fa-bars-filter"></i>
++                                 <button onClick={() => setOffCanvas(true)} style={{ cursor: "pointer" }} className="btn-one d-inline-flex align-items-center" type="button">
++                                    <i className="fa-sharp fa-light fa-bars-filter"></i> Menu
+                                  </button>
+                               </li></>) : (<>
+                                  <li className="d-none d-md-flex align-items-center login-btn-one me-4 me-xxl-5">
+-- 
+2.43.0
+
