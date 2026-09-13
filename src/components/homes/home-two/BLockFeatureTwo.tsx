@@ -8,15 +8,13 @@ import featureShape from "@/assets/images/shape/shape_21.svg";
 interface ContentType {
    title: JSX.Element;
    desc: string;
-   icon: string[];
 }
 
 const content_data: ContentType = {
    title: (<>How our clients get <i>benefited</i> by us</>),
-   desc: "“Outstanding service, bought my dream home quickly!”",
-   icon: ["fa-sharp fa-solid fa-star", "fa-sharp fa-solid fa-star", "fa-sharp fa-solid fa-star", "fa-sharp fa-solid fa-star", "fa-sharp fa-solid fa-star",],
+   desc: "“Found the right plot for my investment, hassle-free!”",
 }
-const { title, desc, icon } = content_data;
+const { title, desc } = content_data;
 
 const BLockFeatureTwo = () => {
    return (
@@ -28,12 +26,6 @@ const BLockFeatureTwo = () => {
                      <h2 className="font-garamond">{title}</h2>
                      <p className="fs-24 mt-xs">{desc}</p>
                   </div>
-                  <ul className="rating style-none d-flex justify-content-center">
-                     {icon.map((icon, index) => (
-                        <li key={index}><i className={icon}></i></li>
-                     ))}
-                     <li><span className="color-dark fw-500">4.7</span> (18k Reviews)</li>
-                  </ul>
                </div>
 
                <div className="wrapper position-relative z-1 mt-45 lg-mt-20 mb-100 lg-mb-50">

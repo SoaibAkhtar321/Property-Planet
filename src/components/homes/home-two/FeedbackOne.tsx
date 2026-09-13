@@ -1,5 +1,4 @@
 import Image from "next/image"
-import Count from "@/components/common/Count";
 
 import feedbackAvatar from "@/assets/images/media/img_01.jpg";
 import feedbackShape_1 from "@/assets/images/shape/shape_14.svg";
@@ -30,14 +29,12 @@ const Feedback = () => {
                      <div className="row">
                         <div className="col-lg-12 col-md-6">
                            <div className="counter-block-two mb-85 xl-mb-50 md-mb-40">
-                              <div className="main-count font-garamond fw-500"><span className="counter"><Count number={1200} /></span>+</div>
-                              <p className="fs-20 fw-light m0">Project handover</p>
+                              <p className="fs-20 fw-light m0">Verified plot listings across the Hyderabad corridor</p>
                            </div>
                         </div>
                         <div className="col-lg-12 col-md-6">
                            <div className="counter-block-two md-mb-40">
-                              <div className="main-count font-garamond fw-500"><span className="counter"><Count number={1.9} /></span>mil+</div>
-                              <p className="fs-20 fw-light m0">Happy customers</p>
+                              <p className="fs-20 fw-light m0">Trusted by buyers and investors alike</p>
                            </div>
                         </div>
                      </div>

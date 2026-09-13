@@ -21,7 +21,7 @@ const HeaderSearchbar = ({ isSearch, setIsSearch }: any) => {
             <div className="modal-dialog modal-fullscreen modal-dialog-centered">
                <div className="modal-content d-flex justify-content-center">
                   <form onSubmit={handleSubmit}>
-                     <input value={searchValue} onChange={handleSearchChange} type="text" placeholder="Buy Apartments, Rent Condos, Sell Houses" />
+                     <input value={searchValue} onChange={handleSearchChange} type="text" placeholder="Search Plots, Villas, Apartments in Hyderabad" />
                      <button><i className="fa-light fa-arrow-right-long"></i></button>
                   </form>
                </div>

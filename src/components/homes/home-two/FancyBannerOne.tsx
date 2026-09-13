@@ -15,14 +15,14 @@ const FancyBannerOne = () => {
                   <div className="col-xl-8 col-lg-9 ms-auto wow fadeInRight">
                      <div className="ps-xxl-5">
                         <div className="title-one mb-50 lg-mb-30">
-                           <h2 className="font-garamond fs-xl">Best homes, perfect Match for you.</h2>
+                           <h2 className="font-garamond fs-xl">Best plots, perfect match for you.</h2>
                         </div>
                         <div className="row">
                            <div className="col-lg-4">
                               <Image src={fancyImg_1} alt="" className="lazy-img ms-auto d-none d-lg-block me-auto mt-20" />
                            </div>
                            <div className="col-lg-8">
-                              <p className="fs-24 color-dark">Find apartments, plots and homes for sale, rent & mortgage.</p>
+                              <p className="fs-24 color-dark">Find plots, villas and apartments for sale across Hyderabad.</p>
                               <div className="accordion accordion-style-one mt-60" id="accordionOne">
                                  <FaqOne />
                               </div>
