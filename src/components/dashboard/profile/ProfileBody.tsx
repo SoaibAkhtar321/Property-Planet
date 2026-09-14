@@ -10,10 +10,10 @@ import { createClient } from "@/lib/supabase/client";
 
 import avatar_1 from "@/assets/images/dashboard/avatar_02.jpg";
 
-// lastName/about have no backing column in `profiles` (see 0001_profiles.sql).
-// Rather than letting the user type into them and lose the input on reload,
-// these are frozen to an empty value with a no-op setter so UserAvatarSetting
-// renders unchanged but the fields can't hold state that silently vanishes.
+// lastName has no backing column in `profiles` (see 0001_profiles.sql).
+// Rather than letting the user type into it and lose the input on reload,
+// it's frozen to an empty value with a no-op setter so UserAvatarSetting
+// renders unchanged but the field can't hold state that silently vanishes.
 const noopSetter = () => { };
 
 const ProfileBody = () => {
@@ -116,7 +116,6 @@ const ProfileBody = () => {
                   firstName={firstName} setFirstName={setFirstName}
                   lastName={""} setLastName={noopSetter}
                   phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber}
-                  about={""} setAbout={noopSetter}
                />
             </div>
             <SocialMediaLink />

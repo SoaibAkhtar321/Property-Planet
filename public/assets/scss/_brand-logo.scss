@@ -112,3 +112,49 @@
     }
   }
 }
+
+// -----------------------------------------------------------------------
+// Header logo: video-based intro clip (public/assets/video/brand-logo-anim.*)
+// layered over the static BrandLogo SVG. Used by
+// src/components/common/AnimatedBrandLogo.tsx.
+//
+// The static SVG always occupies the box (no layout shift, single
+// accessible name); the video sits on top while playing and is faded
+// out once it reaches its final frame, revealing the static SVG as the
+// permanent resting state. prefers-reduced-motion never renders a
+// <video> at all, so this box always just shows the static SVG then.
+// -----------------------------------------------------------------------
+.brand-logo-video-wrap {
+  position: relative;
+  display: inline-block;
+  width: 380px;
+  height: 95px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.brand-logo-video-fallback,
+.brand-logo-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+
+.brand-logo-video-fallback.is-hidden {
+  opacity: 0;
+}
+
+.brand-logo-video {
+  object-fit: contain;
+  object-position: left center;
+  border: 0;
+  outline: none;
+  pointer-events: none;
+
+  &.is-hidden {
+    opacity: 0;
+  }
+}

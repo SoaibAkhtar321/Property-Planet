@@ -1,41 +1,24 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/admin/auth";
+import AdminHeader from "@/components/admin/layout/AdminHeader";
 
 // Every /admin/** request already passes through src/middleware.ts before
 // reaching here. This call is defense-in-depth, not a duplicate gate —
 // see lib/admin/auth.ts's comment for why both layers are kept.
+//
+// Phase B: the shell now reuses the same "dashboard-body" / "dash-aside-navbar"
+// CSS (public/assets/scss/_dashboard.scss) as the Buyer/Seller dashboard
+// instead of raw Bootstrap, so Admin looks like part of the same product.
+// Each admin page keeps its own content/markup — only the surrounding
+// shell and sidebar changed here.
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-   await requireAdmin();
+   const session = await requireAdmin();
 
    return (
-      <div className="d-flex" style={{ minHeight: "100vh" }}>
-         <nav
-            className="p-4 border-end"
-            style={{ width: 220, flexShrink: 0, background: "#f8f9fa" }}
-         >
-            <div className="fw-bold mb-4">Property Planet Admin</div>
-            <ul className="list-unstyled d-flex flex-column gap-2">
-               <li>
-                  <Link href="/admin">Overview</Link>
-               </li>
-               <li>
-                  <Link href="/admin/leads">Leads</Link>
-               </li>
-               <li>
-                  <Link href="/admin/properties">Properties</Link>
-               </li>
-               <li>
-                  <Link href="/admin/users">Users</Link>
-               </li>
-               <li>
-                  <Link href="/admin/projects">Projects</Link>
-               </li>
-               <li>
-                  <Link href="/admin/blog">Blog</Link>
-               </li>
-            </ul>
-         </nav>
-         <main className="flex-grow-1 p-4">{children}</main>
+      <div className="dashboard-body">
+         <div className="position-relative">
+            <AdminHeader title="Property Planet Admin" adminEmail={session.email} />
+            {children}
+         </div>
       </div>
    );
 }

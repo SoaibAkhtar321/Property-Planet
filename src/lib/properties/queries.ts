@@ -95,6 +95,46 @@ export async function getSimilarProperties(property: Property, limit = 2): Promi
    return attachMedia(supabase, (data ?? []) as PropertyPublicRow[]);
 }
 
+/**
+ * Every property the given user has favourited, newest-favourited first.
+ * Used by the Buyer/User dashboard Favourites page. Reads through
+ * `property_public` (not `properties`) so a favourite on a listing that
+ * has since been unpublished silently drops off the list rather than
+ * erroring or leaking a non-public row.
+ */
+export async function getFavouriteProperties(userId: string): Promise<Property[]> {
+   const supabase = await createClient();
+
+   const { data: favourites, error: favouritesError } = await supabase
+      .from("favourites")
+      .select("property_id")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+   if (favouritesError || !favourites || favourites.length === 0) {
+      return [];
+   }
+
+   const ids = favourites.map((row) => row.property_id as string);
+
+   const { data, error } = await supabase
+      .from("property_public")
+      .select(PROPERTY_PUBLIC_COLUMNS)
+      .in("id", ids);
+
+   if (error || !data) {
+      console.error("Failed to load favourite properties:", error?.message);
+      return [];
+   }
+
+   const properties = await attachMedia(supabase, data as PropertyPublicRow[]);
+
+   // property_public has no guaranteed order matching `ids` after `.in()`,
+   // so re-sort to the favourited order (newest-favourited first).
+   const orderById = new Map(ids.map((id, index) => [id, index]));
+   return properties.sort((a, b) => (orderById.get(a.id) ?? 0) - (orderById.get(b.id) ?? 0));
+}
+
 // ---------------------------------------------------------------------------
 // Seller-side reads (Phase 2). These read the base `properties` table, not
 // `property_public` — a seller needs to see their own draft/pending/etc

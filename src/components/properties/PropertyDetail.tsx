@@ -8,6 +8,7 @@ import VideoTour from "./detail/VideoTour";
 import Location from "./detail/Location";
 import SimilarProperties from "./detail/SimilarProperties";
 import Sidebar from "./detail/Sidebar";
+import FavouriteButton from "./FavouriteButton";
 
 // Mortgage calculator and reviews are intentionally deferred (Phase 3 scope
 // only covers listing/detail display) — no requirement or data model exists
@@ -39,9 +40,10 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
                </div>
                <div className="col-lg-6 text-lg-end">
                   <div className="d-inline-block md-mt-40">
-                     <div className="price color-dark fw-500">
+                     <div className="price color-dark fw-500 d-flex align-items-center justify-content-lg-end">
                         Price: ₹{property.price.toLocaleString("en-IN")}
                         {property.priceUnit ? property.priceUnit : ""}
+                        <FavouriteButton propertyId={property.id} className="position-relative ms-3" />
                      </div>
                   </div>
                </div>

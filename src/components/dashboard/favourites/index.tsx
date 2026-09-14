@@ -1,9 +1,10 @@
 import FavouriteBody from './FavouriteBody';
+import { Property } from "@/components/properties/data/types";
 
-const DashboardFavourite = () => {
+const DashboardFavourite = ({ properties }: { properties: Property[] }) => {
    return (
       <>
-         <FavouriteBody />
+         <FavouriteBody properties={properties} />
       </>
    )
 }

@@ -1,14 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Property } from "./data/types";
+import FavouriteButton from "./FavouriteButton";
 
-const PropertyCard = ({ item }: { item: Property }) => {
+const PropertyCard = ({ item, isFavourited }: { item: Property; isFavourited?: boolean }) => {
    return (
       <div className="col-md-6 col-lg-4 d-flex mb-50 wow fadeInUp">
          <div className="listing-card-one border-25 h-100 w-100">
             <div className="img-gallery p-15">
                <div className="position-relative border-25 overflow-hidden">
                   {item.tag && <div className="tag border-25">{item.tag}</div>}
+                  <FavouriteButton propertyId={item.id} initiallyFavourited={isFavourited} />
                   {item.isDemo && (
                      <div
                         className="tag border-25"

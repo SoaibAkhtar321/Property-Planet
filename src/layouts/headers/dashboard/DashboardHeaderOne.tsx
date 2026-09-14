@@ -14,18 +14,12 @@ import dashboardIconActive_3 from "@/assets/images/dashboard/icon/icon_3_active.
 import dashboardIcon_3 from "@/assets/images/dashboard/icon/icon_3.svg";
 import dashboardIconActive_4 from "@/assets/images/dashboard/icon/icon_4_active.svg";
 import dashboardIcon_4 from "@/assets/images/dashboard/icon/icon_4.svg";
-import dashboardIconActive_5 from "@/assets/images/dashboard/icon/icon_5_active.svg";
-import dashboardIcon_5 from "@/assets/images/dashboard/icon/icon_5.svg";
 import dashboardIconActive_6 from "@/assets/images/dashboard/icon/icon_6_active.svg";
 import dashboardIcon_6 from "@/assets/images/dashboard/icon/icon_6.svg";
 import dashboardIconActive_7 from "@/assets/images/dashboard/icon/icon_7_active.svg";
 import dashboardIcon_7 from "@/assets/images/dashboard/icon/icon_7.svg";
 import dashboardIconActive_8 from "@/assets/images/dashboard/icon/icon_8_active.svg";
 import dashboardIcon_8 from "@/assets/images/dashboard/icon/icon_8.svg";
-import dashboardIconActive_9 from "@/assets/images/dashboard/icon/icon_9_active.svg";
-import dashboardIcon_9 from "@/assets/images/dashboard/icon/icon_9.svg";
-import dashboardIconActive_10 from "@/assets/images/dashboard/icon/icon_10_active.svg";
-import dashboardIcon_10 from "@/assets/images/dashboard/icon/icon_10.svg";
 import dashboardIcon_11 from "@/assets/images/dashboard/icon/icon_41.svg";
 
 const DashboardHeaderOne = ({ isActive, setIsActive }: any) => {
@@ -100,10 +94,6 @@ const DashboardHeaderOne = ({ isActive, setIsActive }: any) => {
                      <Image src={pathname === '/dashboard/account-settings' ? dashboardIconActive_4 : dashboardIcon_4} alt="" />
                      <span>Account Settings</span>
                   </Link></li>
-                  <li className="plr"><Link href="/dashboard/membership" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/membership' ? 'active' : ''}`}>
-                     <Image src={pathname === '/dashboard/membership' ? dashboardIconActive_5 : dashboardIcon_5} alt="" />
-                     <span>Membership</span>
-                  </Link></li>
                   {isSeller && (
                      <>
                         <li className="bottom-line pt-30 lg-pt-20 mb-40 lg-mb-30"></li>
@@ -121,14 +111,6 @@ const DashboardHeaderOne = ({ isActive, setIsActive }: any) => {
                   <li className="plr"><Link href="/dashboard/favourites" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/favourites' ? 'active' : ''}`}>
                      <Image src={pathname === '/dashboard/favourites' ? dashboardIconActive_8 : dashboardIcon_8} alt="" />
                      <span>Favourites</span>
-                  </Link></li>
-                  <li className="plr"><Link href="/dashboard/saved-search" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/saved-search' ? 'active' : ''}`}>
-                     <Image src={pathname === '/dashboard/saved-search' ? dashboardIconActive_9 : dashboardIcon_9} alt="" />
-                     <span>Saved Search</span>
-                  </Link></li>
-                  <li className="plr"><Link href="/dashboard/review" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/review' ? 'active' : ''}`}>
-                     <Image src={pathname === '/dashboard/review' ? dashboardIconActive_10 : dashboardIcon_10} alt="" />
-                     <span>Reviews</span>
                   </Link></li>
                </ul>
             </nav>

@@ -7,7 +7,7 @@ import LoginModal from "@/modals/LoginModal"
 import AuthNav from "./Menu/AuthNav"
 import Offcanvas from "./Menu/Offcanvas"
 import HeaderSearchbar from "./Menu/HeaderSearchbar"
-import BrandLogo from "@/components/common/BrandLogo"
+import AnimatedBrandLogo from "@/components/common/AnimatedBrandLogo"
 
 const HeaderTwo = ({ style_1, style_2 }: any) => {
    const { sticky } = UseSticky();
@@ -22,7 +22,7 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
                   <div className="d-flex align-items-center">
                      <div className="logo order-lg-0">
                         <Link href="/" className="d-flex align-items-center">
-                           <BrandLogo />
+                           <AnimatedBrandLogo />
                         </Link>
                      </div>
 

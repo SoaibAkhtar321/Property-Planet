@@ -34,9 +34,15 @@ async function getBuyerStats(supabase: Awaited<ReturnType<typeof createClient>>,
       .eq("buyer_id", userId)
       .in("status", ["new", "contacted", "qualified", "site_visit", "negotiation"]);
 
+   const { count: favouritesCount } = await supabase
+      .from("favourites")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId);
+
    return [
       { id: "buyer-enquiries", title: "My Enquiries", value: String(totalLeads ?? 0) },
       { id: "buyer-open", title: "Open Enquiries", value: String(openLeads ?? 0) },
+      { id: "buyer-favourites", title: "Favourites", value: String(favouritesCount ?? 0) },
    ];
 }
 
