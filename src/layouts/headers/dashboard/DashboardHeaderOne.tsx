@@ -132,14 +132,6 @@ const DashboardHeaderOne = ({ isActive, setIsActive }: any) => {
                   </Link></li>
                </ul>
             </nav>
-            <div className="profile-complete-status bottom-line pb-35 plr">
-               <div className="progress-value fw-500">82%</div>
-               <div className="progress-line position-relative">
-                  <div className="inner-line" style={{ width: "80%" }}></div>
-               </div>
-               <p>Profile Complete</p>
-            </div>
-
             <div className="plr">
                <Link href="/" className="d-flex w-100 align-items-center mb-15">
                   <div className="icon tran3s d-flex align-items-center justify-content-center rounded-circle"><i className="fa-thin fa-arrow-left"></i></div>
