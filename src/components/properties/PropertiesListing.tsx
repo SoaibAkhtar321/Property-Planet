@@ -5,10 +5,19 @@ import { Property } from "./data/types";
 import PropertyCard from "./PropertyCard";
 import PropertyFilters, { PropertyFilterState } from "./PropertyFilters";
 
-const PropertiesListing = ({ items }: { items: Property[] }) => {
+const PropertiesListing = ({
+   items,
+   initialLocation,
+}: {
+   items: Property[];
+   /** From /properties?location=<value> (homepage location cards). Matched
+    * exactly against Property.locality. */
+   initialLocation?: string;
+}) => {
    const [filters, setFilters] = useState<PropertyFilterState>({
       listingType: "all",
       propertyType: "all",
+      location: initialLocation ?? "all",
    });
 
    const listingTypes = useMemo(
@@ -27,9 +36,13 @@ const PropertiesListing = ({ items }: { items: Property[] }) => {
       return items.filter((item) => {
          if (filters.listingType !== "all" && item.listingType !== filters.listingType) return false;
          if (filters.propertyType !== "all" && item.propertyType !== filters.propertyType) return false;
+         if (filters.location !== "all" && item.locality !== filters.location) return false;
          return true;
       });
    }, [items, filters]);
+
+   const activeLocationHasNoMatches =
+      filters.location !== "all" && !items.some((item) => item.locality === filters.location);
 
    return (
       <div className="property-listing-six bg-pink-two pt-110 md-pt-80 pb-150 xl-pb-120 mt-150 xl-mt-120">
@@ -41,6 +54,19 @@ const PropertiesListing = ({ items }: { items: Property[] }) => {
                         <div>
                            Showing <span className="color-dark fw-500">{filtered.length}</span> of{" "}
                            <span className="color-dark fw-500">{items.length}</span> properties
+                           {filters.location !== "all" && (
+                              <>
+                                 {" "}in <span className="color-dark fw-500">{filters.location}</span>
+                                 <button
+                                    type="button"
+                                    className="ms-2 fs-14"
+                                    style={{ border: "none", background: "none", textDecoration: "underline", cursor: "pointer" }}
+                                    onClick={() => setFilters((prev) => ({ ...prev, location: "all" }))}
+                                 >
+                                    Clear
+                                 </button>
+                              </>
+                           )}
                         </div>
                      </div>
 
@@ -54,7 +80,10 @@ const PropertiesListing = ({ items }: { items: Property[] }) => {
                               inventory will appear here as it&apos;s added.
                            </p>
                         )}
-                        {items.length > 0 && filtered.length === 0 && (
+                        {items.length > 0 && filtered.length === 0 && activeLocationHasNoMatches && (
+                           <p className="fs-20">No properties currently available in this location.</p>
+                        )}
+                        {items.length > 0 && filtered.length === 0 && !activeLocationHasNoMatches && (
                            <p className="fs-20">No properties match these filters yet.</p>
                         )}
                      </div>
@@ -67,7 +96,7 @@ const PropertiesListing = ({ items }: { items: Property[] }) => {
                      propertyTypes={propertyTypes}
                      filters={filters}
                      onChange={setFilters}
-                     onReset={() => setFilters({ listingType: "all", propertyType: "all" })}
+                     onReset={() => setFilters({ listingType: "all", propertyType: "all", location: "all" })}
                   />
                </div>
             </div>

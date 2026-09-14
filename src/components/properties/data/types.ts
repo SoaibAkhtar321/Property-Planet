@@ -22,6 +22,9 @@ export interface Property {
    listingType: "Sale" | "Rent";
    propertyType: string;
    address: string;
+   /** Raw locality value (property_public.locality), used for the
+    * homepage "Explore the places with most properties" location filter. */
+   locality?: string;
    price: number;
    priceUnit?: string;
    sqft?: number;

@@ -87,6 +87,7 @@ export function mapProperty(
       // Public-safe address only — exact_address is never exposed here,
       // preserving the location-privacy split from 0002_properties_and_location.sql.
       address: `${row.locality}, ${row.city}`,
+      locality: row.locality,
       price: Number(row.price),
       priceUnit: row.listing_type === "rent" ? "/mo" : undefined,
       sqft: row.area ? Number(row.area) : undefined,

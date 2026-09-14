@@ -3,6 +3,9 @@
 export interface PropertyFilterState {
    listingType: string;
    propertyType: string;
+   /** Exact `locality` value, or "all". Set from /properties?location=..
+    * (homepage location cards) and cleared via the listing header. */
+   location: string;
 }
 
 const PropertyFilters = ({

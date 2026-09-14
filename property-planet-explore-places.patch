@@ -1,0 +1,379 @@
+diff --git a/src/app/properties/page.tsx b/src/app/properties/page.tsx
+index a710417..4726750 100644
+--- a/src/app/properties/page.tsx
++++ b/src/app/properties/page.tsx
+@@ -13,13 +13,17 @@ export const metadata = {
+    title: "Properties | Property Planet",
+ };
+ 
+-const PropertiesPage = async () => {
++const PropertiesPage = async ({
++   searchParams,
++}: {
++   searchParams: { location?: string };
++}) => {
+    const properties = await getPublishedProperties();
+ 
+    return (
+       <Wrapper>
+          <HeaderTwo style_1={false} style_2={false} />
+-         <PropertiesListing items={properties} />
++         <PropertiesListing items={properties} initialLocation={searchParams.location} />
+          <FooterOne style={true} />
+       </Wrapper>
+    );
+diff --git a/src/components/homes/home-two/BLockFeatureOne.tsx b/src/components/homes/home-two/BLockFeatureOne.tsx
+index 15e09cf..c7a2f83 100644
+--- a/src/components/homes/home-two/BLockFeatureOne.tsx
++++ b/src/components/homes/home-two/BLockFeatureOne.tsx
+@@ -1,7 +1,20 @@
++"use client"
++
++import { useState } from "react"
+ import feature_data from "@/data/home-data/FeatureData"
+ import Link from "next/link"
+ 
++// 4 cards per row (col-lg-3) x 2 rows shown by default.
++const CARDS_PER_ROW = 4
++const VISIBLE_ROWS = 2
++const INITIAL_VISIBLE = CARDS_PER_ROW * VISIBLE_ROWS
++
+ const BLockFeatureOne = () => {
++   const [showAll, setShowAll] = useState(false)
++   const locations = feature_data.filter((items) => items.page === "home_2_feature_1")
++   const visibleLocations = showAll ? locations : locations.slice(0, INITIAL_VISIBLE)
++   const hasMore = locations.length > INITIAL_VISIBLE
++
+    return (
+       <div className="block-feature-six mt-150 xl-mt-100">
+          <div className="container">
+@@ -9,24 +22,44 @@ const BLockFeatureOne = () => {
+                <div className="row">
+                   <div className="col-xl-9 m-auto">
+                      <div className="title-one text-center mb-35 lg-mb-20 wow fadeInUp">
+-                        <h2 className="font-garamond">Explore City with Most Properties</h2>
++                        <h2 className="font-garamond">Explore the Places with Most Properties</h2>
+                         <p className="fs-22 mt-xs">Allows you to search for the best and latest properties & projects in different location. Search by area below to find your perfect place.</p>
+                      </div>
+                   </div>
+                </div>
+ 
+                <div className="row gx-xxl-5">
+-                  {feature_data.filter((items) => items.page === "home_2_feature_1").map((item) => (
+-                     <div key={item.id} className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay={item.data_delay_time}>
+-                        <div className={`location-card-two position-relative z-1 d-flex align-items-center justify-content-center mt-30 ${item.item_bg}`}>
++                  {visibleLocations.map((item) => (
++                     <div key={item.id} className="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay={item.data_delay_time}>
++                        <div
++                           className="location-card-two position-relative z-1 d-flex align-items-center justify-content-center mt-30"
++                           style={item.imgUrl ? { backgroundImage: `url(${item.imgUrl})` } : undefined}
++                        >
+                            <div className="content">
+                               <h5 className="text-white font-garamond">{item.title}</h5>
+                            </div>
+-                           <Link href="/properties" className="stretched-link"></Link>
++                           <Link
++                              href={`/properties?location=${encodeURIComponent(item.location ?? item.title)}`}
++                              className="stretched-link"
++                           ></Link>
+                         </div>
+                      </div>
+                   ))}
+                </div>
++
++               {hasMore && (
++                  <div className="row">
++                     <div className="col-12 text-center mt-40">
++                        <button
++                           type="button"
++                           className="btn-four justify-content-center"
++                           onClick={() => setShowAll((prev) => !prev)}
++                        >
++                           {showAll ? "See Less" : "See More"}
++                        </button>
++                     </div>
++                  </div>
++               )}
+             </div>
+          </div>
+       </div>
+diff --git a/src/components/properties/PropertiesListing.tsx b/src/components/properties/PropertiesListing.tsx
+index d35106f..98d9dee 100644
+--- a/src/components/properties/PropertiesListing.tsx
++++ b/src/components/properties/PropertiesListing.tsx
+@@ -5,10 +5,19 @@ import { Property } from "./data/types";
+ import PropertyCard from "./PropertyCard";
+ import PropertyFilters, { PropertyFilterState } from "./PropertyFilters";
+ 
+-const PropertiesListing = ({ items }: { items: Property[] }) => {
++const PropertiesListing = ({
++   items,
++   initialLocation,
++}: {
++   items: Property[];
++   /** From /properties?location=<value> (homepage location cards). Matched
++    * exactly against Property.locality. */
++   initialLocation?: string;
++}) => {
+    const [filters, setFilters] = useState<PropertyFilterState>({
+       listingType: "all",
+       propertyType: "all",
++      location: initialLocation ?? "all",
+    });
+ 
+    const listingTypes = useMemo(
+@@ -27,10 +36,14 @@ const PropertiesListing = ({ items }: { items: Property[] }) => {
+       return items.filter((item) => {
+          if (filters.listingType !== "all" && item.listingType !== filters.listingType) return false;
+          if (filters.propertyType !== "all" && item.propertyType !== filters.propertyType) return false;
++         if (filters.location !== "all" && item.locality !== filters.location) return false;
+          return true;
+       });
+    }, [items, filters]);
+ 
++   const activeLocationHasNoMatches =
++      filters.location !== "all" && !items.some((item) => item.locality === filters.location);
++
+    return (
+       <div className="property-listing-six bg-pink-two pt-110 md-pt-80 pb-150 xl-pb-120 mt-150 xl-mt-120">
+          <div className="container container-large">
+@@ -41,6 +54,19 @@ const PropertiesListing = ({ items }: { items: Property[] }) => {
+                         <div>
+                            Showing <span className="color-dark fw-500">{filtered.length}</span> of{" "}
+                            <span className="color-dark fw-500">{items.length}</span> properties
++                           {filters.location !== "all" && (
++                              <>
++                                 {" "}in <span className="color-dark fw-500">{filters.location}</span>
++                                 <button
++                                    type="button"
++                                    className="ms-2 fs-14"
++                                    style={{ border: "none", background: "none", textDecoration: "underline", cursor: "pointer" }}
++                                    onClick={() => setFilters((prev) => ({ ...prev, location: "all" }))}
++                                 >
++                                    Clear
++                                 </button>
++                              </>
++                           )}
+                         </div>
+                      </div>
+ 
+@@ -54,7 +80,10 @@ const PropertiesListing = ({ items }: { items: Property[] }) => {
+                               inventory will appear here as it&apos;s added.
+                            </p>
+                         )}
+-                        {items.length > 0 && filtered.length === 0 && (
++                        {items.length > 0 && filtered.length === 0 && activeLocationHasNoMatches && (
++                           <p className="fs-20">No properties currently available in this location.</p>
++                        )}
++                        {items.length > 0 && filtered.length === 0 && !activeLocationHasNoMatches && (
+                            <p className="fs-20">No properties match these filters yet.</p>
+                         )}
+                      </div>
+@@ -67,7 +96,7 @@ const PropertiesListing = ({ items }: { items: Property[] }) => {
+                      propertyTypes={propertyTypes}
+                      filters={filters}
+                      onChange={setFilters}
+-                     onReset={() => setFilters({ listingType: "all", propertyType: "all" })}
++                     onReset={() => setFilters({ listingType: "all", propertyType: "all", location: "all" })}
+                   />
+                </div>
+             </div>
+diff --git a/src/components/properties/PropertyFilters.tsx b/src/components/properties/PropertyFilters.tsx
+index b923062..e97cb10 100644
+--- a/src/components/properties/PropertyFilters.tsx
++++ b/src/components/properties/PropertyFilters.tsx
+@@ -3,6 +3,9 @@
+ export interface PropertyFilterState {
+    listingType: string;
+    propertyType: string;
++   /** Exact `locality` value, or "all". Set from /properties?location=..
++    * (homepage location cards) and cleared via the listing header. */
++   location: string;
+ }
+ 
+ const PropertyFilters = ({
+diff --git a/src/components/properties/data/types.ts b/src/components/properties/data/types.ts
+index 6db66aa..8a169ea 100644
+--- a/src/components/properties/data/types.ts
++++ b/src/components/properties/data/types.ts
+@@ -22,6 +22,9 @@ export interface Property {
+    listingType: "Sale" | "Rent";
+    propertyType: string;
+    address: string;
++   /** Raw locality value (property_public.locality), used for the
++    * homepage "Explore the places with most properties" location filter. */
++   locality?: string;
+    price: number;
+    priceUnit?: string;
+    sqft?: number;
+diff --git a/src/data/home-data/FeatureData.ts b/src/data/home-data/FeatureData.ts
+index d181b6d..a9e27f0 100644
+--- a/src/data/home-data/FeatureData.ts
++++ b/src/data/home-data/FeatureData.ts
+@@ -43,6 +43,15 @@ interface DataType {
+    data_delay_time?: string;
+    btn?: string;
+    class_name?:string;
++   /** Plain public-folder image URL, used where a static import isn't set up (e.g. location cards). */
++   imgUrl?: string;
++   /**
++    * Exact value to match against the `locality` column on `property_public`
++    * when this card is used as a location-filter link (see home_2_feature_1).
++    * Kept separate from `title` so display text can differ from the stored
++    * value without breaking the filter.
++    */
++   location?: string;
+ }
+ 
+ const feature_data: DataType[] = [
+@@ -135,45 +144,126 @@ const feature_data: DataType[] = [
+    },
+ 
+    // home_two_feature_1
++   // Real Property Planet coverage locations (Hyderabad / Future City
++   // corridor). The first 7 are the client's actual current property
++   // locations and must stay first, in this exact order — see
++   // BLockFeatureOne.tsx / "Explore the places with most properties".
++   // `location` is matched exactly against property_public.locality when
++   // the card is clicked (src/app/properties uses ?location=<value>).
+ 
+    {
+       id: 1,
+       page: "home_2_feature_1",
+-      item_bg: "location-card-1",
+-      title: "Kelowna",
++      title: "Raviryala",
++      location: "Raviryala",
++      imgUrl: "/assets/images/listing/img_01.jpg",
+    },
+    {
+       id: 2,
+       page: "home_2_feature_1",
+-      item_bg: "location-card-2",
+-      title: "West Kelowna",
++      title: "Tukkuguda",
++      location: "Tukkuguda",
++      imgUrl: "/assets/images/listing/img_08.jpg",
+       data_delay_time: "0.1s",
+    },
+    {
+       id: 3,
+       page: "home_2_feature_1",
+-      item_bg: "location-card-3",
+-      title: "Lake Country",
++      title: "Kongara Kalan",
++      location: "Kongara Kalan",
++      imgUrl: "/assets/images/listing/img_11.jpg",
+       data_delay_time: "0.2s",
+    },
+    {
+       id: 4,
+       page: "home_2_feature_1",
+-      item_bg: "location-card-4",
+-      title: "Vernon",
++      title: "Adibatla",
++      location: "Adibatla",
++      imgUrl: "/assets/images/listing/img_14.jpg",
+    },
+    {
+       id: 5,
+       page: "home_2_feature_1",
+-      item_bg: "location-card-5",
+-      title: "Peachland",
++      title: "Kongara Khurd - A",
++      location: "Kongara Khurd - A",
++      imgUrl: "/assets/images/listing/img_17.jpg",
+       data_delay_time: "0.1s",
+    },
+    {
+       id: 6,
+       page: "home_2_feature_1",
+-      item_bg: "location-card-6",
+-      title: "Penticton",
++      title: "Nadargul",
++      location: "Nadargul",
++      imgUrl: "/assets/images/listing/img_20.jpg",
++      data_delay_time: "0.2s",
++   },
++   {
++      id: 7,
++      page: "home_2_feature_1",
++      title: "Maheshwaram",
++      location: "Maheshwaram",
++      imgUrl: "/assets/images/listing/img_23.jpg",
++   },
++   {
++      id: 8,
++      page: "home_2_feature_1",
++      title: "Ibrahimpatnam",
++      location: "Ibrahimpatnam",
++      imgUrl: "/assets/images/listing/img_26.jpg",
++      data_delay_time: "0.1s",
++   },
++   {
++      id: 9,
++      page: "home_2_feature_1",
++      title: "Kandukur",
++      location: "Kandukur",
++      imgUrl: "/assets/images/listing/img_29.jpg",
++      data_delay_time: "0.2s",
++   },
++   {
++      id: 10,
++      page: "home_2_feature_1",
++      title: "Mucherla",
++      location: "Mucherla",
++      imgUrl: "/assets/images/listing/img_32.jpg",
++   },
++   {
++      id: 11,
++      page: "home_2_feature_1",
++      title: "Amangal",
++      location: "Amangal",
++      imgUrl: "/assets/images/listing/img_35.jpg",
++      data_delay_time: "0.1s",
++   },
++   {
++      id: 12,
++      page: "home_2_feature_1",
++      title: "Keshampet",
++      location: "Keshampet",
++      imgUrl: "/assets/images/listing/img_38.jpg",
++      data_delay_time: "0.2s",
++   },
++   {
++      id: 13,
++      page: "home_2_feature_1",
++      title: "Shadnagar",
++      location: "Shadnagar",
++      imgUrl: "/assets/images/listing/img_41.jpg",
++   },
++   {
++      id: 14,
++      page: "home_2_feature_1",
++      title: "Mankhal",
++      location: "Mankhal",
++      imgUrl: "/assets/images/listing/img_44.jpg",
++      data_delay_time: "0.1s",
++   },
++   {
++      id: 15,
++      page: "home_2_feature_1",
++      title: "Thorrur",
++      location: "Thorrur",
++      imgUrl: "/assets/images/listing/img_47.jpg",
+       data_delay_time: "0.2s",
+    },
+ 
+diff --git a/src/lib/properties/mapProperty.ts b/src/lib/properties/mapProperty.ts
+index 4d774b0..02a568b 100644
+--- a/src/lib/properties/mapProperty.ts
++++ b/src/lib/properties/mapProperty.ts
+@@ -87,6 +87,7 @@ export function mapProperty(
+       // Public-safe address only — exact_address is never exposed here,
+       // preserving the location-privacy split from 0002_properties_and_location.sql.
+       address: `${row.locality}, ${row.city}`,
++      locality: row.locality,
+       price: Number(row.price),
+       priceUnit: row.listing_type === "rent" ? "/mo" : undefined,
+       sqft: row.area ? Number(row.area) : undefined,

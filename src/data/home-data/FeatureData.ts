@@ -43,6 +43,15 @@ interface DataType {
    data_delay_time?: string;
    btn?: string;
    class_name?:string;
+   /** Plain public-folder image URL, used where a static import isn't set up (e.g. location cards). */
+   imgUrl?: string;
+   /**
+    * Exact value to match against the `locality` column on `property_public`
+    * when this card is used as a location-filter link (see home_2_feature_1).
+    * Kept separate from `title` so display text can differ from the stored
+    * value without breaking the filter.
+    */
+   location?: string;
 }
 
 const feature_data: DataType[] = [
@@ -135,45 +144,126 @@ const feature_data: DataType[] = [
    },
 
    // home_two_feature_1
+   // Real Property Planet coverage locations (Hyderabad / Future City
+   // corridor). The first 7 are the client's actual current property
+   // locations and must stay first, in this exact order — see
+   // BLockFeatureOne.tsx / "Explore the places with most properties".
+   // `location` is matched exactly against property_public.locality when
+   // the card is clicked (src/app/properties uses ?location=<value>).
 
    {
       id: 1,
       page: "home_2_feature_1",
-      item_bg: "location-card-1",
-      title: "Kelowna",
+      title: "Raviryala",
+      location: "Raviryala",
+      imgUrl: "/assets/images/listing/img_01.jpg",
    },
    {
       id: 2,
       page: "home_2_feature_1",
-      item_bg: "location-card-2",
-      title: "West Kelowna",
+      title: "Tukkuguda",
+      location: "Tukkuguda",
+      imgUrl: "/assets/images/listing/img_08.jpg",
       data_delay_time: "0.1s",
    },
    {
       id: 3,
       page: "home_2_feature_1",
-      item_bg: "location-card-3",
-      title: "Lake Country",
+      title: "Kongara Kalan",
+      location: "Kongara Kalan",
+      imgUrl: "/assets/images/listing/img_11.jpg",
       data_delay_time: "0.2s",
    },
    {
       id: 4,
       page: "home_2_feature_1",
-      item_bg: "location-card-4",
-      title: "Vernon",
+      title: "Adibatla",
+      location: "Adibatla",
+      imgUrl: "/assets/images/listing/img_14.jpg",
    },
    {
       id: 5,
       page: "home_2_feature_1",
-      item_bg: "location-card-5",
-      title: "Peachland",
+      title: "Kongara Khurd - A",
+      location: "Kongara Khurd - A",
+      imgUrl: "/assets/images/listing/img_17.jpg",
       data_delay_time: "0.1s",
    },
    {
       id: 6,
       page: "home_2_feature_1",
-      item_bg: "location-card-6",
-      title: "Penticton",
+      title: "Nadargul",
+      location: "Nadargul",
+      imgUrl: "/assets/images/listing/img_20.jpg",
+      data_delay_time: "0.2s",
+   },
+   {
+      id: 7,
+      page: "home_2_feature_1",
+      title: "Maheshwaram",
+      location: "Maheshwaram",
+      imgUrl: "/assets/images/listing/img_23.jpg",
+   },
+   {
+      id: 8,
+      page: "home_2_feature_1",
+      title: "Ibrahimpatnam",
+      location: "Ibrahimpatnam",
+      imgUrl: "/assets/images/listing/img_26.jpg",
+      data_delay_time: "0.1s",
+   },
+   {
+      id: 9,
+      page: "home_2_feature_1",
+      title: "Kandukur",
+      location: "Kandukur",
+      imgUrl: "/assets/images/listing/img_29.jpg",
+      data_delay_time: "0.2s",
+   },
+   {
+      id: 10,
+      page: "home_2_feature_1",
+      title: "Mucherla",
+      location: "Mucherla",
+      imgUrl: "/assets/images/listing/img_32.jpg",
+   },
+   {
+      id: 11,
+      page: "home_2_feature_1",
+      title: "Amangal",
+      location: "Amangal",
+      imgUrl: "/assets/images/listing/img_35.jpg",
+      data_delay_time: "0.1s",
+   },
+   {
+      id: 12,
+      page: "home_2_feature_1",
+      title: "Keshampet",
+      location: "Keshampet",
+      imgUrl: "/assets/images/listing/img_38.jpg",
+      data_delay_time: "0.2s",
+   },
+   {
+      id: 13,
+      page: "home_2_feature_1",
+      title: "Shadnagar",
+      location: "Shadnagar",
+      imgUrl: "/assets/images/listing/img_41.jpg",
+   },
+   {
+      id: 14,
+      page: "home_2_feature_1",
+      title: "Mankhal",
+      location: "Mankhal",
+      imgUrl: "/assets/images/listing/img_44.jpg",
+      data_delay_time: "0.1s",
+   },
+   {
+      id: 15,
+      page: "home_2_feature_1",
+      title: "Thorrur",
+      location: "Thorrur",
+      imgUrl: "/assets/images/listing/img_47.jpg",
       data_delay_time: "0.2s",
    },
 

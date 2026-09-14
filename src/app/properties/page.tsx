@@ -13,13 +13,17 @@ export const metadata = {
    title: "Properties | Property Planet",
 };
 
-const PropertiesPage = async () => {
+const PropertiesPage = async ({
+   searchParams,
+}: {
+   searchParams: { location?: string };
+}) => {
    const properties = await getPublishedProperties();
 
    return (
       <Wrapper>
          <HeaderTwo style_1={false} style_2={false} />
-         <PropertiesListing items={properties} />
+         <PropertiesListing items={properties} initialLocation={searchParams.location} />
          <FooterOne style={true} />
       </Wrapper>
    );
