@@ -3,8 +3,15 @@ import Image from "next/image"
 import feedbackAvatar from "@/assets/images/media/img_01.jpg";
 import feedbackShape_1 from "@/assets/images/shape/shape_14.svg";
 import feedbackShape_2 from "@/assets/images/shape/shape_15.svg";
+import { getPublicSiteReraCertificate } from "@/lib/site/queries";
 
-const Feedback = () => {
+// Server component (no "use client") so the RERA certificate — admin-
+// managed, site-wide, see 0014_site_rera_certificate.sql — can be fetched
+// directly here. Renders nothing extra when no certificate has been
+// uploaded yet; never fabricates a registration number or legal claim.
+const Feedback = async () => {
+   const certificate = await getPublicSiteReraCertificate();
+
    return (
       <div className="feedback-section-two md-pb-40 position-relative z-1">
          <div className="container">
@@ -37,6 +44,27 @@ const Feedback = () => {
                               <p className="fs-20 fw-light m0">Trusted by buyers and investors alike</p>
                            </div>
                         </div>
+                        {certificate && (
+                           <div className="col-lg-12">
+                              <div className="counter-block-two rera-trust-badge d-flex align-items-start gap-3 pt-3 border-top border-light border-opacity-25">
+                                 <i className="bi bi-patch-check-fill text-white fs-24 mt-1" aria-hidden="true"></i>
+                                 <div>
+                                    <p className="fs-18 text-white fw-normal m0">{certificate.title || "RERA Registered"}</p>
+                                    {certificate.description && (
+                                       <p className="fs-14 fw-light text-white opacity-75 mt-5 mb-10">{certificate.description}</p>
+                                    )}
+                                    <a
+                                       href={certificate.url}
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       className="fs-14 text-white text-decoration-underline mt-5 d-inline-block"
+                                    >
+                                       View RERA Certificate <i className="bi bi-arrow-up-right ms-1"></i>
+                                    </a>
+                                 </div>
+                              </div>
+                           </div>
+                        )}
                      </div>
                   </div>
                </div>
