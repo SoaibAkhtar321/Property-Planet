@@ -8,10 +8,14 @@
 
 import { createClient } from "@/lib/supabase/server";
 
+const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp"]);
+
 export interface SiteReraCertificate {
    url: string;
    title: string | null;
    description: string | null;
+   /** "image" renders inline with <Image>; "pdf" renders inline in an <iframe>. Derived from the stored file's extension. */
+   fileType: "image" | "pdf";
 }
 
 export async function getPublicSiteReraCertificate(): Promise<SiteReraCertificate | null> {
@@ -31,5 +35,8 @@ export async function getPublicSiteReraCertificate(): Promise<SiteReraCertificat
 
    const { data: urlData } = supabase.storage.from("project-media").getPublicUrl(data.storage_path);
 
-   return { url: urlData.publicUrl, title: data.title, description: data.description };
+   const ext = data.storage_path.split(".").pop()?.toLowerCase() ?? "";
+   const fileType: SiteReraCertificate["fileType"] = IMAGE_EXTENSIONS.has(ext) ? "image" : "pdf";
+
+   return { url: urlData.publicUrl, title: data.title, description: data.description, fileType };
 }

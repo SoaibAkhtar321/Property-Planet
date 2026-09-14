@@ -46,22 +46,48 @@ const Feedback = async () => {
                         </div>
                         {certificate && (
                            <div className="col-lg-12">
-                              <div className="counter-block-two rera-trust-badge d-flex align-items-start gap-3 pt-3 border-top border-light border-opacity-25">
-                                 <i className="bi bi-patch-check-fill text-white fs-24 mt-1" aria-hidden="true"></i>
-                                 <div>
-                                    <p className="fs-18 text-white fw-normal m0">{certificate.title || "RERA Registered"}</p>
-                                    {certificate.description && (
-                                       <p className="fs-14 fw-light text-white opacity-75 mt-5 mb-10">{certificate.description}</p>
-                                    )}
-                                    <a
-                                       href={certificate.url}
-                                       target="_blank"
-                                       rel="noopener noreferrer"
-                                       className="fs-14 text-white text-decoration-underline mt-5 d-inline-block"
-                                    >
-                                       View RERA Certificate <i className="bi bi-arrow-up-right ms-1"></i>
-                                    </a>
+                              <div className="counter-block-two rera-trust-badge pt-3 border-top border-light border-opacity-25">
+                                 <div className="d-flex align-items-start gap-3 mb-10">
+                                    <i className="bi bi-patch-check-fill text-white fs-24 mt-1" aria-hidden="true"></i>
+                                    <div>
+                                       <p className="fs-18 text-white fw-normal m0">{certificate.title || "RERA Registered"}</p>
+                                       {certificate.description && (
+                                          <p className="fs-14 fw-light text-white opacity-75 mt-5 mb-0">{certificate.description}</p>
+                                       )}
+                                    </div>
                                  </div>
+
+                                 {certificate.fileType === "image" ? (
+                                    <a href={certificate.url} target="_blank" rel="noopener noreferrer" className="d-block">
+                                       <Image
+                                          src={certificate.url}
+                                          alt={certificate.title || "RERA Certificate"}
+                                          width={400}
+                                          height={280}
+                                          className="lazy-img w-100 rounded"
+                                          style={{ height: "auto", border: "1px solid rgba(255,255,255,0.2)" }}
+                                          unoptimized
+                                       />
+                                    </a>
+                                 ) : (
+                                    <div className="rounded overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.2)" }}>
+                                       <iframe
+                                          src={`${certificate.url}#toolbar=0`}
+                                          title={certificate.title || "RERA Certificate"}
+                                          className="w-100"
+                                          style={{ height: 260, border: "none" }}
+                                       />
+                                    </div>
+                                 )}
+
+                                 <a
+                                    href={certificate.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="fs-14 text-white text-decoration-underline mt-10 d-inline-block"
+                                 >
+                                    Open full certificate <i className="bi bi-arrow-up-right ms-1"></i>
+                                 </a>
                               </div>
                            </div>
                         )}
