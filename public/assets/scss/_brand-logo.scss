@@ -1,0 +1,114 @@
+// -----------------------------------------------------------------------
+// Property Planet brand logo -- "Planet Orbit + Establish" entrance.
+// Used by src/components/common/BrandLogo.tsx.
+//
+// One-time entrance on mount (~900ms), then the logo is completely
+// static -- no idle loop, no continuous spin, no pulsing. Desktop hover
+// may replay the orbit sweep once. Artwork/geometry/colors are untouched;
+// only opacity/transform on group wrappers are animated.
+//
+// Structure animated:
+//   .brand-logo__icon        outer icon group -- scale/opacity establish
+//   .brand-logo__orbit       ring + dot group -- subtle rotational settle
+//   .brand-logo__sweep       short arc highlight -- one pass along the ring
+//   .brand-logo__word        wordmark group -- fade + short translateX
+// -----------------------------------------------------------------------
+
+@keyframes brandLogoIconIn {
+  0%   { opacity: 0; transform: scale(0.93); }
+  70%  { opacity: 1; transform: scale(0.965); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes brandLogoOrbitSettle {
+  0%   { opacity: 0; transform: rotate(-6deg); }
+  100% { opacity: 1; transform: rotate(0deg); }
+}
+
+@keyframes brandLogoSweep {
+  0%   { opacity: 0; stroke-dashoffset: 100; }
+  15%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; stroke-dashoffset: 0; }
+}
+
+@keyframes brandLogoWordIn {
+  0%   { opacity: 0; transform: translateX(6px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.brand-logo {
+  overflow: visible;
+  transform-box: fill-box;
+
+  // Static (footer / reduced-motion) state: everything already in its
+  // final, fully-settled position -- no animation-name at all.
+  .brand-logo__icon,
+  .brand-logo__orbit,
+  .brand-logo__word {
+    opacity: 1;
+    transform: none;
+  }
+  .brand-logo__sweep {
+    opacity: 0;
+  }
+
+  // Entrance-enabled state, applied only via the `.brand-logo--animate`
+  // modifier so the footer instance can opt out and render statically.
+  &.brand-logo--animate {
+    .brand-logo__icon {
+      transform-origin: 50px 50px;
+      opacity: 0;
+      animation: brandLogoIconIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .brand-logo__orbit {
+      transform-origin: 50px 50px;
+      opacity: 0;
+      animation: brandLogoOrbitSettle 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: 0.1s;
+    }
+
+    .brand-logo__sweep {
+      opacity: 0;
+      stroke-dasharray: 40 100;
+      stroke-dashoffset: 100;
+      animation: brandLogoSweep 0.55s ease-out forwards;
+      animation-delay: 0.25s;
+    }
+
+    .brand-logo__word {
+      opacity: 0;
+      animation: brandLogoWordIn 0.4s ease-out forwards;
+      animation-delay: 0.5s;
+    }
+
+    // Desktop-only: replay the orbit sweep once on hover. Never wired
+    // up for touch, and never a looping/continuous hover state.
+    @media (hover: hover) and (pointer: fine) {
+      &:hover .brand-logo__sweep {
+        animation-name: brandLogoSweep;
+        animation-duration: 0.55s;
+        animation-timing-function: ease-out;
+        animation-delay: 0s;
+        animation-fill-mode: forwards;
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo.brand-logo--animate {
+    .brand-logo__icon,
+    .brand-logo__orbit,
+    .brand-logo__word {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .brand-logo__sweep {
+      animation: none !important;
+      opacity: 0 !important;
+    }
+  }
+}

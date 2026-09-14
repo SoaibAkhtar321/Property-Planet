@@ -1,9 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import footer_data from "@/data/home-data/FooterData"
+import BrandLogo from "@/components/common/BrandLogo"
 
-import footerLogo_1 from "@/assets/images/logo/logo_01.svg"
-import footerLogo_2 from "@/assets/images/logo/logo_03.svg"
 import footerShape_1 from "@/assets/images/shape/shape_32.svg"
 import footerShape_2 from "@/assets/images/shape/shape_33.svg"
 
@@ -20,7 +19,7 @@ const FooterOne = ({ style }: any) => {
                         <div className="bg-wrapper">
                            <div className="logo mb-20">
                               <Link href="/">
-                                 <Image src={style ? footerLogo_2 : footerLogo_1} alt="" />
+                                 <BrandLogo animate={false} variant={style ? "dark" : "light"} />
                               </Link>
                            </div>
                            <p className="mb-20 lg-mb-15 md-mb-10">Hyderabad, Telangana</p>
