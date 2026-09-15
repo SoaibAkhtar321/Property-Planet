@@ -204,9 +204,9 @@
 }
 .search-filter-nav-one {
     .nav-link {
-        width: 87px;
+        min-width: 87px;
         line-height: 42px;
-        padding: 0;
+        padding: 0 22px;
         background: #fff;
         border: 0;
         border-radius: 0;

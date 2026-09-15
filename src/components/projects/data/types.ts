@@ -62,6 +62,10 @@ export interface Project {
    date?: string;
    images: string[];
    overview?: string;
+   /** Admin "Featured" toggle (project_public.is_featured) — used to select
+    * which projects appear in the homepage "Featured Opportunities"
+    * section (src/components/homes/home-two/Property.tsx). */
+   isFeatured?: boolean;
    /** Marks non-real records used only to demonstrate the layout. */
    isDemo?: boolean;
 

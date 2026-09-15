@@ -49,10 +49,10 @@ const BLockFeatureOne = () => {
 
                {hasMore && (
                   <div className="row">
-                     <div className="col-12 text-center mt-40">
+                     <div className="col-12 mt-40">
                         <button
                            type="button"
-                           className="btn-four justify-content-center"
+                           className="btn-five sm"
                            onClick={() => setShowAll((prev) => !prev)}
                         >
                            {showAll ? "See Less" : "See More"}

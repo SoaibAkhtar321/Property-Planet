@@ -82,6 +82,36 @@ export async function getPublishedProjects(): Promise<Project[]> {
 }
 
 /**
+ * Published projects marked "Featured" in the admin (project_public.is_
+ * featured), ordered the same way as /projects (display_priority, then
+ * published_at desc). Used by the homepage "Featured Opportunities"
+ * section (src/components/homes/home-two/Property.tsx). Same media
+ * handling as getPublishedProjects — gallery images only, no detail-page
+ * child tables.
+ */
+export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
+   const supabase = await createClient();
+
+   const { data, error } = await supabase
+      .from("project_public")
+      .select(PROJECT_PUBLIC_COLUMNS)
+      .eq("is_featured", true)
+      .order("display_priority", { ascending: true })
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .limit(limit);
+
+   if (error) {
+      console.error("Failed to load featured projects:", error.message);
+      return [];
+   }
+
+   const rows = (data ?? []) as ProjectPublicRow[];
+   const mediaByProject = await resolveMedia(supabase, rows.map((row) => row.id));
+
+   return rows.map((row) => mapProject(row, mediaByProject.get(row.id) ?? []));
+}
+
+/**
  * A single published project by slug, with its full child-table detail
  * data, or null if it doesn't exist / isn't published (the caller should
  * respond with notFound() in that case — project_public's `where status =
