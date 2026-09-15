@@ -24,6 +24,9 @@ export default async function AdminPropertiesPage({ searchParams }: { searchPara
       <div>
          <div className="d-flex justify-content-between align-items-center mb-4">
             <h3 className="m-0">Property moderation</h3>
+            <Link href="/admin/properties/new" className="btn btn-sm btn-primary">
+               Add Listing
+            </Link>
          </div>
 
          <div className="btn-group mb-4">

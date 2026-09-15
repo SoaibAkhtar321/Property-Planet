@@ -1,9 +1,10 @@
 // src/components/common/AnimatedBrandLogo.tsx
 //
-// Header logo: plays the cropped Property Planet intro clip once, muted,
-// then settles into the static BrandLogo SVG for its resting state.
-// Falls back straight to the static SVG (no video ever requested) when
-// the user has prefers-reduced-motion set.
+// Header logo: plays the Property Planet intro clip on a continuous,
+// silent loop -- it never stops and never needs a click. Falls back to
+// the static BrandLogo SVG only while the video hasn't started playing
+// yet (or can't play at all, e.g. prefers-reduced-motion, or the file
+// fails to load), so there's never a blank gap in the header.
 //
 // Always renders BrandLogo underneath so there is a) no layout shift and
 // b) a single accessible name ("Property Planet") whether or not the
@@ -11,13 +12,13 @@
 
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import BrandLogo from "./BrandLogo"
 
 const AnimatedBrandLogo = () => {
    const [canAnimate, setCanAnimate] = useState(false);
-   const [ended, setEnded] = useState(false);
-   const videoRef = useRef<HTMLVideoElement>(null);
+   const [videoPlaying, setVideoPlaying] = useState(false);
+   const [videoFailed, setVideoFailed] = useState(false);
 
    useEffect(() => {
       const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -27,26 +28,27 @@ const AnimatedBrandLogo = () => {
       return () => mq.removeEventListener("change", applyPreference);
    }, []);
 
-   const showVideo = canAnimate && !ended;
+   const showVideo = canAnimate && !videoFailed;
+   const showFallback = !showVideo || !videoPlaying;
 
    return (
       <span className="brand-logo-video-wrap">
          <BrandLogo
             animate={false}
-            className={`brand-logo-video-fallback${showVideo ? " is-hidden" : ""}`}
+            className={`brand-logo-video-fallback${showFallback ? "" : " is-hidden"}`}
          />
-         {canAnimate && (
+         {showVideo && (
             <video
-               ref={videoRef}
-               className={`brand-logo-video${ended ? " is-hidden" : ""}`}
+               className={`brand-logo-video${videoPlaying ? "" : " is-hidden"}`}
                autoPlay
+               loop
                muted
                playsInline
                preload="auto"
                aria-hidden="true"
-               onEnded={() => setEnded(true)}
+               onPlaying={() => setVideoPlaying(true)}
+               onError={() => setVideoFailed(true)}
             >
-               <source src="/assets/video/brand-logo-anim.webm" type="video/webm" />
                <source src="/assets/video/brand-logo-anim.mp4" type="video/mp4" />
             </video>
          )}

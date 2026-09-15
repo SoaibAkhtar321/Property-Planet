@@ -329,6 +329,36 @@
             background: $color-two;
             color: #fff;
         }
+        // The account dropdown lives inside .right-widget, outside the
+        // .navbar wrapper the theme's other dropdown-menu rules are scoped
+        // to -- so it was falling back to a bare, unstyled <ul> (raw
+        // bullets instead of a card). Style it explicitly here instead of
+        // relying on being nested in .navbar.
+        & + .dropdown-menu {
+            top: calc(100% + 14px);
+            right: 0;
+            left: auto;
+            min-width: 200px;
+            margin: 0;
+            padding: 8px 0;
+            background: #fff;
+            border: none;
+            border-radius: 12px;
+            list-style: none;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            .dropdown-item {
+                padding: 10px 20px;
+                font-size: 0.95em;
+                color: $text-dark;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                &:hover, &:focus {
+                    background: rgba($color-one, 0.08);
+                    color: $color-one;
+                }
+            }
+        }
     }
     .login-btn-two {
         width: 60px;
