@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Property } from "./data/types";
 import MediaGallery from "./detail/MediaGallery";
 import Overview from "./detail/Overview";
@@ -21,6 +22,17 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
          <div className="container">
             <div className="row">
                <div className="col-lg-6">
+                  {/* Phase 16/18: a Project Unit says so, and links back to
+                      its project. An Individual Property renders nothing
+                      here rather than any misleading project framing. */}
+                  {property.project && (
+                     <nav aria-label="Breadcrumb" className="mb-10">
+                        <Link href={`/projects/${property.project.slug}`} className="fs-16 fw-500">
+                           <i className="bi bi-arrow-left me-1" aria-hidden="true"></i>
+                           Part of {property.project.title}
+                        </Link>
+                     </nav>
+                  )}
                   <h3 className="property-titlee">{property.title}</h3>
                   <div className="d-flex flex-wrap mt-10">
                      {property.tag && (
@@ -28,8 +40,16 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
                            {property.tag}
                         </div>
                      )}
+                     <div className="list-type text-uppercase mt-15 me-3 bg-white text-dark fw-500">
+                        For {property.listingType}
+                     </div>
+                     {property.project && (
+                        <div className="list-type text-uppercase mt-15 me-3 bg-white text-dark fw-500">
+                           Project unit
+                        </div>
+                     )}
                      <div className="address mt-15">
-                        <i className="bi bi-geo-alt"></i> {property.address}
+                        <i className="bi bi-geo-alt" aria-hidden="true"></i> {property.address}
                      </div>
                   </div>
                   {property.isDemo && (
@@ -50,6 +70,15 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
             </div>
 
             <Overview property={property} />
+
+            {property.project && (
+               <div className="mt-30">
+                  <Link href={`/projects/${property.project.slug}`} className="btn-four">
+                     View {property.project.title}
+                     <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
+                  </Link>
+               </div>
+            )}
 
             <div className="row">
                <div className="col-xl-8">

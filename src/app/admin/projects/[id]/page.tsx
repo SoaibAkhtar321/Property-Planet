@@ -14,6 +14,7 @@ import {
    type ProjectStatus,
 } from "@/lib/admin/projects/actions";
 import ProjectMediaUpload from "@/components/admin/projects/ProjectMediaUpload";
+import ProjectUnits from "@/components/admin/projects/ProjectUnits";
 
 const MEDIA_SECTIONS: { type: AdminProjectMediaRow["media_type"]; label: string; multiple: boolean }[] = [
    { type: "master_plan", label: "Master Plan", multiple: true },
@@ -302,6 +303,8 @@ export default async function EditProjectPage({ params }: { params: { id: string
                </button>
             </div>
          </form>
+
+         <ProjectUnits projectId={project.id} />
 
          <h5 className="mt-5 mb-3">Media</h5>
          <p className="text-muted small">

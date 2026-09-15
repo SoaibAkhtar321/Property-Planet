@@ -18,6 +18,14 @@ export interface AdminOverviewMetrics {
       pending: number;
       rejected: number;
       draft: number;
+      /** Published listings with project_id IS NULL — the public /properties set. */
+      individualPublished: number;
+      /** Listings attached to a project (any status). Never in /properties. */
+      projectUnits: number;
+   };
+   projects: {
+      published: number;
+      draft: number;
    };
    leads: {
       total: number;
@@ -35,7 +43,8 @@ export interface AdminOverviewMetrics {
 }
 
 const EMPTY_METRICS: AdminOverviewMetrics = {
-   properties: { published: 0, pending: 0, rejected: 0, draft: 0 },
+   properties: { published: 0, pending: 0, rejected: 0, draft: 0, individualPublished: 0, projectUnits: 0 },
+   projects: { published: 0, draft: 0 },
    leads: { total: 0, new: 0, contacted: 0, thisWeek: 0, converted: 0, closed: 0 },
    users: { buyers: 0, sellers: 0, admins: 0 },
 };
@@ -50,6 +59,17 @@ export async function getAdminOverviewMetrics(): Promise<AdminOverviewMetrics> {
       supabase.from("properties").select("id", { count: "exact", head: true }).eq("status", "pending"),
       supabase.from("properties").select("id", { count: "exact", head: true }).eq("status", "rejected"),
       supabase.from("properties").select("id", { count: "exact", head: true }).eq("status", "draft"),
+      // Phase 22: the two counts that make the Individual Property vs
+      // Project Unit split visible in admin, using the same project_id
+      // invariant the public queries use.
+      supabase
+         .from("properties")
+         .select("id", { count: "exact", head: true })
+         .eq("status", "published")
+         .is("project_id", null),
+      supabase.from("properties").select("id", { count: "exact", head: true }).not("project_id", "is", null),
+      supabase.from("projects").select("id", { count: "exact", head: true }).eq("status", "published"),
+      supabase.from("projects").select("id", { count: "exact", head: true }).eq("status", "draft"),
       supabase.from("leads").select("id", { count: "exact", head: true }),
       supabase.from("leads").select("id", { count: "exact", head: true }).eq("status", "new"),
       supabase.from("leads").select("id", { count: "exact", head: true }).eq("status", "contacted"),
@@ -66,6 +86,10 @@ export async function getAdminOverviewMetrics(): Promise<AdminOverviewMetrics> {
       "pending properties",
       "rejected properties",
       "draft properties",
+      "published individual properties",
+      "project units",
+      "published projects",
+      "draft projects",
       "total leads",
       "new leads",
       "contacted leads",
@@ -90,6 +114,10 @@ export async function getAdminOverviewMetrics(): Promise<AdminOverviewMetrics> {
       pending,
       rejected,
       draft,
+      individualPublished,
+      projectUnits,
+      publishedProjects,
+      draftProjects,
       totalLeads,
       newLeads,
       contactedLeads,
@@ -102,7 +130,8 @@ export async function getAdminOverviewMetrics(): Promise<AdminOverviewMetrics> {
    ] = counts;
 
    return {
-      properties: { published, pending, rejected, draft },
+      properties: { published, pending, rejected, draft, individualPublished, projectUnits },
+      projects: { published: publishedProjects, draft: draftProjects },
       leads: {
          total: totalLeads,
          new: newLeads,

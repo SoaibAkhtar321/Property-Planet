@@ -3,7 +3,7 @@ import Wrapper from "@/layouts/Wrapper";
 import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
 import ProjectDetail from "@/components/projects/ProjectDetail";
-import { getProjectBySlug } from "@/lib/projects/queries";
+import { getProjectBySlug, getProjectUnits, getProjectUnitCounts } from "@/lib/projects/queries";
 
 // Same reasoning as /projects: published/unpublished state can change
 // independently of any build, and an unpublished or invalid slug must 404
@@ -15,9 +15,24 @@ export async function generateMetadata({ params }: { params: { slug: string } })
    if (!project) {
       return { title: "Project Not Found | Property Planet" };
    }
+   const title = project.seoTitle ?? `${project.title} | Property Planet`;
+   const description = project.seoDescription ?? project.overview ?? undefined;
+   const url = `https://propertyplanet.in/projects/${project.slug}`;
+
    return {
-      title: project.seoTitle ?? `${project.title} | Property Planet`,
-      description: project.seoDescription ?? project.overview ?? undefined,
+      title,
+      description,
+      alternates: { canonical: url },
+      openGraph: {
+         title,
+         description,
+         url,
+         type: "website",
+         siteName: "Property Planet",
+         // Only the project's own gallery image — never a buyer/seller
+         // asset, and never anything from a non-published record.
+         images: project.images[0] ? [{ url: project.images[0] }] : undefined,
+      },
    };
 }
 
@@ -32,10 +47,14 @@ const ProjectDetailPage = async ({ params }: { params: { slug: string } }) => {
       notFound();
    }
 
+   // Published units only — getProjectUnits reads property_public, so an
+   // unpublished or sold unit is structurally absent rather than filtered.
+   const [units, unitCounts] = await Promise.all([getProjectUnits(project.id), getProjectUnitCounts(project.id)]);
+
    return (
       <Wrapper>
          <HeaderTwo style_1={false} style_2={false} />
-         <ProjectDetail project={project} />
+         <ProjectDetail project={project} units={units} unitCounts={unitCounts} />
          <FooterOne style={true} />
       </Wrapper>
    );

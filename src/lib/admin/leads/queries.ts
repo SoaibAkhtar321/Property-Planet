@@ -25,8 +25,27 @@ import { createClient } from "@/lib/supabase/server";
 
 export type LeadStatus = "new" | "contacted" | "qualified" | "site_visit" | "negotiation" | "closed" | "lost";
 
+/**
+ * Phase 11: which of the three shapes a lead is, derived from the row
+ * itself rather than stored as a column — `leads` already carries enough
+ * to tell them apart (0013_leads_project_id.sql), so no enum, no extra
+ * column, and no second CRM.
+ *
+ *   project    -> project_id set, property_id NULL
+ *   unit       -> property_id set AND that property has a project_id
+ *   individual -> property_id set, no project
+ */
+export type LeadKind = "project" | "unit" | "individual";
+
+export const LEAD_KIND_LABELS: Record<LeadKind, string> = {
+   project: "Project enquiry",
+   unit: "Project unit enquiry",
+   individual: "Individual property enquiry",
+};
+
 export interface AdminLeadListRow {
    id: string;
+   kind: LeadKind;
    status: LeadStatus;
    message: string | null;
    created_at: string;
@@ -34,17 +53,25 @@ export interface AdminLeadListRow {
    buyer_name: string | null;
    buyer_phone: string | null;
    buyer_email: string | null;
-   property_id: string;
-   property_title: string;
-   property_slug: string;
+   /** NULL on a project-level lead. */
+   property_id: string | null;
+   property_title: string | null;
+   property_slug: string | null;
+   /** Set on a project lead and on a unit lead; NULL on an individual one. */
+   project_id: string | null;
+   project_title: string | null;
+   project_slug: string | null;
    seller_id: string;
    seller_name: string | null;
 }
 
 export interface AdminLeadFilters {
    status?: LeadStatus;
-   search?: string; // matches buyer name or property title
+   kind?: LeadKind;
+   search?: string; // matches buyer name, property title, project title or seller name
 }
+
+export const LEAD_KINDS: LeadKind[] = ["individual", "unit", "project"];
 
 interface LeadJoinRow {
    id: string;
@@ -52,7 +79,8 @@ interface LeadJoinRow {
    message: string | null;
    created_at: string;
    buyer_id: string;
-   property_id: string;
+   property_id: string | null;
+   project_id: string | null;
 }
 
 /**
@@ -67,7 +95,7 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
 
    let query = supabase
       .from("leads")
-      .select("id, status, message, created_at, buyer_id, property_id")
+      .select("id, status, message, created_at, buyer_id, property_id, project_id")
       .order("created_at", { ascending: false });
 
    if (filters.status) {
@@ -84,11 +112,16 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
 
    const leadRows = leads as LeadJoinRow[];
    const buyerIds = Array.from(new Set(leadRows.map((l) => l.buyer_id)));
-   const propertyIds = Array.from(new Set(leadRows.map((l) => l.property_id)));
+   // property_id is nullable since 0013 (project-level leads), so the id
+   // lists are filtered before they are used as `in()` arguments.
+   const propertyIds = Array.from(new Set(leadRows.map((l) => l.property_id).filter((id): id is string => Boolean(id))));
+   const leadProjectIds = Array.from(new Set(leadRows.map((l) => l.project_id).filter((id): id is string => Boolean(id))));
 
    const [{ data: buyerProfiles, error: buyerError }, { data: properties, error: propError }] = await Promise.all([
       supabase.from("profiles").select("id, full_name, phone").in("id", buyerIds),
-      supabase.from("properties").select("id, title, slug, owner_id").in("id", propertyIds),
+      propertyIds.length
+         ? supabase.from("properties").select("id, title, slug, owner_id, project_id").in("id", propertyIds)
+         : Promise.resolve({ data: [], error: null }),
    ]);
 
    if (buyerError) console.error("Failed to load buyer profiles for leads:", buyerError.message);
@@ -96,6 +129,24 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
 
    const buyerById = new Map((buyerProfiles ?? []).map((p) => [p.id, p]));
    const propertyById = new Map((properties ?? []).map((p) => [p.id, p]));
+
+   // A unit lead carries its parent project on the lead row, but fall back
+   // to the property's own project_id so a legacy row written before 0013
+   // still resolves to the right project.
+   const projectIds = Array.from(
+      new Set([
+         ...leadProjectIds,
+         ...(properties ?? []).map((p) => p.project_id as string | null).filter((id): id is string => Boolean(id)),
+      ])
+   );
+
+   const { data: projects, error: projectError } = projectIds.length
+      ? await supabase.from("projects").select("id, title, slug").in("id", projectIds)
+      : { data: [], error: null };
+
+   if (projectError) console.error("Failed to load projects for leads:", projectError.message);
+
+   const projectById = new Map((projects ?? []).map((p) => [p.id, p]));
 
    const sellerIds = Array.from(new Set((properties ?? []).map((p) => p.owner_id).filter(Boolean)));
    const { data: sellerProfiles, error: sellerError } = sellerIds.length
@@ -114,11 +165,16 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
    // which this app deliberately does not use for RLS-respecting reads.
    const rows: AdminLeadListRow[] = leadRows.map((lead) => {
       const buyer = buyerById.get(lead.buyer_id);
-      const property = propertyById.get(lead.property_id);
+      const property = lead.property_id ? propertyById.get(lead.property_id) : undefined;
       const seller = property ? sellerById.get(property.owner_id) : undefined;
+      const projectId = lead.project_id ?? (property?.project_id as string | null) ?? null;
+      const project = projectId ? projectById.get(projectId) : undefined;
+
+      const kind: LeadKind = !lead.property_id ? "project" : projectId ? "unit" : "individual";
 
       return {
          id: lead.id,
+         kind,
          status: lead.status,
          message: lead.message,
          created_at: lead.created_at,
@@ -127,22 +183,28 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
          buyer_phone: buyer?.phone ?? null,
          buyer_email: null,
          property_id: lead.property_id,
-         property_title: property?.title ?? "(property removed)",
-         property_slug: property?.slug ?? "",
+         property_title: lead.property_id ? property?.title ?? "(property removed)" : null,
+         property_slug: property?.slug ?? null,
+         project_id: projectId,
+         project_title: projectId ? project?.title ?? "(project removed)" : null,
+         project_slug: project?.slug ?? null,
          seller_id: property?.owner_id ?? "",
          seller_name: seller?.full_name ?? null,
       };
    });
 
-   if (!filters.search) return rows;
+   const byKind = filters.kind ? rows.filter((r) => r.kind === filters.kind) : rows;
+
+   if (!filters.search) return byKind;
 
    const term = filters.search.trim().toLowerCase();
-   if (!term) return rows;
+   if (!term) return byKind;
 
-   return rows.filter(
+   return byKind.filter(
       (r) =>
          (r.buyer_name ?? "").toLowerCase().includes(term) ||
-         r.property_title.toLowerCase().includes(term) ||
+         (r.property_title ?? "").toLowerCase().includes(term) ||
+         (r.project_title ?? "").toLowerCase().includes(term) ||
          (r.seller_name ?? "").toLowerCase().includes(term)
    );
 }
@@ -153,6 +215,7 @@ export interface AdminLeadDetail extends AdminLeadListRow {
    property_status: string;
    city: string;
    locality: string;
+   project_status: string | null;
    seller_phone: string | null;
    site_visits: { id: string; scheduled_at: string | null; status: string; notes: string | null }[];
 }
@@ -163,7 +226,7 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
 
    const { data: lead, error } = await supabase
       .from("leads")
-      .select("id, status, message, created_at, buyer_id, property_id")
+      .select("id, status, message, created_at, buyer_id, property_id, project_id")
       .eq("id", id)
       .maybeSingle();
 
@@ -175,11 +238,15 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
 
    const [{ data: buyer }, { data: property }, { data: siteVisits, error: svError }] = await Promise.all([
       supabase.from("profiles").select("id, full_name, phone").eq("id", lead.buyer_id).maybeSingle(),
-      supabase
-         .from("properties")
-         .select("id, title, slug, owner_id, property_type, listing_type, status, city, locality")
-         .eq("id", lead.property_id)
-         .maybeSingle(),
+      // property_id is NULL on a project-level lead (0013) — skip the
+      // lookup entirely rather than querying `.eq("id", null)`.
+      lead.property_id
+         ? supabase
+              .from("properties")
+              .select("id, title, slug, owner_id, property_type, listing_type, status, city, locality, project_id")
+              .eq("id", lead.property_id)
+              .maybeSingle()
+         : Promise.resolve({ data: null }),
       supabase
          .from("site_visits")
          .select("id, scheduled_at, status, notes")
@@ -199,8 +266,18 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
       seller = data ?? null;
    }
 
+   const projectId = lead.project_id ?? (property?.project_id as string | null) ?? null;
+   let project: { id: string; title: string; slug: string; status: string } | null = null;
+   if (projectId) {
+      const { data } = await supabase.from("projects").select("id, title, slug, status").eq("id", projectId).maybeSingle();
+      project = data ?? null;
+   }
+
+   const kind: LeadKind = !lead.property_id ? "project" : projectId ? "unit" : "individual";
+
    return {
       id: lead.id,
+      kind,
       status: lead.status as LeadStatus,
       message: lead.message,
       created_at: lead.created_at,
@@ -209,8 +286,12 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
       buyer_phone: buyer?.phone ?? null,
       buyer_email: null,
       property_id: lead.property_id,
-      property_title: property?.title ?? "(property removed)",
-      property_slug: property?.slug ?? "",
+      property_title: lead.property_id ? property?.title ?? "(property removed)" : null,
+      property_slug: property?.slug ?? null,
+      project_id: projectId,
+      project_title: projectId ? project?.title ?? "(project removed)" : null,
+      project_slug: project?.slug ?? null,
+      project_status: project?.status ?? null,
       property_type: property?.property_type ?? "",
       listing_type: property?.listing_type ?? "",
       property_status: property?.status ?? "",

@@ -9,8 +9,21 @@ import { getPublishedProjects } from "@/lib/projects/queries";
 // rows only), not local demo data.
 export const dynamic = "force-dynamic";
 
+const CANONICAL = "https://propertyplanet.in/projects";
+const DESCRIPTION =
+   "Featured Opportunities from Property Planet — larger developments and projects across Hyderabad and the Future City corridor, each with individual units and plots available.";
+
 export const metadata = {
-   title: "Projects | Property Planet",
+   title: "Featured Opportunities | Property Planet",
+   description: DESCRIPTION,
+   alternates: { canonical: CANONICAL },
+   openGraph: {
+      title: "Featured Opportunities | Property Planet",
+      description: DESCRIPTION,
+      url: CANONICAL,
+      type: "website",
+      siteName: "Property Planet",
+   },
 };
 
 const ProjectsPage = async () => {

@@ -39,7 +39,7 @@ const BLockFeatureOne = () => {
                               <h5 className="text-white font-garamond">{item.title}</h5>
                            </div>
                            <Link
-                              href={`/properties?location=${encodeURIComponent(item.location ?? item.title)}`}
+                              href={`/properties?locality=${encodeURIComponent(item.location ?? item.title)}`}
                               className="stretched-link"
                            ></Link>
                         </div>

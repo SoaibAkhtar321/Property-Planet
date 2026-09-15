@@ -45,6 +45,12 @@ const PropertyCard = ({ item, isFavourited }: { item: Property; isFavourited?: b
                   {item.title}
                </Link>
                <div className="address">{item.address}</div>
+               {/* Phase 17: the two attributes a buyer scans for first and
+                   that the card previously omitted. Both come from columns
+                   that already exist — nothing is inferred. */}
+               <div className="fs-14 mt-5">
+                  {item.propertyType} · For {item.listingType}
+               </div>
                <ul className="style-none feature d-flex flex-wrap align-items-center justify-content-between">
                   {item.sqft && (
                      <li className="d-flex align-items-center">
@@ -67,8 +73,12 @@ const PropertyCard = ({ item, isFavourited }: { item: Property; isFavourited?: b
                      ₹{item.price.toLocaleString("en-IN")}
                      {item.priceUnit && <sub>{item.priceUnit}</sub>}
                   </strong>
-                  <Link href={`/properties/${item.slug}`} className="btn-four rounded-circle">
-                     <i className="bi bi-arrow-up-right"></i>
+                  <Link
+                     href={`/properties/${item.slug}`}
+                     className="btn-four rounded-circle"
+                     aria-label={`View details for ${item.title}`}
+                  >
+                     <i className="bi bi-arrow-up-right" aria-hidden="true"></i>
                   </Link>
                </div>
             </div>

@@ -44,46 +44,49 @@ export default async function AdminPropertiesPage({ searchParams }: { searchPara
          {properties.length === 0 ? (
             <p className="text-muted">No properties are waiting for approval.</p>
          ) : (
-            <table className="table align-middle">
-               <thead>
-                  <tr>
-                     <th>Title</th>
-                     <th>Type</th>
-                     <th>Price</th>
-                     <th>Location</th>
-                     <th>Seller</th>
-                     <th>Status</th>
-                     <th>Submitted</th>
-                     <th></th>
-                  </tr>
-               </thead>
-               <tbody>
-                  {properties.map((p) => (
-                     <tr key={p.id}>
-                        <td>
-                           <Link href={`/admin/properties/${p.id}`}>{p.title}</Link>
-                        </td>
-                        <td className="text-muted small">
-                           {p.property_type} · {p.listing_type}
-                        </td>
-                        <td>₹{Number(p.price).toLocaleString("en-IN")}</td>
-                        <td>
-                           {p.city}, {p.locality}
-                        </td>
-                        <td>{p.owner_name ?? "—"}</td>
-                        <td>
-                           <span className={`badge ${statusBadgeClass[p.status] ?? "bg-secondary"}`}>{p.status}</span>
-                        </td>
-                        <td className="text-muted small">{new Date(p.created_at).toLocaleDateString()}</td>
-                        <td>
-                           <Link href={`/admin/properties/${p.id}`} className="btn btn-sm btn-outline-primary">
-                              Review
-                           </Link>
-                        </td>
+            <div className="table-responsive">
+               <table className="table align-middle">
+                  <thead>
+                     <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Price</th>
+                        <th>Location</th>
+                        <th>Seller</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th></th>
                      </tr>
-                  ))}
-               </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                     {properties.map((p) => (
+                        <tr key={p.id}>
+                           <td>
+                              <Link href={`/admin/properties/${p.id}`}>{p.title}</Link>
+                           </td>
+                           <td className="text-muted small">
+                              {p.property_type} · {p.listing_type}
+                              <div>{p.project_id ? "Project unit" : "Individual"}</div>
+                           </td>
+                           <td>₹{Number(p.price).toLocaleString("en-IN")}</td>
+                           <td>
+                              {p.city}, {p.locality}
+                           </td>
+                           <td>{p.owner_name ?? "—"}</td>
+                           <td>
+                              <span className={`badge ${statusBadgeClass[p.status] ?? "bg-secondary"}`}>{p.status}</span>
+                           </td>
+                           <td className="text-muted small">{new Date(p.created_at).toLocaleDateString()}</td>
+                           <td>
+                              <Link href={`/admin/properties/${p.id}`} className="btn btn-sm btn-outline-primary">
+                                 Review
+                              </Link>
+                           </td>
+                        </tr>
+                     ))}
+                  </tbody>
+               </table>
+            </div>
          )}
       </div>
    );

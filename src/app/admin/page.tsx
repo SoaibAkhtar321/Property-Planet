@@ -101,6 +101,26 @@ export default async function AdminOverviewPage() {
             <div className="col-6 col-md-3">
                <StatCard label="Draft" value={metrics.properties.draft} />
             </div>
+            <div className="col-6 col-md-3">
+               <StatCard
+                  label="Individual (live)"
+                  value={metrics.properties.individualPublished}
+                  href="/admin/properties?status=published"
+               />
+            </div>
+            <div className="col-6 col-md-3">
+               <StatCard label="Project units" value={metrics.properties.projectUnits} href="/admin/projects" />
+            </div>
+         </div>
+
+         <SectionTitle icon={iconProperties}>Featured Opportunities</SectionTitle>
+         <div className="row g-3 mb-40">
+            <div className="col-6 col-md-3">
+               <StatCard label="Published projects" value={metrics.projects.published} href="/admin/projects" />
+            </div>
+            <div className="col-6 col-md-3">
+               <StatCard label="Draft projects" value={metrics.projects.draft} href="/admin/projects" />
+            </div>
          </div>
 
          <SectionTitle icon={iconLeads}>Lead Pipeline</SectionTitle>

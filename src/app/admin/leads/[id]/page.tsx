@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAdminLeadDetail, type LeadStatus } from "@/lib/admin/leads/queries";
+import { getAdminLeadDetail, LEAD_KIND_LABELS, type LeadStatus } from "@/lib/admin/leads/queries";
 import { updateLeadStatus } from "@/lib/admin/leads/actions";
 
 export const dynamic = "force-dynamic";
@@ -30,7 +30,10 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
          </div>
 
          <div className="d-flex justify-content-between align-items-start mb-4">
-            <h3 className="m-0">Lead detail</h3>
+            <div>
+               <h3 className="m-0">Lead detail</h3>
+               <span className="badge bg-secondary mt-2">{LEAD_KIND_LABELS[lead.kind]}</span>
+            </div>
             <form action={updateStatus} className="d-flex gap-2">
                <select name="status" defaultValue={lead.status} className="form-select form-select-sm">
                   {STATUS_OPTIONS.map((s) => (
@@ -63,22 +66,59 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
 
             <div className="col-md-4">
                <div className="border rounded p-3 h-100">
-                  <h6 className="text-muted">Property</h6>
-                  <div className="fw-bold">{lead.property_title}</div>
-                  <div className="text-muted small">
-                     {lead.property_type} · {lead.listing_type}
-                  </div>
-                  <div>
-                     {lead.city}, {lead.locality}
-                  </div>
-                  <div className="mt-2">
-                     <span className="badge bg-secondary">{lead.property_status}</span>
-                  </div>
-                  {lead.property_slug && (
-                     <div className="mt-3">
-                        <Link href={`/properties/${lead.property_slug}`} className="btn btn-sm btn-outline-secondary" target="_blank">
-                           View listing
-                        </Link>
+                  <h6 className="text-muted">Enquired about</h6>
+
+                  {lead.property_id ? (
+                     <>
+                        <div className="fw-bold">{lead.property_title}</div>
+                        <div className="text-muted small">
+                           {lead.property_type} · {lead.listing_type}
+                        </div>
+                        <div>
+                           {lead.city}, {lead.locality}
+                        </div>
+                        <div className="mt-2">
+                           <span className="badge bg-secondary">{lead.property_status}</span>
+                        </div>
+                        {lead.property_slug && (
+                           <div className="mt-3">
+                              <Link
+                                 href={`/properties/${lead.property_slug}`}
+                                 className="btn btn-sm btn-outline-secondary"
+                                 target="_blank"
+                              >
+                                 View listing
+                              </Link>
+                           </div>
+                        )}
+                     </>
+                  ) : (
+                     <div className="text-muted small">
+                        Project-level enquiry — the buyer asked about the project as a whole, not a specific unit.
+                     </div>
+                  )}
+
+                  {lead.project_id && (
+                     <div className="mt-3 pt-3 border-top">
+                        <div className="text-muted small">Project</div>
+                        <div className="fw-bold">{lead.project_title}</div>
+                        {lead.project_status && (
+                           <span className="badge bg-secondary mt-1">{lead.project_status}</span>
+                        )}
+                        <div className="mt-2 d-flex gap-2 flex-wrap">
+                           {lead.project_slug && (
+                              <Link
+                                 href={`/projects/${lead.project_slug}`}
+                                 className="btn btn-sm btn-outline-secondary"
+                                 target="_blank"
+                              >
+                                 View project
+                              </Link>
+                           )}
+                           <Link href={`/admin/projects/${lead.project_id}`} className="btn btn-sm btn-outline-secondary">
+                              Manage project
+                           </Link>
+                        </div>
                      </div>
                   )}
                </div>
@@ -87,8 +127,16 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
             <div className="col-md-4">
                <div className="border rounded p-3 h-100">
                   <h6 className="text-muted">Seller / Agent</h6>
-                  <div className="fw-bold">{lead.seller_name ?? "—"}</div>
-                  <div>{lead.seller_phone ?? "No phone on file"}</div>
+                  {lead.property_id ? (
+                     <>
+                        <div className="fw-bold">{lead.seller_name ?? "—"}</div>
+                        <div>{lead.seller_phone ?? "No phone on file"}</div>
+                     </>
+                  ) : (
+                     <div className="text-muted small">
+                        No individual seller — project enquiries are handled by the Property Planet team.
+                     </div>
+                  )}
                </div>
             </div>
          </div>

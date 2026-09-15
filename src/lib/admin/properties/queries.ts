@@ -26,6 +26,8 @@ export interface AdminPropertyListRow {
    locality: string;
    owner_id: string;
    owner_name: string | null;
+   /** NULL => Individual Property; set => Project Unit (0007). */
+   project_id: string | null;
    created_at: string;
    updated_at: string;
 }
@@ -38,7 +40,9 @@ export async function getPropertiesForModeration(
 
    const { data, error } = await supabase
       .from("properties")
-      .select("id, title, slug, property_type, listing_type, price, status, city, locality, owner_id, created_at, updated_at")
+      .select(
+         "id, title, slug, property_type, listing_type, price, status, city, locality, owner_id, project_id, created_at, updated_at"
+      )
       .in("status", statuses)
       .order("created_at", { ascending: false });
 
@@ -79,6 +83,9 @@ export interface AdminPropertyDetail {
    rejection_reason: string | null;
    created_at: string;
    updated_at: string;
+   published_at: string | null;
+   /** NULL => Individual Property; set => Project Unit (0007). */
+   project_id: string | null;
    owner_id: string;
    owner_name: string | null;
    owner_phone: string | null;
@@ -88,6 +95,7 @@ export interface AdminPropertyDetail {
       exact_lat: number;
       exact_lng: number;
       exact_address: string;
+      exact_area: string | null;
       nearby_landmarks: string | null;
    } | null;
    media: { id: string; storage_path: string; media_type: string; sort_order: number; publicUrl: string }[];
@@ -100,7 +108,7 @@ export async function getPropertyForModeration(id: string): Promise<AdminPropert
    const { data: property, error } = await supabase
       .from("properties")
       .select(
-         "id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, status, city, locality, rejection_reason, created_at, updated_at, owner_id"
+         "id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, status, city, locality, rejection_reason, created_at, updated_at, published_at, project_id, owner_id"
       )
       .eq("id", id)
       .maybeSingle();
@@ -115,7 +123,7 @@ export async function getPropertyForModeration(id: string): Promise<AdminPropert
       supabase.from("profiles").select("id, full_name, phone").eq("id", property.owner_id).maybeSingle(),
       supabase
          .from("property_location")
-         .select("approx_lat, approx_lng, exact_lat, exact_lng, exact_address, nearby_landmarks")
+         .select("approx_lat, approx_lng, exact_lat, exact_lng, exact_address, area, nearby_landmarks")
          .eq("property_id", id)
          .maybeSingle(),
       supabase.from("property_media").select("id, storage_path, media_type, sort_order").eq("property_id", id).order("sort_order"),
@@ -133,7 +141,20 @@ export async function getPropertyForModeration(id: string): Promise<AdminPropert
       ...(property as Omit<AdminPropertyDetail, "owner_name" | "owner_phone" | "location" | "media">),
       owner_name: owner?.full_name ?? null,
       owner_phone: owner?.phone ?? null,
-      location: location ?? null,
+      location: location
+         ? {
+              approx_lat: location.approx_lat,
+              approx_lng: location.approx_lng,
+              exact_lat: location.exact_lat,
+              exact_lng: location.exact_lng,
+              exact_address: location.exact_address,
+              // property_location.area is a free-text locality descriptor,
+              // distinct from properties.area (the numeric size) — renamed
+              // here so the two can't be confused at the call site.
+              exact_area: location.area ?? null,
+              nearby_landmarks: location.nearby_landmarks,
+           }
+         : null,
       media: mediaRows,
    };
 }

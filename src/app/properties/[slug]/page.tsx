@@ -9,8 +9,35 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
    const property = await getPropertyBySlug(params.slug);
+
+   if (!property) {
+      return { title: "Property Not Found | Property Planet" };
+   }
+
+   const title = `${property.title} | Property Planet`;
+   const url = `https://propertyplanet.in/properties/${property.slug}`;
+
+   // Built only from public, published columns. Deliberately never the
+   // exact address or any seller contact detail — `property.address` is the
+   // locality/city pair that property_public already exposes.
+   const description =
+      property.overview ??
+      `${property.propertyType} for ${property.listingType.toLowerCase()} in ${property.address}${
+         property.sqft ? `, ${property.sqft} sqft` : ""
+      }.`;
+
    return {
-      title: property ? `${property.title} | Property Planet` : "Property Not Found | Property Planet",
+      title,
+      description,
+      alternates: { canonical: url },
+      openGraph: {
+         title,
+         description,
+         url,
+         type: "website",
+         siteName: "Property Planet",
+         images: property.images[0] ? [{ url: property.images[0] }] : undefined,
+      },
    };
 }
 

@@ -8,6 +8,12 @@ import { requireDashboardUser } from "@/lib/auth/session";
 // small number of seller-only pages (add-property, properties-list) add
 // their own requireRole(["seller"]) check on top of this, the same way
 // individual admin server actions each call requireAdmin() again.
+// Same reasoning as src/app/admin/layout.tsx: private buyer/seller area,
+// never indexed.
+export const metadata = {
+   robots: { index: false, follow: false },
+};
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
    await requireDashboardUser();
 

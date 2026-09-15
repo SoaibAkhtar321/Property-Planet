@@ -46,8 +46,8 @@ interface DataType {
    /** Plain public-folder image URL, used where a static import isn't set up (e.g. location cards). */
    imgUrl?: string;
    /**
-    * Exact value to match against the `locality` column on `property_public`
-    * when this card is used as a location-filter link (see home_2_feature_1).
+    * Value matched against the `locality` column on `property_public`
+    * when this card is used as a locality-filter link (see home_2_feature_1).
     * Kept separate from `title` so display text can differ from the stored
     * value without breaking the filter.
     */
@@ -148,8 +148,10 @@ const feature_data: DataType[] = [
    // corridor). The first 7 are the client's actual current property
    // locations and must stay first, in this exact order — see
    // BLockFeatureOne.tsx / "Explore the places with most properties".
-   // `location` is matched exactly against property_public.locality when
-   // the card is clicked (src/app/properties uses ?location=<value>).
+   // `location` is matched against property_public.locality when the card
+   // is clicked (src/app/properties reads ?locality=<value>; the older
+   // ?location=<value> spelling is still accepted there so existing links
+   // keep resolving to the same filtered listing).
 
    {
       id: 1,

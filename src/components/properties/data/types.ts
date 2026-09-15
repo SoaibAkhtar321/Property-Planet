@@ -31,6 +31,15 @@ export interface Property {
    bed?: number;
    bath?: number;
    images: string[];
+   /**
+    * Parent project (properties.project_id, 0007). Undefined => Individual
+    * Property; set => Project Unit. Present so the unit's own detail page
+    * can say which project it belongs to and link back to it, without any
+    * second discovery route for units.
+    */
+   projectId?: string;
+   /** Resolved parent-project display info, only when projectId is set. */
+   project?: { id: string; title: string; slug: string };
    overview?: string;
    overviewItems?: PropertyOverviewItem[];
    amenities?: string[];

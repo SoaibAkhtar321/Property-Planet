@@ -51,6 +51,29 @@ export interface ProjectMedia {
    documents?: ProjectDocument[];
 }
 
+/**
+ * A unit/plot inside a project. Not a separate entity: this is a
+ * `properties` row whose project_id points at the project (0007), mapped
+ * through the same published-only `property_public` view every other
+ * public property read uses — so `slug` always resolves to a real
+ * /properties/[slug] detail page.
+ */
+export interface ProjectUnit {
+   id: string;
+   slug: string;
+   /** properties.title — used as the unit name/number (e.g. "Plot A-14"). */
+   title: string;
+   unitType?: string;
+   price?: number;
+   listingType?: "Sale" | "Rent";
+   area?: number;
+   areaUnit?: string;
+   bed?: number;
+   bath?: number;
+   /** Derived from properties.status; only published units are listed publicly. */
+   availability: string;
+}
+
 export interface Project {
    id: string;
    slug: string;
@@ -85,4 +108,10 @@ export interface Project {
    pricing?: ProjectPricingItem[];
    /** Non-gallery media grouped by kind; gallery images live in `images`. */
    media?: ProjectMedia;
+   /**
+    * Live inventory counts from `project_unit_counts` (0018). Present on
+    * listing/card reads so a card can show real availability; absent when
+    * a project genuinely has no units yet.
+    */
+   unitCounts?: { totalUnits: number; availableUnits: number };
 }

@@ -27,10 +27,11 @@
 // insert and treats a unique-violation (23505) as "you already inquired",
 // not an error.
 //
-// createInquiry also now copies properties.project_id (if any) onto the
+// createInquiry also copies the property's project_id (if any) onto the
 // lead it creates, so a plot enquiry preserves project context per section
-// 27 of the master prompt. See createInquiry's own doc comment for why
-// that lookup queries `properties` directly rather than `property_public`.
+// 27 of the master prompt. That value now comes from the same
+// property_public row the published check uses — see createInquiry's own
+// doc comment.
 //
 // createProjectInquiry (added alongside 0013_leads_project_id.sql): a
 // project-level counterpart to createInquiry, for a buyer enquiring about a
@@ -78,17 +79,17 @@ const MAX_INQUIRY_MESSAGE_LENGTH = 1000;
  * enquiry should preserve both project context and exact property context
  * (project_id set AND property_id set), not just the property.
  *
- * This second lookup queries the `properties` base table directly, not
- * `property_public` (property_public does not expose project_id — adding
- * it would be a schema change, deferred). This is still safe: the row was
- * already confirmed published via property_public immediately above, and
- * the "published properties are public" RLS policy on `properties` grants
- * an equivalent unconditional read of every column (including project_id)
- * on a published row to any authenticated caller, buyer or otherwise —
- * this lookup can't see anything a buyer isn't already entitled to see.
- * If this second query fails for any reason, project_id is simply left
- * NULL rather than failing the whole inquiry — the property/property_id
- * side of the lead is unaffected either way.
+ * Since 0017_project_units.sql, property_public exposes project_id, so the
+ * single published-property lookup below resolves both the "is this a real,
+ * live listing" check and the project context in one read — there is no
+ * longer a second, best-effort query against the `properties` base table
+ * that could silently leave project_id NULL on a unit enquiry.
+ *
+ * That gives the three enquiry shapes the schema is designed around:
+ *   Individual Property -> property_id set, project_id NULL
+ *   Project Unit        -> property_id set, project_id = the unit's project
+ *   Project             -> property_id NULL, project_id set
+ *                          (createProjectInquiry, below)
  */
 export async function createInquiry(propertyId: string, message?: string): Promise<ActionResult> {
    if (!propertyId || typeof propertyId !== "string") {
@@ -105,23 +106,13 @@ export async function createInquiry(propertyId: string, message?: string): Promi
    // the id the client posted corresponds to a live, public listing.
    const { data: property, error: propertyError } = await supabase
       .from("property_public")
-      .select("id")
+      .select("id, project_id")
       .eq("id", propertyId)
       .maybeSingle();
 
    if (propertyError || !property) {
       return { success: false, error: "This property is no longer available." };
    }
-
-   // Best-effort project-context lookup — see function doc comment above.
-   // Deliberately non-fatal: a failure here should never block the buyer's
-   // actual inquiry, just leave the lead's project_id NULL, same as it is
-   // today for a projectless property.
-   const { data: propertyRow } = await supabase
-      .from("properties")
-      .select("project_id")
-      .eq("id", propertyId)
-      .maybeSingle();
 
    const trimmedMessage = message?.trim();
    if (trimmedMessage && trimmedMessage.length > MAX_INQUIRY_MESSAGE_LENGTH) {
@@ -131,7 +122,11 @@ export async function createInquiry(propertyId: string, message?: string): Promi
    const { error: insertError } = await supabase.from("leads").insert({
       buyer_id: ctx.userId,
       property_id: propertyId,
-      project_id: propertyRow?.project_id ?? null,
+      // Phase 10: exactly one server-side read decides both halves of the
+      // lead. An Individual Property yields project_id NULL; a Project
+      // Unit yields its parent project's id. Neither value is ever taken
+      // from the client.
+      project_id: property.project_id ?? null,
       message: trimmedMessage ? trimmedMessage : null,
       // status intentionally omitted — column default is 'new'. There is no
       // buyer-facing update path to this row afterward (see file header), so

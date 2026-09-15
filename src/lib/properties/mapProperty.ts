@@ -23,6 +23,8 @@ export interface PropertyPublicRow {
    nearby_landmarks: string | null;
    approx_lat: number;
    approx_lng: number;
+   /** Parent project (0007). NULL => Individual Property; set => Project Unit. */
+   project_id: string | null;
 }
 
 export interface PropertyMediaRow {
@@ -94,6 +96,7 @@ export function mapProperty(
       bed: row.bedrooms ?? undefined,
       bath: row.bathrooms ?? undefined,
       images,
+      projectId: row.project_id ?? undefined,
       overview: overviewParts.length > 0 ? overviewParts.join(" ") : undefined,
       overviewItems: overviewItems.length > 0 ? overviewItems : undefined,
       // No amenities column exists yet — left undefined rather than invented;

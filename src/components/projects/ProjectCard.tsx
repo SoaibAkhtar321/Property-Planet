@@ -21,15 +21,36 @@ const ProjectCard = ({ item }: { item: Project }) => {
             </Link>
          </figure>
          <div className="caption">
-            <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex justify-content-between align-items-center gap-3">
                <div className="title">
                   {item.location && <div className="date position-relative">{item.location}</div>}
                   <Link href={`/projects/${item.slug}`}>
                      <h4 className="tran3s">{item.title}</h4>
                   </Link>
+
+                  {/* Phase 14: real, already-loaded project fields only —
+                      developer, type and live unit availability. Each line
+                      is omitted entirely when its data is absent, so a
+                      sparse project never renders empty labels. */}
+                  {(item.developer || item.projectType) && (
+                     <div className="fs-16 mt-1">
+                        {[item.developer, item.projectType].filter(Boolean).join(" · ")}
+                     </div>
+                  )}
+                  {item.unitCounts && item.unitCounts.totalUnits > 0 && (
+                     <div className="fs-14 mt-1">
+                        {item.unitCounts.availableUnits > 0
+                           ? `${item.unitCounts.availableUnits} of ${item.unitCounts.totalUnits} units available`
+                           : "Fully booked"}
+                     </div>
+                  )}
                </div>
-               <Link href={`/projects/${item.slug}`} className="btn-thirteen rounded-circle">
-                  <i className="bi bi-arrow-up-right"></i>
+               <Link
+                  href={`/projects/${item.slug}`}
+                  className="btn-thirteen rounded-circle flex-shrink-0"
+                  aria-label={`View ${item.title}`}
+               >
+                  <i className="bi bi-arrow-up-right" aria-hidden="true"></i>
                </Link>
             </div>
          </div>
