@@ -22,12 +22,9 @@ const menu_data: MenuItem[] = [
 
     {
         id: 1,
-        has_dropdown: true,
+        has_dropdown: false,
         title: "Home",
-        link: "#",
-        sub_menus: [
-            
-        ],
+        link: "/",
     },
     
     {
