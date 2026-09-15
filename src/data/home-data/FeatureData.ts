@@ -148,10 +148,10 @@ const feature_data: DataType[] = [
    // corridor). The first 7 are the client's actual current property
    // locations and must stay first, in this exact order — see
    // BLockFeatureOne.tsx / "Explore the places with most properties".
-   // `location` is matched against property_public.locality when the card
-   // is clicked (src/app/properties reads ?locality=<value>; the older
-   // ?location=<value> spelling is still accepted there so existing links
-   // keep resolving to the same filtered listing).
+   // `location` becomes the /places/[locality] segment when the card is
+   // clicked, matched there against property/project localities via
+   // src/lib/places/matching.ts (see getPropertiesForPlace /
+   // getProjectsForPlace).
 
    {
       id: 1,

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { matchesPlace } from "@/lib/places/matching";
 import { Project, ProjectUnit } from "@/components/projects/data/types";
 import {
    mapProject,
@@ -111,6 +112,41 @@ export async function getPublishedProjects(): Promise<Project[]> {
    }
 
    const rows = (data ?? []) as ProjectPublicRow[];
+   const ids = rows.map((row) => row.id);
+   const [mediaByProject, countsByProject] = await Promise.all([
+      resolveMedia(supabase, ids),
+      resolveUnitCounts(supabase, ids),
+   ]);
+
+   return rows.map((row) => ({
+      ...mapProject(row, mediaByProject.get(row.id) ?? []),
+      unitCounts: countsByProject.get(row.id),
+   }));
+}
+
+/**
+ * Published projects whose locality matches `place` (see
+ * src/lib/places/matching.ts). Backs the /places/[locality] discovery page
+ * alongside getPropertiesForPlace(). Same fetch-then-filter shape as that
+ * function — project_public is already published-only and small enough
+ * (same convention as getPublishedProjects()) to filter in application
+ * code rather than needing a second locality-matching query system.
+ */
+export async function getProjectsForPlace(place: string): Promise<Project[]> {
+   const supabase = await createClient();
+
+   const { data, error } = await supabase
+      .from("project_public")
+      .select(PROJECT_PUBLIC_COLUMNS)
+      .order("display_priority", { ascending: true })
+      .order("published_at", { ascending: false, nullsFirst: false });
+
+   if (error) {
+      console.error("Failed to load projects for place:", error.message);
+      return [];
+   }
+
+   const rows = ((data ?? []) as ProjectPublicRow[]).filter((row) => matchesPlace(row.locality, place));
    const ids = rows.map((row) => row.id);
    const [mediaByProject, countsByProject] = await Promise.all([
       resolveMedia(supabase, ids),

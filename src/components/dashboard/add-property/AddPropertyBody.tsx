@@ -21,15 +21,26 @@ const AddPropertyBody = ({ error }: { error?: string }) => {
                <ListingDetails />
                <PropertyLocation />
 
+               {/* A property row must exist before a storage path can
+                   reference it (storage_path is `{property_id}/...`), so
+                   photos/video are added on the next screen, right after
+                   this form saves. Same media uploader as Edit Property —
+                   see PropertyMediaUpload. */}
                <div className="bg-white card-box border-20 mt-40">
                   <h4 className="dash-title-three">Photo & Video Attachment</h4>
-                  <p className="fs-14 opacity-65">Media upload isn&apos;t available yet — add photos after creating the listing.</p>
+                  <p className="fs-14 opacity-65 m0">
+                     Save the details below first, then you&apos;ll be taken straight to the photo &amp; video uploader
+                     for this listing.
+                  </p>
                </div>
 
                <div className="button-group d-inline-flex align-items-center mt-30">
-                  <button type="submit" className="dash-btn-two tran3s me-3">Save as Draft</button>
+                  <button type="submit" className="dash-btn-two tran3s me-3">Save &amp; Add Photos</button>
                </div>
-               <p className="fs-14 opacity-65 mt-15">Saved as a draft. Submit it for review from your property list when you&apos;re ready.</p>
+               <p className="fs-14 opacity-65 mt-15">
+                  Saved as a draft. Once photos are added, submit it for review from your property list when you&apos;re
+                  ready.
+               </p>
             </form>
          </div>
       </div>

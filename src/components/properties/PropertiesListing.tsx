@@ -82,14 +82,15 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
             <div className="row">
                <div className="col-lg-8">
                   <div className="ps-xxl-5">
-                     {/* Phase 13: the counterpart to the Featured
-                         Opportunities heading — this page is standalone
-                         listings only, and says so. */}
+                     {/* Batch 3: "Explore Properties" is the site's own
+                         existing name for this destination (see the hero
+                         CTA in HeroBanner.tsx), used consistently here as
+                         the counterpart to "Featured Opportunities". */}
                      <div className="mb-40 lg-mb-30">
-                        <h2 className="font-garamond">Individual Properties</h2>
+                        <h2 className="font-garamond">Explore Properties</h2>
                         <p className="fs-18 mt-10 mb-0">
                            Standalone plots, villas, houses and apartments. Browsing a larger development instead?{" "}
-                           <Link href="/projects">See featured opportunities</Link>.
+                           <Link href="/projects">See Featured Opportunities</Link>.
                         </p>
                      </div>
 

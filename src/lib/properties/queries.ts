@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Property } from "@/components/properties/data/types";
 import { mapProperty, propertyMediaPublicUrl, PropertyMediaRow, PropertyPublicRow } from "./mapProperty";
+import { matchesPlace } from "@/lib/places/matching";
 
 const PROPERTY_PUBLIC_COLUMNS =
    "id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, city, locality, published_at, location_area, nearby_landmarks, approx_lat, approx_lng, project_id";
@@ -63,6 +64,36 @@ export async function getPublishedProperties(): Promise<Property[]> {
    }
 
    return attachMedia(supabase, (data ?? []) as PropertyPublicRow[]);
+}
+
+/**
+ * Published Individual Properties whose locality matches `place` (see
+ * src/lib/places/matching.ts for what "matches" means — exact after
+ * normalization, or a single-character typo). Backs the /places/[locality]
+ * discovery page. Reuses the same `property_public` + `project_id is null`
+ * read as getPublishedProperties(); the only difference is the locality
+ * filter, applied in application code (same fetch-then-filter pattern
+ * getPropertyFacets() already uses) since the matching isn't a plain
+ * column comparison the database can index on.
+ */
+export async function getPropertiesForPlace(place: string): Promise<Property[]> {
+   const supabase = await createClient();
+
+   const { data, error } = await supabase
+      .from("property_public")
+      .select(PROPERTY_PUBLIC_COLUMNS)
+      .is("project_id", null)
+      .order("published_at", { ascending: false })
+      .limit(1000);
+
+   if (error) {
+      console.error("Failed to load properties for place:", error.message);
+      return [];
+   }
+
+   const rows = ((data ?? []) as PropertyPublicRow[]).filter((row) => matchesPlace(row.locality, place));
+
+   return attachMedia(supabase, rows);
 }
 
 /** A single published property by slug, or null if it doesn't exist/isn't published. */

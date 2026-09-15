@@ -109,10 +109,16 @@ export async function createPropertyListing(formData: FormData): Promise<void> {
       redirect("/dashboard/add-property?error=" + encodeURIComponent(error?.message ?? "Failed to create listing."));
    }
 
-   revalidatePath("/dashboard/properties-list");
-   redirect("/dashboard/properties-list");
+     revalidatePath("/dashboard/properties-list");
+   // Land on Edit rather than the list: that page already has the full
+   // media uploader (PropertyMediaUpload), so the seller's very next step
+   // is adding photos, not a second trip through the dashboard to find
+   // where to do that. A property row must exist before any storage path
+   // can reference it (storage_path is `{property_id}/...`), so this
+   // create -> edit handoff is the two-step the architecture requires,
+   // not an extra one.
+   redirect(`/dashboard/edit-property/${data.id}`);
 }
-
 /**
  * Updates the seller-editable fields on one of the caller's own listings.
  * Only permitted while the listing is still `draft` — once submitted

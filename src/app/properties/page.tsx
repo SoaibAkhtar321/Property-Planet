@@ -23,11 +23,11 @@ const DESCRIPTION =
    "Browse verified individual plots, villas, houses and apartments for sale and rent across Hyderabad and the Future City corridor with Property Planet.";
 
 export const metadata = {
-   title: "Individual Properties | Property Planet",
+   title: "Explore Properties | Property Planet",
    description: DESCRIPTION,
    alternates: { canonical: CANONICAL },
    openGraph: {
-      title: "Individual Properties | Property Planet",
+      title: "Explore Properties | Property Planet",
       description: DESCRIPTION,
       url: CANONICAL,
       type: "website",

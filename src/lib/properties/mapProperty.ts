@@ -21,8 +21,10 @@ export interface PropertyPublicRow {
    published_at: string | null;
    location_area: string | null;
    nearby_landmarks: string | null;
-   approx_lat: number;
-   approx_lng: number;
+   // Nullable since 0019: property_public LEFT JOINs property_location so
+   // a published property with no location row yet is still visible.
+   approx_lat: number | null;
+   approx_lng: number | null;
    /** Parent project (0007). NULL => Individual Property; set => Project Unit. */
    project_id: string | null;
 }
@@ -109,6 +111,11 @@ export function mapProperty(
       nearby: undefined,
       floorPlanImages: floorPlanImages.length > 0 ? floorPlanImages : undefined,
       videoUrl,
-      mapEmbedUrl: `https://maps.google.com/maps?q=${row.approx_lat},${row.approx_lng}&z=15&output=embed`,
+      // No property_location row yet (0019) => no map to embed, rather than
+      // a broken q=null,null URL.
+      mapEmbedUrl:
+         row.approx_lat != null && row.approx_lng != null
+            ? `https://maps.google.com/maps?q=${row.approx_lat},${row.approx_lng}&z=15&output=embed`
+            : undefined,
    };
 }

@@ -2,6 +2,7 @@ import FooterOne from "@/layouts/footers/FooterOne"
 import HeroBanner from "./HeroBanner"
 import FeedbackOne from "./FeedbackOne"
 import Property from "./Property"
+import ExploreProperties from "./ExploreProperties"
 import BLockFeatureOne from "./BLockFeatureOne"
 import FancyBannerOne from "./FancyBannerOne"
 import BLockFeatureTwo from "./BLockFeatureTwo"
@@ -27,6 +28,7 @@ const HomeTwo = () => {
       <HeroBanner />
       <FeedbackOne />
       <Property />
+      <ExploreProperties />
       <PropertyPlanetHowItWorks />
       <BLockFeatureOne />
       <FancyBannerOne />
