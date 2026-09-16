@@ -1,0 +1,268 @@
+/*-----------------------------------------------------------------------------------
+    Hero Build Animation  (src/components/homes/home-two/HeroBuildAnimation.tsx)
+
+    Land -> construction -> completed home -> cinematic camera move.
+
+    Rules this file follows on purpose:
+    1. The DEFAULT state of every selector is the FINISHED HOUSE. Keyframes only
+       replay the build-up on top of that. If animations never run (reduced
+       motion, old browser, print, CSS partially applied) the hero still renders
+       a clean, complete property. No blank hero, ever.
+    2. Only `opacity` and `transform` are animated -> compositor-only work, no
+       layout/paint on the main thread, no impact on INP/LCP.
+    3. One shared cycle duration ($hb-cycle) for every element. Scenes are
+       sequenced with keyframe percentages (not chained delays), so nothing
+       drifts out of sync over time.
+    4. Zero JS, zero extra network requests, zero new dependencies.
+-----------------------------------------------------------------------------------*/
+
+$hb-cycle: 18s;
+
+.hb-stage {
+   width: 57%;
+   max-width: 57%;
+   line-height: 0;
+   pointer-events: none;
+   /* reserve the box before paint -> no CLS from the hero visual */
+   aspect-ratio: 900 / 620;
+
+   .hb-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+   }
+
+   /* scaleY/scale growth must originate from each shape's own box */
+   .hb-col,
+   .hb-wall,
+   .hb-foundation,
+   .hb-roof,
+   .hb-open,
+   .hb-finish,
+   .hb-crane,
+   .hb-plants,
+   .hb-floorline,
+   .hb-scene {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+   }
+
+   .hb-skyline rect,
+   .hb-skyline path {
+      fill: #0F2A37;
+      opacity: 0.1;
+   }
+
+   /* ---- default (finished) states ---- */
+   .hb-plot__line { opacity: 0.22; }
+   .hb-plot__stakes { opacity: 0; }
+   .hb-crane { opacity: 0; }
+}
+
+/* ---------------------------------------------------------------- animated --- */
+/* Gated behind .hb-animate so the static composition is the baseline and the
+   motion is the enhancement, not the other way around.                          */
+.hb-animate {
+   .hb-scene { animation: hbScene $hb-cycle ease-in-out infinite; }
+
+   .hb-skyline { animation: hbSkyline $hb-cycle ease-out infinite; }
+
+   .hb-plot__line { animation: hbPlotLine $hb-cycle ease-in-out infinite; }
+   .hb-plot__stakes { animation: hbStakes $hb-cycle ease-out infinite; }
+
+   .hb-crane { animation: hbCrane $hb-cycle ease-in-out infinite; }
+   .hb-crane__load { animation: hbCraneLoad $hb-cycle ease-in-out infinite; }
+
+   .hb-foundation { animation: hbRise $hb-cycle ease-out infinite; }
+
+   .hb-col {
+      animation: hbGrow $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      &:nth-child(2) { animation-delay: -17.7s; }
+      &:nth-child(3) { animation-delay: -17.4s; }
+      &:nth-child(4) { animation-delay: -17.1s; }
+   }
+
+   .hb-wall--front { animation: hbWallFront $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+   .hb-wall--side { animation: hbWallFront $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite; animation-delay: -17.6s; }
+   .hb-wall--upper { animation: hbWallUpper $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+   .hb-wall--upperSide { animation: hbWallUpper $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite; animation-delay: -17.6s; }
+   .hb-floorline { animation: hbFade $hb-cycle ease-out infinite; }
+
+   .hb-roof { animation: hbRoof $hb-cycle cubic-bezier(0.34, 1.2, 0.64, 1) infinite; }
+
+   .hb-open {
+      animation: hbOpening $hb-cycle ease-out infinite;
+      &:nth-child(2) { animation-delay: -17.85s; }
+      &:nth-child(3) { animation-delay: -17.7s; }
+      &:nth-child(4) { animation-delay: -17.6s; }
+      &:nth-child(5) { animation-delay: -17.5s; }
+      &:nth-child(6) { animation-delay: -17.4s; }
+      &:nth-child(7) { animation-delay: -17.3s; }
+      &:nth-child(8) { animation-delay: -17.2s; }
+   }
+
+   .hb-finish { animation: hbFinish $hb-cycle ease-out infinite; }
+   .hb-plants { animation: hbPlants $hb-cycle cubic-bezier(0.34, 1.3, 0.64, 1) infinite; }
+}
+
+/* --------------------------------------------------------------- keyframes --- */
+
+/* Scene 4: cinematic push-in during the build, slow pull-back at the end,
+   plus a soft cut between cycles so the restart never snaps. */
+@keyframes hbScene {
+   0%   { opacity: 0; transform: scale(1.06) translateY(10px); }
+   4%   { opacity: 1; transform: scale(1.06) translateY(10px); }
+   70%  { transform: scale(1.03) translateY(4px); }
+   88%  { opacity: 1; transform: scale(1) translateY(0); }
+   96%  { opacity: 1; transform: scale(0.995) translateY(-2px); }
+   100% { opacity: 0; transform: scale(0.99) translateY(-4px); }
+}
+
+/* the wider development reveals itself as the camera pulls back */
+@keyframes hbSkyline {
+   0%, 60% { opacity: 0.05; }
+   90%, 100% { opacity: 0.1; }
+}
+
+@keyframes hbPlotLine {
+   0%, 6%  { opacity: 1; }
+   30%     { opacity: 0.6; }
+   72%, 100% { opacity: 0.22; }
+}
+
+@keyframes hbStakes {
+   0%, 10% { opacity: 1; }
+   24%, 100% { opacity: 0; }
+}
+
+/* Scene 2 only: the crane arrives, works, and leaves before the reveal. */
+@keyframes hbCrane {
+   0%, 8%   { opacity: 0; }
+   14%, 66% { opacity: 0.55; }
+   76%, 100% { opacity: 0; }
+}
+
+@keyframes hbCraneLoad {
+   0%, 16% { transform: translateY(-96px); }
+   34%     { transform: translateY(70px); }
+   48%     { transform: translateY(-90px); }
+   62%     { transform: translateY(40px); }
+   74%, 100% { transform: translateY(-96px); }
+}
+
+@keyframes hbRise {
+   0%, 8%   { opacity: 0; transform: scale(0.92); }
+   18%, 100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes hbGrow {
+   0%, 20%  { transform: scaleY(0); }
+   34%, 100% { transform: scaleY(1); }
+}
+
+@keyframes hbWallFront {
+   0%, 40%  { opacity: 0; transform: scaleY(0.04); }
+   56%, 100% { opacity: 1; transform: scaleY(1); }
+}
+
+@keyframes hbWallUpper {
+   0%, 46%  { opacity: 0; transform: scaleY(0.04); }
+   62%, 100% { opacity: 1; transform: scaleY(1); }
+}
+
+@keyframes hbFade {
+   0%, 44%  { opacity: 0; }
+   58%, 100% { opacity: 1; }
+}
+
+/* the roof is flown in and set down -- reads as craned into place */
+@keyframes hbRoof {
+   0%, 62%  { opacity: 0; transform: translateY(-70px) scale(0.96); }
+   74%, 100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes hbOpening {
+   0%, 72%  { opacity: 0; transform: scale(0.7); }
+   80%, 100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes hbFinish {
+   0%, 78%  { opacity: 0; transform: translateY(12px); }
+   88%, 100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hbPlants {
+   0%, 80%  { opacity: 0; transform: scale(0.6); }
+   92%, 100% { opacity: 1; transform: scale(1); }
+}
+
+/* ------------------------------------------------------------- responsive --- */
+
+/* Tablet: recompose rather than shrink -- the stage goes full width under the
+   copy so plot/construction/house stay legible. (The existing
+   `.hero-banner-two .illustration` rule at <=991px already switches it to
+   static flow; this just sizes it.) */
+@media (max-width: 1199px) {
+   .hb-stage { width: 62%; max-width: 62%; }
+}
+
+@media (max-width: 991px) {
+   .hb-stage {
+      width: 80%;
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+   }
+}
+
+@media (max-width: 767px) {
+   .hb-stage {
+      width: 100%;
+      max-width: 100%;
+      /* tighter framing on phones: crop the empty sky, keep the building */
+      aspect-ratio: 900 / 520;
+      .hb-svg { overflow: hidden; }
+      /* skyline is noise at this size */
+      .hb-skyline { display: none; }
+   }
+}
+
+/* ------------------------------------------------- accessibility / fallback --- */
+
+/* Reduced motion: no build-up, no camera move. The user gets the finished
+   property immediately -- the same information, without motion. */
+@media (prefers-reduced-motion: reduce) {
+   .hb-animate {
+      .hb-scene,
+      .hb-skyline,
+      .hb-plot__line,
+      .hb-plot__stakes,
+      .hb-crane,
+      .hb-crane__load,
+      .hb-foundation,
+      .hb-col,
+      .hb-wall,
+      .hb-floorline,
+      .hb-roof,
+      .hb-open,
+      .hb-finish,
+      .hb-plants {
+         animation: none !important;
+         opacity: 1;
+         transform: none !important;
+      }
+      .hb-plot__line { opacity: 0.22; }
+      .hb-plot__stakes,
+      .hb-crane { opacity: 0; }
+   }
+}
+
+/* Very low-end / power-saving contexts also get the static composition. */
+@media (update: slow) {
+   .hb-animate * { animation: none !important; }
+}
+
+@media print {
+   .hb-stage * { animation: none !important; }
+}

@@ -1,0 +1,509 @@
+diff --git a/public/assets/scss/_hero-build.scss b/public/assets/scss/_hero-build.scss
+new file mode 100644
+index 0000000..0516e7d
+--- /dev/null
++++ b/public/assets/scss/_hero-build.scss
+@@ -0,0 +1,268 @@
++/*-----------------------------------------------------------------------------------
++    Hero Build Animation  (src/components/homes/home-two/HeroBuildAnimation.tsx)
++
++    Land -> construction -> completed home -> cinematic camera move.
++
++    Rules this file follows on purpose:
++    1. The DEFAULT state of every selector is the FINISHED HOUSE. Keyframes only
++       replay the build-up on top of that. If animations never run (reduced
++       motion, old browser, print, CSS partially applied) the hero still renders
++       a clean, complete property. No blank hero, ever.
++    2. Only `opacity` and `transform` are animated -> compositor-only work, no
++       layout/paint on the main thread, no impact on INP/LCP.
++    3. One shared cycle duration ($hb-cycle) for every element. Scenes are
++       sequenced with keyframe percentages (not chained delays), so nothing
++       drifts out of sync over time.
++    4. Zero JS, zero extra network requests, zero new dependencies.
++-----------------------------------------------------------------------------------*/
++
++$hb-cycle: 18s;
++
++.hb-stage {
++   width: 57%;
++   max-width: 57%;
++   line-height: 0;
++   pointer-events: none;
++   /* reserve the box before paint -> no CLS from the hero visual */
++   aspect-ratio: 900 / 620;
++
++   .hb-svg {
++      width: 100%;
++      height: 100%;
++      display: block;
++      overflow: visible;
++   }
++
++   /* scaleY/scale growth must originate from each shape's own box */
++   .hb-col,
++   .hb-wall,
++   .hb-foundation,
++   .hb-roof,
++   .hb-open,
++   .hb-finish,
++   .hb-crane,
++   .hb-plants,
++   .hb-floorline,
++   .hb-scene {
++      transform-box: fill-box;
++      transform-origin: 50% 100%;
++   }
++
++   .hb-skyline rect,
++   .hb-skyline path {
++      fill: #0F2A37;
++      opacity: 0.1;
++   }
++
++   /* ---- default (finished) states ---- */
++   .hb-plot__line { opacity: 0.22; }
++   .hb-plot__stakes { opacity: 0; }
++   .hb-crane { opacity: 0; }
++}
++
++/* ---------------------------------------------------------------- animated --- */
++/* Gated behind .hb-animate so the static composition is the baseline and the
++   motion is the enhancement, not the other way around.                          */
++.hb-animate {
++   .hb-scene { animation: hbScene $hb-cycle ease-in-out infinite; }
++
++   .hb-skyline { animation: hbSkyline $hb-cycle ease-out infinite; }
++
++   .hb-plot__line { animation: hbPlotLine $hb-cycle ease-in-out infinite; }
++   .hb-plot__stakes { animation: hbStakes $hb-cycle ease-out infinite; }
++
++   .hb-crane { animation: hbCrane $hb-cycle ease-in-out infinite; }
++   .hb-crane__load { animation: hbCraneLoad $hb-cycle ease-in-out infinite; }
++
++   .hb-foundation { animation: hbRise $hb-cycle ease-out infinite; }
++
++   .hb-col {
++      animation: hbGrow $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite;
++      &:nth-child(2) { animation-delay: -17.7s; }
++      &:nth-child(3) { animation-delay: -17.4s; }
++      &:nth-child(4) { animation-delay: -17.1s; }
++   }
++
++   .hb-wall--front { animation: hbWallFront $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite; }
++   .hb-wall--side { animation: hbWallFront $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite; animation-delay: -17.6s; }
++   .hb-wall--upper { animation: hbWallUpper $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite; }
++   .hb-wall--upperSide { animation: hbWallUpper $hb-cycle cubic-bezier(0.22, 1, 0.36, 1) infinite; animation-delay: -17.6s; }
++   .hb-floorline { animation: hbFade $hb-cycle ease-out infinite; }
++
++   .hb-roof { animation: hbRoof $hb-cycle cubic-bezier(0.34, 1.2, 0.64, 1) infinite; }
++
++   .hb-open {
++      animation: hbOpening $hb-cycle ease-out infinite;
++      &:nth-child(2) { animation-delay: -17.85s; }
++      &:nth-child(3) { animation-delay: -17.7s; }
++      &:nth-child(4) { animation-delay: -17.6s; }
++      &:nth-child(5) { animation-delay: -17.5s; }
++      &:nth-child(6) { animation-delay: -17.4s; }
++      &:nth-child(7) { animation-delay: -17.3s; }
++      &:nth-child(8) { animation-delay: -17.2s; }
++   }
++
++   .hb-finish { animation: hbFinish $hb-cycle ease-out infinite; }
++   .hb-plants { animation: hbPlants $hb-cycle cubic-bezier(0.34, 1.3, 0.64, 1) infinite; }
++}
++
++/* --------------------------------------------------------------- keyframes --- */
++
++/* Scene 4: cinematic push-in during the build, slow pull-back at the end,
++   plus a soft cut between cycles so the restart never snaps. */
++@keyframes hbScene {
++   0%   { opacity: 0; transform: scale(1.06) translateY(10px); }
++   4%   { opacity: 1; transform: scale(1.06) translateY(10px); }
++   70%  { transform: scale(1.03) translateY(4px); }
++   88%  { opacity: 1; transform: scale(1) translateY(0); }
++   96%  { opacity: 1; transform: scale(0.995) translateY(-2px); }
++   100% { opacity: 0; transform: scale(0.99) translateY(-4px); }
++}
++
++/* the wider development reveals itself as the camera pulls back */
++@keyframes hbSkyline {
++   0%, 60% { opacity: 0.05; }
++   90%, 100% { opacity: 0.1; }
++}
++
++@keyframes hbPlotLine {
++   0%, 6%  { opacity: 1; }
++   30%     { opacity: 0.6; }
++   72%, 100% { opacity: 0.22; }
++}
++
++@keyframes hbStakes {
++   0%, 10% { opacity: 1; }
++   24%, 100% { opacity: 0; }
++}
++
++/* Scene 2 only: the crane arrives, works, and leaves before the reveal. */
++@keyframes hbCrane {
++   0%, 8%   { opacity: 0; }
++   14%, 66% { opacity: 0.55; }
++   76%, 100% { opacity: 0; }
++}
++
++@keyframes hbCraneLoad {
++   0%, 16% { transform: translateY(-96px); }
++   34%     { transform: translateY(70px); }
++   48%     { transform: translateY(-90px); }
++   62%     { transform: translateY(40px); }
++   74%, 100% { transform: translateY(-96px); }
++}
++
++@keyframes hbRise {
++   0%, 8%   { opacity: 0; transform: scale(0.92); }
++   18%, 100% { opacity: 1; transform: scale(1); }
++}
++
++@keyframes hbGrow {
++   0%, 20%  { transform: scaleY(0); }
++   34%, 100% { transform: scaleY(1); }
++}
++
++@keyframes hbWallFront {
++   0%, 40%  { opacity: 0; transform: scaleY(0.04); }
++   56%, 100% { opacity: 1; transform: scaleY(1); }
++}
++
++@keyframes hbWallUpper {
++   0%, 46%  { opacity: 0; transform: scaleY(0.04); }
++   62%, 100% { opacity: 1; transform: scaleY(1); }
++}
++
++@keyframes hbFade {
++   0%, 44%  { opacity: 0; }
++   58%, 100% { opacity: 1; }
++}
++
++/* the roof is flown in and set down -- reads as craned into place */
++@keyframes hbRoof {
++   0%, 62%  { opacity: 0; transform: translateY(-70px) scale(0.96); }
++   74%, 100% { opacity: 1; transform: translateY(0) scale(1); }
++}
++
++@keyframes hbOpening {
++   0%, 72%  { opacity: 0; transform: scale(0.7); }
++   80%, 100% { opacity: 1; transform: scale(1); }
++}
++
++@keyframes hbFinish {
++   0%, 78%  { opacity: 0; transform: translateY(12px); }
++   88%, 100% { opacity: 1; transform: translateY(0); }
++}
++
++@keyframes hbPlants {
++   0%, 80%  { opacity: 0; transform: scale(0.6); }
++   92%, 100% { opacity: 1; transform: scale(1); }
++}
++
++/* ------------------------------------------------------------- responsive --- */
++
++/* Tablet: recompose rather than shrink -- the stage goes full width under the
++   copy so plot/construction/house stay legible. (The existing
++   `.hero-banner-two .illustration` rule at <=991px already switches it to
++   static flow; this just sizes it.) */
++@media (max-width: 1199px) {
++   .hb-stage { width: 62%; max-width: 62%; }
++}
++
++@media (max-width: 991px) {
++   .hb-stage {
++      width: 80%;
++      max-width: 80%;
++      margin-left: auto;
++      margin-right: auto;
++   }
++}
++
++@media (max-width: 767px) {
++   .hb-stage {
++      width: 100%;
++      max-width: 100%;
++      /* tighter framing on phones: crop the empty sky, keep the building */
++      aspect-ratio: 900 / 520;
++      .hb-svg { overflow: hidden; }
++      /* skyline is noise at this size */
++      .hb-skyline { display: none; }
++   }
++}
++
++/* ------------------------------------------------- accessibility / fallback --- */
++
++/* Reduced motion: no build-up, no camera move. The user gets the finished
++   property immediately -- the same information, without motion. */
++@media (prefers-reduced-motion: reduce) {
++   .hb-animate {
++      .hb-scene,
++      .hb-skyline,
++      .hb-plot__line,
++      .hb-plot__stakes,
++      .hb-crane,
++      .hb-crane__load,
++      .hb-foundation,
++      .hb-col,
++      .hb-wall,
++      .hb-floorline,
++      .hb-roof,
++      .hb-open,
++      .hb-finish,
++      .hb-plants {
++         animation: none !important;
++         opacity: 1;
++         transform: none !important;
++      }
++      .hb-plot__line { opacity: 0.22; }
++      .hb-plot__stakes,
++      .hb-crane { opacity: 0; }
++   }
++}
++
++/* Very low-end / power-saving contexts also get the static composition. */
++@media (update: slow) {
++   .hb-animate * { animation: none !important; }
++}
++
++@media print {
++   .hb-stage * { animation: none !important; }
++}
+diff --git a/public/assets/scss/style.scss b/public/assets/scss/style.scss
+index 4497f63..69bb85a 100644
+--- a/public/assets/scss/style.scss
++++ b/public/assets/scss/style.scss
+@@ -6,6 +6,7 @@
+ @import "button";
+ @import "header";
+ @import "banner";
++@import "hero-build";
+ @import "layout";
+ @import "element";
+ @import "card";
+diff --git a/src/components/homes/home-two/HeroBanner.tsx b/src/components/homes/home-two/HeroBanner.tsx
+index ba8e6ad..a02d3e0 100644
+--- a/src/components/homes/home-two/HeroBanner.tsx
++++ b/src/components/homes/home-two/HeroBanner.tsx
+@@ -4,8 +4,9 @@ import Link from "next/link";
+ import DropdownTwo from "@/components/search-dropdown/home-dropdown/DropdownTwo";
+ import { openPropertyPlanetAI } from "@/utils/propertyPlanetAIBus";
+ 
++import HeroBuildAnimation from "./HeroBuildAnimation";
++
+ import titleShape from "@/assets/images/shape/shape_11.svg"
+-import bannerImg_1 from "@/assets/images/assets/ils_03.png"
+ import bannerImg_2 from "@/assets/images/shape/shape_12.svg"
+ import bannerImg_3 from "@/assets/images/assets/badge_01.svg"
+ 
+@@ -44,7 +45,7 @@ const HeroBanner = () => {
+                   <DropdownTwo />
+                </div>
+             </div>
+-            <Image src={bannerImg_1} alt="" className="lazy-img shapes illustration" />
++            <HeroBuildAnimation />
+             <Image src={bannerImg_2} alt="" className="lazy-img shapes shape_01" />
+             <Image src={bannerImg_3} alt="" className="lazy-img shapes shape_02" />
+          </div>
+diff --git a/src/components/homes/home-two/HeroBuildAnimation.tsx b/src/components/homes/home-two/HeroBuildAnimation.tsx
+new file mode 100644
+index 0000000..8c6cedd
+--- /dev/null
++++ b/src/components/homes/home-two/HeroBuildAnimation.tsx
+@@ -0,0 +1,193 @@
++/**
++ * HeroBuildAnimation
++ *
++ * Inline SVG "land -> construction -> completed home" hero animation.
++ *
++ * Design constraints (deliberate):
++ *  - No animation library. Zero new dependencies, zero JS at runtime.
++ *    Everything is declarative CSS (see public/assets/scss/_hero-build.scss)
++ *    and only animates `transform` / `opacity`, so it stays on the compositor
++ *    and does not trigger layout/paint thrash above the fold.
++ *  - The BASE (un-animated) state of every element is the FINISHED HOUSE.
++ *    Keyframes only subtract from that state to replay the build-up. So if
++ *    CSS fails, animations are disabled, or the user prefers reduced motion,
++ *    the hero degrades gracefully to a clean static completed property.
++ *  - Inline SVG => no extra network request, no LCP image, no CLS
++ *    (the stage reserves its own aspect ratio).
++ */
++const HeroBuildAnimation = () => {
++   return (
++      <div className="hb-stage hb-animate shapes illustration" aria-hidden="true">
++         <svg
++            className="hb-svg"
++            viewBox="0 0 900 620"
++            preserveAspectRatio="xMidYMax meet"
++            xmlns="http://www.w3.org/2000/svg"
++            role="img"
++            focusable="false"
++         >
++            <defs>
++               <linearGradient id="hbWall" x1="0" y1="0" x2="0" y2="1">
++                  <stop offset="0%" stopColor="#FFFFFF" />
++                  <stop offset="100%" stopColor="#FFF1E8" />
++               </linearGradient>
++               <linearGradient id="hbWallSide" x1="0" y1="0" x2="0" y2="1">
++                  <stop offset="0%" stopColor="#F5EDE8" />
++                  <stop offset="100%" stopColor="#E7DAD1" />
++               </linearGradient>
++               <linearGradient id="hbRoof" x1="0" y1="0" x2="1" y2="1">
++                  <stop offset="0%" stopColor="#23505F" />
++                  <stop offset="100%" stopColor="#0F2A37" />
++               </linearGradient>
++               <linearGradient id="hbGlass" x1="0" y1="0" x2="1" y2="1">
++                  <stop offset="0%" stopColor="#CFF3FB" />
++                  <stop offset="100%" stopColor="#7FD7E8" />
++               </linearGradient>
++               <linearGradient id="hbGround" x1="0" y1="0" x2="0" y2="1">
++                  <stop offset="0%" stopColor="#E9F6F0" />
++                  <stop offset="100%" stopColor="#D6EBE4" />
++               </linearGradient>
++            </defs>
++
++            {/* ---------------- CAMERA GROUP (scene fade + slow push/pull) --------------- */}
++            <g className="hb-scene">
++
++               {/* Scene 1 context: emerging Hyderabad / Future City skyline.
++                   Low-contrast so it never competes with the headline. */}
++               <g className="hb-skyline">
++                  <rect x="18" y="300" width="46" height="150" rx="3" />
++                  <rect x="72" y="262" width="34" height="188" rx="3" />
++                  <rect x="114" y="318" width="52" height="132" rx="3" />
++                  <rect x="176" y="238" width="30" height="212" rx="3" />
++                  <rect x="214" y="296" width="44" height="154" rx="3" />
++                  <rect x="640" y="284" width="38" height="166" rx="3" />
++                  <rect x="686" y="246" width="30" height="204" rx="3" />
++                  <rect x="724" y="308" width="54" height="142" rx="3" />
++                  <rect x="786" y="272" width="34" height="178" rx="3" />
++                  <rect x="828" y="322" width="48" height="128" rx="3" />
++                  {/* hint of a landmark tower so it reads "city", not "countryside" */}
++                  <path d="M196 238 L191 214 L196 200 L201 214 Z" />
++               </g>
++
++               {/* Roadway + ground plane */}
++               <g className="hb-ground">
++                  <rect x="0" y="446" width="900" height="10" fill="#0F2A37" opacity="0.12" />
++                  <path d="M0 456 H900 V620 H0 Z" fill="url(#hbGround)" />
++                  <path d="M120 456 L40 620 H120 L180 456 Z" fill="#0F2A37" opacity="0.06" />
++                  <path
++                     d="M86 560 h34 M60 604 h34"
++                     stroke="#FFFFFF"
++                     strokeWidth="5"
++                     strokeLinecap="round"
++                     opacity="0.7"
++                  />
++               </g>
++
++               {/* Scene 1: the surveyed plot. Visible from frame one. */}
++               <g className="hb-plot">
++                  <path
++                     className="hb-plot__line"
++                     d="M300 474 L742 474 L806 588 L246 588 Z"
++                     fill="#FF6725"
++                     fillOpacity="0.05"
++                     stroke="#FF6725"
++                     strokeWidth="3"
++                     strokeDasharray="14 10"
++                     strokeLinejoin="round"
++                  />
++                  <g className="hb-plot__stakes" fill="#FF6725">
++                     <rect x="297" y="458" width="4" height="18" rx="2" />
++                     <rect x="739" y="458" width="4" height="18" rx="2" />
++                     <rect x="243" y="572" width="4" height="18" rx="2" />
++                     <rect x="803" y="572" width="4" height="18" rx="2" />
++                  </g>
++               </g>
++
++               {/* --------------------------- CONSTRUCTION ---------------------------- */}
++
++               {/* Tower crane: present only while the structure goes up. */}
++               <g className="hb-crane" stroke="#0F2A37" strokeWidth="5" strokeLinecap="round" fill="none">
++                  <path d="M646 486 V180" />
++                  <path d="M646 196 H820" />
++                  <path d="M646 196 H586" />
++                  <path d="M646 168 L646 196" strokeWidth="4" />
++                  <path d="M646 168 L790 196 M646 168 L596 196" strokeWidth="3" opacity="0.7" />
++                  <path className="hb-crane__cable" d="M744 198 V300" strokeWidth="2" />
++                  <rect
++                     className="hb-crane__load"
++                     x="730"
++                     y="300"
++                     width="28"
++                     height="18"
++                     rx="3"
++                     fill="#FF6725"
++                     stroke="none"
++                  />
++               </g>
++
++               {/* Foundation slab */}
++               <g className="hb-foundation">
++                  <path d="M318 474 L724 474 L772 562 L272 562 Z" fill="#CBBFB6" />
++                  <path d="M318 474 L724 474 L716 486 L326 486 Z" fill="#B7A99F" />
++               </g>
++
++               {/* Structural columns (grow from the slab) */}
++               <g className="hb-columns" fill="#A99C92">
++                  <rect className="hb-col" x="352" y="306" width="15" height="172" rx="2" />
++                  <rect className="hb-col" x="470" y="306" width="15" height="172" rx="2" />
++                  <rect className="hb-col" x="588" y="306" width="15" height="172" rx="2" />
++                  <rect className="hb-col" x="676" y="306" width="15" height="172" rx="2" />
++               </g>
++
++               {/* Main volume: front wall, side wall, upper floor */}
++               <g className="hb-walls">
++                  <path className="hb-wall hb-wall--front" d="M346 306 H626 V478 H346 Z" fill="url(#hbWall)" />
++                  <path className="hb-wall hb-wall--side" d="M626 306 L706 286 V458 L626 478 Z" fill="url(#hbWallSide)" />
++                  <path className="hb-wall hb-wall--upper" d="M346 246 H626 V306 H346 Z" fill="url(#hbWall)" />
++                  <path className="hb-wall hb-wall--upperSide" d="M626 246 L706 226 V286 L626 306 Z" fill="url(#hbWallSide)" />
++                  <path className="hb-floorline" d="M346 306 H626 L706 286" stroke="#0F2A37" strokeOpacity="0.14" strokeWidth="3" fill="none" />
++               </g>
++
++               {/* Roof */}
++               <g className="hb-roof">
++                  <path d="M330 248 L486 178 L642 248 L722 228 L566 158 L410 228 Z" fill="url(#hbRoof)" />
++                  <path d="M330 248 H642 L722 228" stroke="#0F2A37" strokeWidth="6" fill="none" strokeLinejoin="round" />
++               </g>
++
++               {/* Openings: glazing + entrance */}
++               <g className="hb-openings">
++                  <rect className="hb-open" x="376" y="338" width="86" height="96" rx="4" fill="url(#hbGlass)" />
++                  <rect className="hb-open" x="482" y="338" width="60" height="96" rx="4" fill="url(#hbGlass)" />
++                  <rect className="hb-open" x="376" y="264" width="60" height="30" rx="4" fill="url(#hbGlass)" />
++                  <rect className="hb-open" x="452" y="264" width="60" height="30" rx="4" fill="url(#hbGlass)" />
++                  <rect className="hb-open" x="528" y="264" width="60" height="30" rx="4" fill="url(#hbGlass)" />
++                  <path className="hb-open" d="M648 322 L692 311 V430 L648 441 Z" fill="url(#hbGlass)" />
++                  <rect className="hb-open hb-door" x="562" y="386" width="48" height="92" rx="3" fill="#23505F" />
++                  <circle className="hb-open" cx="602" cy="432" r="3" fill="#FF6725" />
++               </g>
++
++               {/* Exterior finishing + landscaping + entrance lighting */}
++               <g className="hb-finish">
++                  <path d="M346 478 H626 V488 H346 Z" fill="#0F2A37" opacity="0.10" />
++                  <rect x="346" y="236" width="360" height="12" rx="4" fill="#FF6725" opacity="0.85" transform="translate(0 -4)" />
++                  <path d="M546 478 h80 v10 h-92 z" fill="#E7DAD1" />
++                  <path d="M534 488 h104 v10 h-116 z" fill="#DCCEC5" />
++                  {/* warm light spill from the entrance */}
++                  <path d="M586 478 L640 560 L520 560 Z" fill="#FF6725" opacity="0.10" />
++                  {/* landscaping */}
++                  <g className="hb-plants">
++                     <path d="M300 478 q18 -46 36 0 z" fill="#00B579" opacity="0.85" />
++                     <rect x="316" y="470" width="4" height="16" fill="#0F2A37" opacity="0.5" />
++                     <path d="M728 470 q22 -56 44 0 z" fill="#00B579" opacity="0.8" />
++                     <rect x="748" y="462" width="5" height="22" fill="#0F2A37" opacity="0.5" />
++                     <ellipse cx="686" cy="498" rx="26" ry="8" fill="#00B579" opacity="0.28" />
++                     <ellipse cx="288" cy="506" rx="30" ry="9" fill="#00B579" opacity="0.28" />
++                  </g>
++               </g>
++            </g>
++         </svg>
++      </div>
++   )
++}
++
++export default HeroBuildAnimation

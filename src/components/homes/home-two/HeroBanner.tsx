@@ -4,8 +4,9 @@ import Link from "next/link";
 import DropdownTwo from "@/components/search-dropdown/home-dropdown/DropdownTwo";
 import { openPropertyPlanetAI } from "@/utils/propertyPlanetAIBus";
 
+import HeroBuildAnimation from "./HeroBuildAnimation";
+
 import titleShape from "@/assets/images/shape/shape_11.svg"
-import bannerImg_1 from "@/assets/images/assets/ils_03.png"
 import bannerImg_2 from "@/assets/images/shape/shape_12.svg"
 import bannerImg_3 from "@/assets/images/assets/badge_01.svg"
 
@@ -44,7 +45,7 @@ const HeroBanner = () => {
                   <DropdownTwo />
                </div>
             </div>
-            <Image src={bannerImg_1} alt="" className="lazy-img shapes illustration" />
+            <HeroBuildAnimation />
             <Image src={bannerImg_2} alt="" className="lazy-img shapes shape_01" />
             <Image src={bannerImg_3} alt="" className="lazy-img shapes shape_02" />
          </div>
