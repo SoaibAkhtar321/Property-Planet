@@ -7,16 +7,21 @@ import { openPropertyPlanetAI } from "@/utils/propertyPlanetAIBus";
 import HeroBuildAnimation from "./HeroBuildAnimation";
 
 import titleShape from "@/assets/images/shape/shape_11.svg"
-import bannerImg_2 from "@/assets/images/shape/shape_12.svg"
-import bannerImg_3 from "@/assets/images/assets/badge_01.svg"
 
+// Phase 20: the old hero composition is removed, not layered over. Gone:
+// the ils_03.png illustration, the shape_12/badge_01 decorations and the
+// line-bg grid overlay — all three belonged to the previous hero and
+// competed with the animation for the same corner of the viewport. What
+// remains is one composition: headline, supporting line, primary CTA, the
+// AI CTA, the search panel, and the build animation bled into the
+// bottom-right behind a readability scrim (see _hero-build.scss).
 const HeroBanner = () => {
 
    return (
       <>
          <div className="hero-banner-two z-1 position-relative">
             <div className="container">
-               <div className="position-relative line-bg pt-200 md-pt-150 pb-130 xl-pb-100">
+               <div className="position-relative pt-200 md-pt-150 pb-130 xl-pb-100">
                   <div className="row">
                      <div className="col-xxl-9 col-xl-8 col-lg-9 col-md-10">
                         <h1 className="hero-heading font-garamond wow fadeInUp">The next city is being built <span><Image src={titleShape} alt="" className="lazy-img icon d-inline-block" /></span></h1>
@@ -46,8 +51,6 @@ const HeroBanner = () => {
                </div>
             </div>
             <HeroBuildAnimation />
-            <Image src={bannerImg_2} alt="" className="lazy-img shapes shape_01" />
-            <Image src={bannerImg_3} alt="" className="lazy-img shapes shape_02" />
          </div>
       </>
    )

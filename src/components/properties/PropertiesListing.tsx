@@ -23,7 +23,6 @@ export interface PropertiesListingProps {
    filters: PropertyFilterState;
    facets: {
       propertyTypes: string[];
-      listingTypes: string[];
       cities: string[];
       localities: string[];
    };
@@ -34,7 +33,6 @@ const buildHref = (filters: PropertyFilterState, page: number) => {
    const params = new URLSearchParams();
    const entries: [string, string][] = [
       ["q", filters.q],
-      ["listingType", filters.listingType],
       ["propertyType", filters.propertyType],
       ["city", filters.city],
       ["locality", filters.locality],
@@ -55,7 +53,6 @@ const buildHref = (filters: PropertyFilterState, page: number) => {
 const hasActiveFilters = (filters: PropertyFilterState) =>
    Boolean(
       filters.q ||
-         filters.listingType ||
          filters.propertyType ||
          filters.city ||
          filters.locality ||
@@ -176,7 +173,6 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
 
                <div className="col-lg-4 order-lg-first">
                   <PropertyFilters
-                     listingTypes={facets.listingTypes}
                      propertyTypes={facets.propertyTypes}
                      cities={facets.cities}
                      localities={facets.localities}

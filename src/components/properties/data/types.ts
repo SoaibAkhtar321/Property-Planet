@@ -19,7 +19,11 @@ export interface Property {
    slug: string;
    title: string;
    tag?: string;
-   listingType: "Sale" | "Rent";
+   /** Always "Sale" on public surfaces — Property Planet does not offer
+    *  rentals. The legacy `listing_type` column still exists in the
+    *  database (and legacy 'rent' rows are preserved), but public reads are
+    *  filtered to sale-only; see SALE_ONLY in src/lib/properties/queries.ts. */
+   listingType: "Sale";
    propertyType: string;
    address: string;
    /** Raw locality value (property_public.locality), used for the

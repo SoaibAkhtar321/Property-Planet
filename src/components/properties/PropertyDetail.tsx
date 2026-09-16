@@ -18,19 +18,6 @@ import FavouriteButton from "./FavouriteButton";
 const PropertyDetail = ({ property, similar }: { property: Property; similar: Property[] }) => {
    return (
       <div className="listing-details-one theme-details-one mt-130 lg-mt-100 pb-150 xl-pb-120">
-         {/* Mobile-only sticky inquiry CTA. Desktop/tablet already surface
-             the inquiry card prominently in the sidebar next to the main
-             content, so this stays hidden at lg and above (d-lg-none) to
-             avoid a duplicate/obscuring CTA. Scrolls to the same inquiry
-             card (#property-inquiry) rather than duplicating the form or
-             its auth/role logic. */}
-         <a
-            href="#property-inquiry"
-            className="btn-four w-100 justify-content-center d-lg-none position-fixed start-0 bottom-0 m-0"
-            style={{ zIndex: 1030, borderRadius: 0 }}
-         >
-            Send Inquiry
-         </a>
          <MediaGallery images={property.images} title={property.title} />
          <div className="container">
             <div className="row">

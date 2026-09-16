@@ -22,7 +22,8 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
-import { createInquiry, createSiteVisit, getMyLeadForProperty, revealExactLocation } from "@/lib/leads/actions";
+import { createSiteVisit, getMyLeadForProperty, revealExactLocation } from "@/lib/leads/actions";
+import InquiryButton from "@/components/inquiry/InquiryButton";
 
 type ActionState = { success: boolean; error?: string; alreadyExists?: boolean } | null;
 
@@ -160,17 +161,37 @@ const SiteVisitSection = ({ leadId }: { leadId: string }) => {
    );
 };
 
-const InquiryForm = ({ propertyId }: { propertyId: string }) => {
+// Phase 20: the enquiry half of this component is gone — it now delegates
+// to the single universal inquiry dialog (InquiryButton -> InquiryDialog),
+// the same one the property cards, project cards and project detail page
+// use. That is what makes phone-mandatory / optional date / optional time /
+// optional message one implementation instead of three, and what lets a
+// logged-out buyer authenticate mid-enquiry without losing this property.
+//
+// What stays here is everything that only makes sense once a lead ALREADY
+// exists and is therefore specific to the detail page: requesting a site
+// visit on that lead, and revealing the exact location. Neither is part of
+// the enquiry itself.
+//
+// lead_id is still never accepted as a prop or from anywhere
+// client-controlled — it is only ever what getMyLeadForProperty() returns,
+// which is scoped server-side to the authenticated buyer's own row.
+const InquiryForm = ({
+   propertyId,
+   propertyTitle,
+   propertyAddress,
+}: {
+   propertyId: string;
+   propertyTitle: string;
+   propertyAddress?: string;
+}) => {
    const { user, role, loading } = useSupabaseUser();
-   const [message, setMessage] = useState("");
-   const [isPending, startTransition] = useTransition();
-   const [result, setResult] = useState<ActionState>(null);
    const [leadId, setLeadId] = useState<string | null>(null);
    const [leadLoading, setLeadLoading] = useState(true);
 
    // Resolve any lead the buyer already has on this property, so a repeat
    // visitor goes straight to the site-visit section instead of being asked
-   // to submit a second inquiry.
+   // to enquire again.
    useEffect(() => {
       if (loading || !user || role !== "buyer") {
          setLeadLoading(false);
@@ -192,78 +213,35 @@ const InquiryForm = ({ propertyId }: { propertyId: string }) => {
       return null;
    }
 
-   if (!user) {
-      return (
-         <a
-            href="#"
-            data-bs-toggle="modal"
-            data-bs-target="#loginModal"
-            className="btn-four w-100 justify-content-center"
-         >
-            Enquire Now
-         </a>
-      );
-   }
-
-   if (role !== "buyer") {
+   // Sellers and admins get no buyer enquiry UI, same as before.
+   if (role && role !== "buyer") {
       return null;
    }
 
-   if (leadLoading) {
+   if (user && leadLoading) {
       return null;
    }
 
-   const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      startTransition(async () => {
-         const res = await createInquiry(propertyId, message);
-         setResult(res);
-         if (res.success) {
-            setMessage("");
-            const lead = await getMyLeadForProperty(propertyId);
-            setLeadId(lead?.leadId ?? null);
-         }
-      });
-   };
-
-   // Once a lead exists (fresh inquiry or a prior one), offer the site-visit
-   // request instead of the inquiry form.
    if (leadId) {
       return (
          <div>
-            {result?.success && (
-               <div className="alert alert-success mb-0" role="status">
-                  {result.alreadyExists
-                     ? "You've already sent an inquiry for this property."
-                     : "Your inquiry has been sent. The team will be in touch soon."}
-               </div>
-            )}
             <SiteVisitSection leadId={leadId} />
             <ExactLocationSection leadId={leadId} />
          </div>
       );
    }
 
+   // Guests included: the dialog handles authentication itself and returns
+   // here afterwards with the enquiry intact.
    return (
-      <form onSubmit={handleSubmit}>
-         <textarea
-            className="w-100 mb-15"
-            rows={3}
-            placeholder="Ask a question about this property (optional)"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            disabled={isPending}
-            maxLength={1000}
-         />
-         {result?.error && (
-            <div className="alert alert-danger mb-15" role="alert">
-               {result.error}
-            </div>
-         )}
-         <button type="submit" className="btn-four w-100 justify-content-center" disabled={isPending}>
-            {isPending ? "Sending..." : "Enquire Now"}
-         </button>
-      </form>
+      <InquiryButton
+         kind="property"
+         id={propertyId}
+         title={propertyTitle}
+         subtitle={propertyAddress}
+         className="btn-four w-100 justify-content-center"
+         label="Send Inquiry"
+      />
    );
 };
 

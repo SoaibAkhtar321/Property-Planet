@@ -112,7 +112,10 @@ export async function createAdminPropertyListing(formData: FormData): Promise<vo
          title,
          slug,
          property_type: propertyType,
-         listing_type: textOrNull(formData.get("listing_type")) ?? "sale",
+         // Phase 20: always 'sale'. The rental option was removed from the
+         // admin UI, and this ignores the field entirely so a hand-crafted
+         // POST cannot reintroduce unsupported rental inventory.
+         listing_type: "sale",
          price,
          area: numberOrNull(formData.get("area")),
          area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",
@@ -158,6 +161,62 @@ export async function approveProperty(id: string): Promise<ActionResult> {
    }
 
    revalidatePropertyPaths(id);
+   return { success: true };
+}
+
+/**
+ * Marks / unmarks a property as Featured (0020).
+ *
+ * Featured is a PLACEMENT, not a move. This action writes exactly one
+ * boolean column and nothing else — status, owner_id, project_id, slug,
+ * location and media are all untouched — so a featured property keeps its
+ * place in /properties, keeps its project relationship, and is simply also
+ * eligible for the homepage Featured section. No record is duplicated.
+ *
+ * Authorization is enforced in three independent places, none of which
+ * trusts the client: requireAdmin() here, the "admins can update any
+ * property" RLS policy (0002), and the properties_featured_admin_only
+ * trigger (0020), which raises if a non-admin changes is_featured at all.
+ *
+ * Eligibility: only a published property may be featured. The check below
+ * re-reads the row's status server-side rather than trusting whatever the
+ * calling page rendered, and `property_public` (which the public Featured
+ * query reads) is itself published-only — so an unpublished listing cannot
+ * surface publicly even if this check were bypassed.
+ */
+export async function setPropertyFeatured(id: string, featured: boolean): Promise<ActionResult> {
+   await requireAdmin();
+   const supabase = await createClient();
+
+   if (featured) {
+      const { data: property, error: readError } = await supabase
+         .from("properties")
+         .select("status, project_id")
+         .eq("id", id)
+         .maybeSingle();
+
+      if (readError || !property) {
+         return { success: false, error: "That property could not be found." };
+      }
+      if (property.status !== "published") {
+         return { success: false, error: "Only a published property can be featured." };
+      }
+      if (property.project_id) {
+         return {
+            success: false,
+            error: "Project units are featured through their parent project, not individually.",
+         };
+      }
+   }
+
+   const { error } = await supabase.from("properties").update({ is_featured: featured }).eq("id", id);
+
+   if (error) {
+      return { success: false, error: error.message };
+   }
+
+   revalidatePropertyPaths(id);
+   revalidatePath("/");
    return { success: true };
 }
 
@@ -243,7 +302,10 @@ export async function updateAdminProperty(id: string, formData: FormData): Promi
       .update({
          title,
          property_type: propertyType,
-         listing_type: textOrNull(formData.get("listing_type")) ?? "sale",
+         // Phase 20: always 'sale'. The rental option was removed from the
+         // admin UI, and this ignores the field entirely so a hand-crafted
+         // POST cannot reintroduce unsupported rental inventory.
+         listing_type: "sale",
          price,
          area: numberOrNull(formData.get("area")),
          area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",

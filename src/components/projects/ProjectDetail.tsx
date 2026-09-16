@@ -156,7 +156,7 @@ const ProjectDetail = ({
                            Send an enquiry and the Property Planet team will get back to you with availability, pricing
                            and site-visit details.
                         </p>
-                        <ProjectInquiryForm projectId={project.id} projectTitle={project.title} />
+                        <ProjectInquiryForm projectId={project.id} projectTitle={project.title} projectLocation={project.location} />
                      </div>
                   </div>
                </div>

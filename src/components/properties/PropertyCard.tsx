@@ -2,84 +2,74 @@ import Image from "next/image";
 import Link from "next/link";
 import { Property } from "./data/types";
 import FavouriteButton from "./FavouriteButton";
+import InquiryButton from "@/components/inquiry/InquiryButton";
+
+// Phase 20 rework of the card:
+//  - Height: the image is pinned to a fixed 4:3 ratio and the info block
+//    uses one tighter padding scale, so every card in a row is the same
+//    height and none of them is half a screen tall on mobile.
+//  - The "For Sale / For Rent" line is gone. Property Planet sells plots,
+//    land and homes; rent is not a supported product, so the public card
+//    no longer advertises a listing type and instead leads with the
+//    property type, which is what a buyer actually scans for.
+//  - Two explicit actions: See Details (detail page) and Send Inquiry
+//    (opens the universal inquiry dialog with this property already
+//    selected, so nobody has to open the detail page just to enquire).
+//
+// Hierarchy: Send Inquiry is the filled primary, See Details the outlined
+// secondary. Both are real link/button elements with accessible names that
+// include the property title.
 
 const PropertyCard = ({ item, isFavourited }: { item: Property; isFavourited?: boolean }) => {
+   const facts = [
+      item.sqft ? `${item.sqft} sqft` : null,
+      typeof item.bed === "number" ? `${item.bed} bed` : null,
+      typeof item.bath === "number" ? `${item.bath} bath` : null,
+   ].filter(Boolean) as string[];
+
    return (
-      <div className="col-md-6 col-lg-4 d-flex mb-50 wow fadeInUp">
-         <div className="listing-card-one border-25 h-100 w-100">
-            <div className="img-gallery p-15">
-               <div className="position-relative border-25 overflow-hidden">
-                  {item.tag && <div className="tag border-25">{item.tag}</div>}
-                  <FavouriteButton propertyId={item.id} initiallyFavourited={isFavourited} />
-                  {item.isDemo && (
-                     <div
-                        className="tag border-25"
-                        style={{ left: "auto", right: 15, background: "#6c757d" }}
-                     >
-                        Demo
-                     </div>
+      <div className="col-md-6 col-lg-4 d-flex mb-30 wow fadeInUp">
+         <div className="pp-card h-100 w-100">
+            <div className="pp-card__media">
+               {item.tag && <span className="pp-card__tag">{item.tag}</span>}
+               {item.isDemo && <span className="pp-card__tag pp-card__tag--muted">Demo</span>}
+               <FavouriteButton propertyId={item.id} initiallyFavourited={isFavourited} />
+               <Link href={`/properties/${item.slug}`} className="pp-card__media-link" tabIndex={-1} aria-hidden="true">
+                  {item.images[0] ? (
+                     <Image src={item.images[0]} alt="" width={600} height={450} className="pp-card__img" />
+                  ) : (
+                     <span className="pp-card__img pp-card__img--empty">Photos coming soon</span>
                   )}
-                  <Link href={`/properties/${item.slug}`} className="d-block">
-                     {item.images[0] ? (
-                        <Image
-                           src={item.images[0]}
-                           alt={item.title}
-                           width={600}
-                           height={400}
-                           className="w-100"
-                        />
-                     ) : (
-                        <div
-                           className="w-100 d-flex align-items-center justify-content-center bg-light text-muted"
-                           style={{ aspectRatio: "3 / 2" }}
-                        >
-                           Photos coming soon
-                        </div>
-                     )}
-                  </Link>
-               </div>
+               </Link>
             </div>
 
-            <div className="property-info p-25">
-               <Link href={`/properties/${item.slug}`} className="title tran3s">
+            <div className="pp-card__body">
+               <Link href={`/properties/${item.slug}`} className="pp-card__title">
                   {item.title}
                </Link>
-               <div className="address">{item.address}</div>
-               {/* Phase 17: the two attributes a buyer scans for first and
-                   that the card previously omitted. Both come from columns
-                   that already exist — nothing is inferred. */}
-               <div className="fs-14 mt-5">
-                  {item.propertyType} · For {item.listingType}
+               <p className="pp-card__meta">{item.address}</p>
+
+               <div className="pp-card__facts">
+                  <span className="pp-card__type">{item.propertyType}</span>
+                  {facts.map((fact) => (
+                     <span key={fact}>{fact}</span>
+                  ))}
                </div>
-               <ul className="style-none feature d-flex flex-wrap align-items-center justify-content-between">
-                  {item.sqft && (
-                     <li className="d-flex align-items-center">
-                        <span className="fs-16">{item.sqft} sqft</span>
-                     </li>
-                  )}
-                  {typeof item.bed === "number" && (
-                     <li className="d-flex align-items-center">
-                        <span className="fs-16">{item.bed} bed</span>
-                     </li>
-                  )}
-                  {typeof item.bath === "number" && (
-                     <li className="d-flex align-items-center">
-                        <span className="fs-16">{item.bath} bath</span>
-                     </li>
-                  )}
-               </ul>
-               <div className="pl-footer top-border d-flex align-items-center justify-content-between">
-                  <strong className="price fw-500 color-dark">
-                     ₹{item.price.toLocaleString("en-IN")}
-                     {item.priceUnit && <sub>{item.priceUnit}</sub>}
-                  </strong>
+
+               <div className="pp-card__price">
+                  ₹{item.price.toLocaleString("en-IN")}
+                  {item.priceUnit && <sub>{item.priceUnit}</sub>}
+               </div>
+
+               <div className="pp-card__actions">
                   <Link
                      href={`/properties/${item.slug}`}
-                     className="btn-four rounded-circle"
-                     aria-label={`View details for ${item.title}`}
+                     className="pp-card-btn pp-card-btn--ghost"
+                     aria-label={`See details for ${item.title}`}
                   >
-                     <i className="bi bi-arrow-up-right" aria-hidden="true"></i>
+                     See Details
                   </Link>
+                  <InquiryButton kind="property" id={item.id} title={item.title} subtitle={item.address} />
                </div>
             </div>
          </div>

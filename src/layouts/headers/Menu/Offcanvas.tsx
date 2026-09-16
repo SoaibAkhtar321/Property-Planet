@@ -1,60 +1,34 @@
-import Image, { StaticImageData } from "next/image"
-import Fancybox from "@/components/common/Fancybox"
+"use client"
+import Image from "next/image"
 import Link from "next/link"
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF, SOCIAL_LINKS } from "@/lib/site/contact"
 
 import offcanvasLogo from "@/assets/images/logo/logo_02.svg"
 
-import offcanvasThumb_1 from "@/assets/images/listing/img_69.jpg"
-import offcanvasThumb_2 from "@/assets/images/listing/img_70.jpg"
-import offcanvasThumb_3 from "@/assets/images/listing/img_71.jpg"
-import offcanvasThumb_4 from "@/assets/images/listing/img_72.jpg"
+// Phase 20: this panel is opened by the "Menu" button in the live header,
+// so everything in it was public. It previously showed three fabricated
+// template listings — "FOR RENT", "$2210 / m", "6391 Elgin St. Celina" —
+// plus a Dhaka postal address, a US phone number and WhatsApp / X / Viber
+// icons linking to "#".
+//
+// All of it is removed:
+//   - the fake listings (invented inventory advertising a rental product
+//     Property Planet does not offer, on a page selling real property);
+//   - the placeholder address and phone, replaced with the real business
+//     number as a tel: link;
+//   - the unverified social accounts, replaced by the one verified account
+//     in src/lib/site/contact.ts.
+//
+// What replaces the listing block is navigation that actually goes
+// somewhere: the real discovery routes. No Send Inquiry here — this is
+// navigation, and an enquiry needs a specific property or project.
 
-interface DataType {
-   id: number;
-   tag: string;
-   thumb: StaticImageData;
-   carousel_thumb: string[];
-   price: number;
-   sub?: JSX.Element;
-   address: string;
-}[];
-
-const offcanvas_data: DataType[] = [
-   {
-      id: 1,
-      tag: "FOR RENT",
-      thumb: offcanvasThumb_1,
-      carousel_thumb: ["1", "2", "3"],
-      price: 2210,
-      sub: (<>/ <sub>m</sub></>),
-      address: "6391 Elgin St. Celina",
-   },
-   {
-      id: 2,
-      tag: "FOR RENT",
-      thumb: offcanvasThumb_2,
-      carousel_thumb: ["1", "2", "3"],
-      price: 2210,
-      sub: (<>/ <sub>m</sub></>),
-      address: "6391 Elgin St. Celina",
-   },
-   {
-      id: 3,
-      tag: "FOR SELL",
-      thumb: offcanvasThumb_3,
-      carousel_thumb: ["1", "2", "3"],
-      price: 123710,
-      address: "6391 Elgin St. Celina",
-   },
-   {
-      id: 4,
-      tag: "FOR SELL",
-      thumb: offcanvasThumb_4,
-      carousel_thumb: ["1", "2", "3"],
-      price: 78420,
-      sub: (<>/ <sub>m</sub></>),
-      address: "6391 Elgin St. Celina",
-   },
+const quickLinks: { label: string; href: string; desc: string }[] = [
+   { label: "Properties", href: "/properties", desc: "Verified plots, land, villas and apartments for sale" },
+   { label: "Projects", href: "/projects", desc: "Developments and their available units" },
+   { label: "Insights", href: "/blog", desc: "Market notes from the Property Planet team" },
+   { label: "Become a Seller", href: "/sell-property", desc: "List your land or property with us" },
+   { label: "Contact", href: "/contact", desc: "Talk to an advisor" },
 ]
 
 const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
@@ -64,66 +38,63 @@ const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
             <div className="offcanvas-header">
                <div className="logo order-lg-0">
                   <Link href="/" className="d-flex align-items-center">
-                     <Image src={offcanvasLogo} alt="" />
+                     <Image src={offcanvasLogo} alt="Property Planet" />
                   </Link>
                </div>
-               <button onClick={() => setOffCanvas(false)} type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+               <button onClick={() => setOffCanvas(false)} type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close menu"></button>
             </div>
 
             <div className="wrapper mt-60">
                <div className="d-flex flex-column h-100">
-                  <div className="property-block">
-                     <h4 className="title pb-25">Featured Listing </h4>
-                     <div className="row">
-                        {offcanvas_data.map((item) => (
-                           <div key={item.id} className="col-12">
-                              <div className="listing-card-one shadow-none style-two mb-40">
-                                 <div className="img-gallery">
-                                    <div className="position-relative overflow-hidden">
-                                       <div className="tag bg-white text-dark fw-500">{item.tag}</div>
-                                       <Image src={item.thumb} className="w-100" alt="..." />
-
-                                       <div className="img-slider-btn">
-                                          03 <i className="fa-regular fa-image"></i>
-                                          <Fancybox
-                                             options={{
-                                                Carousel: {
-                                                   infinite: true,
-                                                },
-                                             }}
-                                          >
-                                             {item.carousel_thumb.map((thumb: any, index: any) => (
-                                                <a key={index} className="d-block" data-fancybox="gallery2" href={`/assets/images/listing/img_large_0${thumb}.jpg`}></a>
-                                             ))}
-                                          </Fancybox>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div className="property-info d-flex justify-content-between align-items-end pt-30">
-                                    <div>
-                                       <strong className="price fw-500 color-dark fs-3">${item.price}{item.sub}</strong>
-                                       <div className="address pt-5 m0">{item.address}</div>
-                                    </div>
-                                    <Link href="#" className="btn-four mb-5"><i className="bi bi-arrow-up-right"></i></Link>
-                                 </div>
-                              </div>
-                           </div>
+                  <nav aria-label="Site sections">
+                     <h4 className="title pb-25">Explore</h4>
+                     <ul className="style-none">
+                        {quickLinks.map((link) => (
+                           <li key={link.href} className="mb-25">
+                              <Link
+                                 href={link.href}
+                                 onClick={() => setOffCanvas(false)}
+                                 className="d-block color-dark fw-500 fs-22"
+                              >
+                                 {link.label}
+                                 <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
+                              </Link>
+                              <span className="fs-15 opacity-75">{link.desc}</span>
+                           </li>
                         ))}
-                     </div>
+                     </ul>
+                  </nav>
+
+                  <div className="address-block mt-40">
+                     <h4 className="title pb-15">Talk to us</h4>
+                     <p className="mb-10">Hyderabad, Telangana</p>
+                     <p className="mb-10">
+                        <a href={CONTACT_PHONE_HREF} className="pp-call-link fs-20">
+                           <i className="bi bi-telephone-fill" aria-hidden="true"></i>
+                           <span>{CONTACT_PHONE_DISPLAY}</span>
+                        </a>
+                     </p>
+                     <p>
+                        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+                     </p>
                   </div>
 
-                  <div className="address-block mt-50">
-                     <h4 className="title pb-15">Our Address</h4>
-                     <p>Chowrastar Mirpur- 1210, Sangu <br />River, Dhaka</p>
-                     <p>Urgent issue? call us at <br /><Link href="tel:310.841.5500">310.841.5500</Link></p>
-                  </div>
-                  <ul
-                     className="style-none d-flex flex-wrap w-100 justify-content-between align-items-center social-icon pt-25 mt-auto">
-                     <li><Link href="#"><i className="fa-brands fa-whatsapp"></i></Link></li>
-                     <li><Link href="#"><i className="fa-brands fa-x-twitter"></i></Link></li>
-                     <li><Link href="#"><i className="fa-brands fa-instagram"></i></Link></li>
-                     <li><Link href="#"><i className="fa-brands fa-viber"></i></Link></li>
-                  </ul>
+                  {SOCIAL_LINKS.length > 0 && (
+                     <ul className="style-none d-flex flex-wrap w-100 align-items-center gap-4 social-icon pt-25 mt-auto">
+                        {SOCIAL_LINKS.map((social) => (
+                           <li key={social.name}>
+                              <a
+                                 href={social.href}
+                                 target="_blank"
+                                 rel="noopener noreferrer"
+                                 aria-label={`Property Planet on ${social.name}`}
+                              >
+                                 <i className={`fa-brands fa-${social.icon}`} aria-hidden="true"></i>
+                              </a>
+                           </li>
+                        ))}
+                     </ul>
+                  )}
                </div>
             </div>
          </div>

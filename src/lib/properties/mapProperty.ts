@@ -10,6 +10,7 @@ export interface PropertyPublicRow {
    slug: string;
    property_type: string;
    listing_type: "sale" | "rent";
+   is_featured?: boolean | null;
    price: number | string;
    area: number | string | null;
    area_unit: string | null;
@@ -86,14 +87,22 @@ export function mapProperty(
       slug: row.slug,
       title: row.title,
       tag: titleCase(row.property_type),
-      listingType: row.listing_type === "rent" ? "Rent" : "Sale",
+      // Phase 20: public surfaces are sale-only (see SALE_ONLY in
+      // queries.ts), so this is always "Sale". The field is kept on the
+      // Property type because the detail page's overview table and the
+      // admin/seller views still describe the listing, but no public card
+      // advertises a rent/sale choice any more.
+      listingType: "Sale",
+      featured: Boolean(row.is_featured),
       propertyType: titleCase(row.property_type),
       // Public-safe address only — exact_address is never exposed here,
       // preserving the location-privacy split from 0002_properties_and_location.sql.
       address: `${row.locality}, ${row.city}`,
       locality: row.locality,
       price: Number(row.price),
-      priceUnit: row.listing_type === "rent" ? "/mo" : undefined,
+      // No per-month price unit: a monthly figure only ever applied to
+      // rental inventory, which is no longer publicly exposed.
+      priceUnit: undefined,
       sqft: row.area ? Number(row.area) : undefined,
       bed: row.bedrooms ?? undefined,
       bath: row.bathrooms ?? undefined,

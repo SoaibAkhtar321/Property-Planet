@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 // not indexed as separate thin pages competing with each other.
 const CANONICAL = "https://propertyplanet.in/properties";
 const DESCRIPTION =
-   "Browse verified individual plots, villas, houses and apartments for sale and rent across Hyderabad and the Future City corridor with Property Planet.";
+   "Browse verified individual plots, villas, houses and apartments for sale across Hyderabad and the Future City corridor with Property Planet.";
 
 export const metadata = {
    title: "Explore Properties | Property Planet",
@@ -48,7 +48,6 @@ const PropertiesPage = async ({
 }: {
    searchParams: {
       q?: string;
-      listingType?: string;
       propertyType?: string;
       city?: string;
       locality?: string;
@@ -71,7 +70,6 @@ const PropertiesPage = async ({
 
    const filters: PropertyFilterState = {
       q: first(searchParams.q),
-      listingType: first(searchParams.listingType),
       propertyType: first(searchParams.propertyType),
       city: first(searchParams.city),
       locality,
@@ -88,7 +86,6 @@ const PropertiesPage = async ({
    const [result, facets] = await Promise.all([
       searchPublishedProperties({
          q: filters.q,
-         listingType: filters.listingType,
          propertyType: filters.propertyType,
          city: filters.city,
          locality: filters.locality,

@@ -27,16 +27,10 @@ const propertyTypeOptions = [
    { value: "apartment", text: "Apartment" },
    { value: "commercial", text: "Commercial" },
 ];
-const listingTypeOptions = [
-   { value: "sale", text: "Sale" },
-   { value: "rent", text: "Rent" },
-];
 
 const Overview = ({ defaults }: { defaults?: OverviewDefaults }) => {
    const [propertyType, setPropertyType] = useState(defaults?.property_type ?? "plot");
-   const [listingType, setListingType] = useState(defaults?.listing_type ?? "sale");
    const propertyTypeIndex = Math.max(0, propertyTypeOptions.findIndex((o) => o.value === propertyType));
-   const listingTypeIndex = Math.max(0, listingTypeOptions.findIndex((o) => o.value === listingType));
 
    return (
       <div className="bg-white card-box border-20">
@@ -64,20 +58,11 @@ const Overview = ({ defaults }: { defaults?: OverviewDefaults }) => {
                   />
                </div>
             </div>
-            <div className="col-md-6">
-               <div className="dash-input-wrapper mb-30">
-                  <label htmlFor="listing_type">Listed in*</label>
-                  <input type="hidden" name="listing_type" value={listingType} />
-                  <NiceSelect
-                     className="nice-select"
-                     options={listingTypeOptions}
-                     defaultCurrent={listingTypeIndex}
-                     onChange={(e) => setListingType(e.target.value)}
-                     name="listing_type"
-                     placeholder=""
-                  />
-               </div>
-            </div>
+            {/* Phase 20: the "Listed in" Sale/Rent control is removed —
+                Property Planet lists property for sale only, so a seller can
+                no longer create unsupported rental inventory. The server
+                actions hardcode listing_type: "sale" too, so removing the
+                control is not the only protection. */}
             <div className="col-md-6">
                <div className="dash-input-wrapper mb-30">
                   <label htmlFor="price">Price*</label>

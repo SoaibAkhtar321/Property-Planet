@@ -13,7 +13,6 @@
 
 export interface PropertyFilterState {
    q: string;
-   listingType: string;
    propertyType: string;
    city: string;
    /** Exact `locality` value, or "" for all. Also set from the homepage
@@ -27,13 +26,11 @@ export interface PropertyFilterState {
 }
 
 const PropertyFilters = ({
-   listingTypes,
    propertyTypes,
    cities,
    localities,
    filters,
 }: {
-   listingTypes: string[];
    propertyTypes: string[];
    cities: string[];
    localities: string[];
@@ -60,19 +57,11 @@ const PropertyFilters = ({
                   />
                </div>
 
-               <div className="mb-30">
-                  <label className="fs-16 fw-500 mb-10 d-block" htmlFor="filter-listing-type">
-                     Listing Type
-                  </label>
-                  <select className="nice-select w-100" id="filter-listing-type" name="listingType" defaultValue={filters.listingType}>
-                     <option value="">All</option>
-                     {listingTypes.map((type) => (
-                        <option key={type} value={type}>
-                           {type === "rent" ? "Rent" : "Sale"}
-                        </option>
-                     ))}
-                  </select>
-               </div>
+               {/* Phase 20: the Sale/Rent control is gone. Property Planet
+                   lists plots, land and homes for sale only, so offering a
+                   listing-type choice advertised a product that does not
+                   exist. Public search is sale-only server-side too — see
+                   SALE_ONLY in src/lib/properties/queries.ts. */}
 
                <div className="mb-30">
                   <label className="fs-16 fw-500 mb-10 d-block" htmlFor="filter-property-type">

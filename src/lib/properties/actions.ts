@@ -91,7 +91,10 @@ export async function createPropertyListing(formData: FormData): Promise<void> {
          title,
          slug,
          property_type: propertyType,
-         listing_type: textOrNull(formData.get("listing_type")) ?? "sale",
+         // Phase 20: always 'sale'. The seller form no longer offers a
+         // rent option and this ignores the posted field entirely, so a
+         // crafted request cannot create unsupported rental inventory.
+         listing_type: "sale",
          price,
          area: numberOrNull(formData.get("area")),
          area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",
@@ -157,7 +160,10 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
       .update({
          title,
          property_type: textOrNull(formData.get("property_type")),
-         listing_type: textOrNull(formData.get("listing_type")) ?? "sale",
+         // Phase 20: always 'sale'. The seller form no longer offers a
+         // rent option and this ignores the posted field entirely, so a
+         // crafted request cannot create unsupported rental inventory.
+         listing_type: "sale",
          price: numberOrNull(formData.get("price")),
          area: numberOrNull(formData.get("area")),
          area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",

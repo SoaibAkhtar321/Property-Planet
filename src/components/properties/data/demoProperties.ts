@@ -75,7 +75,7 @@ const demoProperties: Property[] = [
       slug: "hyderabad-apartment-1",
       title: "2BHK Apartment, Hyderabad Growth Corridor",
       tag: "Apartment",
-      listingType: "Rent",
+      listingType: "Sale",
       propertyType: "Apartment",
       address: "Hyderabad Growth Corridor",
       price: 22000,

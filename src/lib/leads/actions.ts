@@ -46,11 +46,21 @@
 
 import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
+import {
+   backfillProfilePhone,
+   normalizeInquiryContact,
+   resolveInquiryBuyer,
+   type InquiryContactInput,
+} from "@/lib/leads/inquiryInput";
 
 export interface ActionResult {
    success: boolean;
    error?: string;
    alreadyExists?: boolean;
+   /** Set when the failure is "not signed in", so the dialog can offer
+    *  Google sign-in while keeping the enquiry context on screen rather
+    *  than being redirected away from it. */
+   needsAuth?: boolean;
 }
 
 export type LeadStatus = "new" | "contacted" | "qualified" | "site_visit" | "negotiation" | "closed" | "lost";
@@ -67,7 +77,7 @@ export interface SiteVisitActionResult {
 }
 
 const UNIQUE_VIOLATION = "23505";
-const MAX_INQUIRY_MESSAGE_LENGTH = 1000;
+// Message length is validated in inquiryInput.ts (MAX_INQUIRY_MESSAGE_LENGTH).
 
 /**
  * Creates (or, if one already exists, safely no-ops on) a buyer inquiry for
@@ -91,15 +101,28 @@ const MAX_INQUIRY_MESSAGE_LENGTH = 1000;
  *   Project             -> property_id NULL, project_id set
  *                          (createProjectInquiry, below)
  */
-export async function createInquiry(propertyId: string, message?: string): Promise<ActionResult> {
+export async function createInquiry(
+   propertyId: string,
+   contact: InquiryContactInput = {},
+): Promise<ActionResult> {
    if (!propertyId || typeof propertyId !== "string") {
       return { success: false, error: "A property is required." };
    }
 
-   // requireRole redirects (rather than returning) if there is no session or
-   // the caller isn't a buyer — same fail-closed behavior as every other
-   // action in src/lib/properties/actions.ts.
-   const ctx = await requireRole(["buyer"]);
+   // Phase 20: resolveInquiryBuyer() instead of requireRole(["buyer"]).
+   // Same server-derived role check, but it RETURNS a failure rather than
+   // redirecting — a redirect here would throw the buyer out of the very
+   // property they were enquiring about. See inquiryInput.ts.
+   const buyer = await resolveInquiryBuyer();
+   if (!buyer.ok) {
+      return { success: false, error: buyer.error, needsAuth: buyer.needsAuth };
+   }
+
+   const normalized = normalizeInquiryContact(contact);
+   if (!normalized.ok) {
+      return { success: false, error: normalized.error };
+   }
+
    const supabase = await createClient();
 
    // Re-derive that the property is real AND published — never trust that
@@ -114,20 +137,21 @@ export async function createInquiry(propertyId: string, message?: string): Promi
       return { success: false, error: "This property is no longer available." };
    }
 
-   const trimmedMessage = message?.trim();
-   if (trimmedMessage && trimmedMessage.length > MAX_INQUIRY_MESSAGE_LENGTH) {
-      return { success: false, error: `Message must be ${MAX_INQUIRY_MESSAGE_LENGTH} characters or fewer.` };
-   }
-
    const { error: insertError } = await supabase.from("leads").insert({
-      buyer_id: ctx.userId,
+      buyer_id: buyer.userId,
       property_id: propertyId,
+      // Phone is mandatory and validated above; date/time/message are each
+      // independently optional and are stored as NULL when absent — never
+      // as a fabricated placeholder value.
+      contact_phone: normalized.value.contact_phone,
+      preferred_date: normalized.value.preferred_date,
+      preferred_time: normalized.value.preferred_time,
       // Phase 10: exactly one server-side read decides both halves of the
       // lead. An Individual Property yields project_id NULL; a Project
       // Unit yields its parent project's id. Neither value is ever taken
       // from the client.
       project_id: property.project_id ?? null,
-      message: trimmedMessage ? trimmedMessage : null,
+      message: normalized.value.message,
       // status intentionally omitted — column default is 'new'. There is no
       // buyer-facing update path to this row afterward (see file header), so
       // this insert is the only write this function ever performs.
@@ -142,6 +166,8 @@ export async function createInquiry(propertyId: string, message?: string): Promi
       }
       return { success: false, error: "Failed to send inquiry. Please try again." };
    }
+
+   await backfillProfilePhone(supabase, buyer.userId, normalized.value.contact_phone);
 
    return { success: true };
 }
@@ -359,7 +385,7 @@ export async function revealExactLocation(leadId: string): Promise<RevealLocatio
    };
 }
 
-const MAX_PROJECT_INQUIRY_MESSAGE_LENGTH = 1000;
+// Message length is validated in inquiryInput.ts (MAX_INQUIRY_MESSAGE_LENGTH).
 
 /**
  * Creates (or, if one already exists, safely no-ops on) a buyer inquiry for
@@ -384,14 +410,27 @@ const MAX_PROJECT_INQUIRY_MESSAGE_LENGTH = 1000;
  * property_id is always omitted (column default NULL) — this action never
  * creates or touches a plot-level lead.
  */
-export async function createProjectInquiry(projectId: string, message?: string): Promise<ActionResult> {
+export async function createProjectInquiry(
+   projectId: string,
+   contact: InquiryContactInput = {},
+): Promise<ActionResult> {
    if (!projectId || typeof projectId !== "string") {
       return { success: false, error: "A project is required." };
    }
 
-   // requireRole redirects (rather than returning) if there is no session or
-   // the caller isn't a buyer — same fail-closed behavior as createInquiry().
-   const ctx = await requireRole(["buyer"]);
+   // Same non-redirecting buyer resolution as createInquiry(), for the same
+   // reason: an enquiry opened from a project card must not navigate the
+   // buyer away from the project.
+   const buyer = await resolveInquiryBuyer();
+   if (!buyer.ok) {
+      return { success: false, error: buyer.error, needsAuth: buyer.needsAuth };
+   }
+
+   const normalized = normalizeInquiryContact(contact);
+   if (!normalized.ok) {
+      return { success: false, error: normalized.error };
+   }
+
    const supabase = await createClient();
 
    // Re-derive that the project is real AND published — never trust that
@@ -407,16 +446,14 @@ export async function createProjectInquiry(projectId: string, message?: string):
       return { success: false, error: "This project is no longer available." };
    }
 
-   const trimmedMessage = message?.trim();
-   if (trimmedMessage && trimmedMessage.length > MAX_PROJECT_INQUIRY_MESSAGE_LENGTH) {
-      return { success: false, error: `Message must be ${MAX_PROJECT_INQUIRY_MESSAGE_LENGTH} characters or fewer.` };
-   }
-
    const { error: insertError } = await supabase.from("leads").insert({
-      buyer_id: ctx.userId,
+      buyer_id: buyer.userId,
       project_id: projectId,
       property_id: null,
-      message: trimmedMessage ? trimmedMessage : null,
+      message: normalized.value.message,
+      contact_phone: normalized.value.contact_phone,
+      preferred_date: normalized.value.preferred_date,
+      preferred_time: normalized.value.preferred_time,
       // status intentionally omitted — column default is 'new', same as
       // createInquiry(). Buyers have no UPDATE policy on leads at all (see
       // file header), so this insert is the only write this function ever
@@ -431,6 +468,8 @@ export async function createProjectInquiry(projectId: string, message?: string):
       }
       return { success: false, error: "Failed to send inquiry. Please try again." };
    }
+
+   await backfillProfilePhone(supabase, buyer.userId, normalized.value.contact_phone);
 
    return { success: true };
 }

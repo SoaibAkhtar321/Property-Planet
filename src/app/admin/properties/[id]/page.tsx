@@ -8,6 +8,7 @@ import {
    updateAdminProperty,
    updateAdminPropertyLocation,
    setAdminPropertyStatus,
+   setPropertyFeatured,
    addAdminPropertyMedia,
    deleteAdminPropertyMedia,
    type AdminPropertyStatus,
@@ -44,6 +45,11 @@ export default async function AdminPropertyDetailPage({
    if (!property) {
       notFound();
    }
+
+   const toggleFeatured = async () => {
+      "use server";
+      await setPropertyFeatured(id, !property.is_featured);
+   };
 
    const approve = async () => {
       "use server";
@@ -144,13 +150,11 @@ export default async function AdminPropertyDetailPage({
                      placeholder="plot, villa, apartment"
                   />
                </div>
-               <div className="col">
-                  <label className="form-label">Listing type</label>
-                  <select name="listing_type" defaultValue={property.listing_type} className="form-select">
-                     <option value="sale">Sale</option>
-                     <option value="rent">Rent</option>
-                  </select>
-               </div>
+               {/* Phase 20: the Sale/Rent choice is removed. Property Planet
+                   does not offer rentals, so new inventory can no longer be
+                   created or converted as a rental. Legacy rows keep their
+                   stored listing_type — nothing is rewritten in the
+                   database — they simply never appear publicly. */}
                <div className="col">
                   <label className="form-label">Price *</label>
                   <input name="price" type="number" step="0.01" defaultValue={property.price} className="form-control" required />

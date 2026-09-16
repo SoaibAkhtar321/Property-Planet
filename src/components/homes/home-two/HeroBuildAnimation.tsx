@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 /**
  * HeroBuildAnimation
  *
@@ -15,7 +19,56 @@
  *  - Inline SVG => no extra network request, no LCP image, no CLS
  *    (the stage reserves its own aspect ratio).
  */
+/**
+ * Optional cinematic media asset.
+ *
+ * If a real rendered/filmed construction sequence is available, set
+ * NEXT_PUBLIC_HERO_VIDEO_URL (and optionally NEXT_PUBLIC_HERO_VIDEO_POSTER)
+ * and this component plays it instead of drawing the SVG sequence — same
+ * slot, same composition, same copy, no hero rebuild required. The SVG
+ * remains the poster-less fallback for reduced motion, for browsers that
+ * cannot play the file, and for when no asset is configured.
+ *
+ * The <video> is muted/playsInline/loop with preload="none" until a poster
+ * exists, so it never blocks first paint and never costs mobile data before
+ * the user has seen the page.
+ */
+const HERO_VIDEO_URL = process.env.NEXT_PUBLIC_HERO_VIDEO_URL;
+const HERO_VIDEO_POSTER = process.env.NEXT_PUBLIC_HERO_VIDEO_POSTER;
+
 const HeroBuildAnimation = () => {
+   // Reduced motion has to be answered in JS for the media variant: CSS
+   // cannot stop a video from autoplaying. When the preference is set, the
+   // poster frame is shown and playback is left to the user.
+   const [reducedMotion, setReducedMotion] = useState(false);
+
+   useEffect(() => {
+      const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+      setReducedMotion(query.matches);
+      const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+      query.addEventListener("change", onChange);
+      return () => query.removeEventListener("change", onChange);
+   }, []);
+
+   if (HERO_VIDEO_URL) {
+      return (
+         <div className="hb-stage hb-stage--video" aria-hidden="true">
+            <video
+               className="hb-video"
+               autoPlay={!reducedMotion}
+               controls={reducedMotion}
+               muted
+               loop={!reducedMotion}
+               playsInline
+               preload={HERO_VIDEO_POSTER ? "metadata" : "none"}
+               poster={HERO_VIDEO_POSTER}
+            >
+               <source src={HERO_VIDEO_URL} />
+            </video>
+         </div>
+      );
+   }
+
    return (
       <div className="hb-stage hb-animate shapes illustration" aria-hidden="true">
          <svg

@@ -1,95 +1,67 @@
-"use client"
+// src/components/homes/home-two/PropertyPlanetHowItWorks.tsx
+//
+// Phase 20 redesign. The section was a floating white band on a white page
+// with a styled-jsx block of its own, so it read as a different website.
+// It now sits on the existing cream ($color-three) surface with the same
+// card shell, orange step markers and dashed connector used elsewhere —
+// styles live in _pp-ui.scss (.pp-how) alongside the card styles rather
+// than in a component-local <style jsx> block.
+//
+// No longer a client component: it has no interactivity, so it renders on
+// the server and ships no JS.
+//
+// The four steps describe what the platform actually does today — browse
+// published inventory, open a listing, send an enquiry that becomes a lead,
+// and get called back by the team. Nothing here claims functionality that
+// doesn't exist.
 
 const steps = [
    {
-      icon: "fa-regular fa-house-flag",
-      label: "Landowner / Developer / Seller",
-      desc: "Submits land, a plot, a villa or a commercial opportunity for review.",
+      title: "Explore",
+      desc: "Browse verified plots, land, homes and projects across Future City and Hyderabad's southern corridors.",
    },
    {
-      icon: "fa-regular fa-shield-check",
-      label: "Property Planet",
-      desc: "Verifies details, scores trust, and uses AI to match demand — backed by our advisory team.",
+      title: "Choose",
+      desc: "Open any listing for pricing, area, locality, media and project details before you commit to anything.",
    },
    {
-      icon: "fa-regular fa-users",
-      label: "Qualified Buyer",
-      desc: "Developer, company or individual buyer discovers a suitable, verified opportunity.",
+      title: "Enquire",
+      desc: "Send an enquiry from any property or project with just your phone number — add a message or a preferred time if you want to.",
    },
    {
-      icon: "fa-regular fa-handshake",
-      label: "Site Visit / Enquiry / Transaction",
-      desc: "Property Planet manages the advisory process through to closure.",
+      title: "Connect",
+      desc: "Our advisory team calls you back, answers questions and arranges a site visit when you're ready.",
    },
-]
+];
 
 const PropertyPlanetHowItWorks = () => {
    return (
       <div className="property-planet-how-it-works position-relative z-1 mt-150 xl-mt-120 md-mt-80">
          <div className="container">
-            <div className="title-one text-center mb-60 lg-mb-40 wow fadeInUp">
-               <h2 className="font-garamond">How Property Planet Works</h2>
-               <p className="fs-22 mt-xs">Not just a listing site — a verified, AI-assisted advisory layer between landowners and buyers.</p>
-            </div>
+            <div className="pp-how">
+               <div className="title-one text-center mb-50 lg-mb-40 wow fadeInUp">
+                  <h2 className="font-garamond">How Property Planet Works</h2>
+                  <p className="fs-22 mt-xs">
+                     Not just a listing site — a verified, advisory-backed route from browsing to a
+                     real conversation about a real property.
+                  </p>
+               </div>
 
-            <div className="how-it-works-row d-flex flex-wrap justify-content-between align-items-stretch">
-               {steps.map((step, i) => (
-                  <div key={i} className="how-it-works-step wow fadeInUp" data-wow-delay={`0.${i}s`}>
-                     <div className="step-number">{`0${i + 1}`}</div>
-                     <div className="step-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i className={step.icon}></i>
-                     </div>
-                     <h5 className="mt-20 mb-10">{step.label}</h5>
-                     <p className="fs-16 opacity-75 mb-0">{step.desc}</p>
-                     {i < steps.length - 1 && <i className="fa-solid fa-arrow-right-long step-arrow d-none d-lg-block"></i>}
-                  </div>
-               ))}
+               <ol className="pp-how__grid style-none">
+                  {steps.map((step, i) => (
+                     <li key={step.title} className="pp-how__step wow fadeInUp" data-wow-delay={`0.${i}s`}>
+                        <div className="pp-how__num" aria-hidden="true">
+                           {String(i + 1).padStart(2, "0")}
+                        </div>
+                        <h5 className="pp-how__title">{step.title}</h5>
+                        <p className="pp-how__desc">{step.desc}</p>
+                     </li>
+                  ))}
+               </ol>
             </div>
          </div>
-
-         <style jsx>{`
-            .how-it-works-row {
-               gap: 24px;
-            }
-            .how-it-works-step {
-               position: relative;
-               flex: 1 1 220px;
-               background: #fff;
-               border: 1px solid #F5EDE8;
-               border-radius: 12px;
-               padding: 30px 24px;
-               box-shadow: 0 10px 30px rgba(20, 20, 10, 0.04);
-            }
-            .step-number {
-               font-family: var(--font-garamond, serif);
-               font-size: 15px;
-               font-weight: 600;
-               opacity: 0.45;
-               margin-bottom: 14px;
-            }
-            .step-icon {
-               width: 54px;
-               height: 54px;
-               background: #FFF8F4;
-               font-size: 20px;
-               color: #FF6725;
-            }
-            .step-arrow {
-               position: absolute;
-               top: 50%;
-               right: -32px;
-               transform: translateY(-50%);
-               font-size: 18px;
-               opacity: 0.35;
-            }
-            @media (max-width: 991px) {
-               .how-it-works-row {
-                  flex-direction: column;
-               }
-            }
-         `}</style>
       </div>
-   )
-}
+   );
+};
 
-export default PropertyPlanetHowItWorks
+export default PropertyPlanetHowItWorks;

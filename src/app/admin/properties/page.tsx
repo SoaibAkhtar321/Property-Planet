@@ -65,7 +65,7 @@ export default async function AdminPropertiesPage({ searchParams }: { searchPara
                               <Link href={`/admin/properties/${p.id}`}>{p.title}</Link>
                            </td>
                            <td className="text-muted small">
-                              {p.property_type} · {p.listing_type}
+                              {p.property_type}
                               <div>{p.project_id ? "Project unit" : "Individual"}</div>
                            </td>
                            <td>₹{Number(p.price).toLocaleString("en-IN")}</td>

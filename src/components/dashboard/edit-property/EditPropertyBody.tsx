@@ -51,7 +51,7 @@ const EditPropertyBody = ({ property, media, error, onSubmit }: { property: Edit
 
             {fieldsEditable ? (
                <form action={onSubmit}>
-                  <Overview defaults={{ title: property.title, description: property.description, property_type: property.property_type, listing_type: property.listing_type, price: property.price }} />
+                  <Overview defaults={{ title: property.title, description: property.description, property_type: property.property_type, price: property.price }} />
                   <ListingDetails defaults={{ area: property.area, area_unit: property.area_unit, bedrooms: property.bedrooms, bathrooms: property.bathrooms }} />
                   <PropertyLocation defaults={{ city: property.city, locality: property.locality }} />
 

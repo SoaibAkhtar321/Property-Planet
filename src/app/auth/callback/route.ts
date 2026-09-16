@@ -19,6 +19,17 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET(request: NextRequest) {
    const { searchParams, origin } = new URL(request.url);
    const code = searchParams.get("code");
+   // Phase 20: where to land after a successful exchange, when the sign-in
+   // was started from somewhere that must be returned to — specifically the
+   // universal inquiry flow, which sends the buyer to Google mid-enquiry and
+   // needs them back on the same property/project to finish it.
+   //
+   // Open-redirect safety: only a same-origin RELATIVE path is honoured. A
+   // value must start with a single "/" and must not start with "//" or
+   // "/\\" (protocol-relative URLs, which browsers treat as absolute), so
+   // "?next=https://evil.example" and "?next=//evil.example" are both
+   // ignored and fall through to the normal role-based destination.
+   const nextParam = searchParams.get("next");
    const errorDescription = searchParams.get("error_description");
 
    if (errorDescription) {
@@ -40,6 +51,9 @@ export async function GET(request: NextRequest) {
       data: { user },
    } = await supabase.auth.getUser();
 
+   const safeNext =
+      nextParam && /^\/(?![/\\])/.test(nextParam) ? nextParam : null;
+
    let destination = "/dashboard/dashboard-index";
 
    if (user) {
@@ -49,7 +63,21 @@ export async function GET(request: NextRequest) {
          .eq("id", user.id)
          .maybeSingle();
 
-      if (profile?.role === "admin") {
+      if (safeNext) {
+         // An explicit return target wins for every role. Note this does not
+         // grant access to anything: /dashboard/** and /admin/** are still
+         // gated by src/middleware.ts and requireDashboardUser() on the
+         // request that follows, so an unauthorized "next" simply bounces.
+         //
+         // The phone-completion redirect below is deliberately skipped in
+         // this case: a buyer returning mid-enquiry is about to submit a
+         // phone number in the inquiry form itself, and createInquiry()
+         // backfills profiles.phone from it (see inquiryInput.ts). Sending
+         // them to /auth/complete-profile here would ask for the same number
+         // twice and lose the enquiry — the exact dashboard detour this
+         // change exists to remove.
+         destination = safeNext;
+      } else if (profile?.role === "admin") {
          destination = "/admin";
       } else if (profile?.role === "buyer" && !profile.phone) {
          destination = "/auth/complete-profile";

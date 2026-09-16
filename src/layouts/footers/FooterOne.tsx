@@ -2,11 +2,15 @@ import Image from "next/image"
 import Link from "next/link"
 import footer_data from "@/data/home-data/FooterData"
 import BrandLogo from "@/components/common/BrandLogo"
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF, SOCIAL_LINKS } from "@/lib/site/contact"
 
 import footerShape_1 from "@/assets/images/shape/shape_32.svg"
 import footerShape_2 from "@/assets/images/shape/shape_33.svg"
 
-const icon_1: string[] = ["facebook", "twitter", "instagram"]
+// Phase 20: the old placeholder row (facebook / twitter / instagram, all
+// pointing at "#") is replaced by the verified accounts in
+// src/lib/site/contact.ts. Unverified networks are simply not rendered
+// rather than linking nowhere.
 
 const FooterOne = ({ style }: any) => {
    return (
@@ -24,12 +28,27 @@ const FooterOne = ({ style }: any) => {
                            </div>
                            <p className="mb-20 lg-mb-15 md-mb-10">Hyderabad, Telangana</p>
                            <h6>CONTACT</h6>
-                           <Link href="mailto:hello@propertyplanet.in" className={`email tran3s mb-40 lg-mb-30 ${style ? "font-garamond" : "fs-24 text-decoration-underline"}`}>hello@propertyplanet.in</Link>
-                           <ul className="style-none d-flex align-items-center social-icon mb-30">
-                              {icon_1.map((icon, i) => (
-                                 <li key={i}><Link href="#"><i className={`fa-brands fa${style ? "" : "-square"}-${icon}`}></i></Link></li>
-                              ))}
-                           </ul>
+                           <Link href={`mailto:${CONTACT_EMAIL}`} className={`email tran3s mb-10 ${style ? "font-garamond" : "fs-24 text-decoration-underline"}`}>{CONTACT_EMAIL}</Link>
+                           <a href={CONTACT_PHONE_HREF} className="pp-call-link fs-20 mb-30 d-flex">
+                              <i className="bi bi-telephone-fill" aria-hidden="true"></i>
+                              <span>{CONTACT_PHONE_DISPLAY}</span>
+                           </a>
+                           {SOCIAL_LINKS.length > 0 && (
+                              <ul className="style-none d-flex align-items-center social-icon mb-30">
+                                 {SOCIAL_LINKS.map((social) => (
+                                    <li key={social.name}>
+                                       <a
+                                          href={social.href}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          aria-label={`Property Planet on ${social.name}`}
+                                       >
+                                          <i className={`fa-brands fa${style ? "" : "-square"}-${social.icon}`} aria-hidden="true"></i>
+                                       </a>
+                                    </li>
+                                 ))}
+                              </ul>
+                           )}
                            <p className="fs-14 opacity-75 lh-md">Property Planet is a technology and facilitation platform. Buyers should independently verify original title documents and legal status before any transaction.</p>
                         </div>
                         {style && <Image src={footerShape_1} alt="" className="lazy-img shapes shape_01" />}

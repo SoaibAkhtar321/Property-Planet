@@ -3,6 +3,7 @@ import Image from "next/image"
 
 import circleImg from "@/assets/images/icon/icon_39.svg"
 import ContactForm from "@/components/forms/ContactForm";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF, SOCIAL_LINKS } from "@/lib/site/contact";
 
 interface DataType {
    id: number;
@@ -10,26 +11,34 @@ interface DataType {
    title: string;
    address_1: string;
    address_2?: string;
+   /** Where address_1 should link to (mailto:, tel:, https:). */
+   href_1?: string;
 }
 
+// Phase 20: real contact details from src/lib/site/contact.ts, replacing
+// the template's placeholder "ask@gmail.com" / "+210 0000 0000" values.
+// The phone is a tel: link so it dials on mobile. Instagram is the one
+// verified social account; nothing else is invented.
 const address_data: DataType[] = [
    {
       id: 1,
-      title: "We’r always happy to help.",
-      address_1: "ask@gmail.com"
+      title: "We're always happy to help.",
+      address_1: CONTACT_EMAIL,
+      href_1: `mailto:${CONTACT_EMAIL}`,
    },
    {
       id: 2,
       class_name: "skew-line",
-      title: "Our hotline number",
-      address_1: "+210 0000 0000,",
-      address_2: "+210 0000 0000",
+      title: "Call us",
+      address_1: CONTACT_PHONE_DISPLAY,
+      href_1: CONTACT_PHONE_HREF,
    },
-   {
-      id: 3,
-      title: "Live chat",
-      address_1: "www.propertyplanet.in"
-   },
+   ...SOCIAL_LINKS.map((social, i) => ({
+      id: 3 + i,
+      title: `Follow us on ${social.name}`,
+      address_1: "@riality_of_hyderabad",
+      href_1: social.href,
+   })),
 ]
 
 const ContactArea = () => {
@@ -55,8 +64,19 @@ const ContactArea = () => {
                               <Image src={circleImg} alt="" className="lazy-img" /></div>
                            <div className="text">
                               <p className="fs-22">{item.title}</p>
-                              <Link href="#" className="tran3s">{item.address_1}</Link>
-                              {item.address_2 && <> { " " } <Link href="#" className="tran3s">{item.address_2}</Link></>}
+                              {item.href_1 ? (
+                                 <a
+                                    href={item.href_1}
+                                    className="tran3s"
+                                    {...(item.href_1.startsWith("http")
+                                       ? { target: "_blank", rel: "noopener noreferrer" }
+                                       : {})}
+                                 >
+                                    {item.address_1}
+                                 </a>
+                              ) : (
+                                 <span>{item.address_1}</span>
+                              )}
                            </div>
                         </div>
                      </div>

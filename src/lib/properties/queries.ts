@@ -4,7 +4,7 @@ import { mapProperty, propertyMediaPublicUrl, PropertyMediaRow, PropertyPublicRo
 import { matchesPlace } from "@/lib/places/matching";
 
 const PROPERTY_PUBLIC_COLUMNS =
-   "id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, city, locality, published_at, location_area, nearby_landmarks, approx_lat, approx_lng, project_id";
+   "id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, city, locality, published_at, location_area, nearby_landmarks, approx_lat, approx_lng, project_id, is_featured";
 
 async function attachMedia(supabase: Awaited<ReturnType<typeof createClient>>, rows: PropertyPublicRow[]): Promise<Property[]> {
    if (rows.length === 0) return [];
@@ -49,6 +49,16 @@ async function attachMedia(supabase: Awaited<ReturnType<typeof createClient>>, r
  * getPropertyBySlug() — and therefore the unit's own detail page, which
  * the Project -> Units flow links to — keeps working unchanged.
  */
+// Phase 20 — rental removal. Property Planet sells plots, land and homes;
+// rental is not a supported product. Rather than deleting the
+// `listing_type` column or any legacy 'rent' row (both explicitly out of
+// scope — historical data is preserved), every PUBLIC read below is
+// constrained to `listing_type = 'sale'`. A legacy rental record therefore
+// stays in the database, stays visible to its owner and to admins through
+// the admin/seller queries, and simply never surfaces in public discovery,
+// search, facets, place pages, related listings or a detail page.
+export const SALE_ONLY = "sale";
+
 export async function getPublishedProperties(): Promise<Property[]> {
    const supabase = await createClient();
 
@@ -56,6 +66,7 @@ export async function getPublishedProperties(): Promise<Property[]> {
       .from("property_public")
       .select(PROPERTY_PUBLIC_COLUMNS)
       .is("project_id", null)
+      .eq("listing_type", SALE_ONLY)
       .order("published_at", { ascending: false });
 
    if (error) {
@@ -83,6 +94,7 @@ export async function getPropertiesForPlace(place: string): Promise<Property[]> 
       .from("property_public")
       .select(PROPERTY_PUBLIC_COLUMNS)
       .is("project_id", null)
+      .eq("listing_type", SALE_ONLY)
       .order("published_at", { ascending: false })
       .limit(1000);
 
@@ -104,6 +116,7 @@ export async function getPropertyBySlug(slug: string): Promise<Property | null> 
       .from("property_public")
       .select(PROPERTY_PUBLIC_COLUMNS)
       .eq("slug", slug)
+      .eq("listing_type", SALE_ONLY)
       .maybeSingle();
 
    if (error) {
@@ -146,7 +159,11 @@ export async function getSimilarProperties(property: Property, limit = 2): Promi
    // unrelated standalone listings — showing Individual Properties here
    // would send a buyer out of the project flow entirely. An Individual
    // Property keeps the `project_id is null` invariant.
-   let query = supabase.from("property_public").select(PROPERTY_PUBLIC_COLUMNS).neq("slug", property.slug);
+   let query = supabase
+      .from("property_public")
+      .select(PROPERTY_PUBLIC_COLUMNS)
+      .eq("listing_type", SALE_ONLY)
+      .neq("slug", property.slug);
 
    query = property.projectId
       ? query.eq("project_id", property.projectId)
@@ -187,6 +204,7 @@ export async function getFavouriteProperties(userId: string): Promise<Property[]
    const { data, error } = await supabase
       .from("property_public")
       .select(PROPERTY_PUBLIC_COLUMNS)
+      .eq("listing_type", SALE_ONLY)
       .in("id", ids);
 
    if (error || !data) {
@@ -366,7 +384,9 @@ export async function searchPublishedProperties(params: PropertySearchParams = {
       .from("property_public")
       .select(PROPERTY_PUBLIC_COLUMNS, { count: "exact" })
       // The Phase 2 separation invariant — see the section comment above.
-      .is("project_id", null);
+      .is("project_id", null)
+      // Rental removal (Phase 20): public search is sale-only. See SALE_ONLY.
+      .eq("listing_type", SALE_ONLY);
 
    const keyword = params.q ? sanitizeKeyword(params.q) : "";
    if (keyword) {
@@ -376,9 +396,10 @@ export async function searchPublishedProperties(params: PropertySearchParams = {
    }
 
    if (params.propertyType) query = query.ilike("property_type", params.propertyType);
-   if (params.listingType === "sale" || params.listingType === "rent") {
-      query = query.eq("listing_type", params.listingType);
-   }
+   // params.listingType is no longer honoured: the public listing is
+   // sale-only and the filter UI that used to set it has been removed. A
+   // stale bookmarked ?listingType=rent URL therefore returns the normal
+   // sale results instead of rental inventory.
    if (params.city) query = query.ilike("city", params.city);
    if (params.locality) query = query.ilike("locality", params.locality);
 
@@ -455,6 +476,7 @@ export async function getPropertyFacets(): Promise<PropertyFacets> {
       .from("property_public")
       .select("property_type, listing_type, city, locality, price")
       .is("project_id", null)
+      .eq("listing_type", SALE_ONLY)
       .limit(1000);
 
    if (error || !data) {
@@ -482,4 +504,41 @@ export async function getPropertyFacets(): Promise<PropertyFacets> {
       minPrice: prices.length > 0 ? Math.min(...prices) : 0,
       maxPrice: prices.length > 0 ? Math.max(...prices) : 0,
    };
+}
+
+
+/**
+ * Published, sale-only, standalone properties an admin has marked Featured.
+ * Backs the homepage Featured section alongside getFeaturedProjects().
+ *
+ * Featured is a PLACEMENT, not a move — this is an additional read, and
+ * nothing about it removes the property from getPublishedProperties(),
+ * searchPublishedProperties(), its locality page or its detail page. The
+ * same row is simply also eligible here.
+ *
+ * Eligibility is enforced by the database, not by this query: the flag is
+ * admin-only (properties_featured_admin_only, 0020) and `property_public`
+ * is defined as `where status = 'published'`, so a draft, pending, rejected
+ * or archived listing cannot appear here even if its flag were somehow set.
+ * `project_id is null` keeps Project Units out of a standalone-property
+ * placement, matching the separation rule used everywhere else.
+ */
+export async function getFeaturedProperties(limit = 3): Promise<Property[]> {
+   const supabase = await createClient();
+
+   const { data, error } = await supabase
+      .from("property_public")
+      .select(PROPERTY_PUBLIC_COLUMNS)
+      .eq("is_featured", true)
+      .eq("listing_type", SALE_ONLY)
+      .is("project_id", null)
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .limit(limit);
+
+   if (error) {
+      console.error("Failed to load featured properties:", error.message);
+      return [];
+   }
+
+   return attachMedia(supabase, (data ?? []) as PropertyPublicRow[]);
 }

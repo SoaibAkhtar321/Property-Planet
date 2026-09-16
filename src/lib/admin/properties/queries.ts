@@ -28,6 +28,8 @@ export interface AdminPropertyListRow {
    owner_name: string | null;
    /** NULL => Individual Property; set => Project Unit (0007). */
    project_id: string | null;
+   /** Admin-only Featured placement flag (0020). */
+   is_featured: boolean;
    created_at: string;
    updated_at: string;
 }
@@ -41,7 +43,7 @@ export async function getPropertiesForModeration(
    const { data, error } = await supabase
       .from("properties")
       .select(
-         "id, title, slug, property_type, listing_type, price, status, city, locality, owner_id, project_id, created_at, updated_at"
+         "id, title, slug, property_type, listing_type, price, status, city, locality, owner_id, project_id, is_featured, created_at, updated_at"
       )
       .in("status", statuses)
       .order("created_at", { ascending: false });
@@ -71,6 +73,7 @@ export interface AdminPropertyDetail {
    slug: string;
    property_type: string;
    listing_type: string;
+   is_featured: boolean;
    price: number;
    area: number | null;
    area_unit: string | null;
@@ -108,7 +111,7 @@ export async function getPropertyForModeration(id: string): Promise<AdminPropert
    const { data: property, error } = await supabase
       .from("properties")
       .select(
-         "id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, status, city, locality, rejection_reason, created_at, updated_at, published_at, project_id, owner_id"
+         "id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, status, city, locality, rejection_reason, created_at, updated_at, published_at, project_id, owner_id, is_featured"
       )
       .eq("id", id)
       .maybeSingle();

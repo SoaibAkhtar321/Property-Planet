@@ -1,4 +1,5 @@
 import Link from "next/link";
+import InquiryButton from "@/components/inquiry/InquiryButton";
 import { ProjectUnit } from "../data/types";
 
 // Units / Plots list on the public project detail page.
@@ -85,14 +86,30 @@ const Units = ({
                                  <span className="badge bg-success">{unit.availability}</span>
                               </td>
                               <td className="text-nowrap">
-                                 <Link
-                                    href={`/properties/${unit.slug}`}
-                                    className="fw-500"
-                                    aria-label={`View and enquire about ${unit.title}`}
-                                 >
-                                    View &amp; enquire
-                                    <i className="bi bi-arrow-up-right ms-1" aria-hidden="true"></i>
-                                 </Link>
+                                 {/* Phase 20: a unit can now be enquired about
+                                     without leaving the project page. This is
+                                     the same universal dialog and the same
+                                     createInquiry() action the unit's own
+                                     detail page uses — which copies the parent
+                                     project_id onto the lead, so a unit
+                                     enquiry keeps both property and project
+                                     context. */}
+                                 <div className="d-inline-flex align-items-center gap-3">
+                                    <Link
+                                       href={`/properties/${unit.slug}`}
+                                       className="fw-500"
+                                       aria-label={`See details for ${unit.title}`}
+                                    >
+                                       See Details
+                                       <i className="bi bi-arrow-up-right ms-1" aria-hidden="true"></i>
+                                    </Link>
+                                    <InquiryButton
+                                       kind="property"
+                                       id={unit.id}
+                                       title={unit.title}
+                                       className="pp-card-btn pp-card-btn--primary py-1 px-3"
+                                    />
+                                 </div>
                               </td>
                            </tr>
                         ))}
