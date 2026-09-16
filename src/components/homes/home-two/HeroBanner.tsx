@@ -47,7 +47,11 @@ const HeroBanner = () => {
                      </div>
                   </div>
 
-                  <DropdownTwo />
+                  <div className="row">
+                     <div className="col-xxl-9 col-xl-8 col-lg-9 col-md-10">
+                        <DropdownTwo />
+                     </div>
+                  </div>
                </div>
             </div>
             <HeroBuildAnimation />

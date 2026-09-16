@@ -57,7 +57,7 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
                         </ul>
                      </div>
 
-                     <nav className="navbar navbar-expand-lg p0 ms-lg-5 order-lg-2">
+                     <nav className="navbar navbar-expand-lg p0 ms-lg-4 order-lg-2">
                         <button className="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse"
                            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                            aria-label="Toggle navigation">
