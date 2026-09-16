@@ -29,6 +29,37 @@
     }
 }
 
+// Explore Properties listing: PropertyCard's own column class
+// (.col-lg-4 = 3-per-row) is shared with the homepage and dashboard, so it
+// isn't changed directly. This scoped override bumps just this page's grid
+// to 4-per-row on wide screens; below xl it stays 3, then 2, then 1 as
+// Bootstrap already handles.
+.property-grid-4 {
+    @media (min-width: 992px) {
+        > [class*="col-"] {
+            flex: 0 0 25% !important;
+            max-width: 25% !important;
+        }
+    }
+}
+
+// Featured Opportunities grid: the old .grid-2column class only sizes
+// children carrying an .isotop-item class, which ProjectCard never had —
+// so cards were rendering full-width, one per row. This is a real CSS
+// Grid instead, so it works on plain children with no extra markup.
+.grid-4column-auto {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 30px;
+    row-gap: 30px;
+    @media (max-width: 991.98px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    @media (max-width: 575.98px) {
+        grid-template-columns: 1fr;
+    }
+}
+
 // Filter
 .filter-nav-one {
     .isotop-menu-wrapper {

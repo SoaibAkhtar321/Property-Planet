@@ -77,7 +77,7 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
       <div className="property-listing-six bg-pink-two pt-110 md-pt-80 pb-150 xl-pb-120 mt-150 xl-mt-120">
          <div className="container container-large">
             <div className="row">
-               <div className="col-lg-8">
+               <div className="col-lg-9">
                   <div className="ps-xxl-5">
                      {/* Batch 3: "Explore Properties" is the site's own
                          existing name for this destination (see the hero
@@ -118,7 +118,7 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
                         </div>
                      </div>
 
-                     <div className="row gx-xxl-5">
+                     <div className="row gx-xxl-5 property-grid-4">
                         {items.map((item) => (
                            <PropertyCard key={item.id} item={item} />
                         ))}
@@ -171,7 +171,7 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
                   </div>
                </div>
 
-               <div className="col-lg-4 order-lg-first">
+               <div className="col-lg-3 order-lg-first">
                   <PropertyFilters
                      propertyTypes={facets.propertyTypes}
                      cities={facets.cities}

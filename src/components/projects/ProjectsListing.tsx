@@ -28,7 +28,7 @@ const ProjectsListing = ({ items }: { items: Project[] }) => {
             </div>
 
             {items.length > 0 ? (
-               <div id="canonical-projects-grid" className="grid-2column pt-10">
+               <div id="canonical-projects-grid" className="grid-4column-auto pt-10">
                   {items.map((item) => (
                      <ProjectCard key={item.id} item={item} />
                   ))}

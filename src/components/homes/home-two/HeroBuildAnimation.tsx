@@ -92,6 +92,10 @@ const HeroBuildAnimation = () => {
                   <stop offset="0%" stopColor="#23505F" />
                   <stop offset="100%" stopColor="#0F2A37" />
                </linearGradient>
+               <linearGradient id="hbRoofSide" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#173C48" />
+                  <stop offset="100%" stopColor="#0A1F29" />
+               </linearGradient>
                <linearGradient id="hbGlass" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stopColor="#CFF3FB" />
                   <stop offset="100%" stopColor="#7FD7E8" />
@@ -201,9 +205,14 @@ const HeroBuildAnimation = () => {
                   <path className="hb-floorline" d="M346 306 H626 L706 286" stroke="#0F2A37" strokeOpacity="0.14" strokeWidth="3" fill="none" />
                </g>
 
-               {/* Roof */}
+               {/* Roof — hip roof drawn as two separate sloped panels that
+                   share the ridge edge (486,178)-(566,158). The previous
+                   version was a single 6-point path where the ridge point
+                   was plotted out of order, so the fill crossed over itself
+                   ("bowtie") at the top instead of forming clean slopes. */}
                <g className="hb-roof">
-                  <path d="M330 248 L486 178 L642 248 L722 228 L566 158 L410 228 Z" fill="url(#hbRoof)" />
+                  <path d="M330 248 L486 178 L566 158 L410 228 Z" fill="url(#hbRoof)" />
+                  <path d="M486 178 L642 248 L722 228 L566 158 Z" fill="url(#hbRoofSide)" />
                   <path d="M330 248 H642 L722 228" stroke="#0F2A37" strokeWidth="6" fill="none" strokeLinejoin="round" />
                </g>
 
@@ -222,7 +231,7 @@ const HeroBuildAnimation = () => {
                {/* Exterior finishing + landscaping + entrance lighting */}
                <g className="hb-finish">
                   <path d="M346 478 H626 V488 H346 Z" fill="#0F2A37" opacity="0.10" />
-                  <rect x="346" y="236" width="360" height="12" rx="4" fill="#FF6725" opacity="0.85" transform="translate(0 -4)" />
+                  <rect x="346" y="243" width="280" height="6" rx="2" fill="#FF6725" opacity="0.9" />
                   <path d="M546 478 h80 v10 h-92 z" fill="#E7DAD1" />
                   <path d="M534 488 h104 v10 h-116 z" fill="#DCCEC5" />
                   {/* warm light spill from the entrance */}

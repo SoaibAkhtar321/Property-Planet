@@ -9,7 +9,7 @@
 // the session, never from client input.
 
 import { revalidatePath } from "next/cache";
-import { requireDashboardUser } from "@/lib/auth/session";
+import { getAuthContext } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
 export interface ActionResult {
@@ -23,7 +23,18 @@ export async function addFavourite(propertyId: string): Promise<ActionResult> {
       return { success: false, error: "A property is required." };
    }
 
-   const ctx = await requireDashboardUser();
+   // Note: intentionally getAuthContext() here, not requireDashboardUser().
+   // requireDashboardUser() calls redirect(), which throws a special
+   // navigation signal that Next.js intercepts before it reaches this
+   // action's caller when the action is invoked directly (as it is here,
+   // from a button onClick) rather than via a <form action>. That left the
+   // client's `await addFavourite(...)` resolving to `undefined` instead
+   // of an ActionResult, crashing on `result.success`. Checking auth
+   // without redirecting lets this always return a real ActionResult.
+   const ctx = await getAuthContext();
+   if (!ctx) {
+      return { success: false, error: "Sign in to save favourites." };
+   }
    const supabase = await createClient();
 
    const { data: property, error: propertyError } = await supabase
@@ -57,7 +68,10 @@ export async function removeFavourite(propertyId: string): Promise<ActionResult>
       return { success: false, error: "A property is required." };
    }
 
-   const ctx = await requireDashboardUser();
+   const ctx = await getAuthContext();
+   if (!ctx) {
+      return { success: false, error: "Sign in to save favourites." };
+   }
    const supabase = await createClient();
 
    const { error } = await supabase

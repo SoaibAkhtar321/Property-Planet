@@ -32,7 +32,7 @@ const FavouriteButton = ({ propertyId, initiallyFavourited = false, className }:
 
       startTransition(async () => {
          const result = next ? await addFavourite(propertyId) : await removeFavourite(propertyId);
-         if (!result.success) {
+         if (!result?.success) {
             // Revert optimistic update on failure.
             setIsFavourited(!next);
          }
