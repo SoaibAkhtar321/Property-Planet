@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
-import ProjectCard from "@/components/projects/ProjectCard"
-import PropertyCard from "@/components/properties/PropertyCard"
+import ProjectGridWithToggle from "@/components/projects/ProjectGridWithToggle"
+import PropertyGridWithToggle from "@/components/properties/PropertyGridWithToggle"
 import { getFeaturedProjects } from "@/lib/projects/queries"
 import { getFeaturedProperties } from "@/lib/properties/queries"
 
@@ -27,24 +27,21 @@ import propertyShape from "@/assets/images/shape/shape_17.svg"
 // not after the next build.
 export const dynamic = "force-dynamic";
 
-// Two full rows (col-lg-4 => 3 per row) per half of this section, same as
-// ExploreProperties. Fetching one extra beyond the 6 shown is a cheap way
-// to know whether a "see more" link is warranted, without a second count
-// query — the 7th row, if present, is dropped and only its existence is
-// used.
-const HOMEPAGE_FEATURED_LIMIT = 6;
+// Same reveal pattern as "Explore the Places with Most Properties"
+// (BLockFeatureOne) and ExploreProperties: 4 per row, 2 rows (8) visible
+// by default per half of this section, each with its own in-place "See
+// More" toggle — rather than one combined "see more" link that only ever
+// pointed at /projects (which did nothing for a hidden featured
+// property). A generous fetch cap means the toggle has everything it
+// needs client-side already; only a genuine overflow past that cap falls
+// back to a plain link.
+const HOMEPAGE_FEATURED_FETCH_LIMIT = 60;
 
 const Property = async () => {
-   const [featuredProjectsRaw, featuredPropertiesRaw] = await Promise.all([
-      getFeaturedProjects(HOMEPAGE_FEATURED_LIMIT + 1),
-      getFeaturedProperties(HOMEPAGE_FEATURED_LIMIT + 1),
+   const [featuredProjects, featuredProperties] = await Promise.all([
+      getFeaturedProjects(HOMEPAGE_FEATURED_FETCH_LIMIT),
+      getFeaturedProperties(HOMEPAGE_FEATURED_FETCH_LIMIT),
    ]);
-
-   const hasMoreProjects = featuredProjectsRaw.length > HOMEPAGE_FEATURED_LIMIT;
-   const hasMoreProperties = featuredPropertiesRaw.length > HOMEPAGE_FEATURED_LIMIT;
-   const featuredProjects = featuredProjectsRaw.slice(0, HOMEPAGE_FEATURED_LIMIT);
-   const featuredProperties = featuredPropertiesRaw.slice(0, HOMEPAGE_FEATURED_LIMIT);
-   const hasMore = hasMoreProjects || hasMoreProperties;
 
    const hasFeatured = featuredProjects.length > 0 || featuredProperties.length > 0;
 
@@ -59,23 +56,8 @@ const Property = async () => {
 
                {hasFeatured ? (
                   <>
-                     {featuredProperties.length > 0 && (
-                        <div className="row gx-xxl-5">
-                           {featuredProperties.map((item) => (
-                              <PropertyCard key={item.id} item={item} />
-                           ))}
-                        </div>
-                     )}
-
-                     {featuredProjects.length > 0 && (
-                        <div className="row gx-xxl-5">
-                           {featuredProjects.map((item) => (
-                              <div key={item.id} className="col-lg-4 col-md-6 d-flex">
-                                 <ProjectCard item={item} />
-                              </div>
-                           ))}
-                        </div>
-                     )}
+                     {featuredProperties.length > 0 && <PropertyGridWithToggle items={featuredProperties} />}
+                     {featuredProjects.length > 0 && <ProjectGridWithToggle items={featuredProjects} />}
                   </>
                ) : (
                   /* Polished empty state rather than placeholder listings —
@@ -90,13 +72,6 @@ const Property = async () => {
                      <Link href="/properties" className="btn-four d-inline-flex">
                         Explore Properties
                      </Link>
-                  </div>
-               )}
-
-               {hasMore && (
-                  <div className="section-btn text-center md-mt-60">
-                     <Link href="/projects" className="btn-eight"><span>See More</span> <i
-                        className="bi bi-arrow-up-right"></i></Link>
                   </div>
                )}
             </div>

@@ -20,7 +20,16 @@ import InquiryButton from "@/components/inquiry/InquiryButton";
 // secondary. Both are real link/button elements with accessible names that
 // include the property title.
 
-const PropertyCard = ({ item, isFavourited }: { item: Property; isFavourited?: boolean }) => {
+const PropertyCard = ({
+   item,
+   isFavourited,
+   columnClassName = "col-md-6 col-lg-4",
+}: {
+   item: Property;
+   isFavourited?: boolean;
+   /** Grid column classes for the wrapping div. Defaults to 3-per-row (col-lg-4); pass "col-md-6 col-lg-3" for a 4-per-row grid. */
+   columnClassName?: string;
+}) => {
    const facts = [
       item.sqft ? `${item.sqft} sqft` : null,
       typeof item.bed === "number" ? `${item.bed} bed` : null,
@@ -28,7 +37,7 @@ const PropertyCard = ({ item, isFavourited }: { item: Property; isFavourited?: b
    ].filter(Boolean) as string[];
 
    return (
-      <div className="col-md-6 col-lg-4 d-flex mb-30 wow fadeInUp">
+      <div className={`${columnClassName} d-flex mb-30 wow fadeInUp`}>
          <div className="pp-card h-100 w-100">
             <div className="pp-card__media">
                {item.tag && <span className="pp-card__tag">{item.tag}</span>}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import PropertyCard from "@/components/properties/PropertyCard";
+import PropertyGridWithToggle from "@/components/properties/PropertyGridWithToggle";
 import { searchPublishedProperties } from "@/lib/properties/queries";
 
 // Batch 3: the homepage's counterpart to Property.tsx ("Featured
@@ -18,23 +18,22 @@ import { searchPublishedProperties } from "@/lib/properties/queries";
 // Opportunities" as the two public discovery routes.
 export const dynamic = "force-dynamic";
 
-// Two full rows at 3-per-row (PropertyCard is col-lg-4) before the teaser
-// falls back to "see more" instead of listing every published property.
-// The old pageSize of 3 meant this teaser could only ever show one row —
-// publishing a 4th property didn't lose the 3 that came before it (they're
-// still published, just not "newest" anymore), it just bumped the oldest
-// of the 3 out of a single-row window. Showing 6 gives that window room
-// before anything drops off, and `total` (already returned by
-// searchPublishedProperties) tells us whether there's more to point to.
-const HOMEPAGE_PROPERTY_LIMIT = 6;
+// Same reveal pattern as "Explore the Places with Most Properties"
+// (BLockFeatureOne): 4 per row, 2 rows (8) visible by default, then an
+// in-place "See More" toggle instead of a link away. searchPublishedProperties
+// caps pageSize at 60, so that's what's fetched up front and handed to the
+// client toggle grid — no per-click request. If there's ever more than
+// that fetched cap (checked against `total`), a plain link to the full
+// /properties page covers the remainder.
+const HOMEPAGE_PROPERTY_FETCH_LIMIT = 60;
 
 const ExploreProperties = async () => {
    const { items, total } = await searchPublishedProperties({
       sort: "newest",
       page: 1,
-      pageSize: HOMEPAGE_PROPERTY_LIMIT,
+      pageSize: HOMEPAGE_PROPERTY_FETCH_LIMIT,
    });
-   const hasMore = total > HOMEPAGE_PROPERTY_LIMIT;
+   const hasMoreBeyondFetch = total > items.length;
 
    return (
       <div className="property-listing-two position-relative z-1 mt-150 xl-mt-120 pb-150 xl-pb-120 lg-pb-80">
@@ -49,11 +48,7 @@ const ExploreProperties = async () => {
                </div>
 
                {items.length > 0 ? (
-                  <div className="row gx-xxl-5">
-                     {items.map((item) => (
-                        <PropertyCard key={item.id} item={item} />
-                     ))}
-                  </div>
+                  <PropertyGridWithToggle items={items} />
                ) : (
                   <p className="fs-20 mt-30">
                      No standalone properties are published yet. Check back soon — new Property Planet listings will
@@ -61,10 +56,10 @@ const ExploreProperties = async () => {
                   </p>
                )}
 
-               {hasMore && (
+               {hasMoreBeyondFetch && (
                   <div className="section-btn text-center md-mt-60">
                      <Link href="/properties" className="btn-eight">
-                        <span>See More Properties</span> <i className="bi bi-arrow-up-right"></i>
+                        <span>Browse All Properties</span> <i className="bi bi-arrow-up-right"></i>
                      </Link>
                   </div>
                )}
