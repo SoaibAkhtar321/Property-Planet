@@ -73,7 +73,7 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
 
             {property.project && (
                <div className="mt-30">
-                  <Link href={`/projects/${property.project.slug}`} className="btn-four">
+                  <Link href={`/projects/${property.project.slug}`} className="pp-card-btn pp-card-btn--primary px-4">
                      View {property.project.title}
                      <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
                   </Link>

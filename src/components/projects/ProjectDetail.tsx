@@ -64,8 +64,8 @@ const ProjectDetail = ({
    return (
       <div className="project-details-one mt-150 xl-mt-100 mb-170 xl-mb-100">
          <div className="container">
-            <div className="row gx-xxl-5">
-               <div className="col-lg-6 order-lg-first">
+            <div className="row gx-xxl-5 align-items-start">
+               <div className="col-lg-6 order-lg-first project-gallery-sticky">
                   {project.images.length > 0 ? (
                      project.images.map((img, index) => (
                         <figure key={index} className="image-wrapper">
@@ -188,7 +188,7 @@ const ProjectDetail = ({
                          enquiry. Reuses the existing form/section — no new
                          enquiry UI or system. */}
                      <div className="text-center mt-40">
-                        <Link href="#project-enquiry" className="btn-four">
+                        <Link href="#project-enquiry" className="pp-card-btn pp-card-btn--primary px-4">
                            Send Inquiry <i className="bi bi-arrow-up-right ms-2"></i>
                         </Link>
                      </div>

@@ -248,6 +248,21 @@
 }
 // Project Details One
 .project-details-one {
+    // The image column and the details column next to it (title, tags,
+    // developer/location/units info card, enquiry box) rarely have equal
+    // height — a project with one photo but a long info card left a big
+    // blank gap under the image while the details column kept going.
+    // Sticking the image in place while the page scrolls past the taller
+    // column uses that space instead of leaving it empty. Only above the
+    // lg breakpoint, matching where these are side-by-side columns at all
+    // (below lg they stack, so nothing should stick).
+    @media (min-width: 992px) {
+        .project-gallery-sticky {
+            position: sticky;
+            top: 110px;
+            align-self: flex-start;
+        }
+    }
     // Same sizing as .theme-details-one .property-location .map-banner
     // (property detail page — see _details_page.scss). ProjectDetail.tsx
     // reuses the identical property-location/wrapper/map-banner markup
