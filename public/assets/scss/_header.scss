@@ -51,7 +51,7 @@
     // box-shadow: 0 13px 35px -12px rgb(35 35 35 / 10%);
     @include transition(0.4s);
     .gap-one {
-        padding: 33px 40px;
+        padding: 24px 40px;
     }
     .gap-two {
         padding: 24px 40px;
@@ -245,6 +245,25 @@
 
 // Mega Menu
 .theme-main-menu .navbar {position: static;}
+// The right-hand cluster (phone / login / menu) was overflowing past the
+// viewport edge on real laptop widths -- the combined natural width of
+// every header element (logo + full nav + phone + login button + menu
+// button, each with its own padding/gaps) is simply wider than the
+// available space once you subtract the header's own horizontal padding.
+// Reclaim width instead of adding any: trim the header's own left/right
+// padding a bit, and shrink the "Menu" button specifically in the header
+// (it's the widest, least essential-to-size element here) -- nothing
+// else changes shape or position.
+@media (min-width: 992px) {
+    .theme-main-menu .inner-content.gap-one {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+    .theme-main-menu .right-widget .btn-one {
+        min-width: 0;
+        padding: 0 18px;
+    }
+}
 .navbar [class*="mega-dropdown"] .dropdown-menu {
     padding: 0 0 15px; 
     margin: 0; 
@@ -307,8 +326,11 @@
         background: $color-one;
         color: #fff;
         font-weight: 500;
-        padding: 12px 22px;
-        border-radius: 40px;
+        padding: 0 20px;
+        line-height: 48px;
+        border-radius: 8px;
+        white-space: nowrap;
+        flex-shrink: 0;
         i {
             margin-right: 8px;
         }

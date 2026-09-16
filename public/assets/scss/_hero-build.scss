@@ -313,8 +313,11 @@ $hb-cycle: 18s;
    overflow: hidden;
 
    .hb-stage {
-      /* Bleed to the bottom-right corner of the viewport. */
-      bottom: 0;
+      /* Anchor from the top instead of the bottom, so the house sits in
+         the blank band under the header with clear breathing room
+         between them, rather than crowding the header's bottom edge. */
+      top: clamp(140px, 20vh, 260px);
+      bottom: auto;
       right: 0;
       z-index: 0;
    }
