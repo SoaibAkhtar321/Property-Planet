@@ -134,11 +134,13 @@ export function mapProject(row: ProjectPublicRow, media: ResolvedProjectMedia[],
       })
       .map((m) => m.publicUrl);
 
-   const masterPlanImages = media
+   const masterPlanRows = media
       .filter((m) => m.media_type === "master_plan")
-      .sort((a, b) => a.sort_order - b.sort_order)
-      .map((m) => m.publicUrl);
-
+      .sort((a, b) => a.sort_order - b.sort_order);
+   const primaryMasterPlanRows = masterPlanRows.filter((m) => m.is_primary);
+   const masterPlanImages = (primaryMasterPlanRows.length === 1 ? primaryMasterPlanRows : masterPlanRows).map(
+      (m) => m.publicUrl
+   );
    const floorPlanImages = media
       .filter((m) => m.media_type === "floor_plan")
       .sort((a, b) => a.sort_order - b.sort_order)

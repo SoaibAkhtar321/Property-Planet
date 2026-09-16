@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Project, ProjectUnit } from "./data/types";
 import Location from "./detail/Location";
 import Landmarks from "./detail/Landmarks";
@@ -179,6 +180,17 @@ const ProjectDetail = ({
                            <VideoTour project={project} />
                            <Documents project={project} />
                         </div>
+                     </div>
+                     {/* Jump-link to the existing enquiry form (same anchor
+                         Units.tsx already links to as plain text) so a buyer
+                         who has scrolled through location/master plan/floor
+                         plan doesn't have to scroll back up to send an
+                         enquiry. Reuses the existing form/section — no new
+                         enquiry UI or system. */}
+                     <div className="text-center mt-40">
+                        <Link href="#project-enquiry" className="btn-four">
+                           Send Inquiry <i className="bi bi-arrow-up-right ms-2"></i>
+                        </Link>
                      </div>
                   </div>
                </div>
