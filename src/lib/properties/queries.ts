@@ -267,8 +267,28 @@ export async function getOwnActivePropertyListings(): Promise<SellerPropertyRow[
    return (data ?? []) as SellerPropertyRow[];
 }
 
+export interface OwnPropertyLocation {
+   location_area: string | null;
+   nearby_landmarks: string | null;
+   exact_address: string;
+   exact_lat: number;
+   exact_lng: number;
+}
+
 /** One of the caller's own properties by id, or null if it doesn't exist / isn't theirs. */
-export async function getOwnPropertyById(id: string): Promise<SellerPropertyRow & { description: string | null; area: number | string | null; area_unit: string | null; bedrooms: number | null; bathrooms: number | null } | null> {
+export async function getOwnPropertyById(
+   id: string
+): Promise<
+   | (SellerPropertyRow & {
+        description: string | null;
+        area: number | string | null;
+        area_unit: string | null;
+        bedrooms: number | null;
+        bathrooms: number | null;
+        location: OwnPropertyLocation | null;
+     })
+   | null
+> {
    const supabase = await createClient();
    const {
       data: { user },
@@ -284,7 +304,29 @@ export async function getOwnPropertyById(id: string): Promise<SellerPropertyRow 
       .maybeSingle();
 
    if (error || !data) return null;
-   return data;
+
+   // "owners can read own property location" (0002) — RLS lets the owner
+   // read exact_lat/exact_lng/exact_address for their own row even though
+   // those columns are never granted to buyers/anon. Used only to
+   // pre-fill the edit form; never rendered on any public page.
+   const { data: location } = await supabase
+      .from("property_location")
+      .select("area, nearby_landmarks, exact_address, exact_lat, exact_lng")
+      .eq("property_id", id)
+      .maybeSingle();
+
+   return {
+      ...data,
+      location: location
+         ? {
+              location_area: location.area,
+              nearby_landmarks: location.nearby_landmarks,
+              exact_address: location.exact_address,
+              exact_lat: location.exact_lat,
+              exact_lng: location.exact_lng,
+           }
+         : null,
+   };
 }
 
 export interface OwnPropertyMediaRow {

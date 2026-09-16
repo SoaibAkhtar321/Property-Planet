@@ -195,6 +195,26 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
       return { success: false, error: "Title must be at least 3 characters." };
    }
 
+   const city = textOrNull(formData.get("city"));
+   const locality = textOrNull(formData.get("locality"));
+
+   // Exact address + coordinates are required from here on (see
+   // PropertyLocation.tsx). Without a property_location row, a listing
+   // has no approx_lat/approx_lng and its public detail page renders no
+   // map at all — this used to be possible to skip, which is exactly how
+   // listings ended up published with no map. Validated before any write
+   // so a half-saved property never results from a partially-filled form.
+   const exactAddress = textOrNull(formData.get("exact_address"));
+   const exactLat = numberOrNull(formData.get("exact_lat"));
+   const exactLng = numberOrNull(formData.get("exact_lng"));
+
+   if (!exactAddress || exactLat === null || exactLng === null) {
+      return { success: false, error: "Full address, latitude and longitude are all required." };
+   }
+   if (exactLat < -90 || exactLat > 90 || exactLng < -180 || exactLng > 180) {
+      return { success: false, error: "Latitude must be between -90 and 90, longitude between -180 and 180." };
+   }
+
    const { error } = await supabase
       .from("properties")
       .update({
@@ -210,13 +230,49 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
          bedrooms: numberOrNull(formData.get("bedrooms")),
          bathrooms: numberOrNull(formData.get("bathrooms")),
          description: textOrNull(formData.get("description")),
-         city: textOrNull(formData.get("city")),
-         locality: textOrNull(formData.get("locality")),
+         city,
+         locality,
       })
       .eq("id", id);
 
    if (error) {
       return { success: false, error: error.message };
+   }
+
+   // Upsert property_location. approx_lat/approx_lng are only set here as
+   // the NOT NULL placeholder on first insert — apply_location_jitter()
+   // (0003) immediately overwrites them server-side with a randomized
+   // 150-500m offset on both INSERT and UPDATE OF exact_lat/exact_lng, so
+   // the real coordinate is never what ends up in the public column. RLS
+   // ("owners can write/update own property location", 0002) is what
+   // actually lets this succeed only for the property's own owner.
+   const { data: existingLocation } = await supabase
+      .from("property_location")
+      .select("property_id")
+      .eq("property_id", id)
+      .maybeSingle();
+
+   const locationPayload = {
+      city,
+      locality,
+      area: textOrNull(formData.get("location_area")),
+      nearby_landmarks: textOrNull(formData.get("nearby_landmarks")),
+      exact_address: exactAddress,
+      exact_lat: exactLat,
+      exact_lng: exactLng,
+   };
+
+   const { error: locationError } = existingLocation
+      ? await supabase.from("property_location").update(locationPayload).eq("property_id", id)
+      : await supabase.from("property_location").insert({
+           property_id: id,
+           ...locationPayload,
+           approx_lat: exactLat,
+           approx_lng: exactLng,
+        });
+
+   if (locationError) {
+      return { success: false, error: locationError.message };
    }
 
    revalidatePath("/dashboard/properties-list");

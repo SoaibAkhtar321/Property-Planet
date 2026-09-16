@@ -1,0 +1,421 @@
+diff --git a/src/components/dashboard/add-property/PropertyLocation.tsx b/src/components/dashboard/add-property/PropertyLocation.tsx
+index 2c1e221..008886d 100644
+--- a/src/components/dashboard/add-property/PropertyLocation.tsx
++++ b/src/components/dashboard/add-property/PropertyLocation.tsx
+@@ -1,12 +1,21 @@
+-// Matches properties.city / properties.locality (0002). The richer
+-// property_location table (exact/approx lat-lng, nearby_landmarks —
+-// 0002/0003) is deliberately not wired here: the brief's Phase 2 scope
+-// is the listing workflow + status security fix, not the map-jitter
+-// location flow, and adding those fields without the jitter/reveal
+-// logic behind them would be half-built rather than a real feature.
++// Matches properties.city / properties.locality (0002), plus the
++// property_location row (exact address + exact_lat/exact_lng —
++// 0002/0003). Exact coordinates are required at creation time now: the
++// public map on a listing's detail page reads approx_lat/approx_lng from
++// property_location, and apply_location_jitter() (0003) only derives
++// those from exact_lat/exact_lng on INSERT/UPDATE of a property_location
++// row — a listing with no exact coordinates gets no property_location row
++// at all, and therefore no map, ever. Collecting them here (instead of
++// only on a separate post-creation edit screen) is what stops a listing
++// from going live with no location data.
+ export interface PropertyLocationDefaults {
+    city?: string;
+    locality?: string;
++   locationArea?: string;
++   nearbyLandmarks?: string;
++   exactAddress?: string;
++   exactLat?: number;
++   exactLng?: number;
+ }
+ 
+ const PropertyLocation = ({ defaults }: { defaults?: PropertyLocationDefaults }) => {
+@@ -26,7 +35,80 @@ const PropertyLocation = ({ defaults }: { defaults?: PropertyLocationDefaults })
+                   <input id="locality" name="locality" type="text" defaultValue={defaults?.locality} placeholder="Locality / Area" required />
+                </div>
+             </div>
++            <div className="col-md-12">
++               <div className="dash-input-wrapper mb-25">
++                  <label htmlFor="exact_address">Full Address*</label>
++                  <input
++                     id="exact_address"
++                     name="exact_address"
++                     type="text"
++                     defaultValue={defaults?.exactAddress}
++                     placeholder="Street, landmark, full postal address"
++                     required
++                  />
++               </div>
++            </div>
++            <div className="col-md-4">
++               <div className="dash-input-wrapper mb-25">
++                  <label htmlFor="exact_lat">Latitude*</label>
++                  <input
++                     id="exact_lat"
++                     name="exact_lat"
++                     type="number"
++                     step="any"
++                     min={-90}
++                     max={90}
++                     defaultValue={defaults?.exactLat}
++                     placeholder="e.g. 17.385044"
++                     required
++                  />
++               </div>
++            </div>
++            <div className="col-md-4">
++               <div className="dash-input-wrapper mb-25">
++                  <label htmlFor="exact_lng">Longitude*</label>
++                  <input
++                     id="exact_lng"
++                     name="exact_lng"
++                     type="number"
++                     step="any"
++                     min={-180}
++                     max={180}
++                     defaultValue={defaults?.exactLng}
++                     placeholder="e.g. 78.486671"
++                     required
++                  />
++               </div>
++            </div>
++            <div className="col-md-4">
++               <div className="dash-input-wrapper mb-25">
++                  <label htmlFor="location_area">Area / Zone</label>
++                  <input
++                     id="location_area"
++                     name="location_area"
++                     type="text"
++                     defaultValue={defaults?.locationArea}
++                     placeholder="Optional — neighbourhood or zone"
++                  />
++               </div>
++            </div>
++            <div className="col-md-12">
++               <div className="dash-input-wrapper mb-15">
++                  <label htmlFor="nearby_landmarks">Nearby Landmarks</label>
++                  <input
++                     id="nearby_landmarks"
++                     name="nearby_landmarks"
++                     type="text"
++                     defaultValue={defaults?.nearbyLandmarks}
++                     placeholder="Optional — e.g. Near City Mall, 2km from Metro Station"
++                  />
++               </div>
++            </div>
+          </div>
++         <p className="fs-13 opacity-65 mt-10 mb-0">
++            The exact address and coordinates are never shown publicly — buyers only ever see a randomized nearby
++            point on the map. The real location is used internally and only revealed after a qualifying inquiry.
++         </p>
+       </div>
+    )
+ }
+diff --git a/src/components/dashboard/edit-property/EditPropertyBody.tsx b/src/components/dashboard/edit-property/EditPropertyBody.tsx
+index 6294c14..4f054a7 100644
+--- a/src/components/dashboard/edit-property/EditPropertyBody.tsx
++++ b/src/components/dashboard/edit-property/EditPropertyBody.tsx
+@@ -5,7 +5,7 @@ import Overview from "../add-property/Overview"
+ import ListingDetails from "../add-property/ListingDetails"
+ import PropertyLocation from "../add-property/PropertyLocation"
+ import PropertyMediaUpload from "../add-property/PropertyMediaUpload"
+-import { OwnPropertyMediaRow, SellerPropertyRow } from "@/lib/properties/queries"
++import { OwnPropertyLocation, OwnPropertyMediaRow, SellerPropertyRow } from "@/lib/properties/queries"
+ 
+ type EditableProperty = SellerPropertyRow & {
+    description: string | null;
+@@ -13,6 +13,7 @@ type EditableProperty = SellerPropertyRow & {
+    area_unit: string | null;
+    bedrooms: number | null;
+    bathrooms: number | null;
++   location: OwnPropertyLocation | null;
+ };
+ 
+ const EditPropertyBody = ({ property, media, error, onSubmit }: { property: EditableProperty | null; media: OwnPropertyMediaRow[]; error?: string; onSubmit: (formData: FormData) => Promise<void> }) => {
+@@ -53,7 +54,17 @@ const EditPropertyBody = ({ property, media, error, onSubmit }: { property: Edit
+                <form action={onSubmit}>
+                   <Overview defaults={{ title: property.title, description: property.description, property_type: property.property_type, price: property.price }} />
+                   <ListingDetails defaults={{ area: property.area, area_unit: property.area_unit, bedrooms: property.bedrooms, bathrooms: property.bathrooms }} />
+-                  <PropertyLocation defaults={{ city: property.city, locality: property.locality }} />
++                  <PropertyLocation
++                     defaults={{
++                        city: property.city,
++                        locality: property.locality,
++                        locationArea: property.location?.location_area ?? undefined,
++                        nearbyLandmarks: property.location?.nearby_landmarks ?? undefined,
++                        exactAddress: property.location?.exact_address,
++                        exactLat: property.location?.exact_lat,
++                        exactLng: property.location?.exact_lng,
++                     }}
++                  />
+ 
+                   <div className="button-group d-inline-flex align-items-center mt-30">
+                      <button type="submit" className="dash-btn-two tran3s me-3">Save Changes</button>
+diff --git a/src/components/homes/home-two/ExploreProperties.tsx b/src/components/homes/home-two/ExploreProperties.tsx
+index 365390a..0ac2796 100644
+--- a/src/components/homes/home-two/ExploreProperties.tsx
++++ b/src/components/homes/home-two/ExploreProperties.tsx
+@@ -18,8 +18,23 @@ import { searchPublishedProperties } from "@/lib/properties/queries";
+ // Opportunities" as the two public discovery routes.
+ export const dynamic = "force-dynamic";
+ 
++// Two full rows at 3-per-row (PropertyCard is col-lg-4) before the teaser
++// falls back to "see more" instead of listing every published property.
++// The old pageSize of 3 meant this teaser could only ever show one row —
++// publishing a 4th property didn't lose the 3 that came before it (they're
++// still published, just not "newest" anymore), it just bumped the oldest
++// of the 3 out of a single-row window. Showing 6 gives that window room
++// before anything drops off, and `total` (already returned by
++// searchPublishedProperties) tells us whether there's more to point to.
++const HOMEPAGE_PROPERTY_LIMIT = 6;
++
+ const ExploreProperties = async () => {
+-   const { items } = await searchPublishedProperties({ sort: "newest", page: 1, pageSize: 3 });
++   const { items, total } = await searchPublishedProperties({
++      sort: "newest",
++      page: 1,
++      pageSize: HOMEPAGE_PROPERTY_LIMIT,
++   });
++   const hasMore = total > HOMEPAGE_PROPERTY_LIMIT;
+ 
+    return (
+       <div className="property-listing-two position-relative z-1 mt-150 xl-mt-120 pb-150 xl-pb-120 lg-pb-80">
+@@ -46,11 +61,13 @@ const ExploreProperties = async () => {
+                   </p>
+                )}
+ 
+-               <div className="section-btn text-center md-mt-60">
+-                  <Link href="/properties" className="btn-eight">
+-                     <span>Explore Properties</span> <i className="bi bi-arrow-up-right"></i>
+-                  </Link>
+-               </div>
++               {hasMore && (
++                  <div className="section-btn text-center md-mt-60">
++                     <Link href="/properties" className="btn-eight">
++                        <span>See More Properties</span> <i className="bi bi-arrow-up-right"></i>
++                     </Link>
++                  </div>
++               )}
+             </div>
+          </div>
+       </div>
+diff --git a/src/components/homes/home-two/Property.tsx b/src/components/homes/home-two/Property.tsx
+index a9537b4..143129b 100644
+--- a/src/components/homes/home-two/Property.tsx
++++ b/src/components/homes/home-two/Property.tsx
+@@ -27,12 +27,25 @@ import propertyShape from "@/assets/images/shape/shape_17.svg"
+ // not after the next build.
+ export const dynamic = "force-dynamic";
+ 
++// Two full rows (col-lg-4 => 3 per row) per half of this section, same as
++// ExploreProperties. Fetching one extra beyond the 6 shown is a cheap way
++// to know whether a "see more" link is warranted, without a second count
++// query — the 7th row, if present, is dropped and only its existence is
++// used.
++const HOMEPAGE_FEATURED_LIMIT = 6;
++
+ const Property = async () => {
+-   const [featuredProjects, featuredProperties] = await Promise.all([
+-      getFeaturedProjects(3),
+-      getFeaturedProperties(3),
++   const [featuredProjectsRaw, featuredPropertiesRaw] = await Promise.all([
++      getFeaturedProjects(HOMEPAGE_FEATURED_LIMIT + 1),
++      getFeaturedProperties(HOMEPAGE_FEATURED_LIMIT + 1),
+    ]);
+ 
++   const hasMoreProjects = featuredProjectsRaw.length > HOMEPAGE_FEATURED_LIMIT;
++   const hasMoreProperties = featuredPropertiesRaw.length > HOMEPAGE_FEATURED_LIMIT;
++   const featuredProjects = featuredProjectsRaw.slice(0, HOMEPAGE_FEATURED_LIMIT);
++   const featuredProperties = featuredPropertiesRaw.slice(0, HOMEPAGE_FEATURED_LIMIT);
++   const hasMore = hasMoreProjects || hasMoreProperties;
++
+    const hasFeatured = featuredProjects.length > 0 || featuredProperties.length > 0;
+ 
+    return (
+@@ -80,10 +93,12 @@ const Property = async () => {
+                   </div>
+                )}
+ 
+-               <div className="section-btn text-center md-mt-60">
+-                  <Link href="/projects" className="btn-eight"><span>Explore All</span> <i
+-                     className="bi bi-arrow-up-right"></i></Link>
+-               </div>
++               {hasMore && (
++                  <div className="section-btn text-center md-mt-60">
++                     <Link href="/projects" className="btn-eight"><span>See More</span> <i
++                        className="bi bi-arrow-up-right"></i></Link>
++                  </div>
++               )}
+             </div>
+          </div>
+          <Image src={propertyShape} alt="" className="lazy-img shapes shape_01" />
+diff --git a/src/lib/admin/properties/actions.ts b/src/lib/admin/properties/actions.ts
+index 68406d5..0037bb4 100644
+--- a/src/lib/admin/properties/actions.ts
++++ b/src/lib/admin/properties/actions.ts
+@@ -360,6 +360,15 @@ export async function updateAdminProperty(id: string, formData: FormData): Promi
+ 
+    if (error) return { success: false, error: error.message };
+ 
++   // The Add Listing screen now collects exact address/lat/lng on this
++   // same form (see PropertyLocation.tsx) instead of only on a later,
++   // separate edit-page step — so this single submit must also write
++   // property_location, or an admin using "Publish immediately" could
++   // still publish a listing with no map. Reuses updateAdminPropertyLocation
++   // itself rather than duplicating its upsert/jitter-placeholder logic.
++   const locationResult = await updateAdminPropertyLocation(id, formData);
++   if (!locationResult.success) return locationResult;
++
+    revalidatePropertyPaths(id);
+    return { success: true };
+ }
+diff --git a/src/lib/properties/actions.ts b/src/lib/properties/actions.ts
+index 8f734e8..350ae69 100644
+--- a/src/lib/properties/actions.ts
++++ b/src/lib/properties/actions.ts
+@@ -195,6 +195,26 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
+       return { success: false, error: "Title must be at least 3 characters." };
+    }
+ 
++   const city = textOrNull(formData.get("city"));
++   const locality = textOrNull(formData.get("locality"));
++
++   // Exact address + coordinates are required from here on (see
++   // PropertyLocation.tsx). Without a property_location row, a listing
++   // has no approx_lat/approx_lng and its public detail page renders no
++   // map at all — this used to be possible to skip, which is exactly how
++   // listings ended up published with no map. Validated before any write
++   // so a half-saved property never results from a partially-filled form.
++   const exactAddress = textOrNull(formData.get("exact_address"));
++   const exactLat = numberOrNull(formData.get("exact_lat"));
++   const exactLng = numberOrNull(formData.get("exact_lng"));
++
++   if (!exactAddress || exactLat === null || exactLng === null) {
++      return { success: false, error: "Full address, latitude and longitude are all required." };
++   }
++   if (exactLat < -90 || exactLat > 90 || exactLng < -180 || exactLng > 180) {
++      return { success: false, error: "Latitude must be between -90 and 90, longitude between -180 and 180." };
++   }
++
+    const { error } = await supabase
+       .from("properties")
+       .update({
+@@ -210,8 +230,8 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
+          bedrooms: numberOrNull(formData.get("bedrooms")),
+          bathrooms: numberOrNull(formData.get("bathrooms")),
+          description: textOrNull(formData.get("description")),
+-         city: textOrNull(formData.get("city")),
+-         locality: textOrNull(formData.get("locality")),
++         city,
++         locality,
+       })
+       .eq("id", id);
+ 
+@@ -219,6 +239,42 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
+       return { success: false, error: error.message };
+    }
+ 
++   // Upsert property_location. approx_lat/approx_lng are only set here as
++   // the NOT NULL placeholder on first insert — apply_location_jitter()
++   // (0003) immediately overwrites them server-side with a randomized
++   // 150-500m offset on both INSERT and UPDATE OF exact_lat/exact_lng, so
++   // the real coordinate is never what ends up in the public column. RLS
++   // ("owners can write/update own property location", 0002) is what
++   // actually lets this succeed only for the property's own owner.
++   const { data: existingLocation } = await supabase
++      .from("property_location")
++      .select("property_id")
++      .eq("property_id", id)
++      .maybeSingle();
++
++   const locationPayload = {
++      city,
++      locality,
++      area: textOrNull(formData.get("location_area")),
++      nearby_landmarks: textOrNull(formData.get("nearby_landmarks")),
++      exact_address: exactAddress,
++      exact_lat: exactLat,
++      exact_lng: exactLng,
++   };
++
++   const { error: locationError } = existingLocation
++      ? await supabase.from("property_location").update(locationPayload).eq("property_id", id)
++      : await supabase.from("property_location").insert({
++           property_id: id,
++           ...locationPayload,
++           approx_lat: exactLat,
++           approx_lng: exactLng,
++        });
++
++   if (locationError) {
++      return { success: false, error: locationError.message };
++   }
++
+    revalidatePath("/dashboard/properties-list");
+    return { success: true };
+ }
+diff --git a/src/lib/properties/queries.ts b/src/lib/properties/queries.ts
+index 5511fab..0eba8ea 100644
+--- a/src/lib/properties/queries.ts
++++ b/src/lib/properties/queries.ts
+@@ -267,8 +267,28 @@ export async function getOwnActivePropertyListings(): Promise<SellerPropertyRow[
+    return (data ?? []) as SellerPropertyRow[];
+ }
+ 
++export interface OwnPropertyLocation {
++   location_area: string | null;
++   nearby_landmarks: string | null;
++   exact_address: string;
++   exact_lat: number;
++   exact_lng: number;
++}
++
+ /** One of the caller's own properties by id, or null if it doesn't exist / isn't theirs. */
+-export async function getOwnPropertyById(id: string): Promise<SellerPropertyRow & { description: string | null; area: number | string | null; area_unit: string | null; bedrooms: number | null; bathrooms: number | null } | null> {
++export async function getOwnPropertyById(
++   id: string
++): Promise<
++   | (SellerPropertyRow & {
++        description: string | null;
++        area: number | string | null;
++        area_unit: string | null;
++        bedrooms: number | null;
++        bathrooms: number | null;
++        location: OwnPropertyLocation | null;
++     })
++   | null
++> {
+    const supabase = await createClient();
+    const {
+       data: { user },
+@@ -284,7 +304,29 @@ export async function getOwnPropertyById(id: string): Promise<SellerPropertyRow
+       .maybeSingle();
+ 
+    if (error || !data) return null;
+-   return data;
++
++   // "owners can read own property location" (0002) — RLS lets the owner
++   // read exact_lat/exact_lng/exact_address for their own row even though
++   // those columns are never granted to buyers/anon. Used only to
++   // pre-fill the edit form; never rendered on any public page.
++   const { data: location } = await supabase
++      .from("property_location")
++      .select("area, nearby_landmarks, exact_address, exact_lat, exact_lng")
++      .eq("property_id", id)
++      .maybeSingle();
++
++   return {
++      ...data,
++      location: location
++         ? {
++              location_area: location.area,
++              nearby_landmarks: location.nearby_landmarks,
++              exact_address: location.exact_address,
++              exact_lat: location.exact_lat,
++              exact_lng: location.exact_lng,
++           }
++         : null,
++   };
+ }
+ 
+ export interface OwnPropertyMediaRow {

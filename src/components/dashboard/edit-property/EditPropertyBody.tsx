@@ -5,7 +5,7 @@ import Overview from "../add-property/Overview"
 import ListingDetails from "../add-property/ListingDetails"
 import PropertyLocation from "../add-property/PropertyLocation"
 import PropertyMediaUpload from "../add-property/PropertyMediaUpload"
-import { OwnPropertyMediaRow, SellerPropertyRow } from "@/lib/properties/queries"
+import { OwnPropertyLocation, OwnPropertyMediaRow, SellerPropertyRow } from "@/lib/properties/queries"
 
 type EditableProperty = SellerPropertyRow & {
    description: string | null;
@@ -13,6 +13,7 @@ type EditableProperty = SellerPropertyRow & {
    area_unit: string | null;
    bedrooms: number | null;
    bathrooms: number | null;
+   location: OwnPropertyLocation | null;
 };
 
 const EditPropertyBody = ({ property, media, error, onSubmit }: { property: EditableProperty | null; media: OwnPropertyMediaRow[]; error?: string; onSubmit: (formData: FormData) => Promise<void> }) => {
@@ -53,7 +54,17 @@ const EditPropertyBody = ({ property, media, error, onSubmit }: { property: Edit
                <form action={onSubmit}>
                   <Overview defaults={{ title: property.title, description: property.description, property_type: property.property_type, price: property.price }} />
                   <ListingDetails defaults={{ area: property.area, area_unit: property.area_unit, bedrooms: property.bedrooms, bathrooms: property.bathrooms }} />
-                  <PropertyLocation defaults={{ city: property.city, locality: property.locality }} />
+                  <PropertyLocation
+                     defaults={{
+                        city: property.city,
+                        locality: property.locality,
+                        locationArea: property.location?.location_area ?? undefined,
+                        nearbyLandmarks: property.location?.nearby_landmarks ?? undefined,
+                        exactAddress: property.location?.exact_address,
+                        exactLat: property.location?.exact_lat,
+                        exactLng: property.location?.exact_lng,
+                     }}
+                  />
 
                   <div className="button-group d-inline-flex align-items-center mt-30">
                      <button type="submit" className="dash-btn-two tran3s me-3">Save Changes</button>

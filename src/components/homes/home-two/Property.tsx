@@ -27,11 +27,24 @@ import propertyShape from "@/assets/images/shape/shape_17.svg"
 // not after the next build.
 export const dynamic = "force-dynamic";
 
+// Two full rows (col-lg-4 => 3 per row) per half of this section, same as
+// ExploreProperties. Fetching one extra beyond the 6 shown is a cheap way
+// to know whether a "see more" link is warranted, without a second count
+// query — the 7th row, if present, is dropped and only its existence is
+// used.
+const HOMEPAGE_FEATURED_LIMIT = 6;
+
 const Property = async () => {
-   const [featuredProjects, featuredProperties] = await Promise.all([
-      getFeaturedProjects(3),
-      getFeaturedProperties(3),
+   const [featuredProjectsRaw, featuredPropertiesRaw] = await Promise.all([
+      getFeaturedProjects(HOMEPAGE_FEATURED_LIMIT + 1),
+      getFeaturedProperties(HOMEPAGE_FEATURED_LIMIT + 1),
    ]);
+
+   const hasMoreProjects = featuredProjectsRaw.length > HOMEPAGE_FEATURED_LIMIT;
+   const hasMoreProperties = featuredPropertiesRaw.length > HOMEPAGE_FEATURED_LIMIT;
+   const featuredProjects = featuredProjectsRaw.slice(0, HOMEPAGE_FEATURED_LIMIT);
+   const featuredProperties = featuredPropertiesRaw.slice(0, HOMEPAGE_FEATURED_LIMIT);
+   const hasMore = hasMoreProjects || hasMoreProperties;
 
    const hasFeatured = featuredProjects.length > 0 || featuredProperties.length > 0;
 
@@ -80,10 +93,12 @@ const Property = async () => {
                   </div>
                )}
 
-               <div className="section-btn text-center md-mt-60">
-                  <Link href="/projects" className="btn-eight"><span>Explore All</span> <i
-                     className="bi bi-arrow-up-right"></i></Link>
-               </div>
+               {hasMore && (
+                  <div className="section-btn text-center md-mt-60">
+                     <Link href="/projects" className="btn-eight"><span>See More</span> <i
+                        className="bi bi-arrow-up-right"></i></Link>
+                  </div>
+               )}
             </div>
          </div>
          <Image src={propertyShape} alt="" className="lazy-img shapes shape_01" />

@@ -18,8 +18,23 @@ import { searchPublishedProperties } from "@/lib/properties/queries";
 // Opportunities" as the two public discovery routes.
 export const dynamic = "force-dynamic";
 
+// Two full rows at 3-per-row (PropertyCard is col-lg-4) before the teaser
+// falls back to "see more" instead of listing every published property.
+// The old pageSize of 3 meant this teaser could only ever show one row —
+// publishing a 4th property didn't lose the 3 that came before it (they're
+// still published, just not "newest" anymore), it just bumped the oldest
+// of the 3 out of a single-row window. Showing 6 gives that window room
+// before anything drops off, and `total` (already returned by
+// searchPublishedProperties) tells us whether there's more to point to.
+const HOMEPAGE_PROPERTY_LIMIT = 6;
+
 const ExploreProperties = async () => {
-   const { items } = await searchPublishedProperties({ sort: "newest", page: 1, pageSize: 3 });
+   const { items, total } = await searchPublishedProperties({
+      sort: "newest",
+      page: 1,
+      pageSize: HOMEPAGE_PROPERTY_LIMIT,
+   });
+   const hasMore = total > HOMEPAGE_PROPERTY_LIMIT;
 
    return (
       <div className="property-listing-two position-relative z-1 mt-150 xl-mt-120 pb-150 xl-pb-120 lg-pb-80">
@@ -46,11 +61,13 @@ const ExploreProperties = async () => {
                   </p>
                )}
 
-               <div className="section-btn text-center md-mt-60">
-                  <Link href="/properties" className="btn-eight">
-                     <span>Explore Properties</span> <i className="bi bi-arrow-up-right"></i>
-                  </Link>
-               </div>
+               {hasMore && (
+                  <div className="section-btn text-center md-mt-60">
+                     <Link href="/properties" className="btn-eight">
+                        <span>See More Properties</span> <i className="bi bi-arrow-up-right"></i>
+                     </Link>
+                  </div>
+               )}
             </div>
          </div>
       </div>

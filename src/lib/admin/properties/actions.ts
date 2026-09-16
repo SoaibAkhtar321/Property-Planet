@@ -360,6 +360,15 @@ export async function updateAdminProperty(id: string, formData: FormData): Promi
 
    if (error) return { success: false, error: error.message };
 
+   // The Add Listing screen now collects exact address/lat/lng on this
+   // same form (see PropertyLocation.tsx) instead of only on a later,
+   // separate edit-page step — so this single submit must also write
+   // property_location, or an admin using "Publish immediately" could
+   // still publish a listing with no map. Reuses updateAdminPropertyLocation
+   // itself rather than duplicating its upsert/jitter-placeholder logic.
+   const locationResult = await updateAdminPropertyLocation(id, formData);
+   if (!locationResult.success) return locationResult;
+
    revalidatePropertyPaths(id);
    return { success: true };
 }
