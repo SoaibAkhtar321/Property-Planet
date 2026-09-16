@@ -1,0 +1,552 @@
+diff --git a/public/assets/scss/_project.scss b/public/assets/scss/_project.scss
+index 522c10e..6269199 100644
+--- a/public/assets/scss/_project.scss
++++ b/public/assets/scss/_project.scss
+@@ -248,6 +248,35 @@
+ }
+ // Project Details One
+ .project-details-one {
++    // The image column and the details column next to it (title, tags,
++    // developer/location/units info card, enquiry box) rarely have equal
++    // height — a project with one photo but a long info card left a big
++    // blank gap under the image while the details column kept going.
++    // Sticking the image in place while the page scrolls past the taller
++    // column uses that space instead of leaving it empty. Only above the
++    // lg breakpoint, matching where these are side-by-side columns at all
++    // (below lg they stack, so nothing should stick).
++    @media (min-width: 992px) {
++        .project-gallery-sticky {
++            position: sticky;
++            top: 110px;
++            align-self: flex-start;
++        }
++    }
++    // Same sizing as .theme-details-one .property-location .map-banner
++    // (property detail page — see _details_page.scss). ProjectDetail.tsx
++    // reuses the identical property-location/wrapper/map-banner markup
++    // (src/components/projects/detail/Location.tsx) for its own map, but
++    // this page's root wrapper is .project-details-one, not
++    // .theme-details-one, so that rule never applied here — the iframe
++    // fell back to height:100% of a parent with no defined height and
++    // rendered as a thin, cropped strip instead of the big square/
++    // rectangular map the property page gets.
++    .property-location {
++        .map-banner {
++            height: 485px;
++        }
++    }
+     .image-wrapper {
+         margin: 0 16px 40px 0;
+     }
+diff --git a/public/assets/scss/_responsive.scss b/public/assets/scss/_responsive.scss
+index 48ce3ff..839d4ab 100644
+--- a/public/assets/scss/_responsive.scss
++++ b/public/assets/scss/_responsive.scss
+@@ -537,6 +537,7 @@
+    .theme-details-one .accordion-style-two .accordion .accordion-button {font-size: 18px; padding: 18px 0;}
+    .theme-details-one .property-floor-plan .carousel-indicators {right: -25px;}
+    .theme-details-one .property-location .map-banner {height: 400px;}
++   .project-details-one .property-location .map-banner {height: 400px;}
+    .theme-details-one .property-floor-plan .accordion-item .accordion-button {font-size: 17px;}
+    .theme-details-one .property-floor-plan .accordion-item .accordion-button ul li {font-size: 14px;}
+    .theme-details-one .p-40.border-top {padding: 40px 20px;}
+diff --git a/src/app/admin/properties/new/page.tsx b/src/app/admin/properties/new/page.tsx
+index cac212c..1b0819b 100644
+--- a/src/app/admin/properties/new/page.tsx
++++ b/src/app/admin/properties/new/page.tsx
+@@ -1,19 +1,15 @@
+ import Link from "next/link";
+-import Overview from "@/components/dashboard/add-property/Overview";
+-import ListingDetails from "@/components/dashboard/add-property/ListingDetails";
+-import PropertyLocation from "@/components/dashboard/add-property/PropertyLocation";
+-import { createAdminPropertyListing } from "@/lib/admin/properties/actions";
++import NewAdminPropertyForm from "@/components/admin/properties/NewAdminPropertyForm";
+ 
+ export const metadata = {
+    title: "Property Planet — Admin Add Listing",
+ };
+ 
+-// Reuses the same Overview / ListingDetails / PropertyLocation sections as
+-// the seller "Add New Property" form (src/components/dashboard/add-property)
+-// — same fields, same validation, same markup/classes — rather than a
+-// duplicate form. Only the submit action and the admin-only "publish now"
+-// option differ. Media upload is intentionally out of scope here too,
+-// matching the seller form's current state.
++// The form itself (details + photos + publish-now, all on one screen) is
++// a client component — see NewAdminPropertyForm — because it needs to
++// create a placeholder draft row on mount before the photo uploader can
++// attach anything to it. This file stays a server component only for the
++// static header/metadata and the ?error= passthrough from a failed submit.
+ export default async function NewAdminPropertyPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+    const { error } = await searchParams;
+ 
+@@ -22,33 +18,7 @@ export default async function NewAdminPropertyPage({ searchParams }: { searchPar
+          <div className="mb-4">
+             <Link href="/admin/properties">&larr; Back to properties</Link>
+          </div>
+-         <h3 className="mb-4">Add Listing</h3>
+-
+-         {error && <div className="alert alert-danger">{error}</div>}
+-
+-         <form action={createAdminPropertyListing}>
+-            <Overview />
+-            <ListingDetails />
+-            <PropertyLocation />
+-
+-            <div className="bg-white card-box border-20 mt-40">
+-               <h4 className="dash-title-three">Photo & Video Attachment</h4>
+-               <p className="fs-14 opacity-65">Media upload isn&apos;t available yet — add photos after creating the listing.</p>
+-            </div>
+-
+-            <div className="bg-white card-box border-20 mt-40">
+-               <div className="form-check">
+-                  <input className="form-check-input" type="checkbox" id="publish_now" name="publish_now" />
+-                  <label className="form-check-label" htmlFor="publish_now">
+-                     Publish immediately (skip draft/review — admin listings can go live directly)
+-                  </label>
+-               </div>
+-            </div>
+-
+-            <div className="button-group d-inline-flex align-items-center mt-30">
+-               <button type="submit" className="dash-btn-two tran3s me-3">Create listing</button>
+-            </div>
+-         </form>
++         <NewAdminPropertyForm error={error} />
+       </div>
+    );
+ }
+diff --git a/src/components/admin/properties/NewAdminPropertyForm.tsx b/src/components/admin/properties/NewAdminPropertyForm.tsx
+new file mode 100644
+index 0000000..7802f8b
+--- /dev/null
++++ b/src/components/admin/properties/NewAdminPropertyForm.tsx
+@@ -0,0 +1,111 @@
++"use client"
++
++// Same combined-screen flow as the seller's AddPropertyBody: a placeholder
++// draft row is created silently on mount (initDraftAdminProperty) so the
++// photo uploader has a real property id from the start, instead of the
++// old "media upload isn't available yet — add photos after creating the
++// listing" placeholder. Everything — details, photos, and the
++// publish-now choice — is filled in on one screen, and a single submit
++// (updateAdminProperty, then optionally setAdminPropertyStatus) finalizes
++// it all at once.
++
++import { useEffect, useState, useTransition } from "react"
++import { useRouter } from "next/navigation"
++import Overview from "@/components/dashboard/add-property/Overview"
++import ListingDetails from "@/components/dashboard/add-property/ListingDetails"
++import PropertyLocation from "@/components/dashboard/add-property/PropertyLocation"
++import AdminPropertyMediaUpload from "@/components/admin/properties/AdminPropertyMediaUpload"
++import { initDraftAdminProperty, updateAdminProperty, setAdminPropertyStatus, addAdminPropertyMedia } from "@/lib/admin/properties/actions"
++
++const NewAdminPropertyForm = ({ error }: { error?: string }) => {
++   const router = useRouter()
++   const [draftId, setDraftId] = useState<string | null>(null)
++   const [initError, setInitError] = useState<string | null>(null)
++   const [submitError, setSubmitError] = useState<string | null>(null)
++   const [isSubmitting, setIsSubmitting] = useState(false)
++   const [, startTransition] = useTransition()
++
++   useEffect(() => {
++      let cancelled = false
++      startTransition(async () => {
++         const result = await initDraftAdminProperty()
++         if (cancelled) return
++         if ("error" in result) setInitError(result.error)
++         else setDraftId(result.id)
++      })
++      return () => {
++         cancelled = true
++      }
++      // eslint-disable-next-line react-hooks/exhaustive-deps
++   }, [])
++
++   const handleSubmit = async (formData: FormData) => {
++      if (!draftId) return
++      setSubmitError(null)
++      setIsSubmitting(true)
++
++      const result = await updateAdminProperty(draftId, formData)
++      if (!result.success) {
++         setSubmitError(result.error ?? "Could not save listing.")
++         setIsSubmitting(false)
++         return
++      }
++
++      const publishNow = formData.get("publish_now") === "on"
++      if (publishNow) {
++         const publishResult = await setAdminPropertyStatus(draftId, "published")
++         if (!publishResult.success) {
++            setSubmitError(publishResult.error ?? "Saved, but could not publish.")
++            setIsSubmitting(false)
++            return
++         }
++      }
++
++      router.push(`/admin/properties/${draftId}`)
++   }
++
++   const addMedia = draftId ? addAdminPropertyMedia.bind(null, draftId) : null
++
++   return (
++      <div>
++         <h3 className="mb-4">Add Listing</h3>
++
++         {(error || initError || submitError) && (
++            <div className="alert alert-danger">{submitError ?? initError ?? error}</div>
++         )}
++
++         {!draftId || !addMedia ? (
++            <div className="bg-white card-box border-20">Setting up the listing…</div>
++         ) : (
++            <form action={handleSubmit}>
++               <Overview />
++               <ListingDetails />
++               <PropertyLocation />
++
++               <div className="bg-white card-box border-20 mt-40">
++                  <h4 className="dash-title-three">Photo & Video Attachment</h4>
++                  <p className="fs-14 opacity-65 mb-20">Add photos now — they&apos;ll be attached to this listing right away.</p>
++                  <AdminPropertyMediaUpload propertyId={draftId} nextSortOrder={0} addMediaAction={addMedia} />
++               </div>
++
++               <div className="bg-white card-box border-20 mt-40">
++                  <div className="form-check">
++                     <input className="form-check-input" type="checkbox" id="publish_now" name="publish_now" />
++                     <label className="form-check-label" htmlFor="publish_now">
++                        Publish immediately (skip draft/review — admin listings can go live directly)
++                     </label>
++                  </div>
++               </div>
++
++               <div className="button-group d-inline-flex align-items-center mt-30">
++                  <button type="submit" className="dash-btn-two tran3s me-3" disabled={isSubmitting}>
++                     {isSubmitting ? "Saving…" : "Save & Publish"}
++                  </button>
++               </div>
++            </form>
++         )}
++      </div>
++   )
++}
++
++export default NewAdminPropertyForm
+diff --git a/src/components/dashboard/add-property/AddPropertyBody.tsx b/src/components/dashboard/add-property/AddPropertyBody.tsx
+index 8bcc517..b92e44f 100644
+--- a/src/components/dashboard/add-property/AddPropertyBody.tsx
++++ b/src/components/dashboard/add-property/AddPropertyBody.tsx
+@@ -1,50 +1,103 @@
+ "use client"
++import { useEffect, useState, useTransition } from "react"
++import { useRouter } from "next/navigation"
+ import DashboardHeaderTwo from "@/layouts/headers/dashboard/DashboardHeaderTwo"
+ import Overview from "./Overview"
+ import ListingDetails from "./ListingDetails"
+ import PropertyLocation from "./PropertyLocation"
+-import { createPropertyListing } from "@/lib/properties/actions"
++import PropertyMediaUpload from "./PropertyMediaUpload"
++import { initDraftProperty, updatePropertyListing, submitPropertyForReview } from "@/lib/properties/actions"
+ 
++// One combined screen: fill every field, upload photos, then a single
++// "Save & Submit for Review" click — instead of the old two-step flow
++// (save text fields -> get redirected -> only then see the uploader).
++//
++// Photos still need a real property id to upload against (storage_path is
++// `{property_id}/...`), so a placeholder draft row is created silently the
++// moment this screen mounts (initDraftProperty), before the seller has
++// typed anything. That id is what PropertyMediaUpload uses right here, in
++// the same form, instead of on a separate screen. The final submit
++// (updatePropertyListing) overwrites every placeholder field with what the
++// seller actually entered and re-validates it — the draft row's initial
++// values are never what gets reviewed or published.
+ const AddPropertyBody = ({ error }: { error?: string }) => {
++   const router = useRouter()
++   const [draftId, setDraftId] = useState<string | null>(null)
++   const [initError, setInitError] = useState<string | null>(null)
++   const [submitError, setSubmitError] = useState<string | null>(null)
++   const [isSubmitting, setIsSubmitting] = useState(false)
++   const [, startTransition] = useTransition()
++
++   useEffect(() => {
++      let cancelled = false
++      startTransition(async () => {
++         const result = await initDraftProperty()
++         if (cancelled) return
++         if ("error" in result) setInitError(result.error)
++         else setDraftId(result.id)
++      })
++      return () => {
++         cancelled = true
++      }
++      // eslint-disable-next-line react-hooks/exhaustive-deps
++   }, [])
++
++   const handleSubmit = async (formData: FormData) => {
++      if (!draftId) return
++      setSubmitError(null)
++      setIsSubmitting(true)
++
++      const result = await updatePropertyListing(draftId, formData)
++      if (!result.success) {
++         setSubmitError(result.error ?? "Could not save listing.")
++         setIsSubmitting(false)
++         return
++      }
++
++      const submitResult = await submitPropertyForReview(draftId)
++      if (!submitResult.success) {
++         setSubmitError(submitResult.error ?? "Saved, but could not submit for review.")
++         setIsSubmitting(false)
++         return
++      }
++
++      router.push("/dashboard/properties-list")
++   }
++
+    return (
+       <div className="dashboard-body">
+          <div className="position-relative">
+             <DashboardHeaderTwo title="Add New Property" />
+             <h2 className="main-title d-block d-lg-none">Add New Property</h2>
+ 
+-            {error && (
+-               <div className="alert alert-danger mb-30" role="alert">{error}</div>
++            {(error || initError || submitError) && (
++               <div className="alert alert-danger mb-30" role="alert">
++                  {submitError ?? initError ?? error}
++               </div>
+             )}
+ 
+-            <form action={createPropertyListing}>
+-               <Overview />
+-               <ListingDetails />
+-               <PropertyLocation />
+-
+-               {/* A property row must exist before a storage path can
+-                   reference it (storage_path is `{property_id}/...`), so
+-                   photos/video are added on the next screen, right after
+-                   this form saves. Same media uploader as Edit Property —
+-                   see PropertyMediaUpload. */}
+-               <div className="bg-white card-box border-20 mt-40">
+-                  <h4 className="dash-title-three">Photo & Video Attachment</h4>
+-                  <p className="fs-14 opacity-65 m0">
+-                     Save the details below first, then you&apos;ll be taken straight to the photo &amp; video uploader
+-                     for this listing.
+-                  </p>
+-               </div>
++            {!draftId ? (
++               <div className="bg-white card-box border-20">Setting up your listing…</div>
++            ) : (
++               <form action={handleSubmit}>
++                  <Overview />
++                  <ListingDetails />
++                  <PropertyLocation />
++                  <PropertyMediaUpload propertyId={draftId} initialMedia={[]} />
+ 
+-               <div className="button-group d-inline-flex align-items-center mt-30">
+-                  <button type="submit" className="dash-btn-two tran3s me-3">Save &amp; Add Photos</button>
+-               </div>
+-               <p className="fs-14 opacity-65 mt-15">
+-                  Saved as a draft. Once photos are added, submit it for review from your property list when you&apos;re
+-                  ready.
+-               </p>
+-            </form>
++                  <div className="button-group d-inline-flex align-items-center mt-30">
++                     <button type="submit" className="dash-btn-two tran3s me-3" disabled={isSubmitting}>
++                        {isSubmitting ? "Saving…" : "Save & Submit for Review"}
++                     </button>
++                  </div>
++                  <p className="fs-14 opacity-65 mt-15">
++                     Add your photos above, then submit — it goes to admin for review from here.
++                  </p>
++               </form>
++            )}
+          </div>
+       </div>
+    )
+ }
+ 
+-export default AddPropertyBody
+\ No newline at end of file
++export default AddPropertyBody
+diff --git a/src/components/projects/ProjectDetail.tsx b/src/components/projects/ProjectDetail.tsx
+index 872dcbe..1f32a67 100644
+--- a/src/components/projects/ProjectDetail.tsx
++++ b/src/components/projects/ProjectDetail.tsx
+@@ -64,8 +64,8 @@ const ProjectDetail = ({
+    return (
+       <div className="project-details-one mt-150 xl-mt-100 mb-170 xl-mb-100">
+          <div className="container">
+-            <div className="row gx-xxl-5">
+-               <div className="col-lg-6 order-lg-first">
++            <div className="row gx-xxl-5 align-items-start">
++               <div className="col-lg-6 order-lg-first project-gallery-sticky">
+                   {project.images.length > 0 ? (
+                      project.images.map((img, index) => (
+                         <figure key={index} className="image-wrapper">
+@@ -188,7 +188,7 @@ const ProjectDetail = ({
+                          enquiry. Reuses the existing form/section — no new
+                          enquiry UI or system. */}
+                      <div className="text-center mt-40">
+-                        <Link href="#project-enquiry" className="btn-four">
++                        <Link href="#project-enquiry" className="pp-card-btn pp-card-btn--primary px-4">
+                            Send Inquiry <i className="bi bi-arrow-up-right ms-2"></i>
+                         </Link>
+                      </div>
+diff --git a/src/components/properties/PropertyDetail.tsx b/src/components/properties/PropertyDetail.tsx
+index b52c561..0c89da9 100644
+--- a/src/components/properties/PropertyDetail.tsx
++++ b/src/components/properties/PropertyDetail.tsx
+@@ -73,7 +73,7 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
+ 
+             {property.project && (
+                <div className="mt-30">
+-                  <Link href={`/projects/${property.project.slug}`} className="btn-four">
++                  <Link href={`/projects/${property.project.slug}`} className="pp-card-btn pp-card-btn--primary px-4">
+                      View {property.project.title}
+                      <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
+                   </Link>
+diff --git a/src/lib/admin/properties/actions.ts b/src/lib/admin/properties/actions.ts
+index 6ce93c3..68406d5 100644
+--- a/src/lib/admin/properties/actions.ts
++++ b/src/lib/admin/properties/actions.ts
+@@ -67,6 +67,45 @@ const slugify = (value: string) =>
+       .replace(/[^a-z0-9]+/g, "-")
+       .replace(/^-+|-+$/g, "");
+ 
++/**
++ * Creates an empty placeholder listing as admin, mirroring
++ * initDraftProperty() in src/lib/properties/actions.ts — same reasoning:
++ * photo storage paths are `{property_id}/...`, so the Add Listing screen
++ * needs a real id to upload against before the admin ever clicks submit.
++ * updateAdminProperty() re-validates and overwrites every real field on
++ * submit, so this placeholder row is never what goes live.
++ */
++export async function initDraftAdminProperty(): Promise<{ id: string } | { error: string }> {
++   const session = await requireAdmin();
++   const supabase = await createClient();
++
++   const slug = `draft-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
++
++   const { data, error } = await supabase
++      .from("properties")
++      .insert({
++         owner_id: session.userId,
++         title: "Untitled listing",
++         slug,
++         property_type: "plot",
++         listing_type: "sale",
++         price: 0,
++         city: "",
++         locality: "",
++         project_id: null,
++         status: "draft",
++         published_at: null,
++      })
++      .select("id")
++      .single();
++
++   if (error || !data) {
++      return { error: error?.message ?? "Could not start a new listing." };
++   }
++
++   return { id: data.id };
++}
++
+ /**
+  * Creates a property listing as admin. Reuses the exact same form fields
+  * as the seller's createPropertyListing() (src/lib/properties/actions.ts)
+diff --git a/src/lib/projects/mapProject.ts b/src/lib/projects/mapProject.ts
+index e7d743e..99165e9 100644
+--- a/src/lib/projects/mapProject.ts
++++ b/src/lib/projects/mapProject.ts
+@@ -159,8 +159,14 @@ export function mapProject(row: ProjectPublicRow, media: ResolvedProjectMedia[],
+    const locationParts = [row.locality, row.city].filter(Boolean);
+    const location = row.address ?? (locationParts.length > 0 ? locationParts.join(", ") : undefined);
+ 
++   // t=p defaults the embed to Google's terrain layer — see the matching
++   // comment in src/lib/properties/mapProperty.ts. The iframe's own
++   // zoom controls and map-type switcher (roadmap/satellite/terrain) are
++   // already part of this embed form; t=p only picks the initial layer.
+    const mapEmbedUrl =
+-      row.lat !== null && row.lng !== null ? `https://maps.google.com/maps?q=${row.lat},${row.lng}&z=15&output=embed` : undefined;
++      row.lat !== null && row.lng !== null
++         ? `https://maps.google.com/maps?q=${row.lat},${row.lng}&z=15&t=p&output=embed`
++         : undefined;
+ 
+    const landmarks: ProjectLandmark[] | undefined = children.landmarks?.length
+       ? byDisplayOrder(children.landmarks).map((l) => ({
+diff --git a/src/lib/properties/actions.ts b/src/lib/properties/actions.ts
+index 7395976..8f734e8 100644
+--- a/src/lib/properties/actions.ts
++++ b/src/lib/properties/actions.ts
+@@ -51,6 +51,46 @@ const textOrNull = (value: FormDataEntryValue | null) => {
+    return s === "" ? null : s;
+ };
+ 
++/**
++ * Creates an empty placeholder listing owned by the current seller, so the
++ * Add Property screen has a real property id to upload photos against
++ * (storage_path is `{property_id}/...`) from the very first render —
++ * instead of making the seller save the text fields first and only then
++ * reach a separate screen with the photo uploader. The seller never sees
++ * this row directly: updatePropertyListing() below fills in every real
++ * field (and re-validates them) the moment they submit the single combined
++ * form, so the placeholder values here are never what actually gets
++ * reviewed or published.
++ */
++export async function initDraftProperty(): Promise<{ id: string } | { error: string }> {
++   const ctx = await requireRole(["seller"]);
++   const supabase = await createClient();
++
++   const slug = `draft-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
++
++   const { data, error } = await supabase
++      .from("properties")
++      .insert({
++         owner_id: ctx.userId,
++         title: "Untitled listing",
++         slug,
++         property_type: "plot",
++         listing_type: "sale",
++         price: 0,
++         city: "",
++         locality: "",
++         // status intentionally omitted — column default is 'draft'.
++      })
++      .select("id")
++      .single();
++
++   if (error || !data) {
++      return { error: error?.message ?? "Could not start a new listing." };
++   }
++
++   return { id: data.id };
++}
++
+ /**
+  * Creates a new listing owned by the current seller, always in `draft`.
+  * Redirects into the properties list on success, or back to the form with
+diff --git a/src/lib/properties/mapProperty.ts b/src/lib/properties/mapProperty.ts
+index 3e4b74d..86ad746 100644
+--- a/src/lib/properties/mapProperty.ts
++++ b/src/lib/properties/mapProperty.ts
+@@ -122,9 +122,15 @@ export function mapProperty(
+       videoUrl,
+       // No property_location row yet (0019) => no map to embed, rather than
+       // a broken q=null,null URL.
++      // t=p defaults the embed to Google's terrain layer. This is the
++      // legacy maps.google.com/maps?...&output=embed form (not the
++      // Maps Embed API), so it already ships with Google's own zoom
++      // controls and a map-type switcher (roadmap/satellite/terrain) in
++      // the iframe chrome — buyers can zoom and change layers themselves;
++      // t=p just picks which layer they see first.
+       mapEmbedUrl:
+          row.approx_lat != null && row.approx_lng != null
+-            ? `https://maps.google.com/maps?q=${row.approx_lat},${row.approx_lng}&z=15&output=embed`
++            ? `https://maps.google.com/maps?q=${row.approx_lat},${row.approx_lng}&z=15&t=p&output=embed`
+             : undefined,
+    };
+ }
+\ No newline at end of file

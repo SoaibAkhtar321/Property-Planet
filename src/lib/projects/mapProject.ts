@@ -159,8 +159,14 @@ export function mapProject(row: ProjectPublicRow, media: ResolvedProjectMedia[],
    const locationParts = [row.locality, row.city].filter(Boolean);
    const location = row.address ?? (locationParts.length > 0 ? locationParts.join(", ") : undefined);
 
+   // t=p defaults the embed to Google's terrain layer — see the matching
+   // comment in src/lib/properties/mapProperty.ts. The iframe's own
+   // zoom controls and map-type switcher (roadmap/satellite/terrain) are
+   // already part of this embed form; t=p only picks the initial layer.
    const mapEmbedUrl =
-      row.lat !== null && row.lng !== null ? `https://maps.google.com/maps?q=${row.lat},${row.lng}&z=15&output=embed` : undefined;
+      row.lat !== null && row.lng !== null
+         ? `https://maps.google.com/maps?q=${row.lat},${row.lng}&z=15&t=p&output=embed`
+         : undefined;
 
    const landmarks: ProjectLandmark[] | undefined = children.landmarks?.length
       ? byDisplayOrder(children.landmarks).map((l) => ({

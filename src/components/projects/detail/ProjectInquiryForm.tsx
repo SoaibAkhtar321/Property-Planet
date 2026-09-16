@@ -45,13 +45,13 @@ const ProjectInquiryForm = ({
 
    return (
       <InquiryButton
-         kind="project"
-         id={projectId}
-         title={projectTitle}
-         subtitle={projectLocation}
-         className="btn-four"
-         label="Send Inquiry"
-      />
+   kind="project"
+   id={projectId}
+   title={projectTitle}
+   subtitle={projectLocation}
+   className="pp-card-btn pp-card-btn--primary px-4"
+   label="Send Inquiry"
+/>
    );
 };
 

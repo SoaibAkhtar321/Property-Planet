@@ -52,6 +52,46 @@ const textOrNull = (value: FormDataEntryValue | null) => {
 };
 
 /**
+ * Creates an empty placeholder listing owned by the current seller, so the
+ * Add Property screen has a real property id to upload photos against
+ * (storage_path is `{property_id}/...`) from the very first render —
+ * instead of making the seller save the text fields first and only then
+ * reach a separate screen with the photo uploader. The seller never sees
+ * this row directly: updatePropertyListing() below fills in every real
+ * field (and re-validates them) the moment they submit the single combined
+ * form, so the placeholder values here are never what actually gets
+ * reviewed or published.
+ */
+export async function initDraftProperty(): Promise<{ id: string } | { error: string }> {
+   const ctx = await requireRole(["seller"]);
+   const supabase = await createClient();
+
+   const slug = `draft-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+   const { data, error } = await supabase
+      .from("properties")
+      .insert({
+         owner_id: ctx.userId,
+         title: "Untitled listing",
+         slug,
+         property_type: "plot",
+         listing_type: "sale",
+         price: 0,
+         city: "",
+         locality: "",
+         // status intentionally omitted — column default is 'draft'.
+      })
+      .select("id")
+      .single();
+
+   if (error || !data) {
+      return { error: error?.message ?? "Could not start a new listing." };
+   }
+
+   return { id: data.id };
+}
+
+/**
  * Creates a new listing owned by the current seller, always in `draft`.
  * Redirects into the properties list on success, or back to the form with
  * an error on failure — same convention as createProject().

@@ -68,6 +68,45 @@ const slugify = (value: string) =>
       .replace(/^-+|-+$/g, "");
 
 /**
+ * Creates an empty placeholder listing as admin, mirroring
+ * initDraftProperty() in src/lib/properties/actions.ts — same reasoning:
+ * photo storage paths are `{property_id}/...`, so the Add Listing screen
+ * needs a real id to upload against before the admin ever clicks submit.
+ * updateAdminProperty() re-validates and overwrites every real field on
+ * submit, so this placeholder row is never what goes live.
+ */
+export async function initDraftAdminProperty(): Promise<{ id: string } | { error: string }> {
+   const session = await requireAdmin();
+   const supabase = await createClient();
+
+   const slug = `draft-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+   const { data, error } = await supabase
+      .from("properties")
+      .insert({
+         owner_id: session.userId,
+         title: "Untitled listing",
+         slug,
+         property_type: "plot",
+         listing_type: "sale",
+         price: 0,
+         city: "",
+         locality: "",
+         project_id: null,
+         status: "draft",
+         published_at: null,
+      })
+      .select("id")
+      .single();
+
+   if (error || !data) {
+      return { error: error?.message ?? "Could not start a new listing." };
+   }
+
+   return { id: data.id };
+}
+
+/**
  * Creates a property listing as admin. Reuses the exact same form fields
  * as the seller's createPropertyListing() (src/lib/properties/actions.ts)
  * — same columns, same validation, same slugify convention — the only

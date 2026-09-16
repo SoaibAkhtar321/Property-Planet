@@ -248,6 +248,20 @@
 }
 // Project Details One
 .project-details-one {
+    // Same sizing as .theme-details-one .property-location .map-banner
+    // (property detail page — see _details_page.scss). ProjectDetail.tsx
+    // reuses the identical property-location/wrapper/map-banner markup
+    // (src/components/projects/detail/Location.tsx) for its own map, but
+    // this page's root wrapper is .project-details-one, not
+    // .theme-details-one, so that rule never applied here — the iframe
+    // fell back to height:100% of a parent with no defined height and
+    // rendered as a thin, cropped strip instead of the big square/
+    // rectangular map the property page gets.
+    .property-location {
+        .map-banner {
+            height: 485px;
+        }
+    }
     .image-wrapper {
         margin: 0 16px 40px 0;
     }
