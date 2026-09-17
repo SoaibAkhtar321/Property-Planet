@@ -1,45 +1,46 @@
 "use client"
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import Slider from "react-slick";
-import BrandOne from "@/components/common/brand/BrandOne";
+import PropertyPlanetCorridorStats from "./PropertyPlanetCorridorStats";
 
 import feedbackIcon from "@/assets/images/icon/icon_14.svg"
-import feedbackShape_1 from "@/assets/images/shape/shape_25.svg"
 import feedbackShape_2 from "@/assets/images/shape/shape_26.svg"
 import feedbackShape_3 from "@/assets/images/shape/shape_27.svg"
-import feedbackThumb_1 from "@/assets/images/media/img_22.jpg";
-import feedbackThumb_2 from "@/assets/images/media/img_22.jpg";
-import feedbackThumb_3 from "@/assets/images/media/img_22.jpg";
 
+// PLACEHOLDER testimonials — same convention as `isDemo` in
+// demoProperties.ts. Names/quotes below are illustrative sample content,
+// not real client reviews. Swap in genuine client feedback (name, area,
+// quote) as it comes in; until then this is clearly local placeholder
+// data, not something presented as a bought/verified review.
 interface DataType {
    id: number;
    desc: JSX.Element;
    title: string;
    country: string;
-   thumb: StaticImageData
+   initials: string;
 }
 
 const feedback_data: DataType[] = [
    {
       id: 1,
-      desc: (<>&quot;Excellent service, made my dream home real. <span>highly recommended</span> real estate agency!&quot;</>),
-      title: "Musa Delimuza",
-      country: "Milan, Italy",
-      thumb: feedbackThumb_1,
+      desc: (<>&quot;Found a well-located plot in Adibatla within my budget. <span>Verification and paperwork were handled properly</span>, no last-minute surprises.&quot;</>),
+      title: "Srinivas Reddy",
+      country: "Adibatla, Hyderabad",
+      initials: "SR",
    },
    {
       id: 2,
-      desc: (<>&quot;Excellent service, made my dream home real. <span>highly recommended</span> real estate agency!&quot;</>),
-      title: "Zubayer Hasan",
-      country: "Milan, Italy",
-      thumb: feedbackThumb_2,
+      desc: (<>&quot;Site visit was arranged quickly and the team was upfront about title status. <span>Straightforward process</span> from enquiry to registration.&quot;</>),
+      title: "Priya Chowdary",
+      country: "Kongara Kalan, Hyderabad",
+      initials: "PC",
    },
    {
       id: 3,
-      desc: (<>&quot;Excellent service, made my dream home real. <span>highly recommended</span> real estate agency!&quot;</>),
-      title: "Rashed Ka",
-      country: "Milan, Italy",
-      thumb: feedbackThumb_3,
+      desc: (<>&quot;Was comparing a few corridor villages for investment. <span>The team's local knowledge</span> of Maheshwaram and Mucherla made the decision easier.&quot;</>),
+      title: "Anil Kumar",
+      country: "Maheshwaram, Hyderabad",
+      initials: "AK",
    },
 ]
 
@@ -82,17 +83,12 @@ const FeedbackTwo = () => {
                                           <div className="name fs-22 text-white mb-5">{item.title}</div>
                                           <div className="fs-18 text-white opacity-75">{item.country}</div>
                                        </div>
-                                       <Image src={item.thumb} alt="" className="avatar" />
+                                       <div className="avatar avatar-initials d-flex align-items-center justify-content-center">{item.initials}</div>
                                     </div>
                                  </div>
                               </div>
                            ))}
                         </Slider>
-
-                        <div className="rating-box">
-                           <Image src={feedbackShape_1} alt="" className="lazy-img" />
-                           <div className="rate fw-500">9.3 <br /><span>Rating</span></div>
-                        </div>
                      </div>
                   </div>
                </div>
@@ -101,7 +97,21 @@ const FeedbackTwo = () => {
                <Image src={feedbackShape_3} alt="" className="lazy-img shapes shape_02" />
             </div>
          </div>
-         <BrandOne />
+         <PropertyPlanetCorridorStats />
+
+         <style jsx>{`
+            .avatar-initials {
+               width: 60px;
+               height: 60px;
+               border-radius: 50%;
+               background: #FF6725;
+               color: #fff;
+               font-size: 18px;
+               font-weight: 600;
+               letter-spacing: 0.5px;
+               flex-shrink: 0;
+            }
+         `}</style>
       </div>
    )
 }

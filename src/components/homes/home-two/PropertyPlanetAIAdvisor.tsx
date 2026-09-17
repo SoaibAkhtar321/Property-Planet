@@ -16,10 +16,10 @@ interface ChatMessage {
 
 const suggestedQuestions = [
    "Find plots under ₹1 crore",
-   "Show land near Future City",
+   "Show land near Adibatla",
    "I need 5 acres for a business",
    "Show villas near Shamshabad",
-   "Which areas are part of the Future City corridor?",
+   "Which areas are part of the growth corridor?",
    "I want an apartment",
    "I want to sell my land",
 ]
@@ -55,16 +55,16 @@ const mockResponse = (question: string): ChatMessage => {
    if (q.includes("apartment")) {
       return {
          role: "ai",
-         text: "Here are prototype apartment opportunities close to Future City's growth belt.",
+         text: "Here are prototype apartment opportunities close to the South-East growth belt.",
          recos: [
             { title: "Skyline Residences, Tukkuguda", price: "₹68 Lakh", area: "1,450 sq.ft", match: "87% Match" },
          ],
       };
    }
-   if (q.includes("corridor") || q.includes("future city")) {
+   if (q.includes("corridor")) {
       return {
          role: "ai",
-         text: "The Future City corridor spans Mucherla, Maheshwaram, Kandukur, Kadthal, Tukkuguda, Adibatla and Yacharam, along the NH-44 / Bangalore Highway and ORR growth belt.",
+         text: "The South-East Hyderabad growth corridor spans Raviryal, Tukkuguda, Kongara Kalan, Adibatla, Maheshwaram, Ibrahimpatnam, Kandukur, Mucherla, Amangal and Shadnagar, along the ORR, Srisailam Highway and RRR.",
       };
    }
    // default: plots under 1 crore
@@ -73,7 +73,7 @@ const mockResponse = (question: string): ChatMessage => {
       text: "I found 4 prototype opportunities that match your requirements.",
       recos: [
          { title: "Mucherla Growth Plot", price: "₹92 Lakh", area: "1,800 sq.yd", match: "92% Match" },
-         { title: "Future City Premium Plot", price: "₹98 Lakh", area: "1,800 sq.yd", match: "88% Match" },
+         { title: "Raviryal Premium Plot", price: "₹98 Lakh", area: "1,800 sq.yd", match: "88% Match" },
       ],
    };
 }
@@ -155,7 +155,7 @@ const PropertyPlanetAIAdvisor = () => {
                      >
                         <input
                            type="text"
-                           placeholder="e.g. I want a plot near Future City under ₹1 crore"
+                           placeholder="e.g. I want a plot near Adibatla under ₹1 crore"
                            value={input}
                            onChange={(e) => setInput(e.target.value)}
                         />

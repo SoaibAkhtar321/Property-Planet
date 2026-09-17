@@ -27,10 +27,6 @@ import feature7Icon_1 from "@/assets/images/icon/icon_40.svg";
 import feature7Icon_2 from "@/assets/images/icon/icon_41.svg";
 import feature7Icon_3 from "@/assets/images/icon/icon_42.svg";
 
-import featureImg_1 from "@/assets/images/media/img_19.jpg";
-import featureImg_2 from "@/assets/images/media/img_20.jpg";
-import featureImg_3 from "@/assets/images/media/img_21.jpg";
-
 interface DataType {
    id: number;
    page: string;
@@ -274,7 +270,7 @@ const feature_data: DataType[] = [
    {
       id: 1,
       page: "home_two_feature_2",
-      img: featureImg_1,
+      imgUrl: "/assets/images/media/img_19.jpg",
       title: "Explore & buy Home",
       tag: "BUY HOME",
       data_delay_time: "0.2s",
@@ -282,7 +278,7 @@ const feature_data: DataType[] = [
    {
       id: 2,
       page: "home_two_feature_2",
-      img: featureImg_2,
+      imgUrl: "/assets/images/media/img_20.jpg",
       title: "List & Sell quickly",
       tag: "Sell Now",
       data_delay_time: "0.1s",
@@ -290,9 +286,9 @@ const feature_data: DataType[] = [
    {
       id: 3,
       page: "home_two_feature_2",
-      img: featureImg_3,
-      title: "Discover & get Rental",
-      tag: "RENT NOW",
+      imgUrl: "/assets/images/media/plot_land_photo.jpg",
+      title: "Explore Plots & Land",
+      tag: "VIEW PLOTS",
       data_delay_time: "0.2s",
    },
 

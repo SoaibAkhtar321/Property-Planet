@@ -33,7 +33,11 @@ const BLockFeatureTwo = () => {
                      {feature_data.filter((items) => items.page === "home_two_feature_2").map((item) => (
                         <div key={item.id} className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay={item}>
                            <div className="card-style-two overflow-hidden position-relative z-1 mt-30">
-                              <Image src={item.img ? item.img : ""} alt="" className="lazy-img w-100 tran5s" />
+                              {item.imgUrl ? (
+                                 <Image src={item.imgUrl} alt="" width={457} height={571} className="lazy-img w-100 tran5s" />
+                              ) : (
+                                 <Image src={item.img ? item.img : ""} alt="" className="lazy-img w-100 tran5s" />
+                              )}
                               <div className="content text-center">
                                  <h5 className="mb-25">{item.title}</h5>
                                  <div className="btn tran3s fw-500 text-uppercase">{item.tag}</div>

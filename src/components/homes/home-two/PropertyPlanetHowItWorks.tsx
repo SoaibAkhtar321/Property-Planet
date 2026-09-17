@@ -18,7 +18,7 @@
 const steps = [
    {
       title: "Explore",
-      desc: "Browse verified plots, land, homes and projects across Future City and Hyderabad's southern corridors.",
+      desc: "Browse verified plots, land, homes and projects across Hyderabad's South-East growth corridors.",
    },
    {
       title: "Choose",
