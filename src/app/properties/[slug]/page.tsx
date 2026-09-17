@@ -4,6 +4,7 @@ import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
 import PropertyDetail from "@/components/properties/PropertyDetail";
 import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
+import BreadcrumbTrail from "@/components/common/breadcrumb/BreadcrumbTrail";
 import PropertyJsonLd from "@/components/common/seo/PropertyJsonLd";
 import { getPropertyBySlug, getSimilarProperties } from "@/lib/properties/queries";
 
@@ -76,6 +77,16 @@ const PropertyDetailPage = async ({ params }: { params: { slug: string } }) => {
             ]}
          />
          <HeaderTwo style_1={false} style_2={false} />
+         {/* SEO fix (Stage 2 — Visible Breadcrumbs): same items array as
+             BreadcrumbJsonLd above, so the visible trail and the
+             structured data can never disagree. */}
+         <BreadcrumbTrail
+            items={[
+               { name: "Home", path: "/" },
+               { name: "Properties", path: "/properties" },
+               { name: property.title, path: `/properties/${property.slug}` },
+            ]}
+         />
          <PropertyDetail property={property} similar={similar} />
          <FooterOne style={true} />
       </Wrapper>

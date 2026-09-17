@@ -8,26 +8,29 @@ import footerShape_2 from "@/assets/images/shape/shape_47.svg"
 import footerIcon_1 from "@/assets/images/icon/icon_30.svg"
 import footerIcon_2 from "@/assets/images/icon/icon_31.svg"
 import footer_data from "@/data/home-data/FooterData";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF, SOCIAL_LINKS } from "@/lib/site/contact";
 
 interface ContentType {
    title: string;
    desc_1: string;
    desc_2: string;
-   email: string;
-   number: string;
-   icon: string[];
 }
 
+// SEO fix (Stage 2 — Trust Signals / Local SEO): this component is live on
+// /about_us_02 and previously showed a placeholder email ("Emile@gmail.com"),
+// a placeholder phone ("+210 0000-0000") and three social icons that all
+// linked to "#" — fake business information on a real, published page.
+// FooterOne already solved this correctly (src/layouts/footers/FooterOne.tsx)
+// by reading from the single verified source of truth in
+// src/lib/site/contact.ts; this brings FooterTwo in line with the same
+// pattern instead of inventing new placeholder values.
 const footer_content: ContentType = {
    title: "Our Newsletter",
    desc_1: "Get instant news by subscribe to our newsletter",
    desc_2: "Hyderabad, Telangana",
-   email: "Emile@gmail.com",
-   number: "+210 0000-0000",
-   icon: ["facebook-f", "twitter", "instagram"],
 }
 
-const { title, desc_1, desc_2, email, number, icon } = footer_content;
+const { title, desc_1, desc_2 } = footer_content;
 
 const FooterTwo = () => {
    return (
@@ -65,19 +68,30 @@ const FooterTwo = () => {
                         <ul className="style-none contact-info">
                            <li className="d-flex align-items-center">
                               <Image src={footerIcon_1} alt="" width="20" />
-                              <Link href="#">{email}</Link>
+                              <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>
                            </li>
                            <li className="d-flex align-items-center">
                               <Image src={footerIcon_2} alt="" width="20" />
-                              <Link href="#">{number}</Link>
+                              <a href={CONTACT_PHONE_HREF}>{CONTACT_PHONE_DISPLAY}</a>
                            </li>
                         </ul>
 
-                        <ul className="style-none d-flex align-items-center social-icon">
-                           {icon.map((icon, i) => (
-                              <li key={i}><Link href="#"><i className={`fa-brands fa-${icon}`}></i></Link></li>
-                           ))}
-                        </ul>
+                        {SOCIAL_LINKS.length > 0 && (
+                           <ul className="style-none d-flex align-items-center social-icon">
+                              {SOCIAL_LINKS.map((social) => (
+                                 <li key={social.name}>
+                                    <a
+                                       href={social.href}
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       aria-label={`Property Planet on ${social.name}`}
+                                    >
+                                       <i className={`fa-brands fa-${social.icon}`} aria-hidden="true"></i>
+                                    </a>
+                                 </li>
+                              ))}
+                           </ul>
+                        )}
                         <Image src={footerShape_1} alt="" className="lazy-img shapes shape_01 d-none d-xl-block" />
                      </div>
                   </div>
@@ -108,12 +122,15 @@ const FooterTwo = () => {
 
             <div className="bottom-footer">
                <div className="d-md-flex justify-content-center justify-content-md-between align-items-center">
+                  {/* SEO fix (Stage 2 — Broken Internal Links): both of these
+                      previously pointed at /faq instead of the actual
+                      privacy/terms pages that already exist on the site. */}
                   <ul className="style-none bottom-nav d-flex flex-wrap justify-content-center">
-                     <li><Link href="/faq">Privacy &amp; Terms</Link></li>
-                     <li><Link href="/faq">Cookies</Link></li>
+                     <li><Link href="/privacy-policy">Privacy Policy</Link></li>
+                     <li><Link href="/terms-of-service">Terms &amp; Conditions</Link></li>
                      <li><Link href="/contact">Contact Us</Link></li>
                   </ul>
-                  <p className="mb-15 text-center text-lg-start order-md-first">Copyright @2025 Property Planet.</p>
+                  <p className="mb-15 text-center text-lg-start order-md-first">Copyright @{new Date().getFullYear()} Property Planet.</p>
                </div>
             </div>
          </div>

@@ -53,6 +53,24 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
                      )}
                      <div className="address mt-15">
                         <i className="bi bi-geo-alt" aria-hidden="true"></i> {property.address}
+                        {/* SEO fix (Stage 2 — Internal Linking): links to the
+                            existing /places/[locality] route using the same
+                            raw locality value and encodeURIComponent pattern
+                            already used on the homepage's "Explore the places
+                            with most properties" cards
+                            (BLockFeatureOne.tsx) — no new page/route, just a
+                            missing cross-link between an existing property
+                            and an existing locality page. Renders nothing
+                            when locality is absent. */}
+                        {property.locality && (
+                           <>
+                              {" "}
+                              ·{" "}
+                              <Link href={`/places/${encodeURIComponent(property.locality)}`}>
+                                 More in {property.locality}
+                              </Link>
+                           </>
+                        )}
                      </div>
                   </div>
                   {property.isDemo && (

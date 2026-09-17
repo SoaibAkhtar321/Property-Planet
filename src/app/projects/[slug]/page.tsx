@@ -4,6 +4,7 @@ import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
 import ProjectDetail from "@/components/projects/ProjectDetail";
 import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
+import BreadcrumbTrail from "@/components/common/breadcrumb/BreadcrumbTrail";
 import ProjectJsonLd from "@/components/common/seo/ProjectJsonLd";
 import { getProjectBySlug, getProjectUnits, getProjectUnitCounts } from "@/lib/projects/queries";
 
@@ -79,6 +80,15 @@ const ProjectDetailPage = async ({ params }: { params: { slug: string } }) => {
             ]}
          />
          <HeaderTwo style_1={false} style_2={false} />
+         {/* SEO fix (Stage 2 — Visible Breadcrumbs): same items array as
+             BreadcrumbJsonLd above. */}
+         <BreadcrumbTrail
+            items={[
+               { name: "Home", path: "/" },
+               { name: "Projects", path: "/projects" },
+               { name: project.title, path: `/projects/${project.slug}` },
+            ]}
+         />
          <ProjectDetail project={project} units={units} unitCounts={unitCounts} />
          <FooterOne style={true} />
       </Wrapper>

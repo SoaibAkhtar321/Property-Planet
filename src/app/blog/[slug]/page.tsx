@@ -5,6 +5,7 @@ import FooterOne from "@/layouts/footers/FooterOne";
 import BlogDetail from "@/components/blog/BlogDetail";
 import ArticleJsonLd from "@/components/common/seo/ArticleJsonLd";
 import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
+import BreadcrumbTrail from "@/components/common/breadcrumb/BreadcrumbTrail";
 import { getPostBySlug, getOtherPublishedPosts } from "@/lib/blog/queries";
 
 // Same reasoning as /blog and /properties/[slug]: published/unpublished
@@ -67,6 +68,15 @@ const BlogDetailPage = async ({ params }: { params: { slug: string } }) => {
             ]}
          />
          <HeaderTwo style_1={false} style_2={false} />
+         {/* SEO fix (Stage 2 — Visible Breadcrumbs): same items array as
+             BreadcrumbJsonLd above. */}
+         <BreadcrumbTrail
+            items={[
+               { name: "Home", path: "/" },
+               { name: "Insights", path: "/blog" },
+               { name: post.title, path: `/blog/${post.slug}` },
+            ]}
+         />
          <BlogDetail post={post} otherPosts={otherPosts} />
          <FooterOne style={true} />
       </Wrapper>

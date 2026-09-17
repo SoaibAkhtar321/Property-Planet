@@ -2,8 +2,7 @@ import { BlogPost } from "@/lib/blog/queries";
 import BlogCard from "./BlogCard";
 
 // Reuses the existing template's blog-section-three / blog-meta-two CSS
-// classes (see public/assets/scss/_blog.scss and
-// src/components/blogs/blog-one/BlogOneArea.tsx) for visual consistency
+// classes (see public/assets/scss/_blog.scss) for visual consistency
 // with the rest of the site — no new design system introduced, per the
 // Phase 6 scope boundary (full visual pass is Phase 7).
 

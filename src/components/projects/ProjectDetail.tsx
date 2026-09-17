@@ -69,7 +69,26 @@ const ProjectDetail = ({
                   {project.images.length > 0 ? (
                      project.images.map((img, index) => (
                         <figure key={index} className="image-wrapper">
-                           <Image src={img} alt={project.title} width={700} height={500} className="lazy-img w-100" />
+                           {/* SEO fix (Stage 3 — Image SEO): every photo in this
+                               gallery previously shared the exact same alt text
+                               (just project.title), which is indistinguishable
+                               to a screen reader or image search across N
+                               photos of the same project. Same
+                               "{title} — photo {n}" pattern already used for
+                               the property gallery (MediaGallery.tsx) and for
+                               property/project cards elsewhere in this file's
+                               sibling components. */}
+                           <Image
+                              src={img}
+                              alt={
+                                 index === 0
+                                    ? project.title
+                                    : `${project.title} — photo ${index + 1}${project.location ? ` (${project.location})` : ""}`
+                              }
+                              width={700}
+                              height={500}
+                              className="lazy-img w-100"
+                           />
                         </figure>
                      ))
                   ) : (
@@ -109,7 +128,15 @@ const ProjectDetail = ({
                                  {project.location && (
                                     <li className="position-relative z-1">
                                        <strong>Location</strong>
-                                       <span>{project.location}</span>
+                                       {/* SEO fix (Stage 2 — Internal Linking): same
+                                           /places/[locality] cross-link as
+                                           PropertyDetail.tsx, using the project's own
+                                           free-text location field. */}
+                                       <span>
+                                          <Link href={`/places/${encodeURIComponent(project.location)}`}>
+                                             {project.location}
+                                          </Link>
+                                       </span>
                                     </li>
                                  )}
                                  {project.projectType && (

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { BlogPost } from "@/lib/blog/queries";
 import SimilarPosts from "./SimilarPosts";
 
@@ -43,6 +44,30 @@ const BlogDetail = ({ post, otherPosts }: { post: BlogPost; otherPosts: BlogPost
                         date && <div className="fw-500 mb-30">{date}</div>
                      )}
                      <div className="post-data pt-50 md-pt-30">{renderContent(post.content)}</div>
+                     {/* SEO fix (Stage 2 — Internal Linking): every blog
+                         article previously dead-ended here (or at
+                         SimilarPosts) with no path back to the site's actual
+                         conversion pages. This is deliberately generic
+                         navigation rather than a specific property/project
+                         claim — the article's content is free text with no
+                         structured link to any one listing, so linking to a
+                         particular property/project here would be an
+                         invented, likely-false relevance claim rather than a
+                         real one. Browse-all links to /properties and
+                         /projects, plus a way back to /blog, are the safe,
+                         genuinely-useful version of that same goal. */}
+                     <div className="d-flex flex-wrap gap-3 mt-50 pt-30 border-top">
+                        <Link href="/properties" className="pp-card-btn pp-card-btn--primary px-4">
+                           Browse Properties <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
+                        </Link>
+                        <Link href="/projects" className="pp-card-btn px-4">
+                           Browse Projects <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
+                        </Link>
+                        <Link href="/blog" className="fs-16 fw-500 d-flex align-items-center ms-auto">
+                           <i className="bi bi-arrow-left me-1" aria-hidden="true"></i>
+                           Back to Insights
+                        </Link>
+                     </div>
                   </article>
                </div>
             </div>

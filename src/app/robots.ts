@@ -32,11 +32,23 @@ const AI_CRAWLER_AGENTS = [
    "ChatGPT-User",
    "OAI-SearchBot",
    "ClaudeBot",
+   // SEO fix (Stage 4 — AI Discoverability): Anthropic now runs three
+   // separate bots with three separate jobs — ClaudeBot (training),
+   // Claude-SearchBot (indexing for Claude's search/answers), and
+   // Claude-User (a live fetch on behalf of someone asking Claude a
+   // question right now). "Claude-Web" is the old, superseded name this
+   // list previously had instead of the current two; kept here too in
+   // case anything still sends it, alongside the current names, rather
+   // than dropped outright.
+   "Claude-SearchBot",
+   "Claude-User",
    "Claude-Web",
    "Google-Extended",
    "PerplexityBot",
+   "Perplexity-User",
    "Amazonbot",
    "Applebot-Extended",
+   "Meta-ExternalAgent",
 ];
 
 export default function robots(): MetadataRoute.Robots {
