@@ -3,6 +3,7 @@ import Wrapper from "@/layouts/Wrapper";
 import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
 import ProjectDetail from "@/components/projects/ProjectDetail";
+import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
 import { getProjectBySlug, getProjectUnits, getProjectUnitCounts } from "@/lib/projects/queries";
 
 // Same reasoning as /projects: published/unpublished state can change
@@ -53,6 +54,13 @@ const ProjectDetailPage = async ({ params }: { params: { slug: string } }) => {
 
    return (
       <Wrapper>
+         <BreadcrumbJsonLd
+            items={[
+               { name: "Home", path: "/" },
+               { name: "Projects", path: "/projects" },
+               { name: project.title, path: `/projects/${project.slug}` },
+            ]}
+         />
          <HeaderTwo style_1={false} style_2={false} />
          <ProjectDetail project={project} units={units} unitCounts={unitCounts} />
          <FooterOne style={true} />

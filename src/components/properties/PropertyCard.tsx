@@ -45,7 +45,13 @@ const PropertyCard = ({
                <FavouriteButton propertyId={item.id} initiallyFavourited={isFavourited} />
                <Link href={`/properties/${item.slug}`} className="pp-card__media-link" tabIndex={-1} aria-hidden="true">
                   {item.images[0] ? (
-                     <Image src={item.images[0]} alt="" width={600} height={450} className="pp-card__img" />
+                     <Image
+                        src={item.images[0]}
+                        alt={`${item.title} — ${item.address}`}
+                        width={600}
+                        height={450}
+                        className="pp-card__img"
+                     />
                   ) : (
                      <span className="pp-card__img pp-card__img--empty">Photos coming soon</span>
                   )}

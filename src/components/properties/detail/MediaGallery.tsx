@@ -10,7 +10,12 @@ const MediaGallery = ({ images, title }: { images: string[]; title: string }) =>
          <div className="row">
             <div className="col-md-7 d-flex">
                <div className="position-relative h-100 w-100 sm-pb-20">
-                  <a className="media-bg h-100" style={{ backgroundImage: `url(${main})` }}></a>
+                  <a
+                     className="media-bg h-100"
+                     style={{ backgroundImage: `url(${main})` }}
+                     role="img"
+                     aria-label={`${title} — main photo`}
+                  ></a>
                   {rest.length > 0 && (
                      <Fancybox options={{ Carousel: { infinite: true } }}>
                         <div className="img-fancy-btn fw-500 fs-16 color-dark">
@@ -33,6 +38,8 @@ const MediaGallery = ({ images, title }: { images: string[]; title: string }) =>
                                  href={img}
                                  className="media-bg sm"
                                  style={{ backgroundImage: `url(${img})` }}
+                                 role="img"
+                                 aria-label={`${title} photo ${index + 2}`}
                               ></a>
                            </div>
                         ))}

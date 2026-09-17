@@ -10,9 +10,19 @@ import { getPublishedPosts } from "@/lib/blog/queries";
 // /properties and /projects.
 export const dynamic = "force-dynamic";
 
+const CANONICAL = "https://propertyplanet.in/blog";
+const DESCRIPTION = "Guidance on buying and selling plots, land and property across Hyderabad's growth corridors.";
+
 export const metadata = {
    title: "Insights | Property Planet",
-   description: "Guidance on buying and selling plots, land and property across Hyderabad's growth corridors.",
+   description: DESCRIPTION,
+   alternates: { canonical: CANONICAL },
+   openGraph: {
+      title: "Insights | Property Planet",
+      description: DESCRIPTION,
+      url: CANONICAL,
+      type: "website",
+   },
 };
 
 const BlogPage = async () => {

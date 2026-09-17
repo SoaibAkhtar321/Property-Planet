@@ -1,8 +1,13 @@
 import PrivacyPolicy from "@/components/inner-pages/privacy-policy";
 import Wrapper from "@/layouts/Wrapper";
 
+const CANONICAL = "https://propertyplanet.in/privacy-policy";
+
 export const metadata = {
-   title: "Property Planet — Privacy Policy",
+   title: "Privacy Policy | Property Planet",
+   description: "How Property Planet collects, uses and protects your information.",
+   alternates: { canonical: CANONICAL },
+   robots: { index: true, follow: true },
 };
 const index = () => {
    return (

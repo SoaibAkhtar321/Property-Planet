@@ -3,6 +3,8 @@ import Wrapper from "@/layouts/Wrapper";
 import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
 import BlogDetail from "@/components/blog/BlogDetail";
+import ArticleJsonLd from "@/components/common/seo/ArticleJsonLd";
+import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
 import { getPostBySlug, getOtherPublishedPosts } from "@/lib/blog/queries";
 
 // Same reasoning as /blog and /properties/[slug]: published/unpublished
@@ -15,12 +17,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
    if (!post) {
       return { title: "Article Not Found | Property Planet" };
    }
+   const title = post.seoTitle ?? `${post.title} | Property Planet`;
+   const description = post.seoDescription ?? post.excerpt ?? undefined;
+   const url = `https://propertyplanet.in/blog/${post.slug}`;
    return {
-      title: post.seoTitle ?? `${post.title} | Property Planet`,
-      description: post.seoDescription ?? post.excerpt ?? undefined,
+      title,
+      description,
+      alternates: { canonical: url },
       openGraph: {
          title: post.seoTitle ?? post.title,
-         description: post.seoDescription ?? post.excerpt ?? undefined,
+         description,
+         url,
+         type: "article",
          images: post.ogImageUrl ? [post.ogImageUrl] : undefined,
       },
    };
@@ -41,6 +49,14 @@ const BlogDetailPage = async ({ params }: { params: { slug: string } }) => {
 
    return (
       <Wrapper>
+         <ArticleJsonLd post={post} />
+         <BreadcrumbJsonLd
+            items={[
+               { name: "Home", path: "/" },
+               { name: "Insights", path: "/blog" },
+               { name: post.title, path: `/blog/${post.slug}` },
+            ]}
+         />
          <HeaderTwo style_1={false} style_2={false} />
          <BlogDetail post={post} otherPosts={otherPosts} />
          <FooterOne style={true} />

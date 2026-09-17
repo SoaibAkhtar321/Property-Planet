@@ -3,6 +3,8 @@ import Wrapper from "@/layouts/Wrapper";
 import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
 import PropertyDetail from "@/components/properties/PropertyDetail";
+import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
+import PropertyJsonLd from "@/components/common/seo/PropertyJsonLd";
 import { getPropertyBySlug, getSimilarProperties } from "@/lib/properties/queries";
 
 export const dynamic = "force-dynamic";
@@ -52,6 +54,18 @@ const PropertyDetailPage = async ({ params }: { params: { slug: string } }) => {
 
    return (
       <Wrapper>
+         <PropertyJsonLd property={property} />
+         {/* Mirrors the real, reachable pages a visitor would actually click
+             through (Home -> Properties -> this listing). Kept deliberately
+             minimal/accurate rather than inventing a location-page crumb
+             that doesn't exist as a real route yet. */}
+         <BreadcrumbJsonLd
+            items={[
+               { name: "Home", path: "/" },
+               { name: "Properties", path: "/properties" },
+               { name: property.title, path: `/properties/${property.slug}` },
+            ]}
+         />
          <HeaderTwo style_1={false} style_2={false} />
          <PropertyDetail property={property} similar={similar} />
          <FooterOne style={true} />

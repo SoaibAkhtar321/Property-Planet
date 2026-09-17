@@ -12,11 +12,37 @@ import { getProjectsForPlace } from "@/lib/projects/queries";
 // reads live published inventory through Supabase, not build-time data.
 export const dynamic = "force-dynamic";
 
+// SEO fix: `locality` is free-text (see sitemap.ts's own comment on why
+// there's no canonical locality table), so this route previously
+// returned a 200 "Nothing is published for {place} yet" page for *any*
+// arbitrary string in the URL -- an unbounded set of indexable, empty,
+// near-duplicate pages. Now it 404s like every other not-found record in
+// the app (properties/[slug], projects/[slug], blog/[slug]) when there's
+// nothing to show. It still isn't a curated locality page (no canonical
+// list of valid localities exists yet -- see the audit's note under
+// "Needs a Business Decision"), so it also isn't in sitemap.ts and has
+// no metadataBase-quality title/description of its own beyond this
+// generateMetadata -- both intentionally deferred until that's decided.
+export async function generateMetadata({ params }: { params: { locality: string } }) {
+   const place = decodeURIComponent(params.locality).trim();
+   if (!place) {
+      return { title: "Not Found | Property Planet" };
+   }
+   return {
+      title: `Properties in ${place}, Hyderabad | Property Planet`,
+      description: `Browse published properties and projects in ${place}, Hyderabad with Property Planet.`,
+   };
+}
+
 const PlacePage = async ({ params }: { params: { locality: string } }) => {
    const place = decodeURIComponent(params.locality).trim();
    if (!place) notFound();
 
    const [properties, projects] = await Promise.all([getPropertiesForPlace(place), getProjectsForPlace(place)]);
+
+   if (properties.length === 0 && projects.length === 0) {
+      notFound();
+   }
 
    return (
       <Wrapper>
@@ -33,13 +59,6 @@ const PlacePage = async ({ params }: { params: { locality: string } }) => {
                            <Link href="/projects">see all featured opportunities</Link>.
                         </p>
                      </div>
-
-                     {properties.length === 0 && projects.length === 0 && (
-                        <p className="fs-20">
-                           Nothing is published for {place} yet. Check back soon, or{" "}
-                           <Link href="/properties">browse individual properties</Link> across every area.
-                        </p>
-                     )}
 
                      {properties.length > 0 && (
                         <div className="mb-60 lg-mb-40">
