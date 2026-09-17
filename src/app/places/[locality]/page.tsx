@@ -52,7 +52,9 @@ const PlacePage = async ({ params }: { params: { locality: string } }) => {
                <div className="row">
                   <div className="col-xl-9">
                      <div className="mb-40 lg-mb-30">
-                        <h2 className="font-garamond">Properties in {place}</h2>
+                        {/* SEO fix (Section 17 — Heading Structure): this was an <h2>,
+                            leaving the page with no <h1> at all. */}
+                        <h1 className="font-garamond">Properties in {place}</h1>
                         <p className="fs-18 mt-10 mb-0">
                            Standalone properties and projects published for this area. Looking for everything on the
                            site instead? <Link href="/properties">Browse all properties</Link> or{" "}

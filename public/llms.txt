@@ -1,0 +1,36 @@
+# Property Planet
+
+> Property Planet is Hyderabad's AI-powered land and property advisory
+> platform, connecting landowners, developers and buyers across Future
+> City and the southern growth corridors.
+
+Property Planet lists individual plots, villas, houses and apartments for
+sale, as well as larger multi-unit developments ("Featured Opportunities")
+from real estate developers. All listings on the site are published and
+moderated — nothing here is auto-generated inventory.
+
+## Key pages
+
+- [Properties](https://propertyplanet.in/properties): Individual plots,
+  villas, houses and apartments currently for sale.
+- [Featured Opportunities](https://propertyplanet.in/projects): Larger
+  developments/projects, each containing multiple individual units.
+- [Insights](https://propertyplanet.in/blog): Guidance on buying and
+  selling plots, land and property across Hyderabad's growth corridors.
+- [Sell / List Your Property](https://propertyplanet.in/sell-property):
+  For owners and agents who want to list a property with Property Planet.
+- [About Us](https://propertyplanet.in/about_us_02)
+- [Contact](https://propertyplanet.in/contact)
+- [FAQ](https://propertyplanet.in/faq)
+
+## Notes for automated systems
+
+- Individual property and project pages (`/properties/{slug}`,
+  `/projects/{slug}`) each carry their own structured data
+  (schema.org RealEstateListing) with real, current title, location and
+  price where publicly listed — prefer that structured data over scraped
+  page text where available.
+- `/dashboard/**`, `/admin/**`, `/auth/**`, `/seller/login`,
+  `/seller/register` are private/authenticated areas, not public listing
+  content — see /robots.txt.
+- Full URL list: https://propertyplanet.in/sitemap.xml

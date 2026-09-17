@@ -9,7 +9,10 @@ const BreadcrumbTwo = ({ title, sub_title }: any) => {
       <div className="inner-banner-three inner-banner text-center z-1 position-relative">
          <div className="bg-wrapper overflow-hidden position-relative z-1" style={{ backgroundImage: `url(/assets/images/media/img_51.jpg)` }}>
             <div className="container position-relative z-2">
-               <h2 className="mb-35 xl-mb-20 md-mb-10 pt-15 font-garamond text-white">{title}</h2>
+               {/* SEO fix (Section 17 — Heading Structure): this was an <h2> —
+                   the only heading-only-used-page (about_us_02) had no <h1> at
+                   all. Single-consumer component, safe to promote here. */}
+               <h1 className="mb-35 xl-mb-20 md-mb-10 pt-15 font-garamond text-white">{title}</h1>
                <ul className="theme-breadcrumb style-none d-inline-flex align-items-center justify-content-center position-relative z-1 bottom-line">
                   <li><Link href="/">Home</Link></li>
                   <li>/</li>

@@ -18,7 +18,9 @@ const ProjectsListing = ({ items }: { items: Project[] }) => {
                 listing. */}
             <div className="row">
                <div className="col-lg-8">
-                  <h2 className="font-garamond">Featured Opportunities</h2>
+                  {/* SEO fix (Section 17 — Heading Structure): this was an <h2>,
+                      leaving the page with no <h1> at all. */}
+                  <h1 className="font-garamond">Featured Opportunities</h1>
                   <p className="fs-20 mt-10">
                      Larger developments and projects. Each one contains individual units or plots you can browse and
                      enquire about. Looking for a standalone plot, villa or apartment instead?{" "}

@@ -24,6 +24,13 @@ export const metadata = {
       type: "website",
       siteName: "Property Planet",
    },
+   // SEO fix (Section 20 — Twitter/X Card): see the identical note in
+   // src/app/properties/page.tsx — this page had no twitter block either.
+   twitter: {
+      card: "summary_large_image",
+      title: "Featured Opportunities | Property Planet",
+      description: DESCRIPTION,
+   },
 };
 
 const ProjectsPage = async () => {

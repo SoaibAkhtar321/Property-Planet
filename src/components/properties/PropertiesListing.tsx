@@ -84,7 +84,9 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
                          CTA in HeroBanner.tsx), used consistently here as
                          the counterpart to "Featured Opportunities". */}
                      <div className="mb-40 lg-mb-30">
-                        <h2 className="font-garamond">Explore Properties</h2>
+                        {/* SEO fix (Section 17 — Heading Structure): this was an <h2>,
+                            leaving the page with no <h1> at all. */}
+                        <h1 className="font-garamond">Explore Properties</h1>
                         <p className="fs-18 mt-10 mb-0">
                            Standalone plots, villas, houses and apartments. Browsing a larger development instead?{" "}
                            <Link href="/projects">See Featured Opportunities</Link>.

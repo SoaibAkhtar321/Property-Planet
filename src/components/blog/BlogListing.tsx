@@ -14,7 +14,9 @@ const BlogListing = ({ items }: { items: BlogPost[] }) => {
             <div className="row">
                <div className="col-12">
                   <div className="title-one mb-50 lg-mb-30">
-                     <h2 className="font-garamond">Property Planet Insights</h2>
+                     {/* SEO fix (Section 17 — Heading Structure): this was an <h2>,
+                         leaving the page with no <h1> at all. */}
+                     <h1 className="font-garamond">Property Planet Insights</h1>
                      <p className="fs-22 mt-xs">
                         Guidance on buying and selling plots, land and property in and around Hyderabad&apos;s growth corridors.
                      </p>

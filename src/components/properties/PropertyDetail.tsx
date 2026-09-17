@@ -33,7 +33,10 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
                         </Link>
                      </nav>
                   )}
-                  <h3 className="property-titlee">{property.title}</h3>
+                  {/* SEO fix (Section 17 — Heading Structure): this was an <h3>,
+                      leaving the page with no <h1> at all — the property's own
+                      name is the page's primary heading. */}
+                  <h1 className="property-titlee">{property.title}</h1>
                   <div className="d-flex flex-wrap mt-10">
                      {property.tag && (
                         <div className="list-type text-uppercase mt-15 me-3 bg-white text-dark fw-500">

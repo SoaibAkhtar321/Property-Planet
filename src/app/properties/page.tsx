@@ -33,6 +33,16 @@ export const metadata = {
       type: "website",
       siteName: "Property Planet",
    },
+   // SEO fix (Section 20 — Twitter/X Card): without its own `twitter`
+   // block, this page silently inherited the root layout's generic
+   // homepage title/description/image on Twitter/X, even though the
+   // openGraph block above (used by every other platform) already has
+   // page-specific copy.
+   twitter: {
+      card: "summary_large_image",
+      title: "Explore Properties | Property Planet",
+      description: DESCRIPTION,
+   },
 };
 
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value) ?? "";

@@ -85,7 +85,9 @@ const ProjectDetail = ({
                <div className="col-lg-6">
                   <div className="details-text ps-xxl-5 md-mt-40">
                      {project.tag && <div className="tag fw-500 text-uppercase">{project.tag}</div>}
-                     <h3>{project.title}</h3>
+                     {/* SEO fix (Section 17 — Heading Structure): this was an <h3>,
+                         leaving the page with no <h1> at all. */}
+                     <h1>{project.title}</h1>
 
                      {project.overview && <p className="fs-20 pt-20">{project.overview}</p>}
 

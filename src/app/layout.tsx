@@ -1,7 +1,25 @@
 import "../styles/index.scss";
 import type { Metadata, Viewport } from "next";
+import { EB_Garamond } from "next/font/google";
 import ReduxProvider from "@/redux/ReduxProvider";
 import GlobalJsonLd from "@/components/common/seo/GlobalJsonLd";
+
+// SEO/perf fix: EB Garamond (the site's `.font-garamond` heading font —
+// see public/assets/scss/_variables.scss's $sub-font) was previously
+// loaded via a render-blocking <link rel="stylesheet"> to
+// fonts.googleapis.com with no preconnect: every page paid for an extra
+// DNS lookup + connection + CSS fetch + font fetch, all blocking render,
+// before any heading could paint. next/font/google self-hosts the same
+// font at build time (same family, same weights/styles, same
+// display: "swap"), serving it from this domain with no external
+// request and no render-blocking stylesheet at all.
+const ebGaramond = EB_Garamond({
+   subsets: ["latin"],
+   weight: ["400", "500", "600", "700"],
+   style: ["normal", "italic"],
+   display: "swap",
+   variable: "--font-eb-garamond",
+});
 
 // SEO fix: this used to be a Client Component ('use client') with a
 // hand-written <head> full of static meta tags duplicated on every page,
@@ -80,14 +98,10 @@ export default function RootLayout({
    const isDev = process.env.NODE_ENV === "development";
 
    return (
-      <html lang="en" suppressHydrationWarning={isDev}>
+      <html lang="en" className={ebGaramond.variable} suppressHydrationWarning={isDev}>
          <head>
             {/* For IE */}
             <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-            <link
-               rel="stylesheet"
-               href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap"
-            />
             <GlobalJsonLd />
          </head>
          <body suppressHydrationWarning={true}>

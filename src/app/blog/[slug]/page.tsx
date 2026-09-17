@@ -31,6 +31,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
          type: "article",
          images: post.ogImageUrl ? [post.ogImageUrl] : undefined,
       },
+      // SEO fix (Section 20 — Twitter/X Card): see the identical note in
+      // src/app/properties/page.tsx. Mirrors the openGraph block above —
+      // same real article image, not the generic homepage favicon.
+      twitter: {
+         card: "summary_large_image",
+         title: post.seoTitle ?? post.title,
+         description,
+         images: post.ogImageUrl ? [post.ogImageUrl] : undefined,
+      },
    };
 }
 

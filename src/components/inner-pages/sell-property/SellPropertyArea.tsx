@@ -18,7 +18,9 @@ const SellPropertyArea = () => {
             <div className="row justify-content-center">
                <div className="col-xl-8 col-lg-9">
                   <div className="title-one text-center mb-20 wow fadeInUp">
-                     <h2 className="font-garamond">Sell Through Property Planet</h2>
+                     {/* SEO fix (Section 17 — Heading Structure): this was an <h2>,
+                         leaving the page with no <h1> at all. */}
+                     <h1 className="font-garamond">Sell Through Property Planet</h1>
                      <p className="fs-22 mt-xs">Submit your land or property. Our team reviews the opportunity and connects it with relevant buyers, developers or companies — you don&apos;t get exposed directly to buyers.</p>
                   </div>
                </div>

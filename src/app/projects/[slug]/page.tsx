@@ -4,6 +4,7 @@ import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
 import ProjectDetail from "@/components/projects/ProjectDetail";
 import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
+import ProjectJsonLd from "@/components/common/seo/ProjectJsonLd";
 import { getProjectBySlug, getProjectUnits, getProjectUnitCounts } from "@/lib/projects/queries";
 
 // Same reasoning as /projects: published/unpublished state can change
@@ -34,6 +35,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
          // asset, and never anything from a non-published record.
          images: project.images[0] ? [{ url: project.images[0] }] : undefined,
       },
+      // SEO fix (Section 20 — Twitter/X Card): see the identical note in
+      // src/app/properties/page.tsx. Mirrors the openGraph block above —
+      // same real project photo, not the generic homepage favicon.
+      twitter: {
+         card: "summary_large_image",
+         title,
+         description,
+         images: project.images[0] ? [project.images[0]] : undefined,
+      },
    };
 }
 
@@ -54,6 +64,13 @@ const ProjectDetailPage = async ({ params }: { params: { slug: string } }) => {
 
    return (
       <Wrapper>
+         {/* SEO fix: /projects/[slug] previously had no structured data
+             beyond the breadcrumb — PropertyJsonLd existed for individual
+             listings but nothing equivalent described the project itself
+             (name, location, size, real pricing) to search engines. Built
+             only from fields project_public + project_pricing already
+             expose on this page — no invented offers/availability. */}
+         <ProjectJsonLd project={project} />
          <BreadcrumbJsonLd
             items={[
                { name: "Home", path: "/" },

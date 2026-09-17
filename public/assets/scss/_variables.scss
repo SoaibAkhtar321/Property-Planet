@@ -1,6 +1,10 @@
 // Font Family
 $main-font: 'Gordita';
-$sub-font: 'EB Garamond', serif;
+// SEO/perf fix: now points at the CSS variable next/font/google generates
+// in src/app/layout.tsx (self-hosted, no external Google Fonts request)
+// instead of the raw family name, which relied on the removed
+// render-blocking <link> to actually load anything.
+$sub-font: var(--font-eb-garamond), serif;
 $bootstrapFont: 'bootstrap-icons';
 $font-awesome: 'Font Awesome 6 Pro';
 

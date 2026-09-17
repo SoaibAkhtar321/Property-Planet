@@ -40,6 +40,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
          siteName: "Property Planet",
          images: property.images[0] ? [{ url: property.images[0] }] : undefined,
       },
+      // SEO fix (Section 20 — Twitter/X Card): see the identical note in
+      // src/app/properties/page.tsx. Mirrors the openGraph block above —
+      // same real listing photo, not the generic homepage favicon.
+      twitter: {
+         card: "summary_large_image",
+         title,
+         description,
+         images: property.images[0] ? [property.images[0]] : undefined,
+      },
    };
 }
 
