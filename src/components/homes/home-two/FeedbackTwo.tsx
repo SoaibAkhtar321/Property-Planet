@@ -37,7 +37,7 @@ const feedback_data: DataType[] = [
    },
    {
       id: 3,
-      desc: (<>&quot;Was comparing a few corridor villages for investment. <span>The team's local knowledge</span> of Maheshwaram and Mucherla made the decision easier.&quot;</>),
+      desc: (<>&quot;Was comparing a few corridor villages for investment. <span>The team&apos;s local knowledge</span> of Maheshwaram and Mucherla made the decision easier.&quot;</>),
       title: "Anil Kumar",
       country: "Maheshwaram, Hyderabad",
       initials: "AK",
