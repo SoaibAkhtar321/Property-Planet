@@ -15,6 +15,12 @@ const DashboardHeaderTwo = ({title}:any) => {
 
    const [isActive, setIsActive] = useState<boolean>(false);
 
+   // Phase 7: the badge-pill dot used to render unconditionally (CSS-only),
+   // implying there was always something unread even when Notification.tsx
+   // was static demo content. Now it only shows when there's a real unread
+   // row in `notifications` for this user.
+   const [unreadCount, setUnreadCount] = useState(0);
+
    // "Add Listing" is a seller-only action (it opens the property-creation
    // flow) -- it must not be shown to buyers. Same read-only, client-side
    // role check as DashboardHeaderOne.tsx, permitted by the existing
@@ -59,9 +65,9 @@ const DashboardHeaderTwo = ({title}:any) => {
                <div className="profile-notification position-relative dropdown-center ms-3 ms-md-5 me-4">
                   <button className="noti-btn dropdown-toggle" type="button" id="notification-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                      <Image src={dashboardIcon_2} alt="" className="lazy-img" />
-                     <div className="badge-pill"></div>
+                     {unreadCount > 0 && <div className="badge-pill"></div>}
                   </button>
-                  <Notification />
+                  <Notification onUnreadCountChange={setUnreadCount} />
                </div>
                {isSeller && (
                   <div className="d-none d-md-block me-3">

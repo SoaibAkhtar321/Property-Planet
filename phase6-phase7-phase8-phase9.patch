@@ -1,0 +1,534 @@
+diff --git a/src/app/admin/blog/page.tsx b/src/app/admin/blog/page.tsx
+index e6416c8..a503e78 100644
+--- a/src/app/admin/blog/page.tsx
++++ b/src/app/admin/blog/page.tsx
+@@ -43,6 +43,7 @@ export default async function AdminBlogPage() {
+          {posts.length === 0 ? (
+             <p className="text-muted">No posts yet.</p>
+          ) : (
++            <div className="table-responsive">
+             <table className="table align-middle">
+                <thead>
+                   <tr>
+@@ -78,6 +79,7 @@ export default async function AdminBlogPage() {
+                   ))}
+                </tbody>
+             </table>
++            </div>
+          )}
+       </div>
+    );
+diff --git a/src/app/admin/projects/page.tsx b/src/app/admin/projects/page.tsx
+index d7051b3..64fb306 100644
+--- a/src/app/admin/projects/page.tsx
++++ b/src/app/admin/projects/page.tsx
+@@ -42,6 +42,7 @@ export default async function AdminProjectsPage() {
+          {projects.length === 0 ? (
+             <p className="text-muted">No projects yet.</p>
+          ) : (
++            <div className="table-responsive">
+             <table className="table align-middle">
+                <thead>
+                   <tr>
+@@ -77,6 +78,7 @@ export default async function AdminProjectsPage() {
+                   ))}
+                </tbody>
+             </table>
++            </div>
+          )}
+       </div>
+    );
+diff --git a/src/app/admin/users/page.tsx b/src/app/admin/users/page.tsx
+index 45746da..b48a5bb 100644
+--- a/src/app/admin/users/page.tsx
++++ b/src/app/admin/users/page.tsx
+@@ -39,6 +39,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
+          {filtered.length === 0 ? (
+             <p className="text-muted">No users found.</p>
+          ) : (
++            <div className="table-responsive">
+             <table className="table align-middle">
+                <thead>
+                   <tr>
+@@ -79,6 +80,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
+                   })}
+                </tbody>
+             </table>
++            </div>
+          )}
+       </div>
+    );
+diff --git a/src/app/robots.ts b/src/app/robots.ts
+new file mode 100644
+index 0000000..a39ceae
+--- /dev/null
++++ b/src/app/robots.ts
+@@ -0,0 +1,39 @@
++// src/app/robots.ts
++//
++// Phase 8: no robots.txt existed at all (neither a static file under
++// public/ nor this special Next.js file) -- crawlers got Next's default
++// (implicitly "allow everything", including /dashboard/** and /admin/**,
++// which should never be indexed) and there was nothing pointing them at
++// a sitemap.
++//
++// Domain matches the one already hardcoded in every per-page
++// generateMetadata() (see src/app/properties/[slug]/page.tsx,
++// src/app/projects/[slug]/page.tsx, etc.) and in the root layout's
++// og:url meta tag -- kept as a literal here rather than introducing a
++// new env var, for the same reason those call sites do.
++
++import type { MetadataRoute } from "next";
++
++const SITE_URL = "https://propertyplanet.in";
++
++export default function robots(): MetadataRoute.Robots {
++   return {
++      rules: [
++         {
++            userAgent: "*",
++            allow: "/",
++            disallow: [
++               "/dashboard",
++               "/dashboard/",
++               "/admin",
++               "/admin/",
++               "/auth",
++               "/auth/",
++               "/seller/login",
++               "/seller/register",
++            ],
++         },
++      ],
++      sitemap: `${SITE_URL}/sitemap.xml`,
++   };
++}
+diff --git a/src/app/sitemap.ts b/src/app/sitemap.ts
+new file mode 100644
+index 0000000..576cf07
+--- /dev/null
++++ b/src/app/sitemap.ts
+@@ -0,0 +1,64 @@
++// src/app/sitemap.ts
++//
++// Phase 8: no sitemap existed at all. This one is built only from real,
++// already-published data via the same query functions every public page
++// already uses (getPublishedProperties/getPublishedProjects/getPublishedPosts --
++// all read from the RLS-safe *_public views, so nothing unpublished or
++// admin-only can end up in it). No inventory, URLs, or dates are
++// invented -- a property/project/post with no published_at simply omits
++// lastModified rather than getting a fabricated one.
++//
++// /places/[locality] is intentionally NOT included here: locality is a
++// free-text column (see src/lib/places/matching.ts's own comment on why
++// there's no canonical place table), so there's no safe, non-invented
++// list of valid locality slugs to enumerate without querying and
++// deduplicating free text at build time -- left as a follow-up rather
++// than guessed at in this pass.
++
++import type { MetadataRoute } from "next";
++import { getPublishedProperties } from "@/lib/properties/queries";
++import { getPublishedProjects } from "@/lib/projects/queries";
++import { getPublishedPosts } from "@/lib/blog/queries";
++
++const SITE_URL = "https://propertyplanet.in";
++
++const STATIC_ROUTES = [
++   "",
++   "/properties",
++   "/projects",
++   "/blog",
++   "/about_us_02",
++   "/contact",
++   "/faq",
++   "/sell-property",
++   "/privacy-policy",
++   "/terms-of-service",
++];
++
++export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
++   const [properties, projects, posts] = await Promise.all([
++      getPublishedProperties().catch(() => []),
++      getPublishedProjects().catch(() => []),
++      getPublishedPosts().catch(() => []),
++   ]);
++
++   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((path) => ({
++      url: `${SITE_URL}${path}`,
++   }));
++
++   const propertyEntries: MetadataRoute.Sitemap = properties.map((property) => ({
++      url: `${SITE_URL}/properties/${property.slug}`,
++   }));
++
++   const projectEntries: MetadataRoute.Sitemap = projects.map((project) => ({
++      url: `${SITE_URL}/projects/${project.slug}`,
++      ...(project.publishedAt ? { lastModified: new Date(project.publishedAt) } : {}),
++   }));
++
++   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
++      url: `${SITE_URL}/blog/${post.slug}`,
++      ...(post.publishedAt ? { lastModified: new Date(post.publishedAt) } : {}),
++   }));
++
++   return [...staticEntries, ...propertyEntries, ...projectEntries, ...postEntries];
++}
+diff --git a/src/layouts/headers/dashboard/DashboardHeaderTwo.tsx b/src/layouts/headers/dashboard/DashboardHeaderTwo.tsx
+index f9efe55..0bc3038 100644
+--- a/src/layouts/headers/dashboard/DashboardHeaderTwo.tsx
++++ b/src/layouts/headers/dashboard/DashboardHeaderTwo.tsx
+@@ -15,6 +15,12 @@ const DashboardHeaderTwo = ({title}:any) => {
+ 
+    const [isActive, setIsActive] = useState<boolean>(false);
+ 
++   // Phase 7: the badge-pill dot used to render unconditionally (CSS-only),
++   // implying there was always something unread even when Notification.tsx
++   // was static demo content. Now it only shows when there's a real unread
++   // row in `notifications` for this user.
++   const [unreadCount, setUnreadCount] = useState(0);
++
+    // "Add Listing" is a seller-only action (it opens the property-creation
+    // flow) -- it must not be shown to buyers. Same read-only, client-side
+    // role check as DashboardHeaderOne.tsx, permitted by the existing
+@@ -59,9 +65,9 @@ const DashboardHeaderTwo = ({title}:any) => {
+                <div className="profile-notification position-relative dropdown-center ms-3 ms-md-5 me-4">
+                   <button className="noti-btn dropdown-toggle" type="button" id="notification-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                      <Image src={dashboardIcon_2} alt="" className="lazy-img" />
+-                     <div className="badge-pill"></div>
++                     {unreadCount > 0 && <div className="badge-pill"></div>}
+                   </button>
+-                  <Notification />
++                  <Notification onUnreadCountChange={setUnreadCount} />
+                </div>
+                {isSeller && (
+                   <div className="d-none d-md-block me-3">
+diff --git a/src/layouts/headers/dashboard/Notification.tsx b/src/layouts/headers/dashboard/Notification.tsx
+index 23d2434..bba7f3b 100644
+--- a/src/layouts/headers/dashboard/Notification.tsx
++++ b/src/layouts/headers/dashboard/Notification.tsx
+@@ -1,36 +1,129 @@
+-import Image from "next/image"
++"use client"
++
++// Phase 7: this used to be static template markup ("You have 3 new
++// mails", "Your listing post has been approved", "Your meeting is
++// cancelled") shown to every buyer/seller regardless of whether any of
++// it was true -- fabricated notification content. The real
++// `notifications` table has existed since 0022_site_visit_cancellation.sql
++// (site-visit-cancellation is the only event that currently writes to
++// it), with RLS already scoping reads/updates to
++// `recipient_id = auth.uid()`. This component now reads that table
++// directly instead of rendering invented events.
++//
++// No new notification-producing events are added here -- per the Phase 7
++// brief ("do not fabricate notification functionality"), the only real
++// backend trigger today is the seller-cancellation notification. Listing
++// approval/rejection, buyer-enquiry-confirmation, etc. are not wired to
++// write to `notifications` yet, so they correctly don't appear here
++// until that backend work is actually done.
++
++import { useEffect, useState } from "react";
++import Image from "next/image";
++import { createClient } from "@/lib/supabase/client";
+ 
+-import notificationIcon_1 from "@/assets/images/dashboard/icon/icon_36.svg";
+-import notificationIcon_2 from "@/assets/images/dashboard/icon/icon_37.svg";
+ import notificationIcon_3 from "@/assets/images/dashboard/icon/icon_38.svg";
+ 
+-const Notification = () => {
++interface NotificationRow {
++   id: string;
++   type: string;
++   message: string;
++   read: boolean;
++   created_at: string;
++}
++
++const formatRelativeTime = (iso: string): string => {
++   const diffMs = Date.now() - new Date(iso).getTime();
++   const minutes = Math.floor(diffMs / 60000);
++   if (minutes < 1) return "just now";
++   if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
++   const hours = Math.floor(minutes / 60);
++   if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
++   const days = Math.floor(hours / 24);
++   return `${days} day${days === 1 ? "" : "s"} ago`;
++};
++
++interface NotificationProps {
++   /** Lets the header show/hide its unread badge-pill from real data. */
++   onUnreadCountChange?: (count: number) => void;
++}
++
++const Notification = ({ onUnreadCountChange }: NotificationProps) => {
++   const [notifications, setNotifications] = useState<NotificationRow[]>([]);
++   const [loaded, setLoaded] = useState(false);
++
++   useEffect(() => {
++      let cancelled = false;
++      const supabase = createClient();
++
++      (async () => {
++         const {
++            data: { user },
++         } = await supabase.auth.getUser();
++         if (!user || cancelled) return;
++
++         const { data } = await supabase
++            .from("notifications")
++            .select("id, type, message, read, created_at")
++            .order("created_at", { ascending: false })
++            .limit(10);
++
++         if (cancelled) return;
++         const rows = data ?? [];
++         setNotifications(rows);
++         setLoaded(true);
++         onUnreadCountChange?.(rows.filter((r) => !r.read).length);
++      })();
++
++      return () => {
++         cancelled = true;
++      };
++      // eslint-disable-next-line react-hooks/exhaustive-deps
++   }, []);
++
++   const markRead = async (id: string) => {
++      setNotifications((prev) => {
++         const next = prev.map((n) => (n.id === id ? { ...n, read: true } : n));
++         onUnreadCountChange?.(next.filter((n) => !n.read).length);
++         return next;
++      });
++      const supabase = createClient();
++      await supabase.from("notifications").update({ read: true }).eq("id", id);
++   };
++
+    return (
+       <ul className="dropdown-menu" aria-labelledby="notification-dropdown">
+          <li>
+             <h4>Notification</h4>
+             <ul className="style-none notify-list">
+-               <li className="d-flex align-items-center unread">
+-                  <Image src={notificationIcon_1} alt="" className="lazy-img icon" />
+-                  <div className="flex-fill ps-2">
+-                     <h6>You have 3 new mails</h6>
+-                     <span className="time">3 hours ago</span>
+-                  </div>
+-               </li>
+-               <li className="d-flex align-items-center">
+-                  <Image src={notificationIcon_2} alt="" className="lazy-img icon" />
+-                  <div className="flex-fill ps-2">
+-                     <h6>Your listing post has been approved</h6>
+-                     <span className="time">1 day ago</span>
+-                  </div>
+-               </li>
+-               <li className="d-flex align-items-center unread">
+-                  <Image src={notificationIcon_3} alt="" className="lazy-img icon" />
+-                  <div className="flex-fill ps-2">
+-                     <h6>Your meeting is cancelled</h6>
+-                     <span className="time">3 days ago</span>
+-                  </div>
+-               </li>
++               {!loaded ? (
++                  <li className="d-flex align-items-center">
++                     <div className="flex-fill ps-2">
++                        <span className="time">Loading...</span>
++                     </div>
++                  </li>
++               ) : notifications.length === 0 ? (
++                  <li className="d-flex align-items-center">
++                     <div className="flex-fill ps-2">
++                        <span className="time">No notifications yet.</span>
++                     </div>
++                  </li>
++               ) : (
++                  notifications.map((n) => (
++                     <li
++                        key={n.id}
++                        className={`d-flex align-items-center${n.read ? "" : " unread"}`}
++                        role={n.read ? undefined : "button"}
++                        onClick={n.read ? undefined : () => markRead(n.id)}
++                        style={n.read ? undefined : { cursor: "pointer" }}
++                     >
++                        <Image src={notificationIcon_3} alt="" className="lazy-img icon" />
++                        <div className="flex-fill ps-2">
++                           <h6>{n.message}</h6>
++                           <span className="time">{formatRelativeTime(n.created_at)}</span>
++                        </div>
++                     </li>
++                  ))
++               )}
+             </ul>
+          </li>
+       </ul>
+diff --git a/supabase/migrations/0023_properties_project_id_seller_lock.sql b/supabase/migrations/0023_properties_project_id_seller_lock.sql
+new file mode 100644
+index 0000000..3dd3b1b
+--- /dev/null
++++ b/supabase/migrations/0023_properties_project_id_seller_lock.sql
+@@ -0,0 +1,92 @@
++-- 0023_properties_project_id_seller_lock.sql
++-- Phase 6 security fix.
++--
++-- PROBLEM: "sellers can update own properties" (0002) is a row-level
++-- policy only -- using/with check both key off auth.uid() = owner_id,
++-- with no column-level restriction. The 0008 trigger
++-- (enforce_seller_property_update) already locks owner_id,
++-- published_at, and status transitions for non-admin callers, but never
++-- touches project_id. 0007's own migration comment notes this
++-- explicitly: "sellers do not gain any project-management capability
++-- from this migration" was true of the UI at the time, but was never
++-- enforced at the database layer -- a seller can bypass the app UI
++-- entirely (same browser Supabase client already used for their own
++-- media uploads) and run:
++--     update properties set project_id = '<any project uuid>'
++--     where id = '<own property>';
++-- attaching their own listing to an admin-curated project it was never
++-- approved as part of.
++--
++-- FIX: extend the existing 0008 trigger with the same pattern already
++-- used for owner_id/published_at -- non-admin callers may not change
++-- project_id at all; only an admin (via the admin property actions) may
++-- attach/detach a property's project relationship.
++--
++-- Admins are exempt, matching every other column this trigger guards.
++-- No RLS policy changes, no data migration, no change to the seller
++-- create/update forms (which already never set project_id).
++
++create or replace function enforce_seller_property_update()
++returns trigger
++language plpgsql
++security definer set search_path = public
++as $$
++begin
++  -- Admins keep unrestricted update rights (moderation transitions,
++  -- corrections, project assignment, etc.) -- this trigger only
++  -- constrains non-admin callers.
++  if current_role_is('admin') then
++    return new;
++  end if;
++
++  -- owner_id is never transferable by anyone but an admin (defense in
++  -- depth on top of the RLS check, which already requires
++  -- auth.uid() = owner_id on both the old and new row).
++  if new.owner_id is distinct from old.owner_id then
++    raise exception 'owner_id cannot be changed';
++  end if;
++
++  -- published_at is derived, not seller-settable. The only trigger that
++  -- may set it is properties_set_published_at, and a non-admin can never
++  -- drive a transition into 'published' (see status check below), so pin
++  -- it to its previous value for non-admin callers.
++  if new.published_at is distinct from old.published_at then
++    raise exception 'published_at cannot be set directly';
++  end if;
++
++  -- project_id links a listing into an admin-curated project (0006/0007).
++  -- That relationship is an admin/moderation decision, not something a
++  -- seller can grant themselves or change on their own row -- a seller
++  -- attaching their own listing to a project they were never approved
++  -- into would misrepresent it as part of that development.
++  if new.project_id is distinct from old.project_id then
++    raise exception 'project_id can only be changed by an admin';
++  end if;
++
++  -- Seller-owned lifecycle: draft -> pending (submit for review) and
++  -- draft -> archived (seller's removal mechanism -- see brief, no physical
++  -- delete). Any other transition, including no-op edits to a non-draft
++  -- row's status column, is a moderation action and belongs to admin only.
++  if new.status is distinct from old.status then
++    if old.status = 'draft' and new.status in ('pending', 'archived') then
++      -- allowed
++    else
++      raise exception
++        'sellers may only move a property from draft to pending or archived (attempted % -> %)',
++        old.status, new.status;
++    end if;
++  end if;
++
++  return new;
++end;
++$$;
++
++comment on function enforce_seller_property_update is
++  'BEFORE UPDATE trigger backstop for `properties`. RLS (0002) already '
++  'restricts non-admin updates to rows the caller owns; this adds the '
++  'column/transition-level restriction RLS cannot express (no OLD-vs-NEW '
++  'comparison in a single policy): non-admin callers cannot change '
++  'owner_id, published_at, or project_id, and may only move status '
++  'draft -> pending or draft -> archived. Admins are exempt and keep full '
++  'moderation rights, including assigning/reassigning a property''s '
++  'project_id (0023).';
+diff --git a/supabase/migrations/0024_storage_bucket_limits.sql b/supabase/migrations/0024_storage_bucket_limits.sql
+new file mode 100644
+index 0000000..78161a1
+--- /dev/null
++++ b/supabase/migrations/0024_storage_bucket_limits.sql
+@@ -0,0 +1,67 @@
++-- 0024_storage_bucket_limits.sql
++-- Phase 6 security fix.
++--
++-- PROBLEM: property-media (0005), project-media (0006), and blog-media
++-- (0010) were all created with only (id, name, public) -- no
++-- file_size_limit or allowed_mime_types set at the bucket level. Every
++-- upload component (PropertyMediaUpload.tsx, ProjectMediaUpload.tsx,
++-- FeaturedImageUpload.tsx, AdminPropertyMediaUpload.tsx,
++-- ReraCertificateUpload.tsx) only checks file.type/file.size in the
++-- browser before calling supabase.storage.upload() -- a client-reported
++-- MIME type and a check that runs entirely in JS the caller controls.
++-- Anyone with a valid session (seller or admin) can call the Storage API
++-- directly with their own access token and upload any file type or size
++-- into their own owned path -- the ownership-path RLS policies (0005,
++-- 0006, 0010) still apply, but nothing at the storage layer stops an
++-- oversized file or an unexpected content type (e.g. an .svg/.html that
++-- could carry a script, served back from a public bucket URL).
++--
++-- FIX: set allowed_mime_types/file_size_limit on each bucket to match
++-- what the application's own upload components already claim to accept
++-- (the widest limit across each bucket's upload components), so the
++-- browser-side checks become a UX nicety backed by a real server-side
++-- boundary rather than the only boundary.
++--
++-- No RLS policy changes, no path/ownership changes, no data migration.
++-- Existing objects already in each bucket are unaffected -- these limits
++-- apply going forward to new uploads only (Supabase Storage does not
++-- retroactively validate existing objects).
++
++-- property-media: PropertyMediaUpload.tsx (seller) and
++-- AdminPropertyMediaUpload.tsx (admin) -- images up to 10MB, video up to
++-- 50MB. Bucket limit is the wider of the two (video).
++update storage.buckets
++set
++  file_size_limit = 52428800, -- 50MB
++  allowed_mime_types = array[
++    'image/jpeg', 'image/png', 'image/webp',
++    'video/mp4', 'video/webm'
++  ]
++where id = 'property-media';
++
++-- project-media: ProjectMediaUpload.tsx (gallery/master_plan/floor_plan
++-- images, document PDFs, video, all up to 25MB) and
++-- ReraCertificateUpload.tsx, which deliberately reuses this same bucket
++-- (see 0015's comment) -- PDF/images up to 25MB. Bucket limit is the
++-- widest across both: 25MB, images + PDF + video.
++update storage.buckets
++set
++  file_size_limit = 26214400, -- 25MB
++  allowed_mime_types = array[
++    'image/jpeg', 'image/png', 'image/webp',
++    'application/pdf',
++    'video/mp4', 'video/webm'
++  ]
++where id = 'project-media';
++
++-- blog-media: FeaturedImageUpload.tsx -- images only, up to 10MB.
++update storage.buckets
++set
++  file_size_limit = 10485760, -- 10MB
++  allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp']
++where id = 'blog-media';
++
++comment on column storage.buckets.file_size_limit is
++  'Phase 6 (0024): server-side ceiling matching each bucket''s upload '
++  'components, so the browser-side size check is backed by a real '
++  'boundary rather than being the only one.';

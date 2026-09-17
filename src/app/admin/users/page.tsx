@@ -39,6 +39,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
          {filtered.length === 0 ? (
             <p className="text-muted">No users found.</p>
          ) : (
+            <div className="table-responsive">
             <table className="table align-middle">
                <thead>
                   <tr>
@@ -79,6 +80,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
                   })}
                </tbody>
             </table>
+            </div>
          )}
       </div>
    );

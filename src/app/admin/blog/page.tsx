@@ -43,6 +43,7 @@ export default async function AdminBlogPage() {
          {posts.length === 0 ? (
             <p className="text-muted">No posts yet.</p>
          ) : (
+            <div className="table-responsive">
             <table className="table align-middle">
                <thead>
                   <tr>
@@ -78,6 +79,7 @@ export default async function AdminBlogPage() {
                   ))}
                </tbody>
             </table>
+            </div>
          )}
       </div>
    );

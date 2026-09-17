@@ -42,6 +42,7 @@ export default async function AdminProjectsPage() {
          {projects.length === 0 ? (
             <p className="text-muted">No projects yet.</p>
          ) : (
+            <div className="table-responsive">
             <table className="table align-middle">
                <thead>
                   <tr>
@@ -77,6 +78,7 @@ export default async function AdminProjectsPage() {
                   ))}
                </tbody>
             </table>
+            </div>
          )}
       </div>
    );
