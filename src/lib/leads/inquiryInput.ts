@@ -36,8 +36,12 @@ export const MAX_INQUIRY_MESSAGE_LENGTH = 1000;
 const PHONE_SHAPE = /^[0-9+\-\s()]{6,20}$/;
 const DATE_SHAPE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_SHAPE = /^\d{2}:\d{2}$/;
+const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const MAX_CONTACT_NAME_LENGTH = 120;
 
 export interface InquiryContactInput {
+   /** Name given with this specific enquiry. Required — see normalizeInquiryContact. */
+   name?: string | null;
    phone?: string | null;
    message?: string | null;
    /** "YYYY-MM-DD" or empty/undefined. NEVER defaulted to today. */
@@ -47,10 +51,23 @@ export interface InquiryContactInput {
 }
 
 export interface NormalizedInquiryContact {
+   contact_name: string;
    contact_phone: string;
    message: string | null;
    preferred_date: string | null;
    preferred_time: string | null;
+}
+
+/** Shared name-shape check, reused by the general contact-form validator below. */
+export function validateContactName(rawName: string | null | undefined): { ok: true; value: string } | { ok: false; error: string } {
+   const name = (rawName ?? "").trim();
+   if (!name) {
+      return { ok: false, error: "Name is required." };
+   }
+   if (name.length > MAX_CONTACT_NAME_LENGTH) {
+      return { ok: false, error: `Name must be ${MAX_CONTACT_NAME_LENGTH} characters or fewer.` };
+   }
+   return { ok: true, value: name };
 }
 
 export type InquiryInputResult =
@@ -69,6 +86,11 @@ export type InquiryInputResult =
  * date or time to be stored.
  */
 export function normalizeInquiryContact(input: InquiryContactInput): InquiryInputResult {
+   const nameResult = validateContactName(input.name);
+   if (!nameResult.ok) {
+      return { ok: false, error: nameResult.error };
+   }
+
    const phone = (input.phone ?? "").trim();
 
    if (!phone) {
@@ -125,10 +147,80 @@ export function normalizeInquiryContact(input: InquiryContactInput): InquiryInpu
    return {
       ok: true,
       value: {
+         contact_name: nameResult.value,
          contact_phone: phone,
          message: message ? message : null,
          preferred_date: preferredDate,
          preferred_time: preferredTime,
+      },
+   };
+}
+
+export interface GeneralContactInput {
+   name?: string | null;
+   email?: string | null;
+   phone?: string | null;
+   message?: string | null;
+}
+
+export interface NormalizedGeneralContact {
+   contact_name: string;
+   contact_email: string;
+   contact_phone: string;
+   message: string | null;
+}
+
+export type GeneralContactInputResult =
+   | { ok: true; value: NormalizedGeneralContact }
+   | { ok: false; error: string };
+
+const MAX_CONTACT_MESSAGE_LENGTH = 2000;
+
+/**
+ * Validates the general "Send Message" contact-form fields server-side.
+ * Unlike the property/project inquiry flow, there is no signed-in buyer
+ * behind this one, so name, email AND phone are all mandatory here — see
+ * 0021_leads_contact_name_and_general_inquiries.sql's
+ * leads_contact_form_requires_identity constraint, which enforces the same
+ * rule again at the database layer.
+ */
+export function normalizeGeneralContact(input: GeneralContactInput): GeneralContactInputResult {
+   const nameResult = validateContactName(input.name);
+   if (!nameResult.ok) {
+      return { ok: false, error: nameResult.error };
+   }
+
+   const email = (input.email ?? "").trim();
+   if (!email) {
+      return { ok: false, error: "Email is required." };
+   }
+   if (!EMAIL_SHAPE.test(email)) {
+      return { ok: false, error: "Please enter a valid email address." };
+   }
+
+   const phone = (input.phone ?? "").trim();
+   if (!phone) {
+      return { ok: false, error: "Phone number is required." };
+   }
+   if (!PHONE_SHAPE.test(phone)) {
+      return { ok: false, error: "Please enter a valid phone number." };
+   }
+   if (phone.replace(/\D/g, "").length < 7) {
+      return { ok: false, error: "Please enter a valid phone number." };
+   }
+
+   const message = (input.message ?? "").trim();
+   if (message.length > MAX_CONTACT_MESSAGE_LENGTH) {
+      return { ok: false, error: `Message must be ${MAX_CONTACT_MESSAGE_LENGTH} characters or fewer.` };
+   }
+
+   return {
+      ok: true,
+      value: {
+         contact_name: nameResult.value,
+         contact_email: email,
+         contact_phone: phone,
+         message: message ? message : null,
       },
    };
 }

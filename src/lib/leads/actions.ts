@@ -48,8 +48,10 @@ import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import {
    backfillProfilePhone,
+   normalizeGeneralContact,
    normalizeInquiryContact,
    resolveInquiryBuyer,
+   type GeneralContactInput,
    type InquiryContactInput,
 } from "@/lib/leads/inquiryInput";
 
@@ -140,9 +142,10 @@ export async function createInquiry(
    const { error: insertError } = await supabase.from("leads").insert({
       buyer_id: buyer.userId,
       property_id: propertyId,
-      // Phone is mandatory and validated above; date/time/message are each
-      // independently optional and are stored as NULL when absent — never
-      // as a fabricated placeholder value.
+      // Name and phone are mandatory and validated above; date/time/message
+      // are each independently optional and are stored as NULL when absent
+      // — never as a fabricated placeholder value.
+      contact_name: normalized.value.contact_name,
       contact_phone: normalized.value.contact_phone,
       preferred_date: normalized.value.preferred_date,
       preferred_time: normalized.value.preferred_time,
@@ -385,6 +388,53 @@ export async function revealExactLocation(leadId: string): Promise<RevealLocatio
    };
 }
 
+/**
+ * Creates a lead from the site's general "Send Message" contact form
+ * (src/components/forms/ContactForm.tsx) — the one on /contact, not tied
+ * to any specific property/project and open to anyone, signed in or not.
+ *
+ * Unlike createInquiry()/createProjectInquiry(), there is no
+ * requireRole()/resolveInquiryBuyer() gate here: a visitor filling out the
+ * general contact form need not be signed in or even have an account. The
+ * row is written with buyer_id/property_id/project_id all NULL and
+ * source = 'contact_form', which is the one lead shape
+ * 0021_leads_contact_name_and_general_inquiries.sql's
+ * "anyone can submit a general contact enquiry" RLS policy allows — every
+ * other insert path (buyer_id set, property/project set) is untouched by
+ * that policy, so this cannot be used to forge a buyer-owned lead.
+ *
+ * Because it has no buyer_id, it does not show up on a buyer's "my leads"
+ * or a seller's "leads on my properties" — only "admins can read all
+ * leads" (0004) sees it, i.e. it lands in Admin -> Leads exactly like every
+ * other enquiry.
+ */
+export async function createGeneralInquiry(contact: GeneralContactInput): Promise<ActionResult> {
+   const normalized = normalizeGeneralContact(contact);
+   if (!normalized.ok) {
+      return { success: false, error: normalized.error };
+   }
+
+   const supabase = await createClient();
+
+   const { error: insertError } = await supabase.from("leads").insert({
+      buyer_id: null,
+      property_id: null,
+      project_id: null,
+      source: "contact_form",
+      contact_name: normalized.value.contact_name,
+      contact_email: normalized.value.contact_email,
+      contact_phone: normalized.value.contact_phone,
+      message: normalized.value.message,
+      // status intentionally omitted — column default is 'new'.
+   });
+
+   if (insertError) {
+      return { success: false, error: "Failed to send your message. Please try again." };
+   }
+
+   return { success: true };
+}
+
 // Message length is validated in inquiryInput.ts (MAX_INQUIRY_MESSAGE_LENGTH).
 
 /**
@@ -451,6 +501,7 @@ export async function createProjectInquiry(
       project_id: projectId,
       property_id: null,
       message: normalized.value.message,
+      contact_name: normalized.value.contact_name,
       contact_phone: normalized.value.contact_phone,
       preferred_date: normalized.value.preferred_date,
       preferred_time: normalized.value.preferred_time,

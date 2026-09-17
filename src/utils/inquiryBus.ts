@@ -42,6 +42,7 @@ export interface InquiryTarget {
 
 export interface PendingInquiry {
    target: InquiryTarget;
+   name: string;
    phone: string;
    message: string;
    preferredDate: string;

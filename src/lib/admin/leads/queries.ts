@@ -35,12 +35,13 @@ export type LeadStatus = "new" | "contacted" | "qualified" | "site_visit" | "neg
  *   unit       -> property_id set AND that property has a project_id
  *   individual -> property_id set, no project
  */
-export type LeadKind = "project" | "unit" | "individual";
+export type LeadKind = "project" | "unit" | "individual" | "general";
 
 export const LEAD_KIND_LABELS: Record<LeadKind, string> = {
    project: "Project enquiry",
    unit: "Project unit enquiry",
    individual: "Individual property enquiry",
+   general: "General contact form",
 };
 
 export interface AdminLeadListRow {
@@ -49,7 +50,9 @@ export interface AdminLeadListRow {
    status: LeadStatus;
    message: string | null;
    created_at: string;
-   buyer_id: string;
+   buyer_id: string | null;
+   /** Name given with this enquiry — from `profiles` for a signed-in buyer,
+    *  or leads.contact_name directly for a general contact-form lead. */
    buyer_name: string | null;
    buyer_phone: string | null;
    buyer_email: string | null;
@@ -71,16 +74,23 @@ export interface AdminLeadFilters {
    search?: string; // matches buyer name, property title, project title or seller name
 }
 
-export const LEAD_KINDS: LeadKind[] = ["individual", "unit", "project"];
+export const LEAD_KINDS: LeadKind[] = ["individual", "unit", "project", "general"];
 
 interface LeadJoinRow {
    id: string;
    status: LeadStatus;
    message: string | null;
    created_at: string;
-   buyer_id: string;
+   buyer_id: string | null;
    property_id: string | null;
    project_id: string | null;
+   /** Present on every lead since 0021; only ever populated on a general
+    *  contact-form lead do contact_name/contact_email stand in for a
+    *  missing buyer profile. */
+   source: string | null;
+   contact_name: string | null;
+   contact_email: string | null;
+   contact_phone: string | null;
 }
 
 /**
@@ -95,7 +105,9 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
 
    let query = supabase
       .from("leads")
-      .select("id, status, message, created_at, buyer_id, property_id, project_id")
+      .select(
+         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone"
+      )
       .order("created_at", { ascending: false });
 
    if (filters.status) {
@@ -111,7 +123,9 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
    if (!leads || leads.length === 0) return [];
 
    const leadRows = leads as LeadJoinRow[];
-   const buyerIds = Array.from(new Set(leadRows.map((l) => l.buyer_id)));
+   const buyerIds = Array.from(
+      new Set(leadRows.map((l) => l.buyer_id).filter((id): id is string => Boolean(id)))
+   );
    // property_id is nullable since 0013 (project-level leads), so the id
    // lists are filtered before they are used as `in()` arguments.
    const propertyIds = Array.from(new Set(leadRows.map((l) => l.property_id).filter((id): id is string => Boolean(id))));
@@ -164,13 +178,20 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
    // no email column to surface without a service-role auth.admin call,
    // which this app deliberately does not use for RLS-respecting reads.
    const rows: AdminLeadListRow[] = leadRows.map((lead) => {
-      const buyer = buyerById.get(lead.buyer_id);
+      const buyer = lead.buyer_id ? buyerById.get(lead.buyer_id) : undefined;
       const property = lead.property_id ? propertyById.get(lead.property_id) : undefined;
       const seller = property ? sellerById.get(property.owner_id) : undefined;
       const projectId = lead.project_id ?? (property?.project_id as string | null) ?? null;
       const project = projectId ? projectById.get(projectId) : undefined;
 
-      const kind: LeadKind = !lead.property_id ? "project" : projectId ? "unit" : "individual";
+      const kind: LeadKind =
+         lead.source === "contact_form"
+            ? "general"
+            : !lead.property_id
+              ? "project"
+              : projectId
+                ? "unit"
+                : "individual";
 
       return {
          id: lead.id,
@@ -179,9 +200,13 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
          message: lead.message,
          created_at: lead.created_at,
          buyer_id: lead.buyer_id,
-         buyer_name: buyer?.full_name ?? null,
-         buyer_phone: buyer?.phone ?? null,
-         buyer_email: null,
+         // Prefer the name/phone given with this specific enquiry
+         // (leads.contact_name/contact_phone, 0020/0021) over the buyer's
+         // profile — falls back to the profile only for pre-0021 rows that
+         // predate contact_name.
+         buyer_name: lead.contact_name ?? buyer?.full_name ?? null,
+         buyer_phone: lead.contact_phone ?? buyer?.phone ?? null,
+         buyer_email: lead.contact_email ?? null,
          property_id: lead.property_id,
          property_title: lead.property_id ? property?.title ?? "(property removed)" : null,
          property_slug: property?.slug ?? null,
@@ -226,7 +251,9 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
 
    const { data: lead, error } = await supabase
       .from("leads")
-      .select("id, status, message, created_at, buyer_id, property_id, project_id")
+      .select(
+         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone"
+      )
       .eq("id", id)
       .maybeSingle();
 
@@ -237,7 +264,9 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
    if (!lead) return null;
 
    const [{ data: buyer }, { data: property }, { data: siteVisits, error: svError }] = await Promise.all([
-      supabase.from("profiles").select("id, full_name, phone").eq("id", lead.buyer_id).maybeSingle(),
+      lead.buyer_id
+         ? supabase.from("profiles").select("id, full_name, phone").eq("id", lead.buyer_id).maybeSingle()
+         : Promise.resolve({ data: null }),
       // property_id is NULL on a project-level lead (0013) — skip the
       // lookup entirely rather than querying `.eq("id", null)`.
       lead.property_id
@@ -273,7 +302,14 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
       project = data ?? null;
    }
 
-   const kind: LeadKind = !lead.property_id ? "project" : projectId ? "unit" : "individual";
+   const kind: LeadKind =
+      lead.source === "contact_form"
+         ? "general"
+         : !lead.property_id
+           ? "project"
+           : projectId
+             ? "unit"
+             : "individual";
 
    return {
       id: lead.id,
@@ -282,9 +318,9 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
       message: lead.message,
       created_at: lead.created_at,
       buyer_id: lead.buyer_id,
-      buyer_name: buyer?.full_name ?? null,
-      buyer_phone: buyer?.phone ?? null,
-      buyer_email: null,
+      buyer_name: lead.contact_name ?? buyer?.full_name ?? null,
+      buyer_phone: lead.contact_phone ?? buyer?.phone ?? null,
+      buyer_email: lead.contact_email ?? null,
       property_id: lead.property_id,
       property_title: lead.property_id ? property?.title ?? "(property removed)" : null,
       property_slug: property?.slug ?? null,

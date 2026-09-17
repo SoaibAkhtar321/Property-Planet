@@ -25,6 +25,7 @@ const kindBadgeClass: Record<LeadKind, string> = {
    project: "bg-primary",
    unit: "bg-info text-dark",
    individual: "bg-secondary",
+   general: "bg-dark",
 };
 
 export default async function AdminLeadsPage({
@@ -103,6 +104,7 @@ export default async function AdminLeadsPage({
                            <td>
                               <div>{lead.buyer_name ?? "—"}</div>
                               <div className="text-muted small">{lead.buyer_phone ?? "no phone on file"}</div>
+                              {lead.buyer_email && <div className="text-muted small">{lead.buyer_email}</div>}
                            </td>
                            <td>
                               <span className={`badge ${kindBadgeClass[lead.kind]}`}>{LEAD_KIND_LABELS[lead.kind]}</span>
@@ -115,8 +117,12 @@ export default async function AdminLeadsPage({
                                        <div className="text-muted small">in {lead.project_title}</div>
                                     )}
                                  </>
+                              ) : lead.project_title ? (
+                                 <div>{lead.project_title}</div>
+                              ) : lead.kind === "general" ? (
+                                 <div className="text-muted">Website contact form</div>
                               ) : (
-                                 <div>{lead.project_title ?? "—"}</div>
+                                 <div>—</div>
                               )}
                            </td>
                            <td>{lead.seller_name ?? "—"}</td>

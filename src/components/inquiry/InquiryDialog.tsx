@@ -12,15 +12,16 @@
 // Admin -> Leads screen with no new admin page and no parallel storage.
 //
 // Fields:
+//   Name    — REQUIRED (validated here and, decisively, on the server)
 //   Phone   — REQUIRED (validated here and, decisively, on the server)
 //   Message — optional
 //   Date    — optional; absent means NULL, never a made-up date
 //   Time    — optional; absent means NULL, never a made-up time
-// Name/email are not asked for: they come from the authenticated Google
-// account/profile. A guest therefore supplies a phone, signs in with
-// Google once, and comes straight back here — which is also how the
-// "name + phone for guests" requirement is satisfied without a second,
-// unverified identity path.
+// Email is not asked for: it comes from the authenticated Google
+// account/profile. Name IS asked for explicitly even though a signed-in
+// buyer's profile already has one — this is "the name given with this
+// specific enquiry", the same reasoning as asking for phone explicitly
+// instead of only trusting profiles.phone.
 //
 // Auth interruption: if the buyer isn't signed in, everything typed is
 // stashed in sessionStorage (see inquiryBus), Google sign-in is started
@@ -50,6 +51,7 @@ const todayISO = () => new Date().toISOString().slice(0, 10);
 
 const InquiryDialog = () => {
    const [target, setTarget] = useState<InquiryTarget | null>(null);
+   const [name, setName] = useState("");
    const [phone, setPhone] = useState("");
    const [message, setMessage] = useState("");
    const [preferredDate, setPreferredDate] = useState("");
@@ -59,10 +61,12 @@ const InquiryDialog = () => {
    const [alreadyExists, setAlreadyExists] = useState(false);
    const [isPending, startTransition] = useTransition();
 
+   const nameRef = useRef<HTMLInputElement | null>(null);
    const phoneRef = useRef<HTMLInputElement | null>(null);
    const previouslyFocused = useRef<HTMLElement | null>(null);
 
    const reset = useCallback(() => {
+      setName("");
       setPhone("");
       setMessage("");
       setPreferredDate("");
@@ -80,10 +84,11 @@ const InquiryDialog = () => {
    }, [reset]);
 
    const submit = useCallback(
-      (t: InquiryTarget, values: { phone: string; message: string; date: string; time: string }) => {
+      (t: InquiryTarget, values: { name: string; phone: string; message: string; date: string; time: string }) => {
          setError(null);
          startTransition(async () => {
             const contact = {
+               name: values.name,
                phone: values.phone,
                message: values.message,
                preferredDate: values.date,
@@ -108,6 +113,7 @@ const InquiryDialog = () => {
                setPhase("authenticating");
                savePendingInquiry({
                   target: t,
+                  name: values.name,
                   phone: values.phone,
                   message: values.message,
                   preferredDate: values.date,
@@ -149,13 +155,15 @@ const InquiryDialog = () => {
       if (!pending) return;
 
       setTarget(pending.target);
+      setName(pending.name);
       setPhone(pending.phone);
       setMessage(pending.message);
       setPreferredDate(pending.preferredDate);
       setPreferredTime(pending.preferredTime);
 
-      if (pending.phone) {
+      if (pending.name && pending.phone) {
          submit(pending.target, {
+            name: pending.name,
             phone: pending.phone,
             message: pending.message,
             date: pending.preferredDate,
@@ -178,7 +186,7 @@ const InquiryDialog = () => {
       const previousOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
 
-      const focusTimer = window.setTimeout(() => phoneRef.current?.focus(), 50);
+      const focusTimer = window.setTimeout(() => nameRef.current?.focus(), 50);
 
       return () => {
          document.removeEventListener("keydown", onKeyDown);
@@ -191,12 +199,17 @@ const InquiryDialog = () => {
 
    const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
+      if (!name.trim()) {
+         setError("Name is required.");
+         nameRef.current?.focus();
+         return;
+      }
       if (!phone.trim()) {
          setError("Phone number is required.");
          phoneRef.current?.focus();
          return;
       }
-      submit(target, { phone, message, date: preferredDate, time: preferredTime });
+      submit(target, { name, phone, message, date: preferredDate, time: preferredTime });
    };
 
    const busy = isPending || phase === "authenticating";
@@ -250,6 +263,26 @@ const InquiryDialog = () => {
                      {target.title}
                      {target.subtitle && <span className="d-block fs-14 opacity-75">{target.subtitle}</span>}
                   </p>
+
+                  <div className="mb-20">
+                     <label className="fs-15 fw-500 mb-8 d-block" htmlFor="pp-inquiry-name">
+                        Name <span className="pp-inquiry-req">*</span>
+                     </label>
+                     <input
+                        ref={nameRef}
+                        id="pp-inquiry-name"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        required
+                        maxLength={120}
+                        className="w-100"
+                        placeholder="Your full name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        disabled={busy}
+                     />
+                  </div>
 
                   <div className="mb-20">
                      <label className="fs-15 fw-500 mb-8 d-block" htmlFor="pp-inquiry-phone">
