@@ -20,7 +20,7 @@ export const CONTACT_PHONE_DISPLAY = "8096 786 351";
 
 export const CONTACT_PHONE_HREF = `tel:${CONTACT_PHONE}`;
 
-export const CONTACT_EMAIL = "hello@propertyplanet.in";
+export const CONTACT_EMAIL = "riadelightpvtltd@gmail.com";
 
 /** Verified social accounts only. Keys map to Font Awesome brand icons. */
 export const SOCIAL_LINKS: { name: string; icon: string; href: string }[] = [

@@ -8,6 +8,7 @@ import LoginModal from "@/modals/LoginModal"
 import Offcanvas from "./Menu/Offcanvas"
 import AuthNav from "./Menu/AuthNav"
 import BecomeSellerNav from "./Menu/BecomeSellerNav"
+import { CONTACT_EMAIL } from "@/lib/site/contact"
 
 import logo_1 from "@/assets/images/logo/logo_06.svg";
 
@@ -38,7 +39,7 @@ const HeaderThree = () => {
                      </div>
 
                      <div className="order-lg-2 d-none d-xxl-block">
-                        <p className="m0 email-text ps-5 pe-5">Our Email <Link href="#" className="tran3s fw-500 ms-2">hello@propertyplanet.in</Link></p>
+                        <p className="m0 email-text ps-5 pe-5">Our Email <Link href={`mailto:${CONTACT_EMAIL}`} className="tran3s fw-500 ms-2">{CONTACT_EMAIL}</Link></p>
                      </div>
 
                      <nav className="navbar navbar-expand-lg p0 ms-lg-5 order-lg-3">

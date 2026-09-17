@@ -4,6 +4,7 @@ import footerLogo from "@/assets/images/logo/logo_06.svg"
 import footerShape from "@/assets/images/assets/ils_06.svg"
 import Link from "next/link"
 import footer_data from "@/data/home-data/FooterData"
+import { CONTACT_EMAIL } from "@/lib/site/contact"
 
 const FooterFour = () => {
    return (
@@ -19,7 +20,7 @@ const FooterFour = () => {
                            </Link>
                         </div>
                         <p className="mb-30 xs-mb-20">Hyderabad, Telangana</p>
-                        <Link href="#" className="email tran3s mb-60 md-mb-30">hello@propertyplanet.in</Link>
+                        <Link href={`mailto:${CONTACT_EMAIL}`} className="email tran3s mb-60 md-mb-30">{CONTACT_EMAIL}</Link>
                         <ul className="style-none d-flex align-items-center social-icon">
                            <li><Link href="#"><i className="fa-brands fa-facebook-f"></i></Link></li>
                            <li><Link href="#"><i className="fa-brands fa-twitter"></i></Link></li>
