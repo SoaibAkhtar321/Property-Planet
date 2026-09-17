@@ -1,0 +1,94 @@
+diff --git a/src/components/forms/SellerRegisterForm.tsx b/src/components/forms/SellerRegisterForm.tsx
+index 3f89dc6..db3a28d 100644
+--- a/src/components/forms/SellerRegisterForm.tsx
++++ b/src/components/forms/SellerRegisterForm.tsx
+@@ -196,7 +196,9 @@ const SellerRegisterForm = () => {
+             <div>
+               <input type="checkbox" id="termsAccepted" {...register("termsAccepted")} />
+               <label htmlFor="termsAccepted">
+-                By hitting the &quot;Register&quot; button, you agree to our Terms & Conditions and Privacy Policy
++                By hitting the &quot;Register&quot; button, you agree to our{" "}
++                <Link href="/terms-of-service" target="_blank">Terms &amp; Conditions</Link> and{" "}
++                <Link href="/privacy-policy" target="_blank">Privacy Policy</Link>
+               </label>
+               <p className="form_error">{errors.termsAccepted?.message}</p>
+             </div>
+diff --git a/src/data/home-data/FooterData.ts b/src/data/home-data/FooterData.ts
+index 5501365..8fd9224 100644
+--- a/src/data/home-data/FooterData.ts
++++ b/src/data/home-data/FooterData.ts
+@@ -24,7 +24,7 @@ const footer_data: DataType[] = [
+       widget_class: "xs-mt-30",
+       page: "home_1",
+       widget_title: "Legal",
+-      footer_link: [{ link: "/faq", link_title: "Terms & conditions" }, { link: "/faq", link_title: "Cookie" }, { link: "/faq", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
++      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
+    },
+    {
+       id: 3,
+@@ -47,7 +47,7 @@ const footer_data: DataType[] = [
+       widget_class: "col-xxl-3 col-xl-4",
+       page: "home_3",
+       widget_title: "Legal",
+-      footer_link: [{ link: "/faq", link_title: "Terms & conditions" }, { link: "/faq", link_title: "Cookie" }, { link: "/faq", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
++      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
+    },
+    {
+       id: 3,
+@@ -77,7 +77,7 @@ const footer_data: DataType[] = [
+       widget_class: "col-xl-2 col-lg-3",
+       page: "home_4",
+       widget_title: "Legal",
+-      footer_link: [{ link: "/faq", link_title: "Terms & conditions" }, { link: "/faq", link_title: "Cookie" }, { link: "/faq", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
++      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
+    },
+ 
+    // home five
+diff --git a/src/modals/LoginModal.tsx b/src/modals/LoginModal.tsx
+index 3c577ad..581f549 100644
+--- a/src/modals/LoginModal.tsx
++++ b/src/modals/LoginModal.tsx
+@@ -26,8 +26,14 @@ import googleIcon from "@/assets/images/icon/google.png"
+ // call sites don't need to change.
+ const LoginModal = (_props: any) => {
+    const [isLoading, setIsLoading] = useState(false);
++   const [agreed, setAgreed] = useState(false);
++   const [showAgreementError, setShowAgreementError] = useState(false);
+ 
+    const handleGoogleContinue = async () => {
++      if (!agreed) {
++         setShowAgreementError(true);
++         return;
++      }
+       setIsLoading(true);
+       const supabase = createClient();
+       await supabase.auth.signInWithOAuth({
+@@ -53,6 +59,28 @@ const LoginModal = (_props: any) => {
+                            <p className="fs-20 color-dark">Continue with Google to browse and enquire about properties.</p>
+                         </div>
+ 
++                        <div className="agreement-checkbox d-flex justify-content-between align-items-center mt-20">
++                           <div>
++                              <input
++                                 type="checkbox"
++                                 id="buyerTermsAccepted"
++                                 checked={agreed}
++                                 onChange={(e) => {
++                                    setAgreed(e.target.checked);
++                                    if (e.target.checked) setShowAgreementError(false);
++                                 }}
++                              />
++                              <label htmlFor="buyerTermsAccepted">
++                                 I agree to the{" "}
++                                 <Link href="/terms-of-service" target="_blank">Terms &amp; Conditions</Link> and{" "}
++                                 <Link href="/privacy-policy" target="_blank">Privacy Policy</Link>
++                              </label>
++                              {showAgreementError && (
++                                 <p className="form_error">Please accept the Terms & Conditions and Privacy Policy to continue.</p>
++                              )}
++                           </div>
++                        </div>
++
+                         <button
+                            type="button"
+                            onClick={handleGoogleContinue}

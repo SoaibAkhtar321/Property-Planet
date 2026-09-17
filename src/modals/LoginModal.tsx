@@ -26,8 +26,14 @@ import googleIcon from "@/assets/images/icon/google.png"
 // call sites don't need to change.
 const LoginModal = (_props: any) => {
    const [isLoading, setIsLoading] = useState(false);
+   const [agreed, setAgreed] = useState(false);
+   const [showAgreementError, setShowAgreementError] = useState(false);
 
    const handleGoogleContinue = async () => {
+      if (!agreed) {
+         setShowAgreementError(true);
+         return;
+      }
       setIsLoading(true);
       const supabase = createClient();
       await supabase.auth.signInWithOAuth({
@@ -51,6 +57,28 @@ const LoginModal = (_props: any) => {
                         <div className="text-center mb-30">
                            <h2>Welcome to Property Planet</h2>
                            <p className="fs-20 color-dark">Continue with Google to browse and enquire about properties.</p>
+                        </div>
+
+                        <div className="agreement-checkbox d-flex justify-content-between align-items-center mt-20">
+                           <div>
+                              <input
+                                 type="checkbox"
+                                 id="buyerTermsAccepted"
+                                 checked={agreed}
+                                 onChange={(e) => {
+                                    setAgreed(e.target.checked);
+                                    if (e.target.checked) setShowAgreementError(false);
+                                 }}
+                              />
+                              <label htmlFor="buyerTermsAccepted">
+                                 I agree to the{" "}
+                                 <Link href="/terms-of-service" target="_blank">Terms &amp; Conditions</Link> and{" "}
+                                 <Link href="/privacy-policy" target="_blank">Privacy Policy</Link>
+                              </label>
+                              {showAgreementError && (
+                                 <p className="form_error">Please accept the Terms & Conditions and Privacy Policy to continue.</p>
+                              )}
+                           </div>
                         </div>
 
                         <button

@@ -196,7 +196,9 @@ const SellerRegisterForm = () => {
             <div>
               <input type="checkbox" id="termsAccepted" {...register("termsAccepted")} />
               <label htmlFor="termsAccepted">
-                By hitting the &quot;Register&quot; button, you agree to our Terms & Conditions and Privacy Policy
+                By hitting the &quot;Register&quot; button, you agree to our{" "}
+                <Link href="/terms-of-service" target="_blank">Terms &amp; Conditions</Link> and{" "}
+                <Link href="/privacy-policy" target="_blank">Privacy Policy</Link>
               </label>
               <p className="form_error">{errors.termsAccepted?.message}</p>
             </div>
