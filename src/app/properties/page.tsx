@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 // not indexed as separate thin pages competing with each other.
 const CANONICAL = "https://propertyplanet.in/properties";
 const DESCRIPTION =
-   "Browse verified individual plots, villas, houses and apartments for sale across Hyderabad and the Future City corridor with Property Planet.";
+   "Browse curated individual plots, villas, houses and apartments for sale across Hyderabad and the Future City corridor with Property Planet.";
 
 export const metadata = {
    title: "Explore Properties | Property Planet",

@@ -1,0 +1,3932 @@
+diff --git a/src/app/properties/page.tsx b/src/app/properties/page.tsx
+index 3438afc..b5207a0 100644
+--- a/src/app/properties/page.tsx
++++ b/src/app/properties/page.tsx
+@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
+ // not indexed as separate thin pages competing with each other.
+ const CANONICAL = "https://propertyplanet.in/properties";
+ const DESCRIPTION =
+-   "Browse verified individual plots, villas, houses and apartments for sale across Hyderabad and the Future City corridor with Property Planet.";
++   "Browse curated individual plots, villas, houses and apartments for sale across Hyderabad and the Future City corridor with Property Planet.";
+ 
+ export const metadata = {
+    title: "Explore Properties | Property Planet",
+diff --git a/src/components/common/CardStyleTwo.tsx b/src/components/common/CardStyleTwo.tsx
+deleted file mode 100644
+index 290a939..0000000
+--- a/src/components/common/CardStyleTwo.tsx
++++ /dev/null
+@@ -1,36 +0,0 @@
+-import Image from "next/image"
+-import Count from "@/components/common/Count";
+-import feature_data from "@/data/home-data/FeatureData";
+-
+-const CardStyleTwo = () => {
+-   return (
+-      <div className="row gx-lg-5 align-items-center mt-120 lg-mt-50">
+-         <div className="col-lg-3">
+-            <div className="card-style-three mt-40 wow fadeInUp">
+-               <div className="bg-wrapper text-center">
+-                  <h3>0<Count number={7} />+</h3>
+-                  <p>Years Experience <br />with proud.</p>
+-               </div>
+-            </div>
+-         </div>
+-
+-         <div className="col-lg-9">
+-            <div className="row gx-xl-5">
+-               {feature_data.filter((items) => items.page === "home_three_feature_2").map((item) => (
+-                  <div key={item.id} className="col-md-4">
+-                     <div className="card-style-four mt-40 wow fadeInUp">
+-                        <div className="icon rounded-circle d-flex align-items-center justify-content-center position-relative style-two">
+-                           <Image src={item.icon ? item.icon : ""} alt="" className="lazy-img" />
+-                        </div>
+-                        <h5 className="mt-35 mb-15">{item.title}</h5>
+-                        <p>{item.desc}</p>
+-                     </div>
+-                  </div>
+-               ))}
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default CardStyleTwo;
+diff --git a/src/components/common/SocialIcon.tsx b/src/components/common/SocialIcon.tsx
+deleted file mode 100644
+index ebeaa7d..0000000
+--- a/src/components/common/SocialIcon.tsx
++++ /dev/null
+@@ -1,13 +0,0 @@
+-import Link from "next/link"
+-
+-const SocialIcon = () => {
+-   return (
+-      <>
+-         <li><Link href="#"><i className="fa-light fa-heart"></i></Link></li>
+-         <li><Link href="#"><i className="fa-light fa-bookmark"></i></Link></li>
+-         <li><Link href="#"><i className="fa-light fa-circle-plus"></i></Link></li>
+-      </>
+-   )
+-}
+-
+-export default SocialIcon
+diff --git a/src/components/common/brand/BrandOne.tsx b/src/components/common/brand/BrandOne.tsx
+deleted file mode 100644
+index 4391afd..0000000
+--- a/src/components/common/brand/BrandOne.tsx
++++ /dev/null
+@@ -1,63 +0,0 @@
+-"use client"
+-import Image, { StaticImageData } from "next/image"
+-import Slider from "react-slick"
+-
+-import brandLogo_1 from "@/assets/images/logo/p_logo_01.png"
+-import brandLogo_2 from "@/assets/images/logo/p_logo_02.png"
+-import brandLogo_3 from "@/assets/images/logo/p_logo_03.png"
+-import brandLogo_4 from "@/assets/images/logo/p_logo_04.png"
+-import brandLogo_5 from "@/assets/images/logo/p_logo_05.png"
+-import brandLogo_6 from "@/assets/images/logo/p_logo_06.png"
+-
+-const brand_data: StaticImageData[] = [brandLogo_1, brandLogo_2, brandLogo_3, brandLogo_4, brandLogo_5, brandLogo_6, brandLogo_3]
+-
+-const setting = {
+-   dots: false,
+-   arrows: false,
+-   centerPadding: '0px',
+-   slidesToShow: 6,
+-   slidesToScroll: 1,
+-   autoplay: true,
+-   autoplaySpeed: 3500,
+-   responsive: [
+-      {
+-         breakpoint: 1200,
+-         settings: {
+-            slidesToShow: 4
+-         }
+-      },
+-      {
+-         breakpoint: 768,
+-         settings: {
+-            slidesToShow: 3
+-         }
+-      },
+-      {
+-         breakpoint: 576,
+-         settings: {
+-            slidesToShow: 2
+-         }
+-      }
+-   ]
+-}
+-
+-const BrandOne = () => {
+-   return (
+-      <div className="partner-section-one position-relative z-2">
+-         <div className="container">
+-            <p className="text-white fs-24"><span>Join 27,000+</span> companies who’ve reached </p>
+-         </div>
+-         <div className="bg-wrapper">
+-            <div className="container">
+-               <Slider {...setting} className="partner-logo-one">
+-                  {brand_data.map((brand, i) => (
+-                     <div key={i} className="item"><Image src={brand} alt="" /></div>
+-                  ))}
+-               </Slider>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default BrandOne
+diff --git a/src/components/common/brand/BrandThree.tsx b/src/components/common/brand/BrandThree.tsx
+deleted file mode 100644
+index 3a1fe24..0000000
+--- a/src/components/common/brand/BrandThree.tsx
++++ /dev/null
+@@ -1,54 +0,0 @@
+-"use client"
+-import Image, { StaticImageData } from "next/image"
+-import Slider from "react-slick"
+-
+-import brandLogo_1 from "@/assets/images/logo/p_logo_07.png"
+-import brandLogo_2 from "@/assets/images/logo/p_logo_08.png"
+-import brandLogo_3 from "@/assets/images/logo/p_logo_09.png"
+-import brandLogo_4 from "@/assets/images/logo/p_logo_10.png"
+-import brandLogo_5 from "@/assets/images/logo/p_logo_11.png"
+-import brandLogo_6 from "@/assets/images/logo/p_logo_12.png"
+-
+-const brand_data: StaticImageData[] = [brandLogo_1, brandLogo_2, brandLogo_3, brandLogo_4, brandLogo_5, brandLogo_6, brandLogo_3]
+-
+-const setting = {
+-   dots: false,
+-   arrows: false,
+-   centerPadding: '0px',
+-   slidesToShow: 5,
+-   slidesToScroll: 1,
+-   autoplay: true,
+-   autoplaySpeed: 3500,
+-   responsive: [
+-      {
+-         breakpoint: 1200,
+-         settings: {
+-            slidesToShow: 4
+-         }
+-      },
+-      {
+-         breakpoint: 768,
+-         settings: {
+-            slidesToShow: 3
+-         }
+-      },
+-      {
+-         breakpoint: 576,
+-         settings: {
+-            slidesToShow: 2
+-         }
+-      }
+-   ]
+-}
+-
+-const BrandThree = () => {
+-   return (
+-      <Slider {...setting} className="partner-logo-two">
+-         {brand_data.map((brand, i) => (
+-            <div key={i} className="item"><Image src={brand} alt="" /></div>
+-         ))}
+-      </Slider>
+-   )
+-}
+-
+-export default BrandThree;
+diff --git a/src/components/forms/AgencyFormOne.tsx b/src/components/forms/AgencyFormOne.tsx
+deleted file mode 100644
+index df1f601..0000000
+--- a/src/components/forms/AgencyFormOne.tsx
++++ /dev/null
+@@ -1,82 +0,0 @@
+-"use client"
+-import { toast } from 'react-toastify';
+-
+-import * as yup from "yup";
+-import { useForm } from "react-hook-form";
+-import { yupResolver } from '@hookform/resolvers/yup';
+-import NiceSelect from '@/ui/NiceSelect';
+-
+-interface FormData {
+-   name: string;
+-   email: string;
+-   message: string;
+-}
+-
+-const schema = yup
+-   .object({
+-      name: yup.string().required().label("Name"),
+-      email: yup.string().required().email().label("Email"),
+-      message: yup.string().required().label("Message"),
+-   })
+-   .required();
+-
+-const AgencyFormOne = ({ style }: any) => {
+-
+-   const selectHandler = (e: any) => { };
+-
+-   const { register, handleSubmit, reset, formState: { errors }, } = useForm<FormData>({ resolver: yupResolver(schema), });
+-   const onSubmit = (data: FormData) => {
+-      const notify = () => toast('Review submit successfully', { position: 'top-center' });
+-      notify();
+-      reset();
+-   };
+-
+-   return (
+-      <form onSubmit={handleSubmit(onSubmit)} className={` ${style ? "" : "bg-white p-40"}`}>
+-         <div className="row">
+-            <div className="col-12">
+-               <div className="input-box-two mb-30">
+-                  <div className="label">Title*</div>
+-                  <input type="text" {...register("name")} placeholder="Rashed Kabir" className={`type-input ${style ? "" : "rounded-0"}`} />
+-                  <p className="form_error">{errors.name?.message}</p>
+-               </div>
+-            </div>
+-            <div className="col-lg-6">
+-               <div className="input-box-two mb-30">
+-                  <div className="label">Email*</div>
+-                  <input type="email" {...register("email")} placeholder="r@gmail.com" className={`type-input ${style ? "" : "rounded-0"}`} />
+-                  <p className="form_error">{errors.email?.message}</p>
+-               </div>
+-            </div>
+-            <div className="col-lg-6">
+-               <div className="input-box-two mb-30">
+-                  <div className="label">Ratings*</div>
+-                  <NiceSelect
+-                     className={`nice select ${style ? "" : "rounded-0"}`}
+-                     options={[
+-                        { value: "01", text: "Ratings" },
+-                        { value: "02", text: "Five Star" },
+-                        { value: "02", text: "Four Star" },
+-                        { value: "02", text: "Three Star" },
+-                        { value: "02", text: "Two Star" },
+-                        { value: "02", text: "One Star" },
+-                     ]}
+-                     defaultCurrent={0}
+-                     onChange={selectHandler}
+-                     name=""
+-                     placeholder="" />
+-               </div>
+-            </div>
+-            <div className="col-12">
+-               <div className="input-box-two mb-30">
+-                  <textarea {...register("message")} placeholder="Write your review here..." className={`${style ? "" : "rounded-0"}`} ></textarea>
+-                  <p className="form_error">{errors.message?.message}</p>
+-               </div>
+-            </div>
+-         </div>
+-         <button type='submit' className={`btn-five text-uppercase sm ${style ? "" : "rounded-0"}`}>Post Review</button>
+-      </form>
+-   )
+-}
+-
+-export default AgencyFormOne
+diff --git a/src/components/forms/AgencyFormTwo.tsx b/src/components/forms/AgencyFormTwo.tsx
+deleted file mode 100644
+index 95f3c97..0000000
+--- a/src/components/forms/AgencyFormTwo.tsx
++++ /dev/null
+@@ -1,59 +0,0 @@
+-"use client"
+-import { toast } from 'react-toastify';
+-
+-import * as yup from "yup";
+-import { useForm } from "react-hook-form";
+-import { yupResolver } from '@hookform/resolvers/yup';
+-
+-interface FormData {
+-   email: string;
+-   phone: number;
+-   message: string;
+-}
+-
+-const schema = yup
+-   .object({
+-      phone: yup.number()
+-         .transform((originalValue, originalObject) => {
+-            // Convert empty string to NaN
+-            return originalObject && originalObject.phone === '' ? NaN : originalValue;
+-         })
+-         .typeError('Phone number is required')
+-         .required('Phone must be a number'),
+-      email: yup.string().required().email().label("Email"),
+-      message: yup.string().required().label("Message"),
+-   })
+-   .required();
+-
+-const AgencyFormTwo = () => {
+-
+-   const { register, handleSubmit, reset, formState: { errors }, } = useForm<FormData>({ resolver: yupResolver(schema), });
+-   const onSubmit = (data: FormData) => {
+-      const notify = () => toast('Review submit successfully', { position: 'top-center' });
+-      notify();
+-      reset();
+-   };
+-
+-   return (
+-      <form onSubmit={handleSubmit(onSubmit)}>
+-         <div className="input-box-three mb-25">
+-            <div className="label">Your Email*</div>
+-            <input type="email" {...register("email")} placeholder="Enter mail address" className="type-input rounded-0" />
+-            <p className="form_error">{errors.email?.message}</p>
+-         </div>
+-         <div className="input-box-three mb-25">
+-            <div className="label">Your Phone*</div>
+-            <input type="tel" {...register("phone")} placeholder="Your phone number" className="type-input rounded-0" />
+-            <p className="form_error">{errors.phone?.message}</p>
+-         </div>
+-         <div className="input-box-three mb-15">
+-            <div className="label">Message*</div>
+-            <textarea {...register("message")} placeholder="Hello, I am interested in [Califronia Apartments]" className="rounded-0"></textarea>
+-            <p className="form_error">{errors.message?.message}</p>
+-         </div>
+-         <button type='submit' className="btn-nine text-uppercase w-100 mb-20">INQUIry</button>
+-      </form>
+-   )
+-}
+-
+-export default AgencyFormTwo
+diff --git a/src/components/forms/BlogForm.tsx b/src/components/forms/BlogForm.tsx
+deleted file mode 100644
+index 7deeaef..0000000
+--- a/src/components/forms/BlogForm.tsx
++++ /dev/null
+@@ -1,63 +0,0 @@
+-"use client"
+-import LoginModal from "@/modals/LoginModal";
+-import { toast } from 'react-toastify';
+-import * as yup from "yup";
+-import { useForm } from "react-hook-form";
+-import { yupResolver } from '@hookform/resolvers/yup';
+-import { useState } from "react";
+-
+-interface FormData {
+-   name: string;
+-   email: string;
+-   message: string;
+-}
+-
+-const schema = yup
+-   .object({
+-      name: yup.string().required().label("Name"),
+-      email: yup.string().required().email().label("Email"),
+-      message: yup.string().required().label("Message"),
+-   })
+-   .required();
+-
+-const BlogForm = () => {
+-
+-   const { register, handleSubmit, reset, formState: { errors }, } = useForm<FormData>({ resolver: yupResolver(schema), });
+-   const onSubmit = (data: FormData) => {
+-      const notify = () => toast('Comment submit successfully', { position: 'top-center' });
+-      notify();
+-      reset();
+-   };
+-
+-   const [loginModal, setLoginModal] = useState<boolean>(false);
+-
+-   return (
+-      <>
+-         <div className="blog-comment-form">
+-            <h3 className="blog-inner-title">Leave A Comment</h3>
+-            <p><a onClick={() => setLoginModal(true)} style={{ cursor: "pointer" }} className="text-decoration-underline fw-500">Sign in</a> Sign-in to post your comment or signup
+-               if you don’t have any account.</p>
+-            <form onSubmit={handleSubmit(onSubmit)} className="mt-30">
+-               <div className="input-wrapper mb-30">
+-                  <label>Name*</label>
+-                  <input {...register("name")} type="text" placeholder="Rashed Kabir" />
+-                  <p className="form_error">{errors.name?.message}</p>
+-               </div>
+-               <div className="input-wrapper mb-40">
+-                  <label>Email*</label>
+-                  <input {...register("email")} type="email" placeholder="rsr@gmail.com" />
+-                  <p className="form_error">{errors.email?.message}</p>
+-               </div>
+-               <div className="input-wrapper mb-30">
+-                  <textarea {...register("message")} placeholder="Your Comment"></textarea>
+-                  <p className="form_error">{errors.message?.message}</p>
+-               </div>
+-               <button className="btn-five rounded-0">Post Comment</button>
+-            </form>
+-         </div>
+-         <LoginModal loginModal={loginModal} setLoginModal={setLoginModal} />
+-      </>
+-   )
+-}
+-
+-export default BlogForm;
+diff --git a/src/components/homes/home-two/HeroBanner.tsx b/src/components/homes/home-two/HeroBanner.tsx
+index 5f666c3..d46c60c 100644
+--- a/src/components/homes/home-two/HeroBanner.tsx
++++ b/src/components/homes/home-two/HeroBanner.tsx
+@@ -25,7 +25,7 @@ const HeroBanner = () => {
+                   <div className="row">
+                      <div className="col-xxl-9 col-xl-8 col-lg-9 col-md-10">
+                         <h1 className="hero-heading font-garamond wow fadeInUp">The next city is being built <span><Image src={titleShape} alt="" className="lazy-img icon d-inline-block" /></span></h1>
+-                        <p className="fs-24 color-dark pt-35 md-pt-30 pb-35 mb-pb-20 wow fadeInUp" data-wow-delay="0.1s">Discover verified land, plots, villas, apartments and commercial opportunities across Hyderabad&apos;s emerging South-East growth corridors — guided by AI and backed by human expertise.</p>
++                        <p className="fs-24 color-dark pt-35 md-pt-30 pb-35 mb-pb-20 wow fadeInUp" data-wow-delay="0.1s">Discover curated land, plots, villas, apartments and commercial opportunities across Hyderabad&apos;s emerging South-East growth corridors — guided by AI and backed by human expertise.</p>
+                         <div className="d-inline-flex align-items-center flex-wrap hero-cta-group">
+                            <Link href="/properties" className="btn-seven mb-20 me-4 me-xxl5"><span>Explore Properties</span> <i className="bi bi-arrow-up-right"></i></Link>
+                            <button
+diff --git a/src/components/homes/home-two/Property.tsx b/src/components/homes/home-two/Property.tsx
+index ffa6861..03db1bd 100644
+--- a/src/components/homes/home-two/Property.tsx
++++ b/src/components/homes/home-two/Property.tsx
+@@ -51,7 +51,7 @@ const Property = async () => {
+             <div className="position-relative">
+                <div className="title-one mb-25 lg-mb-20 wow fadeInUp">
+                   <h2 className="font-garamond">Featured Opportunities</h2>
+-                  <p className="fs-22 mt-xs">Verified land, plots, villas, apartments and commercial listings across Hyderabad&apos;s growth corridors.</p>
++                  <p className="fs-22 mt-xs">Curated land, plots, villas, apartments and commercial listings across Hyderabad&apos;s growth corridors.</p>
+                </div>
+ 
+                {hasFeatured ? (
+diff --git a/src/components/homes/home-two/PropertyPlanetHowItWorks.tsx b/src/components/homes/home-two/PropertyPlanetHowItWorks.tsx
+index 2652517..9b3c57a 100644
+--- a/src/components/homes/home-two/PropertyPlanetHowItWorks.tsx
++++ b/src/components/homes/home-two/PropertyPlanetHowItWorks.tsx
+@@ -18,7 +18,7 @@
+ const steps = [
+    {
+       title: "Explore",
+-      desc: "Browse verified plots, land, homes and projects across Hyderabad's South-East growth corridors.",
++      desc: "Browse curated plots, land, homes and projects across Hyderabad's South-East growth corridors.",
+    },
+    {
+       title: "Choose",
+@@ -42,7 +42,7 @@ const PropertyPlanetHowItWorks = () => {
+                <div className="title-one text-center mb-50 lg-mb-40 wow fadeInUp">
+                   <h2 className="font-garamond">How Property Planet Works</h2>
+                   <p className="fs-22 mt-xs">
+-                     Not just a listing site — a verified, advisory-backed route from browsing to a
++                     Not just a listing site — a moderated, advisory-backed route from browsing to a
+                      real conversation about a real property.
+                   </p>
+                </div>
+diff --git a/src/components/projects/data/demoProjects.ts b/src/components/projects/data/demoProjects.ts
+deleted file mode 100644
+index cbbb5fb..0000000
+--- a/src/components/projects/data/demoProjects.ts
++++ /dev/null
+@@ -1,25 +0,0 @@
+-import { Project } from "./types";
+-
+-// Only one project is confirmed today. No fictional projects are added here —
+-// per project decision, an honest, smaller dataset is preferred over fake
+-// inventory. Do not invent RERA numbers, approvals, pricing, possession
+-// dates, distances, amenities, or other unverified specifics.
+-
+-const demoProjects: Project[] = [
+-   {
+-      id: "property-planet",
+-      slug: "property-planet",
+-      title: "Property Planet",
+-      tag: "Plotted Development",
+-      developer: "Elite Infra Group",
+-      location: "Kongara Khurd-A, South Hyderabad",
+-      projectType: "17-acre plotted development",
+-      images: [
+-         "/assets/images/project/img_01.jpg",
+-         "/assets/images/project/img_02.jpg",
+-         "/assets/images/project/img_03.jpg",
+-      ],
+-   },
+-];
+-
+-export default demoProjects;
+diff --git a/src/components/properties/data/demoProperties.ts b/src/components/properties/data/demoProperties.ts
+deleted file mode 100644
+index d61bb0c..0000000
+--- a/src/components/properties/data/demoProperties.ts
++++ /dev/null
+@@ -1,103 +0,0 @@
+-import { Property } from "./types";
+-
+-// IMPORTANT: These are development/demo records used only to exercise the
+-// canonical /properties layout during Phase 3. They are NOT confirmed
+-// Property Planet inventory. Every record is flagged `isDemo: true` and the
+-// UI must surface that flag rather than presenting these as real listings.
+-// Phase 4 replaces this file with a Supabase-backed query against
+-// `properties` / `property_location` / `property_media`.
+-
+-const demoProperties: Property[] = [
+-   {
+-      id: "demo-1",
+-      slug: "kongara-khurd-plot-1",
+-      title: "Residential Plot, Kongara Khurd-A",
+-      tag: "Plot",
+-      listingType: "Sale",
+-      propertyType: "Plot",
+-      address: "Kongara Khurd-A, South Hyderabad",
+-      price: 3500000,
+-      sqft: 2000,
+-      images: [
+-         "/assets/images/listing/img_01.jpg",
+-         "/assets/images/listing/img_02.jpg",
+-         "/assets/images/listing/img_03.jpg",
+-         "/assets/images/listing/img_04.jpg",
+-      ],
+-      overview:
+-         "A sample plot record used to demonstrate the canonical listing layout while real inventory data is finalized.",
+-      overviewItems: [
+-         { label: "Area", value: "2,000 sqft" },
+-         { label: "Type", value: "Plot" },
+-         { label: "Facing", value: "East" },
+-      ],
+-      amenities: ["Gated Layout", "Wide Roads", "Underground Drainage"],
+-      nearby: [
+-         { title: "Main Road", distance: "0.5km" },
+-         { title: "School", distance: "2.1km" },
+-      ],
+-      isDemo: true,
+-   },
+-   {
+-      id: "demo-2",
+-      slug: "future-city-villa-1",
+-      title: "3BHK Independent Villa, Future City Corridor",
+-      tag: "Villa",
+-      listingType: "Sale",
+-      propertyType: "Villa",
+-      address: "Future City Corridor, Hyderabad",
+-      price: 9800000,
+-      sqft: 2600,
+-      bed: 3,
+-      bath: 3,
+-      images: [
+-         "/assets/images/listing/img_05.jpg",
+-         "/assets/images/listing/img_06.jpg",
+-         "/assets/images/listing/img_07.jpg",
+-      ],
+-      overview:
+-         "A sample villa record used to demonstrate the canonical listing layout while real inventory data is finalized.",
+-      overviewItems: [
+-         { label: "Sqft", value: "2,600" },
+-         { label: "Bed", value: "3" },
+-         { label: "Bath", value: "3" },
+-         { label: "Type", value: "Villa" },
+-      ],
+-      amenities: ["Car Parking", "Garden", "Power Backup"],
+-      nearby: [
+-         { title: "Hospital", distance: "1.7km" },
+-         { title: "Metro Station", distance: "3.4km" },
+-      ],
+-      isDemo: true,
+-   },
+-   {
+-      id: "demo-3",
+-      slug: "hyderabad-apartment-1",
+-      title: "2BHK Apartment, Hyderabad Growth Corridor",
+-      tag: "Apartment",
+-      listingType: "Sale",
+-      propertyType: "Apartment",
+-      address: "Hyderabad Growth Corridor",
+-      price: 22000,
+-      priceUnit: "/mo",
+-      sqft: 1150,
+-      bed: 2,
+-      bath: 2,
+-      images: [
+-         "/assets/images/listing/img_08.jpg",
+-         "/assets/images/listing/img_09.jpg",
+-      ],
+-      overview:
+-         "A sample apartment record used to demonstrate the canonical listing layout while real inventory data is finalized.",
+-      overviewItems: [
+-         { label: "Sqft", value: "1,150" },
+-         { label: "Bed", value: "2" },
+-         { label: "Bath", value: "2" },
+-         { label: "Type", value: "Apartment" },
+-      ],
+-      amenities: ["Lift", "Security", "Parking"],
+-      isDemo: true,
+-   },
+-];
+-
+-export default demoProperties;
+diff --git a/src/components/search-dropdown/home-dropdown/DropdownModal.tsx b/src/components/search-dropdown/home-dropdown/DropdownModal.tsx
+deleted file mode 100644
+index d6fd7d3..0000000
+--- a/src/components/search-dropdown/home-dropdown/DropdownModal.tsx
++++ /dev/null
+@@ -1,179 +0,0 @@
+-import NiceSelect from "@/ui/NiceSelect"
+-import Link from "next/link"
+-
+-const ammenities_data: string[] = ["A/C & Heating", "Garages", "Garden", "Disabled Access", "Swimming Pool", "Parking", "Wifi", "Pet Friendly", "Ceiling Height", "Fireplace", "Play Ground", "Elevator"]
+-
+-const DropdownModal = () => {
+-
+-   const selectHandler = (e: any) => { };
+-
+-   return (
+-      <div className="home-dropdown modal fade" id="advanceFilterModal" tabIndex={-1} aria-hidden="true">
+-         <div className="modal-dialog modal-dialog-centered">
+-            <div className="container">
+-               <div className="row">
+-                  <div className="col-xl-8 m-auto">
+-                     <div className="modal-content">
+-                        <button type="button" className="btn-close ms-auto mt-20 me-4" data-bs-dismiss="modal"
+-                           aria-label="Close"><i className="fa-regular fa-xmark"></i></button>
+-                        <div className="advance-search-panel">
+-                           <div className="main-bg border-0">
+-                              <form onSubmit={(e) => e.preventDefault()}>
+-                                 <div className="row gx-lg-5">
+-                                    <div className="col-md-6">
+-                                       <div className="input-box-one mb-35">
+-                                          <div className="label">I’m looking to...</div>
+-                                          <NiceSelect className="nice-select fw-normal"
+-                                             options={[
+-                                                { value: "apartments", text: "Buy Apartments" },
+-                                                { value: "condos", text: "Rent Condos" },
+-                                                { value: "houses", text: "Sell Houses" },
+-                                                { value: "industrial", text: "Rent Industrial" },
+-                                                { value: "villas", text: "Sell Villas" },
+-                                             ]}
+-                                             defaultCurrent={0}
+-                                             onChange={selectHandler}
+-                                             name=""
+-                                             placeholder="" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-md-6">
+-                                       <div className="input-box-one mb-35">
+-                                          <div className="label">Location</div>
+-                                          <NiceSelect className="nice-select location fw-normal"
+-                                             options={[
+-                                                { value: "washington", text: "Washington DC" },
+-                                                { value: "mexico", text: "Mucherla" },
+-                                                { value: "germany", text: "Shamshabad" },
+-                                                { value: "france", text: "Kollur" },
+-                                                { value: "india", text: "Maheshwaram" },
+-                                                { value: "giza", text: "Adibatla" },
+-                                                { value: "cuba", text: "Shankarpally" },
+-                                             ]}
+-                                             defaultCurrent={0}
+-                                             onChange={selectHandler}
+-                                             name=""
+-                                             placeholder="" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-md-6">
+-                                       <div className="input-box-one mb-35">
+-                                          <div className="label">Keyword</div>
+-                                          <input type="text" placeholder="buy, home, loft, apartment" className="type-input" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-md-6">
+-                                       <div className="input-box-one mb-35">
+-                                          <div className="label">Property ID</div>
+-                                          <input type="text" placeholder="EM45203014" className="type-input" />
+-                                       </div>
+-                                    </div>
+-
+-                                    <div className="col-lg-6">
+-                                       <div className="input-box-one mb-40">
+-                                          <div className="label">Bedroom</div>
+-                                          <NiceSelect className="nice-select fw-normal"
+-                                             options={[
+-                                                { value: "1", text: "1" },
+-                                                { value: "2", text: "2" },
+-                                                { value: "3", text: "3" },
+-                                                { value: "4", text: "4" },
+-                                             ]}
+-                                             defaultCurrent={0}
+-                                             onChange={selectHandler}
+-                                             name=""
+-                                             placeholder="" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-lg-6">
+-                                       <div className="input-box-one mb-40">
+-                                          <div className="label">Bath</div>
+-                                          <NiceSelect className="nice-select fw-normal"
+-                                             options={[
+-                                                { value: "1", text: "1" },
+-                                                { value: "2", text: "2" },
+-                                                { value: "3", text: "3" },
+-                                                { value: "4", text: "4" },
+-                                             ]}
+-                                             defaultCurrent={0}
+-                                             onChange={selectHandler}
+-                                             name=""
+-                                             placeholder="" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-12">
+-                                       <h6 className="block-title fw-bold mb-30">Amenities</h6>
+-                                       <ul className="style-none d-flex flex-wrap justify-content-between filter-input">
+-                                          {ammenities_data.map((list, i) => (
+-                                             <li key={i}>
+-                                                <input type="checkbox" name="Amenities" value={`${i}`} />
+-                                                <label>{list}</label>
+-                                             </li>
+-                                          ))}
+-                                       </ul>
+-                                    </div>
+-                                    <div className="col-md-6">
+-                                       <h6 className="block-title fw-bold mt-45 mb-20">Price range</h6>
+-                                       <div className="price-ranger">
+-                                          <div
+-                                             className="price-input d-flex align-items-center justify-content-between pt-5">
+-                                             <div className="field d-flex align-items-center">
+-                                                <input type="number" className="input-min" defaultValue="2500" onChange={(e) => (e.target.value)} />
+-                                             </div>
+-                                             <div className="divider-line"></div>
+-                                             <div className="field d-flex align-items-center">
+-                                                <input type="number" className="input-max" defaultValue="35000" />
+-                                             </div>
+-                                             <div className="currency ps-1">USD</div>
+-                                          </div>
+-                                          <div className="slider">
+-                                             <div className="progress"></div>
+-                                          </div>
+-                                          <div className="range-input mb-10">
+-                                             <input type="range" className="range-min" min="1000" max="80000" defaultValue="2500"
+-                                                step="500" />
+-                                             <input type="range" className="range-max" min="0" max="100000" defaultValue="35000"
+-                                                step="500" />
+-                                          </div>
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-md-6">
+-                                       <h6 className="block-title fw-bold mt-45 mb-20">SQFT</h6>
+-                                       <div className="d-flex align-items-center sqf-ranger">
+-                                          <input type="text" placeholder="Min" />
+-                                          <div className="divider"></div>
+-                                          <input type="text" placeholder="Max" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-12">
+-                                       <button className="fw-500 text-uppercase tran3s apply-search w-100 mt-40 mb-25">
+-                                          <i className="fa-light fa-magnifying-glass"></i>
+-                                          <span>Search</span>
+-                                       </button>
+-                                    </div>
+-                                    <div className="col-12">
+-                                       <div className="d-flex justify-content-between form-widget">
+-                                          <Link href="#" className="tran3s">
+-                                             <i className="fa-regular fa-arrows-rotate"></i>
+-                                             <span>Reset Filter</span>
+-                                          </Link>
+-                                          <Link href="#" className="tran3s">
+-                                             <i className="fa-regular fa-star"></i>
+-                                             <span>Save Search</span>
+-                                          </Link>
+-                                       </div>
+-                                    </div>
+-                                 </div>
+-                              </form>
+-                           </div>
+-                        </div>
+-                     </div>
+-                  </div>
+-               </div>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default DropdownModal
+diff --git a/src/components/search-dropdown/home-dropdown/DropdownOne.tsx b/src/components/search-dropdown/home-dropdown/DropdownOne.tsx
+deleted file mode 100644
+index 4ef0f5f..0000000
+--- a/src/components/search-dropdown/home-dropdown/DropdownOne.tsx
++++ /dev/null
+@@ -1,76 +0,0 @@
+-import NiceSelect from "@/ui/NiceSelect";
+-
+-const DropdownOne = ({ style }: any) => {
+-
+-   const selectHandler = (e: any) => { };
+-
+-   const searchHandler = () => {
+-      window.location.href = '/listing_0';
+-   };
+-
+-   return (
+-      <form onSubmit={(e) => { e.preventDefault(); searchHandler(); }}>
+-         <div className="row gx-0 align-items-center">
+-            <div className="col-xl-3 col-lg-4">
+-               <div className="input-box-one border-left">
+-                  <div className="label">I’m looking to...</div>
+-                  <NiceSelect className={`nice-select ${style ? "fw-normal" : ""}`}
+-                     options={[
+-                        { value: "apartments", text: "Buy Apartments" },
+-                        { value: "condos", text: "Rent Condos" },
+-                        { value: "houses", text: "Sell Houses" },
+-                        { value: "industrial", text: "Rent Industrial" },
+-                        { value: "villas", text: "Sell Villas" },
+-                     ]}
+-                     defaultCurrent={0}
+-                     onChange={selectHandler}
+-                     name=""
+-                     placeholder="" />
+-               </div>
+-            </div>
+-            <div className={`${style ? "col-xl-3" : "col-xl-4"} col-lg-4`}>
+-               <div className="input-box-one border-left">
+-                  <div className="label">Location</div>
+-                  <NiceSelect className={`nice-select location ${style ? "fw-normal" : ""}`}
+-                     options={[
+-                        { value: "germany", text: "Shamshabad" },
+-                        { value: "dhaka", text: "Future City" },
+-                        { value: "mexico", text: "Mucherla" },
+-                        { value: "france", text: "Kollur" },
+-                        { value: "india", text: "Maheshwaram" },
+-                        { value: "giza", text: "Adibatla" },
+-                        { value: "cuba", text: "Shankarpally" },
+-                     ]}
+-                     defaultCurrent={0}
+-                     onChange={selectHandler}
+-                     name=""
+-                     placeholder="" />
+-               </div>
+-            </div>
+-            <div className="col-xl-3 col-lg-4">
+-               <div className="input-box-one border-left border-lg-0">
+-                  <div className="label">Price Range</div>
+-                  <NiceSelect
+-                     className={`nice-select ${style ? "fw-normal" : ""}`}
+-                     options={[
+-                        { value: "1", text: "$10,000 - $200,000" },
+-                        { value: "2", text: "$20,000 - $300,000" },
+-                        { value: "3", text: "$30,000 - $400,000" },
+-                     ]}
+-                     defaultCurrent={0}
+-                     onChange={selectHandler}
+-                     name=""
+-                     placeholder="" />
+-               </div>
+-            </div>
+-            <div className={`${style ? "col-xl-3" : "col-xl-2"}`}>
+-               <div className="input-box-one lg-mt-10">
+-                  <button className={`fw-500 tran3s ${style ? "w-100 tran3s search-btn-three" : "text-uppercase search-btn"}`}>{style ? "Search Now" : "Search"}</button>
+-               </div>
+-            </div>
+-         </div>
+-      </form>
+-   );
+-};
+-
+-export default DropdownOne;
+diff --git a/src/data/home-data/AgentData.ts b/src/data/home-data/AgentData.ts
+deleted file mode 100644
+index 4542c9b..0000000
+--- a/src/data/home-data/AgentData.ts
++++ /dev/null
+@@ -1,55 +0,0 @@
+-import { StaticImageData } from "next/image";
+-
+-import agentThumb_1 from "@/assets/images/agent/img_01.jpg";
+-import agentThumb_2 from "@/assets/images/agent/img_02.jpg";
+-import agentThumb_3 from "@/assets/images/agent/img_03.jpg";
+-import agentThumb_4 from "@/assets/images/agent/img_04.jpg";
+-import agentThumb_5 from "@/assets/images/agent/img_05.jpg";
+-
+-interface DataType {
+-   id: number;
+-   page: string;
+-   thumb: StaticImageData;
+-   title: string;
+-   desc: string;
+-}
+-
+-const agent_data: DataType[] = [
+-   {
+-      id: 1,
+-      page: "home_1",
+-      thumb: agentThumb_1,
+-      title: "Mark Filo",
+-      desc: "CEO & Founder",
+-   },
+-   {
+-      id: 2,
+-      page: "home_1",
+-      thumb: agentThumb_2,
+-      title: "Chris Matial",
+-      desc: "Retailer",
+-   },
+-   {
+-      id: 3,
+-      page: "home_1",
+-      thumb: agentThumb_3,
+-      title: "Jubayer Al Hasan",
+-      desc: "Marketing Expert",
+-   },
+-   {
+-      id: 4,
+-      page: "home_1",
+-      thumb: agentThumb_4,
+-      title: "Jannatul Ferdaus",
+-      desc: "Broker",
+-   },
+-   {
+-      id: 5,
+-      page: "home_1",
+-      thumb: agentThumb_5,
+-      title: "Chris Matial",
+-      desc: "Broker",
+-   },
+-]
+-
+-export default agent_data;
+\ No newline at end of file
+diff --git a/src/data/home-data/BrandData.ts b/src/data/home-data/BrandData.ts
+deleted file mode 100644
+index 5c59281..0000000
+--- a/src/data/home-data/BrandData.ts
++++ /dev/null
+@@ -1,24 +0,0 @@
+-import { StaticImageData } from "next/image"
+-
+-import brandLogo_1 from "@/assets/images/logo/p_logo_01.png"
+-import brandLogo_2 from "@/assets/images/logo/p_logo_02.png"
+-import brandLogo_3 from "@/assets/images/logo/p_logo_03.png"
+-import brandLogo_4 from "@/assets/images/logo/p_logo_04.png"
+-import brandLogo_5 from "@/assets/images/logo/p_logo_05.png"
+-import brandLogo_6 from "@/assets/images/logo/p_logo_06.png"
+-
+-interface DataType {
+-   id: number;
+-   page: string;
+-   img: StaticImageData[];
+-}
+-
+-const brand_data: DataType[] = [
+-   {
+-      id: 1,
+-      page: "home_2",
+-      img: [brandLogo_1, brandLogo_2, brandLogo_3, brandLogo_4, brandLogo_5, brandLogo_6, brandLogo_3],
+-   },
+-]
+-
+-export default brand_data;
+\ No newline at end of file
+diff --git a/src/data/home-data/CategoryData.ts b/src/data/home-data/CategoryData.ts
+deleted file mode 100644
+index 4fcd5dc..0000000
+--- a/src/data/home-data/CategoryData.ts
++++ /dev/null
+@@ -1,102 +0,0 @@
+-import { StaticImageData } from "next/image";
+-
+-import categoryIcon_1 from "@/assets/images/icon/icon_15.svg";
+-import categoryIcon_2 from "@/assets/images/icon/icon_16.svg";
+-import categoryIcon_3 from "@/assets/images/icon/icon_17.svg";
+-import categoryIcon_4 from "@/assets/images/icon/icon_18.svg";
+-import categoryIcon_5 from "@/assets/images/icon/icon_19.svg";
+-import categoryIcon_6 from "@/assets/images/icon/icon_20.svg";
+-import categoryIcon_7 from "@/assets/images/icon/icon_21.svg";
+-import categoryIcon_8 from "@/assets/images/icon/icon_22.svg";
+-
+-interface DataType {
+-   id: number;
+-   page: string;
+-   icon?: StaticImageData;
+-   text: string;
+-   item_bg_img?:string;
+-   data_delay_time?:string;
+-}[];
+-
+-const category_data: DataType[] = [
+-   {
+-      id: 1,
+-      page: "home_3",
+-      icon: categoryIcon_1,
+-      text: "Shopping Mall",
+-   },
+-   {
+-      id: 2,
+-      page: "home_3",
+-      icon: categoryIcon_2,
+-      text: "Apartments",
+-   },
+-   {
+-      id: 3,
+-      page: "home_3",
+-      icon: categoryIcon_3,
+-      text: "Villa",
+-   },
+-   {
+-      id: 4,
+-      page: "home_3",
+-      icon: categoryIcon_4,
+-      text: "Industry",
+-   },
+-   {
+-      id: 5,
+-      page: "home_3",
+-      icon: categoryIcon_5,
+-      text: "Office",
+-   },
+-   {
+-      id: 6,
+-      page: "home_3",
+-      icon: categoryIcon_6,
+-      text: "Medical",
+-   },
+-   {
+-      id: 7,
+-      page: "home_3",
+-      icon: categoryIcon_7,
+-      text: "House",
+-   },
+-   {
+-      id: 8,
+-      page: "home_3",
+-      icon: categoryIcon_8,
+-      text: "Loft",
+-   },
+-
+-   // home_4
+-
+-   {
+-      id: 1,
+-      page: "home_4",
+-      item_bg_img:"category-4-item-1",
+-      text: "Apartments",
+-   },
+-   {
+-      id: 2,
+-      page: "home_4",
+-      item_bg_img:"category-4-item-2",
+-      text: "House",
+-      data_delay_time:"0.1s"
+-   },
+-   {
+-      id: 3,
+-      page: "home_4",
+-      item_bg_img:"category-4-item-3",
+-      text: "Lofts",
+-      data_delay_time:"0.2s"
+-   },
+-   {
+-      id: 4,
+-      page: "home_4",
+-      item_bg_img:"category-4-item-4",
+-      text: "Villa",
+-      data_delay_time:"0.3s"
+-   },
+-]
+-
+-export default category_data;
+\ No newline at end of file
+diff --git a/src/data/home-data/DropdownData.ts b/src/data/home-data/DropdownData.ts
+deleted file mode 100644
+index 9f9866d..0000000
+--- a/src/data/home-data/DropdownData.ts
++++ /dev/null
+@@ -1,294 +0,0 @@
+-interface InputField {
+-   id: number;
+-   page: string;
+-   col?: string;
+-   border_lg?: string;
+-   label: string;
+-   options: {
+-      value: string;
+-      text: string;
+-   }[];
+-   className?: string;
+-}[]
+-
+-const dropdoun_data: InputField[] = [
+-   {
+-      id: 1,
+-      page: "home_1",
+-      col: "col-xl-3",
+-      label: "I’m looking to...",
+-      options: [{ value: "1", text: "Buy Apartments" }, { value: "2", text: "Rent Condos" }, { value: "3", text: "Sell Houses" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_1",
+-      col: "col-xl-4",
+-      label: "Location",
+-      options: [{ value: "1", text: "Future City" }, { value: "2", text: "Mucherla" }, { value: "3", text: "Shamshabad" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_1",
+-      col: "col-xl-3",
+-      border_lg: "border-lg-0",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$10,000 - $200,000" }, { value: "2", text: "$200,000 - $300,000" }, { value: "3", text: "$300,000 - $400,000" },],
+-   },
+-
+-   // home_2_tab_1
+-
+-   {
+-      id: 1,
+-      page: "home_2_tab_1",
+-      col: "col-xl-2",
+-      label: "I’m looking to...",
+-      options: [{ value: "1", text: "Buy Apartments" }, { value: "2", text: "Rent Condos" }, { value: "3", text: "Sell Houses" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_2_tab_1",
+-      col: "col-xl-3",
+-      label: "Location",
+-      options: [{ value: "1", text: "Future City" }, { value: "2", text: "Mucherla" }, { value: "3", text: "Shamshabad" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_2_tab_1",
+-      col: "col-xl-3",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$10,000 - $200,000" }, { value: "2", text: "$200,000 - $300,000" }, { value: "3", text: "$300,000 - $400,000" },],
+-   },
+-
+-   // home_2_tab_2
+-
+-   {
+-      id: 1,
+-      page: "home_2_tab_2",
+-      col: "col-xl-2",
+-      label: "I’m looking to...",
+-      options: [{ value: "1", text: "Rent Industrial" }, { value: "2", text: "Rent Condos" }, { value: "3", text: "Sell Houses" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Buy Apartments" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_2_tab_2",
+-      col: "col-xl-3",
+-      label: "Location",
+-      options: [{ value: "1", text: "Mucherla" }, { value: "2", text: "Future City" }, { value: "3", text: "Shamshabad" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_2_tab_2",
+-      col: "col-xl-3",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$200,000 - $300,000" }, { value: "2", text: "$10,000 - $200,000" }, { value: "3", text: "$300,000 - $400,000" },],
+-   },
+-
+-   // home_3_tab_1
+-
+-   {
+-      id: 1,
+-      page: "home_3_tab_1",
+-      col: "mb-25",
+-      label: "I’m looking to...",
+-      options: [{ value: "1", text: "Buy Apartments" }, { value: "2", text: "Rent Condos" }, { value: "3", text: "Sell Houses" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_3_tab_1",
+-      col: "mb-25",
+-      label: "Location",
+-      options: [{ value: "1", text: "Future City" }, { value: "2", text: "Mucherla" }, { value: "3", text: "Shamshabad" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_3_tab_1",
+-      col: "mb-50 lg-mb-30",
+-      border_lg: "border-lg-0",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$10,000 - $200,000" }, { value: "2", text: "$200,000 - $300,000" }, { value: "3", text: "$300,000 - $400,000" },],
+-   },
+-
+-   // home_3_tab_2
+-
+-   {
+-      id: 1,
+-      page: "home_3_tab_2",
+-      col: "mb-25",
+-      label: "I’m looking to...",
+-      options: [{ value: "1", text: "Rent Condos" }, { value: "2", text: "Buy Apartments" }, { value: "3", text: "Sell Houses" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_3_tab_2",
+-      col: "mb-25",
+-      label: "Location",
+-      options: [{ value: "1", text: "Mucherla" }, { value: "2", text: "Future City" }, { value: "3", text: "Shamshabad" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_3_tab_2",
+-      col: "mb-50 lg-mb-30",
+-      border_lg: "border-lg-0",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$200,000 - $300,000" }, { value: "2", text: "$10,000 - $200,000" }, { value: "3", text: "$300,000 - $400,000" },],
+-   },
+-
+-   // home_3_tab_3
+-
+-   {
+-      id: 1,
+-      page: "home_3_tab_3",
+-      col: "mb-25",
+-      label: "I’m looking to...",
+-      options: [{ value: "1", text: "Sell Houses" }, { value: "2", text: "Rent Condos" }, { value: "3", text: "Buy Apartments" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_3_tab_3",
+-      col: "mb-25",
+-      label: "Location",
+-      options: [{ value: "1", text: "Shamshabad" }, { value: "2", text: "Mucherla" }, { value: "3", text: "Future City" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_3_tab_3",
+-      col: "mb-50 lg-mb-30",
+-      border_lg: "border-lg-0",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$300,000 - $400,000" }, { value: "2", text: "$200,000 - $300,000" }, { value: "3", text: "$10,000 - $200,000" },],
+-   },
+-
+-   // home_5_tab_1
+-
+-   {
+-      id: 1,
+-      page: "home_5_tab_1",
+-      col: "col-lg-3",
+-      label: "I’m looking to...",
+-      border_lg: "border-left",
+-      options: [{ value: "1", text: "Buy Apartments" }, { value: "2", text: "Rent Condos" }, { value: "3", text: "Sell Houses" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_5_tab_1",
+-      col: "col-lg-4",
+-      label: "Location",
+-      border_lg: "border-left",
+-      options: [{ value: "1", text: "Future City" }, { value: "2", text: "Mucherla" }, { value: "3", text: "Shamshabad" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_5_tab_1",
+-      col: "col-xl-3 col-lg-4",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$10,000 - $200,000" }, { value: "2", text: "$200,000 - $300,000" }, { value: "3", text: "$300,000 - $400,000" },],
+-   },
+-
+-   // home_5_tab_2
+-
+-   {
+-      id: 1,
+-      page: "home_5_tab_2",
+-      col: "col-lg-3",
+-      label: "I’m looking to...",
+-      border_lg: "border-left",
+-      options: [{ value: "1", text: "Rent Condos" }, { value: "2", text: "Buy Apartments" }, { value: "3", text: "Sell Houses" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_5_tab_2",
+-      col: "col-lg-4",
+-      label: "Location",
+-      border_lg: "border-left",
+-      options: [{ value: "1", text: "Mucherla" }, { value: "2", text: "Future City" }, { value: "3", text: "Shamshabad" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_5_tab_2",
+-      col: "col-xl-3 col-lg-4",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$200,000 - $300,000" }, { value: "2", text: "$10,000 - $200,000" }, { value: "3", text: "$300,000 - $400,000" },],
+-   },
+-
+-   // home_6_tab_1
+-
+-   {
+-      id: 1,
+-      page: "home_6_tab_1",
+-      col: "col-xxl-2",
+-      label: "I’m looking to...",
+-      options: [{ value: "1", text: "Buy Apartments" }, { value: "2", text: "Rent Condos" }, { value: "3", text: "Sell Houses" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_6_tab_1",
+-      label: "Location",
+-      options: [{ value: "1", text: "Future City" }, { value: "2", text: "Mucherla" }, { value: "3", text: "Shamshabad" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_6_tab_1",
+-      border_lg: "border-lg-0",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$10,000 - $200,000" }, { value: "2", text: "$200,000 - $300,000" }, { value: "3", text: "$300,000 - $400,000" },],
+-   },
+-
+-   // home_6_tab_2
+-
+-   {
+-      id: 1,
+-      page: "home_6_tab_2",
+-      col: "col-xxl-2",
+-      label: "I’m looking to...",
+-      options: [{ value: "1", text: "Rent Condos" }, { value: "2", text: "Buy Apartments" }, { value: "3", text: "Sell Houses" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_6_tab_2",
+-      label: "Location",
+-      options: [{ value: "1", text: "Mucherla" }, { value: "2", text: "Future City" }, { value: "3", text: "Shamshabad" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_6_tab_2",
+-      border_lg: "border-lg-0",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$200,000 - $300,000" }, { value: "2", text: "$10,000 - $200,000" }, { value: "3", text: "$300,000 - $400,000" },],
+-   },
+-
+-   // home_6_tab_3
+-
+-   {
+-      id: 1,
+-      page: "home_6_tab_3",
+-      col: "col-xxl-2",
+-      label: "I’m looking to...",
+-      options: [{ value: "1", text: "Sell Houses" }, { value: "2", text: "Rent Condos" }, { value: "3", text: "Buy Apartments" }, { value: "4", text: "Sell Houses" }, { value: "5", text: "Rent Industrial" }, { value: "6", text: "Sell Villas" },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_6_tab_3",
+-      label: "Location",
+-      options: [{ value: "1", text: "Shamshabad" }, { value: "2", text: "Mucherla" }, { value: "3", text: "Future City" }, { value: "4", text: "Kollur" }, { value: "5", text: "Maheshwaram" }, { value: "6", text: "Adibatla" }, { value: "7", text: "Shankarpally" },],
+-      className: "location",
+-   },
+-   {
+-      id: 3,
+-      page: "home_6_tab_3",
+-      border_lg: "border-lg-0",
+-      label: "Price Range",
+-      options: [{ value: "1", text: "$300,000 - $400,000" }, { value: "2", text: "$200,000 - $300,000" }, { value: "3", text: "$10,000 - $200,000" },],
+-   },
+-];
+-
+-export default dropdoun_data;
+\ No newline at end of file
+diff --git a/src/data/home-data/FeaturedListingData.ts b/src/data/home-data/FeaturedListingData.ts
+deleted file mode 100644
+index 89b9c6f..0000000
+--- a/src/data/home-data/FeaturedListingData.ts
++++ /dev/null
+@@ -1,47 +0,0 @@
+-interface DataType {
+-   id: number;
+-   page: string;
+-   tag: string;
+-   title: string;
+-   address: string;
+-   data_delay_time?: string;
+-   item_bg_img:string;
+-   property_info: {
+-      feature: string;
+-      total_feature: number;
+-   }[];
+-}[];
+-
+-const feature_listing_data:DataType[]=[
+-   {
+-      id: 1,
+-      page: "home_5",
+-      tag: "Rent",
+-      item_bg_img:"item-bg-1",
+-      title: "Gated Villa, Shamshabad",
+-      address: "Shamshabad, Hyderabad",
+-      property_info: [{feature: "sqft", total_feature: 2137 }, {feature: "bed", total_feature: 0o3 }, {feature: "kitchen", total_feature: 0o1 }, {feature: "bath", total_feature: 0o2 },],
+-   },
+-   {
+-      id: 2,
+-      page: "home_5",
+-      tag: "Sell",
+-      item_bg_img:"item-bg-2",
+-      title: "Future City Premium Plot",
+-      address: "Mucherla, Hyderabad",
+-      data_delay_time:"0.1s",
+-      property_info: [{feature: "sqft", total_feature: 2400 }, {feature: "facing", total_feature: 0o1 }, {feature: "road ft", total_feature: 33 },],
+-   },
+-   {
+-      id: 3,
+-      page: "home_5",
+-      tag: "Rent",
+-      item_bg_img:"item-bg-3",
+-      title: "Modern Apartment, Kollur",
+-      address: "Kollur, Hyderabad",
+-      data_delay_time:"0.2s",
+-      property_info: [{feature: "sqft", total_feature: 1850 }, {feature: "bed", total_feature: 0o3 }, {feature: "kitchen", total_feature: 0o1 }, {feature: "bath", total_feature: 0o2 },],
+-   },
+-]
+-
+-export default feature_listing_data;
+\ No newline at end of file
+diff --git a/src/data/home-data/FeedbackData.ts b/src/data/home-data/FeedbackData.ts
+deleted file mode 100644
+index 03c74f8..0000000
+--- a/src/data/home-data/FeedbackData.ts
++++ /dev/null
+@@ -1,92 +0,0 @@
+-import { StaticImageData } from "next/image";
+-
+-import feedbackThumb_1 from "@/assets/images/media/img_01.jpg";
+-import feedbackThumb_2 from "@/assets/images/media/img_02.jpg";
+-import feedbackThumb_3 from "@/assets/images/media/img_03.jpg";
+-
+-import feedback3Thumb_1 from "@/assets/images/media/img_01.jpg";
+-import feedback3Thumb_2 from "@/assets/images/media/img_02.jpg";
+-import feedback3Thumb_3 from "@/assets/images/media/img_03.jpg";
+-
+-import quoteIcon from "@/assets/images/icon/icon_29.svg";
+-
+-interface DataType {
+-   id: number;
+-   page: string;
+-   desc: string;
+-   title: string;
+-   country: string;
+-   thumb: StaticImageData;
+-   quote_icon: StaticImageData;
+-}
+-
+-const feedback_data: DataType[] = [
+-   {
+-      id: 1,
+-      page: "home_3",
+-      desc: "Efficient and friendly service, guided us perfectly. Satisfied with our new home. Thank you!",
+-      title: "Rashed Kabir",
+-      country: "Milan, Itlay",
+-      thumb: feedback3Thumb_1,
+-      quote_icon: quoteIcon,
+-   },
+-   {
+-      id: 2,
+-      page: "home_3",
+-      desc: "Found our dream home. Great Business with them. Thank you for excellent service.",
+-      title: "Jannat Ferdu.",
+-      country: "London, Uk",
+-      thumb: feedback3Thumb_2,
+-      quote_icon: quoteIcon,
+-   },
+-   {
+-      id: 3,
+-      page: "home_3",
+-      desc: "Efficient and friendly service, guided us perfectly. Satisfied with our new home. Thank you!",
+-      title: "Jubayer Hasan",
+-      country: "Miami, USA",
+-      thumb: feedback3Thumb_3,
+-      quote_icon: quoteIcon,
+-   },
+-   {
+-      id: 4,
+-      page: "home_3",
+-      desc: "Found our dream home. Great Business with them. Thank you for excellent service.",
+-      title: "Jannat Ferdu.",
+-      country: "London, Uk",
+-      thumb: feedback3Thumb_2,
+-      quote_icon: quoteIcon,
+-   },
+-
+-   // home_5
+-
+-   {
+-      id: 1,
+-      page: "home_5",
+-      desc: "Game-changer! Boosted efficiency, simplified tasks, and saved time. Highly recommended!",
+-      title: "Rashed Kabir,",
+-      country: "Claifornia",
+-      thumb: feedbackThumb_1,
+-      quote_icon: quoteIcon,
+-   },
+-   {
+-      id: 2,
+-      page: "home_5",
+-      desc: "Found our dream home. Great Business with them. simplified tasks, and saved time. Thank You",
+-      title: "Jannat Ferdu,",
+-      country: "Claifornia",
+-      thumb: feedbackThumb_2,
+-      quote_icon: quoteIcon,
+-   },
+-   {
+-      id: 3,
+-      page: "home_5",
+-      desc: "Efficient and friendly service, guided us perfectly. Satisfied with our new home. Thank you!",
+-      title: "Jubayer Hasan,",
+-      country: "Claifornia",
+-      thumb: feedbackThumb_3,
+-      quote_icon: quoteIcon,
+-   },
+-]
+-
+-export default feedback_data;
+\ No newline at end of file
+diff --git a/src/data/inner-data/AgecyData.ts b/src/data/inner-data/AgecyData.ts
+deleted file mode 100644
+index 302013d..0000000
+--- a/src/data/inner-data/AgecyData.ts
++++ /dev/null
+@@ -1,423 +0,0 @@
+-import { StaticImageData } from "next/image";
+-
+-import agencyThumb_1 from "@/assets/images/logo/p_logo_13.png";
+-import agencyThumb_2 from "@/assets/images/logo/p_logo_14.png";
+-import agencyThumb_3 from "@/assets/images/logo/p_logo_15.png";
+-import agencyThumb_4 from "@/assets/images/logo/p_logo_16.png";
+-import agencyThumb_5 from "@/assets/images/logo/p_logo_17.png";
+-import agencyThumb_6 from "@/assets/images/logo/p_logo_18.png";
+-import agencyThumb_7 from "@/assets/images/logo/p_logo_19.png";
+-import agencyThumb_8 from "@/assets/images/logo/p_logo_20.png";
+-import agencyThumb_9 from "@/assets/images/logo/p_logo_21.png";
+-
+-interface DataType {
+-   id: number;
+-   data_delay_time?: string;
+-   tag: string;
+-   category?: string;
+-   thumb: StaticImageData;
+-   title: string;
+-   rating: number;
+-   desc: string;
+-   price: number;
+-}[];
+-
+-const agency_data: DataType[] = [
+-   {
+-      id: 1,
+-      tag: "27 Listing",
+-      thumb: agencyThumb_1,
+-      title: "American Inc",
+-      rating: 5,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 100,
+-   },
+-   {
+-      id: 2,
+-      data_delay_time: "0.1s",
+-      tag: "31 Listing",
+-      thumb: agencyThumb_2,
+-      title: "Amazon Build",
+-      rating: 4,
+-      desc: "2118 Thornridge Cir. Syracuse, Connecticut 35624",
+-      price: 50,
+-   },
+-   {
+-      id: 3,
+-      data_delay_time: "0.2s",
+-      tag: "22 Listing",
+-      thumb: agencyThumb_3,
+-      title: "Circle Kilo",
+-      rating: 5,
+-      desc: "4140 Parker Rd. Allentown, New Mexico 31134",
+-      price: 100,
+-   },
+-   {
+-      id: 4,
+-      tag: "12 Listing",
+-      thumb: agencyThumb_4,
+-      title: "Payoneer State",
+-      rating: 4,
+-      category: "Popular",
+-      desc: "2715 Ash Dr. San Jose, South Dakota 83475",
+-      price: 50,
+-   },
+-   {
+-      id: 5,
+-      data_delay_time: "0.1s",
+-      tag: "36 Listing",
+-      thumb: agencyThumb_5,
+-      title: "MegaZone",
+-      rating: 3,
+-      desc: "8502 Preston Rd. Inglewood, Maine 98380",
+-      price: 30,
+-   },
+-   {
+-      id: 6,
+-      data_delay_time: "0.2s",
+-      tag: "16 Listing",
+-      thumb: agencyThumb_6,
+-      title: "Muri Retailers Inc",
+-      rating: 5,
+-      desc: "2118 Thornridge Cir. Syracuse, Connecticut 35624",
+-      price: 150,
+-   },
+-   {
+-      id: 7,
+-      tag: "26 Listing",
+-      thumb: agencyThumb_7,
+-      title: "Modernizer",
+-      rating: 3,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 30,
+-   },
+-   {
+-      id: 8,
+-      data_delay_time: "0.1s",
+-      tag: "19 Listing",
+-      thumb: agencyThumb_8,
+-      title: "American Inc",
+-      rating: 5,
+-      category: "Popular",
+-      desc: "2972 Westheimer Rd. Santa Ana, Illinois 85486",
+-      price: 150,
+-   },
+-   {
+-      id: 9,
+-      data_delay_time: "0.2s",
+-      tag: "27 Listing",
+-      thumb: agencyThumb_9,
+-      title: "SolidBuilders",
+-      rating: 5,
+-      desc: "3891 Ranchview Dr. Richardson, California 62639",
+-      price: 150,
+-   },
+-   {
+-      id: 10,
+-      tag: "26 Listing",
+-      thumb: agencyThumb_7,
+-      title: "Modernizer",
+-      rating: 3,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 30,
+-   },
+-   {
+-      id: 11,
+-      data_delay_time: "0.1s",
+-      tag: "19 Listing",
+-      thumb: agencyThumb_8,
+-      title: "American Inc",
+-      rating: 2,
+-      category: "Popular",
+-      desc: "2972 Westheimer Rd. Santa Ana, Illinois 85486",
+-      price: 20,
+-   },
+-   {
+-      id: 12,
+-      data_delay_time: "0.2s",
+-      tag: "27 Listing",
+-      thumb: agencyThumb_9,
+-      title: "SolidBuilders",
+-      rating: 5,
+-      desc: "3891 Ranchview Dr. Richardson, California 62639",
+-      price: 100,
+-   },
+-   {
+-      id: 13,
+-      tag: "27 Listing",
+-      thumb: agencyThumb_1,
+-      title: "American Inc",
+-      rating: 1,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 10,
+-   },
+-   {
+-      id: 14,
+-      data_delay_time: "0.1s",
+-      tag: "31 Listing",
+-      thumb: agencyThumb_2,
+-      title: "Amazon Build",
+-      rating: 4,
+-      desc: "2118 Thornridge Cir. Syracuse, Connecticut 35624",
+-      price: 50,
+-   },
+-   {
+-      id: 15,
+-      data_delay_time: "0.2s",
+-      tag: "22 Listing",
+-      thumb: agencyThumb_3,
+-      title: "Circle Kilo",
+-      rating: 5,
+-      desc: "4140 Parker Rd. Allentown, New Mexico 31134",
+-      price: 150,
+-   },
+-   {
+-      id: 16,
+-      tag: "12 Listing",
+-      thumb: agencyThumb_4,
+-      title: "Payoneer State",
+-      rating: 4,
+-      category: "Popular",
+-      desc: "2715 Ash Dr. San Jose, South Dakota 83475",
+-      price: 50,
+-   },
+-   {
+-      id: 17,
+-      data_delay_time: "0.1s",
+-      tag: "36 Listing",
+-      thumb: agencyThumb_5,
+-      title: "MegaZone",
+-      rating: 2,
+-      desc: "8502 Preston Rd. Inglewood, Maine 98380",
+-      price: 20,
+-   },
+-   {
+-      id: 18,
+-      data_delay_time: "0.2s",
+-      tag: "16 Listing",
+-      thumb: agencyThumb_6,
+-      title: "Muri Retailers Inc",
+-      rating: 5,
+-      desc: "2118 Thornridge Cir. Syracuse, Connecticut 35624",
+-      price: 200,
+-   },
+-   {
+-      id: 19,
+-      tag: "12 Listing",
+-      thumb: agencyThumb_4,
+-      title: "Payoneer State",
+-      rating: 4,
+-      category: "Popular",
+-      desc: "2715 Ash Dr. San Jose, South Dakota 83475",
+-      price: 50,
+-   },
+-   {
+-      id: 20,
+-      data_delay_time: "0.1s",
+-      tag: "36 Listing",
+-      thumb: agencyThumb_5,
+-      title: "MegaZone",
+-      rating: 3,
+-      desc: "8502 Preston Rd. Inglewood, Maine 98380",
+-      price: 30,
+-   },
+-   {
+-      id: 21,
+-      data_delay_time: "0.2s",
+-      tag: "16 Listing",
+-      thumb: agencyThumb_6,
+-      title: "Muri Retailers Inc",
+-      rating: 5,
+-      desc: "2118 Thornridge Cir. Syracuse, Connecticut 35624",
+-      price: 100,
+-   },
+-   {
+-      id: 22,
+-      tag: "27 Listing",
+-      thumb: agencyThumb_1,
+-      title: "American Inc",
+-      rating: 5,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 100,
+-   },
+-   {
+-      id: 23,
+-      data_delay_time: "0.1s",
+-      tag: "31 Listing",
+-      thumb: agencyThumb_2,
+-      title: "Amazon Build",
+-      rating: 4,
+-      desc: "2118 Thornridge Cir. Syracuse, Connecticut 35624",
+-      price: 60,
+-   },
+-   {
+-      id: 24,
+-      data_delay_time: "0.2s",
+-      tag: "22 Listing",
+-      thumb: agencyThumb_3,
+-      title: "Circle Kilo",
+-      rating: 5,
+-      desc: "4140 Parker Rd. Allentown, New Mexico 31134",
+-      price: 90,
+-   },
+-   {
+-      id: 25,
+-      tag: "26 Listing",
+-      thumb: agencyThumb_7,
+-      title: "Modernizer",
+-      rating: 3,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 30,
+-   },
+-   {
+-      id: 26,
+-      data_delay_time: "0.1s",
+-      tag: "19 Listing",
+-      thumb: agencyThumb_8,
+-      title: "American Inc",
+-      rating: 5,
+-      category: "Popular",
+-      desc: "2972 Westheimer Rd. Santa Ana, Illinois 85486",
+-      price: 90,
+-   },
+-   {
+-      id: 27,
+-      data_delay_time: "0.2s",
+-      tag: "27 Listing",
+-      thumb: agencyThumb_9,
+-      title: "SolidBuilders",
+-      rating: 5,
+-      desc: "3891 Ranchview Dr. Richardson, California 62639",
+-      price: 100,
+-   },
+-   {
+-      id: 28,
+-      tag: "27 Listing",
+-      thumb: agencyThumb_1,
+-      title: "American Inc",
+-      rating: 5,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 100,
+-   },
+-   {
+-      id: 29,
+-      data_delay_time: "0.1s",
+-      tag: "31 Listing",
+-      thumb: agencyThumb_2,
+-      title: "Amazon Build",
+-      rating: 4,
+-      desc: "2118 Thornridge Cir. Syracuse, Connecticut 35624",
+-      price: 50,
+-   },
+-   {
+-      id: 30,
+-      data_delay_time: "0.2s",
+-      tag: "22 Listing",
+-      thumb: agencyThumb_3,
+-      title: "Circle Kilo",
+-      rating: 5,
+-      desc: "4140 Parker Rd. Allentown, New Mexico 31134",
+-      price: 100,
+-   },
+-   {
+-      id: 31,
+-      tag: "12 Listing",
+-      thumb: agencyThumb_4,
+-      title: "Payoneer State",
+-      rating: 4,
+-      category: "Popular",
+-      desc: "2715 Ash Dr. San Jose, South Dakota 83475",
+-      price: 50,
+-   },
+-   {
+-      id: 32,
+-      data_delay_time: "0.1s",
+-      tag: "36 Listing",
+-      thumb: agencyThumb_5,
+-      title: "MegaZone",
+-      rating: 3,
+-      desc: "8502 Preston Rd. Inglewood, Maine 98380",
+-      price: 30,
+-   },
+-   {
+-      id: 33,
+-      data_delay_time: "0.2s",
+-      tag: "16 Listing",
+-      thumb: agencyThumb_6,
+-      title: "Muri Retailers Inc",
+-      rating: 5,
+-      desc: "2118 Thornridge Cir. Syracuse, Connecticut 35624",
+-      price: 150,
+-   },
+-   {
+-      id: 34,
+-      tag: "26 Listing",
+-      thumb: agencyThumb_7,
+-      title: "Modernizer",
+-      rating: 3,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 30,
+-   },
+-   {
+-      id: 35,
+-      data_delay_time: "0.1s",
+-      tag: "19 Listing",
+-      thumb: agencyThumb_8,
+-      title: "American Inc",
+-      rating: 5,
+-      category: "Popular",
+-      desc: "2972 Westheimer Rd. Santa Ana, Illinois 85486",
+-      price: 150,
+-   },
+-   {
+-      id: 36,
+-      data_delay_time: "0.2s",
+-      tag: "27 Listing",
+-      thumb: agencyThumb_9,
+-      title: "SolidBuilders",
+-      rating: 5,
+-      desc: "3891 Ranchview Dr. Richardson, California 62639",
+-      price: 150,
+-   },
+-   {
+-      id: 37,
+-      tag: "26 Listing",
+-      thumb: agencyThumb_7,
+-      title: "Modernizer",
+-      rating: 3,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 30,
+-   },
+-   {
+-      id: 38,
+-      data_delay_time: "0.1s",
+-      tag: "19 Listing",
+-      thumb: agencyThumb_8,
+-      title: "American Inc",
+-      rating: 2,
+-      category: "Popular",
+-      desc: "2972 Westheimer Rd. Santa Ana, Illinois 85486",
+-      price: 20,
+-   },
+-   {
+-      id: 39,
+-      data_delay_time: "0.2s",
+-      tag: "27 Listing",
+-      thumb: agencyThumb_9,
+-      title: "SolidBuilders",
+-      rating: 5,
+-      desc: "3891 Ranchview Dr. Richardson, California 62639",
+-      price: 100,
+-   },
+-   {
+-      id: 40,
+-      tag: "27 Listing",
+-      thumb: agencyThumb_1,
+-      title: "American Inc",
+-      rating: 1,
+-      desc: "4517 Washington Ave. Manchester, Kentucky 39495",
+-      price: 10,
+-   },
+-]
+-
+-export default agency_data;
+\ No newline at end of file
+diff --git a/src/data/inner-data/AgentData.ts b/src/data/inner-data/AgentData.ts
+deleted file mode 100644
+index e18b55a..0000000
+--- a/src/data/inner-data/AgentData.ts
++++ /dev/null
+@@ -1,352 +0,0 @@
+-import { StaticImageData } from "next/image";
+-
+-import agentThumb_1 from "@/assets/images/agent/img_07.jpg";
+-import agentThumb_2 from "@/assets/images/agent/img_08.jpg";
+-import agentThumb_3 from "@/assets/images/agent/img_09.jpg";
+-import agentThumb_4 from "@/assets/images/agent/img_10.jpg";
+-import agentThumb_5 from "@/assets/images/agent/img_11.jpg";
+-import agentThumb_6 from "@/assets/images/agent/img_12.jpg";
+-import agentThumb_7 from "@/assets/images/agent/img_13.jpg";
+-import agentThumb_8 from "@/assets/images/agent/img_14.jpg";
+-import agentThumb_9 from "@/assets/images/agent/img_15.jpg";
+-import agentThumb_10 from "@/assets/images/agent/img_16.jpg";
+-import agentThumb_11 from "@/assets/images/agent/img_17.jpg";
+-import agentThumb_12 from "@/assets/images/agent/img_18.jpg";
+-
+-interface DataType {
+-   id: number;
+-   thumb: StaticImageData;
+-   tag: string;
+-   title: string;
+-   data_delay_time?: string;
+-}
+-
+-const inner_agent_data: DataType[] = [
+-   {
+-      id: 1,
+-      thumb: agentThumb_1,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 2,
+-      thumb: agentThumb_2,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 3,
+-      thumb: agentThumb_3,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 4,
+-      thumb: agentThumb_4,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 5,
+-      thumb: agentThumb_5,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 6,
+-      thumb: agentThumb_6,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 7,
+-      thumb: agentThumb_7,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 8,
+-      thumb: agentThumb_8,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 9,
+-      thumb: agentThumb_9,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 10,
+-      thumb: agentThumb_10,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 11,
+-      thumb: agentThumb_11,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 12,
+-      thumb: agentThumb_12,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 13,
+-      thumb: agentThumb_9,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 14,
+-      thumb: agentThumb_10,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 15,
+-      thumb: agentThumb_11,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 16,
+-      thumb: agentThumb_12,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 17,
+-      thumb: agentThumb_5,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 18,
+-      thumb: agentThumb_6,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 19,
+-      thumb: agentThumb_7,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 20,
+-      thumb: agentThumb_8,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 21,
+-      thumb: agentThumb_1,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 22,
+-      thumb: agentThumb_2,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 23,
+-      thumb: agentThumb_3,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 24,
+-      thumb: agentThumb_4,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 25,
+-      thumb: agentThumb_5,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 26,
+-      thumb: agentThumb_6,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 27,
+-      thumb: agentThumb_7,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 28,
+-      thumb: agentThumb_8,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 29,
+-      thumb: agentThumb_1,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 30,
+-      thumb: agentThumb_2,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 31,
+-      thumb: agentThumb_3,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 32,
+-      thumb: agentThumb_4,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 33,
+-      thumb: agentThumb_1,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 34,
+-      thumb: agentThumb_2,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 35,
+-      thumb: agentThumb_3,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 36,
+-      thumb: agentThumb_4,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 37,
+-      thumb: agentThumb_5,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 38,
+-      thumb: agentThumb_6,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 39,
+-      thumb: agentThumb_7,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 40,
+-      thumb: agentThumb_8,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-   {
+-      id: 41,
+-      thumb: agentThumb_9,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 42,
+-      thumb: agentThumb_10,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 43,
+-      thumb: agentThumb_11,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 44,
+-      thumb: agentThumb_12,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-
+-   {
+-      id: 45,
+-      thumb: agentThumb_5,
+-      tag: "7 Listing",
+-      title: "Chris Matial",
+-   },
+-   {
+-      id: 46,
+-      thumb: agentThumb_6,
+-      tag: "3 Listing",
+-      title: "Mark Filo",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 47,
+-      thumb: agentThumb_7,
+-      tag: "3 Listing",
+-      title: "Zubayer Hasan",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 48,
+-      thumb: agentThumb_8,
+-      tag: "2 Listing",
+-      title: "Jannatul Ferdaus",
+-      data_delay_time: "0.3s",
+-   },
+-]
+-
+-export default inner_agent_data;
+\ No newline at end of file
+diff --git a/src/data/inner-data/PricingData.ts b/src/data/inner-data/PricingData.ts
+deleted file mode 100644
+index 11f5a9b..0000000
+--- a/src/data/inner-data/PricingData.ts
++++ /dev/null
+@@ -1,80 +0,0 @@
+-interface DataType {
+-   page: string;
+-   pricing_data: {
+-      id: number,
+-      class_name?: string;
+-      plan: string;
+-      price: string;
+-      desc: string;
+-      icon_details: {
+-         icon: string;
+-         icon_class?: string;
+-      }[];
+-      btn: string;
+-   }[];
+-}[];
+-
+-const pricing_data: DataType[] = [
+-   {
+-      page: "pricing_1",
+-      pricing_data: [
+-         {
+-            id: 1,
+-            class_name: "active",
+-            plan: "FREE PLAN",
+-            price: "0",
+-            desc: "Great for Individual Person",
+-            icon_details: [{ icon: "fa-sharp fa-regular fa-xmark" }, { icon: "fa-sharp fa-regular fa-xmark" }, { icon: "fa-sharp fa-regular fa-xmark" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" },],
+-            btn: "active"
+-         },
+-         {
+-            id: 1,
+-            plan: "Gold Plan",
+-            price: "$89",
+-            desc: "Great for Startup",
+-            icon_details: [{ icon: "fa-sharp fa-regular fa-xmark" }, { icon: "fa-sharp fa-regular fa-xmark" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" },],
+-            btn: "Get Started"
+-         },
+-         {
+-            id: 1,
+-            plan: "Business Plan",
+-            price: "$147",
+-            desc: "Great for Large Business",
+-            icon_details: [{ icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" },],
+-            btn: "Get Started"
+-         },
+-      ]
+-   },
+-   {
+-      page: "pricing_1",
+-      pricing_data: [
+-         {
+-            id: 1,
+-            class_name: "active",
+-            plan: "FREE PLAN",
+-            price: "0",
+-            desc: "Great for Individual Person",
+-            icon_details: [{ icon: "fa-sharp fa-regular fa-xmark" }, { icon: "fa-sharp fa-regular fa-xmark" }, { icon: "fa-sharp fa-regular fa-xmark" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" },],
+-            btn: "active"
+-         },
+-         {
+-            id: 1,
+-            plan: "Gold Plan",
+-            price: "$189",
+-            desc: "Great for Startup",
+-            icon_details: [{ icon: "fa-sharp fa-regular fa-xmark" }, { icon: "fa-sharp fa-regular fa-xmark" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" },],
+-            btn: "Get Started"
+-         },
+-         {
+-            id: 1,
+-            plan: "Business Plan",
+-            price: "$347",
+-            desc: "Great for Large Business",
+-            icon_details: [{ icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" }, { icon_class: "available", icon: "fa-sharp fa-regular fa-check" },],
+-            btn: "Get Started"
+-         },
+-      ]
+-   },
+-];
+-
+-export default pricing_data;
+\ No newline at end of file
+diff --git a/src/data/inner-data/ProjectData.ts b/src/data/inner-data/ProjectData.ts
+deleted file mode 100644
+index da9e0b7..0000000
+--- a/src/data/inner-data/ProjectData.ts
++++ /dev/null
+@@ -1,252 +0,0 @@
+-import { StaticImageData } from "next/image";
+-
+-import projectThumb_1 from "@/assets/images/project/img_01.jpg"
+-import projectThumb_2 from "@/assets/images/project/img_02.jpg"
+-import projectThumb_3 from "@/assets/images/project/img_03.jpg"
+-import projectThumb_4 from "@/assets/images/project/img_04.jpg"
+-import projectThumb_5 from "@/assets/images/project/img_05.jpg"
+-import projectThumb_6 from "@/assets/images/project/img_06.jpg"
+-import projectThumb_7 from "@/assets/images/project/img_07.jpg"
+-import projectThumb_8 from "@/assets/images/project/img_08.jpg"
+-import projectThumb_9 from "@/assets/images/project/img_09.jpg"
+-
+-import projectThumb_10 from "@/assets/images/project/img_10.jpg"
+-import projectThumb_11 from "@/assets/images/project/img_11.jpg"
+-import projectThumb_12 from "@/assets/images/project/img_12.jpg"
+-import projectThumb_13 from "@/assets/images/project/img_13.jpg"
+-import projectThumb_14 from "@/assets/images/project/img_14.jpg"
+-import projectThumb_15 from "@/assets/images/project/img_15.jpg"
+-
+-import projectThumb_16 from "@/assets/images/project/img_16.jpg"
+-import projectThumb_17 from "@/assets/images/project/img_17.jpg"
+-import projectThumb_18 from "@/assets/images/project/img_18.jpg"
+-import projectThumb_19 from "@/assets/images/project/img_19.jpg"
+-import projectThumb_20 from "@/assets/images/project/img_20.jpg"
+-import projectThumb_21 from "@/assets/images/project/img_21.jpg"
+-
+-import projectThumb_22 from "@/assets/images/project/img_22.jpg"
+-import projectThumb_23 from "@/assets/images/project/img_23.jpg"
+-import projectThumb_24 from "@/assets/images/project/img_24.jpg"
+-import projectThumb_25 from "@/assets/images/project/img_25.jpg"
+-import projectThumb_26 from "@/assets/images/project/img_26.jpg"
+-
+-interface DataType {
+-   id: number;
+-   page: string;
+-   thumb: StaticImageData;
+-   category: string;
+-   title?:string;
+-   date?:string;
+-   desc?:string;
+-   tag?:string;
+-   fancybox?:string;
+-}
+-
+-const project_data: DataType[] = [
+-   {
+-      id: 1,
+-      page: "project_1",
+-      thumb: projectThumb_1,
+-      category: "house flat"
+-   },
+-   {
+-      id: 2,
+-      page: "project_1",
+-      thumb: projectThumb_2,
+-      category: "villa"
+-   },
+-   {
+-      id: 3,
+-      page: "project_1",
+-      thumb: projectThumb_3,
+-      category: "apartments"
+-   },
+-   {
+-      id: 4,
+-      page: "project_1",
+-      thumb: projectThumb_4,
+-      category: "villa"
+-   },
+-   {
+-      id: 5,
+-      page: "project_1",
+-      thumb: projectThumb_5,
+-      category: "house"
+-   },
+-   {
+-      id: 6,
+-      page: "project_1",
+-      thumb: projectThumb_6,
+-      category: "apartments flat"
+-   },
+-   {
+-      id: 7,
+-      page: "project_1",
+-      thumb: projectThumb_7,
+-      category: "villa"
+-   },
+-   {
+-      id: 8,
+-      page: "project_1",
+-      thumb: projectThumb_8,
+-      category: "apartments"
+-   },
+-   {
+-      id: 9,
+-      page: "project_1",
+-      thumb: projectThumb_9,
+-      category: "house flat"
+-   },
+-
+-   // project_2
+-
+-   {
+-      id: 1,
+-      page: "project_2",
+-      thumb: projectThumb_10,
+-      category: "house flat"
+-   },
+-   {
+-      id: 2,
+-      page: "project_2",
+-      thumb: projectThumb_11,
+-      category: "villa"
+-   },
+-   {
+-      id: 3,
+-      page: "project_2",
+-      thumb: projectThumb_12,
+-      category: "apartments"
+-   },
+-   {
+-      id: 4,
+-      page: "project_2",
+-      thumb: projectThumb_13,
+-      category: "villa"
+-   },
+-   {
+-      id: 5,
+-      page: "project_2",
+-      thumb: projectThumb_14,
+-      category: "house"
+-   },
+-   {
+-      id: 6,
+-      page: "project_2",
+-      thumb: projectThumb_15,
+-      category: "apartments flat"
+-   },
+-
+-   // project_3
+-   
+-   {
+-      id: 1,
+-      page: "project_3",
+-      thumb: projectThumb_16,
+-      category: "house flat",
+-      title:"Blue Duplex Villa",
+-      date:"13 Sep, 23",
+-      tag:"VILLA",
+-      fancybox:"16",
+-   },
+-   {
+-      id: 2,
+-      page: "project_3",
+-      thumb: projectThumb_17,
+-      category: "villa",
+-      title:"1320sft Modern Flat",
+-      date:"15 Sep, 23",
+-      tag:"FLAT",
+-      fancybox:"17",
+-   },
+-   {
+-      id: 3,
+-      page: "project_3",
+-      thumb: projectThumb_18,
+-      category: "apartments",
+-      title:"Galaxy Sky Touch",
+-      date:"17 Sep, 23",
+-      tag:"APARTMENTS",
+-      fancybox:"18",
+-   },
+-   {
+-      id: 4,
+-      page: "project_3",
+-      thumb: projectThumb_19,
+-      category: "villa",
+-      title:"Apartments Vintage City",
+-      date:"19 Sep, 23",
+-      tag:"HOUSE",
+-      fancybox:"19",
+-   },
+-   {
+-      id: 5,
+-      page: "project_3",
+-      thumb: projectThumb_20,
+-      category: "house",
+-      title:"2-Stored House",
+-      date:"21 Sep, 23",
+-      tag:"FLAT",
+-      fancybox:"20",
+-   },
+-   {
+-      id: 6,
+-      page: "project_3",
+-      thumb: projectThumb_21,
+-      category: "apartments flat",
+-      title:"Swimming Pool Villa",
+-      date:"23 Sep, 23",
+-      tag:"VILLA",
+-      fancybox:"21",
+-   },
+-
+-   // project_4
+-   
+-   {
+-      id: 1,
+-      page: "project_4",
+-      thumb: projectThumb_22,
+-      fancybox:"22",
+-      category: "house",
+-      title:"Apartments On Vintage City.",
+-      desc:"Your leading real estate advocate, transforming houses into dreams. Trust",
+-   },
+-   {
+-      id: 2,
+-      page: "project_4",
+-      thumb: projectThumb_23,
+-      fancybox:"23",
+-      category: "villa",
+-      title:"Galaxy Touch Sky Villa.",
+-      desc:"Your leading real estate advocate, transforming houses into dreams. Trust",
+-   },
+-   {
+-      id: 3,
+-      page: "project_4",
+-      thumb: projectThumb_24,
+-      category: "apartments",
+-      fancybox:"24",
+-      title:"2370sft Modern Apartments.",
+-      desc:"Your leading real estate advocate, transforming houses into dreams. Trust",
+-   },
+-   {
+-      id: 4,
+-      page: "project_4",
+-      thumb: projectThumb_25,
+-      category: "flat",
+-      fancybox:"25",
+-      title:"2 Store Tiny Duplex House.",
+-      desc:"Your leading real estate advocate, transforming houses into dreams. Trust",
+-   },
+-   {
+-      id: 5,
+-      page: "project_4",
+-      thumb: projectThumb_26,
+-      category: "house",
+-      fancybox:"26",
+-      title:"Swimming Pool Duplex Villa.",
+-      desc:"Your leading real estate advocate, transforming houses into dreams. Trust",
+-   },
+-]
+-
+-export default project_data;
+\ No newline at end of file
+diff --git a/src/data/inner-data/PropertyFeatureListData.ts b/src/data/inner-data/PropertyFeatureListData.ts
+deleted file mode 100644
+index 262cc6e..0000000
+--- a/src/data/inner-data/PropertyFeatureListData.ts
++++ /dev/null
+@@ -1,58 +0,0 @@
+-interface DataType {
+-   id: number;
+-   title: string;
+-   feature_list: {
+-      title: string;
+-      count: string;
+-   }[];
+-}[];
+-
+-const property_feature_list: DataType[] = [
+-   {
+-      id: 1,
+-      title: "Property Details",
+-      feature_list: [
+-         { title: "Bedrooms:", count: "03" },
+-         { title: "Furnishing:", count: "Semi furnished", },
+-         { title: "Bathrooms:", count: "02", },
+-         { title: "Year Built:", count: "2010", },
+-         { title: "Floor:", count: "Ground", },
+-         { title: "Garage:", count: "03", },
+-         { title: "Ceiling Height:", count: "3.2m", },
+-         { title: "Property Type:", count: "Apartment", },
+-         { title: "Renovation:", count: "3.2m", },
+-         { title: "Status:", count: "For Sale", },
+-      ],
+-   },
+-   {
+-      id: 2,
+-      title: "Utility Details",
+-      feature_list: [
+-         { title: "Heating:", count: "Natural gas", },
+-         { title: "Intercom:", count: "Yes", },
+-         { title: "Air Condition:", count: "Yes", },
+-         { title: "Window Type:", count: "Aluminum frame", },
+-         { title: "Fireplace:", count: "--", },
+-         { title: "Cable TV:", count: "--", },
+-         { title: "Elevator:", count: "Yes", },
+-         { title: "WiFi:", count: "Yes", },
+-         { title: "Ventilation:", count: "Yes", },
+-      ],
+-   },
+-   {
+-      id: 3,
+-      title: "Outdoor Features",
+-      feature_list: [
+-         { title: "Garage:", count: "Yes", },
+-         { title: "Parking:", count: "Yes", },
+-         { title: "Garden:", count: "30m2", },
+-         { title: "Disabled Access:", count: "Ramp", },
+-         { title: "Swimming Pool:", count: "--", },
+-         { title: "Fence:", count: "--", },
+-         { title: "Security:", count: "3 Cameras", },
+-         { title: "Pet Friendly:", count: "Yes", },
+-      ],
+-   }
+-];
+-
+-export default property_feature_list;
+\ No newline at end of file
+diff --git a/src/data/inner-data/ServiceData.ts b/src/data/inner-data/ServiceData.ts
+deleted file mode 100644
+index fa3e39b..0000000
+--- a/src/data/inner-data/ServiceData.ts
++++ /dev/null
+@@ -1,73 +0,0 @@
+-import { StaticImageData } from "next/image";
+-
+-import serviceIcon_1 from "@/assets/images/icon/icon_69.svg";
+-import serviceIcon_2 from "@/assets/images/icon/icon_70.svg";
+-import serviceIcon_3 from "@/assets/images/icon/icon_71.svg";
+-
+-interface DataType {
+-   id: number;
+-   page: string;
+-   icon: StaticImageData;
+-   title: string;
+-   desc: string;
+-   data_delay_time?: string;
+-   btn: string;
+-}[]
+-
+-const service_data: DataType[] = [
+-   {
+-      id: 1,
+-      page: "service_1",
+-      icon: serviceIcon_1,
+-      title: "Buy a home",
+-      btn: "Buy Home",
+-      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
+-   },
+-   {
+-      id: 2,
+-      page: "service_1",
+-      icon: serviceIcon_2,
+-      title: "Rent a Home",
+-      btn: "Rent Home",
+-      desc: "Discover the right property with Property Planet, thanks to 35+ filters.",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 3,
+-      page: "service_1",
+-      icon: serviceIcon_3,
+-      title: "Sell Home",
+-      btn: "Sell Home",
+-      desc: "List, sell, thrive – with our top-notch real estate agency.",
+-      data_delay_time: "0.2s",
+-   },
+-   {
+-      id: 4,
+-      page: "service_1",
+-      icon: serviceIcon_1,
+-      title: "Mortgage",
+-      btn: "Buy Home",
+-      desc: "Explore Property Planet’s verified land, plots and homes and uncover your ideal opportunity.",
+-   },
+-   {
+-      id: 5,
+-      page: "service_1",
+-      icon: serviceIcon_2,
+-      title: "Consulting",
+-      btn: "Rent Home",
+-      desc: "Discover the right property with Property Planet, thanks to 35+ filters.",
+-      data_delay_time: "0.1s",
+-   },
+-   {
+-      id: 6,
+-      page: "service_1",
+-      icon: serviceIcon_3,
+-      title: "Property Managements",
+-      btn: "Sell Home",
+-      desc: "List, sell, thrive – with our top-notch real estate agency.",
+-      data_delay_time: "0.2s",
+-   },
+-   
+-]
+-
+-export default service_data;
+\ No newline at end of file
+diff --git a/src/hooks/useShortedProperty.ts b/src/hooks/useShortedProperty.ts
+deleted file mode 100644
+index 8173b54..0000000
+--- a/src/hooks/useShortedProperty.ts
++++ /dev/null
+@@ -1,215 +0,0 @@
+-import UseProperty from "@/hooks/UseProperty";
+-import { ChangeEvent, useEffect, useState } from "react";
+-import { useSelector } from "react-redux";
+-import { selectProperties } from "@/redux/features/propertySlice";
+-import listing_data from "@/data/inner-data/ListingData";
+-
+-interface DataType {
+-   itemsPerPage: number;
+-   page: string;
+-}
+-
+-const UseShortedProperty = ({ itemsPerPage, page }: DataType) => {
+-
+-   let all_property = listing_data;
+-
+-   const { properties, setProperties } = UseProperty();
+-   const filteredProperties = properties.filter((item) => item.page === page);
+-
+-   const [itemOffset, setItemOffset] = useState(0);
+-   const [sortOption, setSortOption] = useState<string>("");
+-   const [status, setStatus] = useState<string | null>(null);
+-   const [location, setLocation] = useState<string | null>(null);
+-   const [selectedBedrooms, setSelectedBedrooms] = useState<string | null>(null);
+-   const [selectedBathrooms, setSelectedBathrooms] = useState<string | null>(null);
+-   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+-
+-   // handleSortOptionChange
+-   const handleTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+-      setSortOption(event.target.value);
+-      setItemOffset(0);
+-   };
+-
+-   // handleStatusChange
+-   const handleStatusChange = (event: ChangeEvent<HTMLSelectElement>) => {
+-      setStatus(event.target.value);
+-      setItemOffset(0);
+-   };
+-
+-   // handleLocationChange
+-   const handleLocationChange = (event: ChangeEvent<HTMLSelectElement>) => {
+-      setLocation(event.target.value);
+-      setItemOffset(0);
+-   };
+-
+-   // handleBedroomChange
+-   const handleBedroomChange = (event: ChangeEvent<HTMLSelectElement>) => {
+-      setSelectedBedrooms(event.target.value);
+-      setItemOffset(0);
+-   };
+-
+-   // handleBathroomChange
+-   const handleBathroomChange = (event: ChangeEvent<HTMLSelectElement>) => {
+-      setSelectedBathrooms(event.target.value);
+-      setItemOffset(0);
+-   };
+-
+-   // handleAmenityChange
+-   const handleAmenityChange = (event: ChangeEvent<HTMLInputElement>) => {
+-      const amenity = event.target.value;
+-
+-      setSelectedAmenities((prevSelectedAmenities) => {
+-         if (prevSelectedAmenities.includes(amenity)) {
+-            return prevSelectedAmenities.filter((a) => a !== amenity);
+-         } else {
+-            return [...prevSelectedAmenities, amenity];
+-         }
+-      });
+-   };
+-
+-   useEffect(() => {
+-      // This block will be executed after selectedAmenities has been updated.
+-      setItemOffset(0);
+-   }, [selectedAmenities]);
+-
+-   const getSortedProperties = () => {
+-      let filtered = filteredProperties;
+-
+-      // Status filtering
+-      if (status !== null) {
+-         filtered = filtered.filter((item) => {
+-            return item.status.toLowerCase().includes(status.toLowerCase());
+-         });
+-      }
+-
+-      // Location filtering
+-      if (location !== null) {
+-         filtered = filtered.filter((item) => {
+-            return item.location.toLowerCase().includes(location.toLowerCase());
+-         });
+-      }
+-
+-      // Bedrooms filtering
+-      if (selectedBedrooms !== null) {
+-         filtered = filtered.filter((item) => {
+-            return item.property_info.bed.toLowerCase().includes(selectedBedrooms.toLowerCase());
+-         });
+-      }
+-
+-      // Bathrooms filtering
+-      if (selectedBathrooms !== null) {
+-         filtered = filtered.filter((item) => {
+-            return item.property_info.bath.toLowerCase().includes(selectedBathrooms.toLowerCase());
+-         });
+-      }
+-
+-      // Amenities filtering
+-      if (selectedAmenities.length > 0) {
+-         filtered = filtered.filter((item) => {
+-            const propertyAmenities = item.amenities || [];
+-            return selectedAmenities.every((amenity) => propertyAmenities.includes(amenity));
+-         });
+-      }
+-
+-      // Type filtering
+-      switch (sortOption) {
+-         case "newest":
+-            return filtered.filter((item) => item.type === "newest");
+-         case "best_seller":
+-            return filtered.filter((item) => item.type === "Best Seller");
+-         case "best_match":
+-            return filtered.filter((item) => item.type === "Best Match");
+-         case "price_low":
+-            return filtered.sort((a, b) => a.price - b.price);
+-         case "price_high":
+-            return filtered.sort((a, b) => b.price - a.price);
+-         default:
+-            return filtered;
+-      }
+-   };
+-
+-   const sortedProperties = getSortedProperties();
+-   const endOffset = itemOffset + itemsPerPage;
+-   const currentItems = sortedProperties.slice(itemOffset, endOffset);
+-   const pageCount = Math.ceil(sortedProperties.length / itemsPerPage);
+-
+-   const handlePageClick = (event: any) => {
+-      const newOffset = event.selected * itemsPerPage;
+-      setItemOffset(newOffset);
+-   };
+-
+-   // All products
+-   const allProperties = useSelector(selectProperties);
+-   const filteredAllProduct = allProperties.filter(item => item.page === "listing_1");
+-
+-   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+-      const searchingProducts = filteredAllProduct.filter((p) =>
+-         p.title.toLowerCase().includes(e.target.value.toLowerCase())
+-      );
+-      setProperties(searchingProducts);
+-   };
+-
+-   // handle Price
+-   const maxPrice = all_property.filter(item => item.page === page).reduce((max, item) => {
+-      return item.price > max ? item.price : max;
+-   }, 0);
+-   const [priceValue, setPriceValue] = useState([0, maxPrice]);
+-
+-   useEffect(() => {
+-      let filterPrice = all_property.filter((j) => j.price >= priceValue[0] && j.price <= priceValue[1]);
+-      setProperties(filterPrice)
+-   }, [priceValue]);
+-
+-   const handlePriceChange = (val: number[]) => {
+-      setPriceValue(val)
+-   }
+-
+-
+-   const priceRanges: {
+-      [key: string]: number[];
+-   } = {
+-      "1": [10000, 200000],
+-      "2": [20000, 300000],
+-      "3": [30000, 400000],
+-   };
+-
+-   const handlePriceDropChange = (selectedValue: string) => {
+-      const selectedRange = priceRanges[selectedValue];
+-      const newPriceValue = selectedRange ? selectedRange : [0, maxPrice];
+-      setPriceValue(newPriceValue);
+-   };
+-
+-   const resetFilters = () => {
+-      setSortOption("");
+-      setItemOffset(0);
+-      setStatus(null);
+-      setLocation(null);
+-      setSelectedBedrooms(null);
+-      setSelectedBathrooms(null);
+-      setSelectedAmenities([]);
+-      setPriceValue([0, maxPrice]);
+-   };
+-
+-   return {
+-      handlePriceDropChange,
+-      itemOffset,
+-      sortedProperties,
+-      currentItems,
+-      handlePageClick,
+-      handleSearchChange,
+-      handleBedroomChange,
+-      handleLocationChange,
+-      handleTypeChange,
+-      handleStatusChange,
+-      handleBathroomChange,
+-      handlePriceChange,
+-      maxPrice,
+-      priceValue,
+-      resetFilters,
+-      selectedAmenities,
+-      handleAmenityChange,
+-      pageCount,
+-   };
+-};
+-
+-export default UseShortedProperty;
+\ No newline at end of file
+diff --git a/src/layouts/footers/FooterFive.tsx b/src/layouts/footers/FooterFive.tsx
+deleted file mode 100644
+index 57169e0..0000000
+--- a/src/layouts/footers/FooterFive.tsx
++++ /dev/null
+@@ -1,75 +0,0 @@
+-"use client"
+-import Image from "next/image"
+-import Link from "next/link"
+-
+-import footerLogo from "@/assets/images/logo/logo_07.svg"
+-import footer_data from "@/data/home-data/FooterData"
+-
+-const FooterFive = () => {
+-   return (
+-      <div className="footer-four dark-bg position-relative z-1">
+-         <div className="news-letter-area">
+-            <div className="container container-large">
+-               <div className="line-wrapper">
+-                  <div className="row align-items-center">
+-                     <div className="col-lg-6">
+-                        <div className="text-center text-lg-start md-mb-40">
+-                           <h2 className="text-white">Our Newsletter</h2>
+-                           <p className="fs-24 text-white opacity-75 m0">Get instant news by subscribe to our newsletter</p>
+-                        </div>
+-                     </div>
+-                     <div className="col-lg-6">
+-                        <div className="form-wrapper me-auto ms-auto me-lg-0">
+-                           <form onSubmit={(e) => e.preventDefault()}>
+-                              <input type="email" placeholder="Email address" className="rounded-0" />
+-                              <button className="rounded-0">Get Started</button>
+-                           </form>
+-                           <div className="fs-16 mt-10 text-white"><span className="fw-light opacity-75">Already a Agent?</span> <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Sign in.</a></div>
+-                        </div>
+-                     </div>
+-                  </div>
+-               </div>
+-            </div>
+-         </div>
+-
+-         <div className="container container-large">
+-            <div className="bg-wrapper position-relative z-1">
+-               <div className="row">
+-                  <div className="col-xl-3 col-lg-4 mb-60">
+-                     <div className="footer-intro">
+-                        <div className="logo mb-20">
+-                           <Link href="/">
+-                              <Image src={footerLogo} alt="" />
+-                           </Link>
+-                        </div>
+-                        <p className="mb-45 md-mb-20">Hyderabad, Telangana</p>
+-                        <ul className="style-none d-flex align-items-center social-icon">
+-                           <li><Link href="#"><i className="fa-brands fa-facebook-f"></i></Link></li>
+-                           <li><Link href="#"><i className="fa-brands fa-twitter"></i></Link></li>
+-                           <li><Link href="#"><i className="fa-brands fa-instagram"></i></Link></li>
+-                        </ul>
+-                     </div>
+-                  </div>
+-
+-                  {footer_data.filter((items) => items.page === "home_5").map((item) => (
+-                     <div key={item.id} className={`col-md-4 mb-30 ${item.widget_class}`}>
+-                        <div className={`footer-nav ${item.widget_class2}`}>
+-                           <h5 className="footer-title text-white">{item.widget_title}</h5>
+-                           <ul className="footer-nav-link style-none">
+-                              {item.footer_link.map((li, i) => (
+-                                 <li key={i}><Link href={li.link}>{li.link_title}</Link></li>))}
+-                           </ul>
+-                        </div>
+-                     </div>
+-                  ))}
+-               </div>
+-            </div>
+-            <div className="bottom-footer">
+-               <p className="m0 text-center fs-16">Copyright @2025 Property Planet.</p>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default FooterFive
+diff --git a/src/layouts/footers/FooterThree.tsx b/src/layouts/footers/FooterThree.tsx
+deleted file mode 100644
+index 9d67bb2..0000000
+--- a/src/layouts/footers/FooterThree.tsx
++++ /dev/null
+@@ -1,71 +0,0 @@
+-"use client"
+-import Image from "next/image"
+-import Link from "next/link"
+-import footer_data from "@/data/home-data/FooterData"
+-
+-import footerLogo from "@/assets/images/logo/logo_06.svg"
+-import footerShape_1 from "@/assets/images/shape/shape_52.svg"
+-
+-const FooterThree = () => {
+-   return (
+-      <div className="footer-three">
+-         <div className="container container-large">
+-            <div className="bg-wrapper position-relative z-1">
+-               <div className="row">
+-                  <div className="col-xl-3 mb-40 lg-mb-60">
+-                     <div className="footer-intro pe-xxl-5 pe-xl-3">
+-                        <div className="logo mb-15">
+-                           <Link href="/">
+-                              <Image src={footerLogo} alt="" />
+-                           </Link>
+-                        </div>
+-                        <p className="mb-45 lg-mb-30">Hyderabad, Telangana</p>
+-                        <ul className="style-none d-flex align-items-center social-icon">
+-                           <li><Link href="#"><i className="fa-brands fa-facebook-f"></i></Link></li>
+-                           <li><Link href="#"><i className="fa-brands fa-twitter"></i></Link></li>
+-                           <li><Link href="#"><i className="fa-brands fa-instagram"></i></Link></li>
+-                        </ul>
+-                        <Image src={footerShape_1} alt="" className="lazy-img ms-auto d-none d-xl-block" />
+-                     </div>
+-                  </div>
+-
+-                  {footer_data.filter((items) => items.page == "home_4").map((item) => (
+-                     <div key={item.id} className="col-lg-2 col-md-6 mb-30">
+-                        <div className="footer-nav">
+-                           <h5 className="footer-title">{item.widget_title}</h5>
+-                           <ul className="footer-nav-link style-none">
+-                              {item.footer_link.map((li, i) => (
+-                                 <li key={i}><Link href={li.link}>{li.link_title}</Link></li>
+-                              ))}
+-                           </ul>
+-                        </div>
+-                     </div>
+-                  ))}
+-
+-                  <div className="col-xl-3 col-lg-4 col-md-6 mb-30">
+-                     <h5 className="footer-title">Newsletters</h5>
+-                     <p className="pt-5">Join & get important new regularly</p>
+-                     <form onSubmit={(e) => e.preventDefault()} className="newsletter-form position-relative">
+-                        <input type="email" placeholder="Enter your email" />
+-                        <button className="fw-500 fs-16 text-white tran3s">Send</button>
+-                     </form>
+-                     <span className="fs-14 opacity-75">We only send interesting and relevant emails.</span>
+-                  </div>
+-               </div>
+-            </div>
+-
+-            <div className="bottom-footer">
+-               <div className="d-md-flex justify-content-center justify-content-md-between align-items-center">
+-                  <ul className="style-none bottom-nav d-flex justify-content-center">
+-                     <li><Link href="/faq">Privacy &amp; Terms</Link></li>
+-                     <li><Link href="/contact">Contact Us</Link></li>
+-                  </ul>
+-                  <p className="mb-15 text-center text-lg-start fs-16 order-md-first">Copyright @2025 Property Planet.</p>
+-               </div>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default FooterThree
+diff --git a/src/layouts/headers/HeaderThree.tsx b/src/layouts/headers/HeaderThree.tsx
+deleted file mode 100644
+index 8491def..0000000
+--- a/src/layouts/headers/HeaderThree.tsx
++++ /dev/null
+@@ -1,66 +0,0 @@
+-"use client"
+-import NavMenu from "./Menu/NavMenu"
+-import Link from "next/link"
+-import Image from "next/image"
+-import { useState } from "react"
+-import UseSticky from "@/hooks/UseSticky"
+-import LoginModal from "@/modals/LoginModal"
+-import Offcanvas from "./Menu/Offcanvas"
+-import AuthNav from "./Menu/AuthNav"
+-import BecomeSellerNav from "./Menu/BecomeSellerNav"
+-import { CONTACT_EMAIL } from "@/lib/site/contact"
+-
+-import logo_1 from "@/assets/images/logo/logo_06.svg";
+-
+-const HeaderThree = () => {
+-   const { sticky } = UseSticky();
+-   const [offCanvas, setOffCanvas] = useState<boolean>(false);
+-
+-   return (
+-      <>
+-         <header className={`theme-main-menu menu-overlay menu-style-five sticky-menu ${sticky ? "fixed" : ""}`}>
+-            <div className="inner-content gap-one">
+-               <div className="top-header position-relative">
+-                  <div className="d-flex align-items-center">
+-                     <div className="logo order-lg-0">
+-                        <Link href="/" className="d-flex align-items-center">
+-                           <Image src={logo_1} alt="" />
+-                        </Link>
+-                     </div>
+-
+-                     <div className="right-widget ms-auto me-3 me-lg-0 order-lg-4">
+-                        <ul className="d-flex align-items-center style-none">
+-                           <AuthNav />
+-                           <li className="d-none d-md-inline-block ms-3 ms-xl-4 me-xl-4">
+-                              <BecomeSellerNav className="btn-five md rounded-0" />
+-                           </li>
+-                           <li className="d-none d-xl-block"><button onClick={() => setOffCanvas(true)} style={{ cursor: "pointer" }} className="sidenavbtn rounded-circle tran3s" type="button"><i className="fa-sharp fa-light fa-bars-filter"></i></button></li>
+-                        </ul>
+-                     </div>
+-
+-                     <div className="order-lg-2 d-none d-xxl-block">
+-                        <p className="m0 email-text ps-5 pe-5">Our Email <Link href={`mailto:${CONTACT_EMAIL}`} className="tran3s fw-500 ms-2">{CONTACT_EMAIL}</Link></p>
+-                     </div>
+-
+-                     <nav className="navbar navbar-expand-lg p0 ms-lg-5 order-lg-3">
+-                        <button className="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse"
+-                           data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+-                           aria-label="Toggle navigation">
+-                           <span></span>
+-                        </button>
+-                        <div className="collapse navbar-collapse" id="navbarNav">
+-                           <NavMenu />
+-                        </div>
+-                     </nav>
+-                  </div>
+-               </div>
+-            </div>
+-         </header>
+-
+-         <Offcanvas offCanvas={offCanvas} setOffCanvas={setOffCanvas} />
+-         <LoginModal />
+-      </>
+-   )
+-}
+-
+-export default HeaderThree
+diff --git a/src/lib/leads/actions.ts b/src/lib/leads/actions.ts
+index 5b3bf00..2f33caa 100644
+--- a/src/lib/leads/actions.ts
++++ b/src/lib/leads/actions.ts
+@@ -316,6 +316,60 @@ export async function createSiteVisit(
+    return { success: true };
+ }
+ 
++/**
++ * Cancels the buyer's own site visit (status requested/confirmed only).
++ *
++ * Authorization: "own" is re-derived server-side from the visit's parent
++ * lead (lead.buyer_id === ctx.userId), exactly like createSiteVisit() —
++ * never trusted from client input. The database is the actual backstop
++ * regardless (see 0022_site_visit_cancellation.sql's
++ * enforce_buyer_site_visit_update trigger + "buyers can update own site
++ * visits" RLS policy): even if this check were removed, a buyer's UPDATE
++ * could not reach another buyer's visit, a non-cancel status, or any
++ * column but status.
++ *
++ * Per the confirmed cancellation policy: no time cutoff (a visit may be
++ * cancelled at any point up to and including shortly before its scheduled
++ * time), the parent lead is never touched, and the site_visits row is
++ * never deleted — it becomes status='cancelled', preserving history for
++ * admin visibility. Seller notification is handled entirely in the
++ * database (site_visits_notify_seller_on_cancel trigger), not here, so
++ * this function performs a single UPDATE and nothing else.
++ */
++export async function cancelSiteVisit(siteVisitId: string): Promise<SiteVisitActionResult> {
++   if (!siteVisitId || typeof siteVisitId !== "string") {
++      return { success: false, error: "A site visit is required." };
++   }
++
++   const ctx = await requireRole(["buyer"]);
++   const supabase = await createClient();
++
++   const { data: visit, error: visitError } = await supabase
++      .from("site_visits")
++      .select("id, status, lead_id, leads!inner(buyer_id)")
++      .eq("id", siteVisitId)
++      .maybeSingle();
++
++   if (visitError || !visit || (visit as unknown as { leads: { buyer_id: string } }).leads.buyer_id !== ctx.userId) {
++      return { success: false, error: "This site visit could not be found." };
++   }
++
++   if (!["requested", "confirmed"].includes(visit.status)) {
++      return { success: false, error: "This site visit can no longer be cancelled." };
++   }
++
++   const { error: updateError } = await supabase
++      .from("site_visits")
++      .update({ status: "cancelled" })
++      .eq("id", siteVisitId);
++
++   if (updateError) {
++      return { success: false, error: "Failed to cancel the site visit. Please try again." };
++   }
++
++   return { success: true };
++}
++
+ export interface RevealLocationResult {
+    success: boolean;
+    error?: string;
+diff --git a/src/modals/ImagePopup.tsx b/src/modals/ImagePopup.tsx
+deleted file mode 100644
+index 7ce7b35..0000000
+--- a/src/modals/ImagePopup.tsx
++++ /dev/null
+@@ -1,32 +0,0 @@
+-import React from "react";
+-import Lightbox from "react-18-image-lightbox";
+-import 'react-18-image-lightbox/style.css';
+-
+-
+-interface dataType {
+-  images: any;
+-  setIsOpen: any;
+-  photoIndex: any;
+-  setPhotoIndex: any;
+-}
+-
+-const ImagePopup = ({ images, setIsOpen, photoIndex, setPhotoIndex }: dataType) => {
+-  return (
+-    <React.Fragment>
+-      <Lightbox
+-        mainSrc={images[photoIndex].src} // Assuming that `src` is the property containing the image URL
+-        nextSrc={images[(photoIndex + 1) % images.length].src}
+-        prevSrc={images[(photoIndex + images.length - 1) % images.length].src}
+-        onCloseRequest={() => setIsOpen(false)}
+-        onMovePrevRequest={() =>
+-          setPhotoIndex((photoIndex + images.length - 1) % images.length)
+-        }
+-        onMoveNextRequest={() =>
+-          setPhotoIndex((photoIndex + 1) % images.length)
+-        }
+-      />
+-    </React.Fragment>
+-  );
+-};
+-
+-export default ImagePopup;
+diff --git a/src/modals/ListingDropdownModal.tsx b/src/modals/ListingDropdownModal.tsx
+deleted file mode 100644
+index ad0f74b..0000000
+--- a/src/modals/ListingDropdownModal.tsx
++++ /dev/null
+@@ -1,191 +0,0 @@
+-import PriceRange from "@/components/common/PriceRange"
+-import NiceSelect from "@/ui/NiceSelect"
+-import Link from "next/link"
+-
+-const ammenities_data: string[] = ["A/C & Heating", "Garages", "Garden", "Disabled Access", "Swimming Pool", "Parking", "Wifi", "Pet Friendly", "Ceiling Height", "Fireplace", "Play Ground", "Elevator"]
+-
+-
+-const ListingDropdownModal = ({
+-   handleBathroomChange,
+-   handleBedroomChange,
+-   handleSearchChange,
+-   handlePriceChange,
+-   maxPrice,
+-   priceValue,
+-   handleResetFilter,
+-   selectedAmenities,
+-   handleAmenityChange,
+-   handleLocationChange,
+-   handleStatusChange, }: any) => {
+-   return (
+-      <div className="modal fade" id="advanceFilterModal" tabIndex={-1} aria-hidden="true">
+-         <div className="modal-dialog modal-dialog-centered">
+-            <div className="container">
+-               <div className="row">
+-                  <div className="col-xl-8 m-auto">
+-                     <div className="modal-content">
+-                        <button type="button" className="btn-close ms-auto mt-20 me-4" data-bs-dismiss="modal" aria-label="Close"><i className="fa-regular fa-xmark"></i></button>
+-                        <div className="advance-search-panel">
+-                           <div className="main-bg border-0">
+-                              <form onSubmit={(e) => e.preventDefault()}>
+-                                 <div className="row gx-lg-5">
+-                                    <div className="col-md-6">
+-                                       <div className="input-box-one mb-35">
+-                                          <div className="label">I’m looking to...</div>
+-                                          <NiceSelect className="nice-select fw-normal"
+-                                             options={[
+-                                                { value: "apartments", text: "Buy Apartments" },
+-                                                { value: "condos", text: "Rent Condos" },
+-                                                { value: "houses", text: "Sell Houses" },
+-                                                { value: "industrial", text: "Rent Industrial" },
+-                                                { value: "villas", text: "Sell Villas" },
+-                                             ]}
+-                                             defaultCurrent={0}
+-                                             onChange={handleStatusChange}
+-                                             name=""
+-                                             placeholder="" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-md-6">
+-                                       <div className="input-box-one mb-35">
+-                                          <div className="label">Location</div>
+-                                          <NiceSelect className="nice-select location fw-normal"
+-                                             options={[
+-                                                { value: "washington", text: "Washington DC" },
+-                                                { value: "mexico", text: "Mucherla" },
+-                                                { value: "germany", text: "Shamshabad" },
+-                                                { value: "france", text: "Kollur" },
+-                                                { value: "india", text: "Maheshwaram" },
+-                                                { value: "giza", text: "Adibatla" },
+-                                                { value: "cuba", text: "Shankarpally" },
+-                                             ]}
+-                                             defaultCurrent={0}
+-                                             onChange={handleLocationChange}
+-                                             name=""
+-                                             placeholder="" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-md-6">
+-                                       <div className="input-box-one mb-35">
+-                                          <div className="label">Keyword</div>
+-                                          <input onChange={handleSearchChange} type="text" placeholder="buy, home, loft, apartment" className="type-input" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-md-6">
+-                                       <div className="input-box-one mb-35">
+-                                          <div className="label">Property ID</div>
+-                                          <input type="text" placeholder="EM45203014" className="type-input" />
+-                                       </div>
+-                                    </div>
+-
+-                                    <div className="col-lg-6">
+-                                       <div className="input-box-one mb-40">
+-                                          <div className="label">Bedroom</div>
+-                                          <NiceSelect className="nice-select fw-normal"
+-                                             options={[
+-                                                { value: "1", text: "1" },
+-                                                { value: "2", text: "2" },
+-                                                { value: "3", text: "3" },
+-                                                { value: "4", text: "4" },
+-                                             ]}
+-                                             defaultCurrent={0}
+-                                             onChange={handleBedroomChange}
+-                                             name=""
+-                                             placeholder="" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-lg-6">
+-                                       <div className="input-box-one mb-40">
+-                                          <div className="label">Bath</div>
+-                                          <NiceSelect className="nice-select fw-normal"
+-                                             options={[
+-                                                { value: "1", text: "1" },
+-                                                { value: "2", text: "2" },
+-                                                { value: "3", text: "3" },
+-                                                { value: "4", text: "4" },
+-                                             ]}
+-                                             defaultCurrent={0}
+-                                             onChange={handleBathroomChange}
+-                                             name=""
+-                                             placeholder="" />
+-                                       </div>
+-                                    </div>
+-                                    <div className="col-12">
+-                                       <h6 className="block-title fw-bold mb-30">Amenities</h6>
+-                                       <ul className="style-none d-flex flex-wrap justify-content-between filter-input">
+-                                          {ammenities_data.map((list, i) => (
+-                                             <li key={i}>
+-                                                <input
+-                                                   type="checkbox"
+-                                                   name="Amenities"
+-                                                   value={list}
+-                                                   checked={selectedAmenities.includes(list)}
+-                                                   onChange={handleAmenityChange}
+-                                                />
+-                                                <label>{list}</label>
+-                                             </li>
+-                                          ))}
+-                                       </ul>
+-                                    </div>
+-                                    <div className="col-md-6">
+-                                       <h6 className="block-title fw-bold mt-45 mb-20">Price range</h6>
+-                                       <div className="price-ranger">
+-                                          <div className="price-input d-flex align-items-center justify-content-between pt-5">
+-                                             <div className="field d-flex align-items-center">
+-                                                <input type="number" className="input-min" value={priceValue[0]} onChange={() => handlePriceChange} />
+-                                             </div>
+-                                             <div className="divider-line"></div>
+-                                             <div className="field d-flex align-items-center">
+-                                                <input type="number" className="input-max" value={priceValue[0]} onChange={() => handlePriceChange} />
+-                                             </div>
+-                                             <div className="currency ps-1">USD</div>
+-                                          </div>
+-                                       </div>
+-                                       <PriceRange
+-                                          MAX={maxPrice}
+-                                          MIN={0}
+-                                          STEP={1}
+-                                          values={priceValue}
+-                                          handleChanges={handlePriceChange}
+-                                       />
+-                                       <div className="col-md-6">
+-                                          <h6 className="block-title fw-bold mt-45 mb-20">SQFT</h6>
+-                                          <div className="d-flex align-items-center sqf-ranger">
+-                                             <input type="text" placeholder="Min" />
+-                                             <div className="divider"></div>
+-                                             <input type="text" placeholder="Max" />
+-                                          </div>
+-                                       </div>
+-                                       <div className="col-12">
+-                                          <button className="fw-500 text-uppercase tran3s apply-search w-100 mt-40 mb-25">
+-                                             <i className="fa-light fa-magnifying-glass"></i>
+-                                             <span>Search</span>
+-                                          </button>
+-                                       </div>
+-                                       <div className="col-12">
+-                                          <div className="d-flex justify-content-between form-widget">
+-                                             <a onClick={handleResetFilter} style={{ cursor: "pointer" }} className="tran3s">
+-                                                <i className="fa-regular fa-arrows-rotate"></i>
+-                                                <span>Reset Filter</span>
+-                                             </a>
+-                                             <Link href="#" className="tran3s">
+-                                                <i className="fa-regular fa-star"></i>
+-                                                <span>Save Search</span>
+-                                             </Link>
+-                                          </div>
+-                                       </div>
+-                                    </div>
+-                                 </div>
+-                              </form>
+-                           </div>
+-                        </div>
+-                     </div>
+-                  </div>
+-               </div>
+-            </div>
+-         </div>
+-      </div>
+-   )
+-}
+-
+-export default ListingDropdownModal
+diff --git a/src/modals/VideoPopup.tsx b/src/modals/VideoPopup.tsx
+deleted file mode 100644
+index a7edcf4..0000000
+--- a/src/modals/VideoPopup.tsx
++++ /dev/null
+@@ -1,23 +0,0 @@
+-import ModalVideo from "react-modal-video";
+-
+-const VideoPopup = ({
+-  isVideoOpen,
+-  setIsVideoOpen,
+-  videoId = "bgMEvrd2E", 
+-  
+-}:any ) => {
+-  return (
+-    <>
+-      <ModalVideo
+-        channel="youtube"
+-        // autoplay
+-        isOpen={isVideoOpen}
+-        videoId={videoId}
+-        onClose={() => setIsVideoOpen(false)}
+-      />
+-    </>
+-  );
+-};
+-
+-export default VideoPopup;
+-
+diff --git a/src/redux/features/shortedSlice.ts b/src/redux/features/shortedSlice.ts
+deleted file mode 100644
+index d320f81..0000000
+--- a/src/redux/features/shortedSlice.ts
++++ /dev/null
+@@ -1,29 +0,0 @@
+-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+-
+-interface ShortedState {
+-  sortOption: string;
+-  itemOffset: number;
+-}
+-
+-const initialState: ShortedState = {
+-  sortOption: '',
+-  itemOffset: 0,
+-};
+-
+-export const shortedSlice = createSlice({
+-  name: 'shorted',
+-  initialState,
+-  reducers: {
+-    setSortOption: (state, action: PayloadAction<string>) => {
+-      state.sortOption = action.payload;
+-      state.itemOffset = 0; // Reset offset when sorting changes
+-    },
+-    setItemOffset: (state, action: PayloadAction<number>) => {
+-      state.itemOffset = action.payload;
+-    },
+-  },
+-});
+-
+-export const { setSortOption, setItemOffset } = shortedSlice.actions;
+-
+-export default shortedSlice.reducer;
+\ No newline at end of file
+diff --git a/src/ui/NumberNiceSelect.tsx b/src/ui/NumberNiceSelect.tsx
+deleted file mode 100644
+index bfa6daa..0000000
+--- a/src/ui/NumberNiceSelect.tsx
++++ /dev/null
+@@ -1,77 +0,0 @@
+-"use client"
+-import React, { useState, useCallback, useRef, FC, ChangeEvent } from "react";
+-import { useClickAway } from "react-use";
+-
+-interface Option {
+-   value: number;
+-   text: number;
+-}
+-
+-type NiceSelectProps = {
+-   options: Option[];
+-   defaultCurrent: number;
+-   placeholder: string;
+-   className?: string;
+-   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+-   name: string;
+-}
+-
+-const NumberNiceSelect: FC<NiceSelectProps> = ({
+-   options,
+-   defaultCurrent,
+-   placeholder,
+-   className,
+-   onChange,
+-   name,
+-}) => {
+-   const [open, setOpen] = useState(false);
+-   const [current, setCurrent] = useState<Option>(options[defaultCurrent]);
+-   const onClose = useCallback(() => {
+-      setOpen(false);
+-   }, []);
+-   const ref = useRef<HTMLDivElement | null>(null);
+-
+-   useClickAway(ref, onClose);
+-
+-   const currentHandler = (item: Option) => {
+-      setCurrent(item);
+-      onChange({ target: { value: item.value } } as unknown as ChangeEvent<HTMLSelectElement>);
+-      onClose();
+-   };
+-
+-   return (
+-      <div
+-         className={`nice-select form-select-lg ${className || ""} ${open ? "open" : ""}`}
+-         role="button"
+-         tabIndex={0}
+-         onClick={() => setOpen((prev) => !prev)}
+-         onKeyDown={(e) => e}
+-         ref={ref}
+-      >
+-         <span className="current">{current?.text || placeholder}</span>
+-         <ul
+-            className="list"
+-            role="menubar"
+-            onClick={(e) => e.stopPropagation()}
+-            onKeyDown={(e) => e.stopPropagation()}
+-         >
+-            {options?.map((item, i) => (
+-               <li
+-                  key={i}
+-                  data-value={item.value}
+-                  className={`option ${item.value === current?.value ? "selected focus" : ""
+-                     }`}
+-                  style={{ fontSize: '14px' }}
+-                  role="menuitem"
+-                  onClick={() => currentHandler(item)}
+-                  onKeyDown={(e) => e}
+-               >
+-                  {item.text}
+-               </li>
+-            ))}
+-         </ul>
+-      </div>
+-   );
+-};
+-
+-export default NumberNiceSelect;
+\ No newline at end of file
+diff --git a/src/utils/localstorage.ts b/src/utils/localstorage.ts
+deleted file mode 100644
+index e5a5ac0..0000000
+--- a/src/utils/localstorage.ts
++++ /dev/null
+@@ -1,14 +0,0 @@
+-export const setLocalStorage = <T>(name: string, items: T[]): void => {
+-   localStorage.setItem(name, JSON.stringify(items));
+-};
+-
+-
+-export const getLocalStorage = <T>(name: string): T[] => {
+-   const data = localStorage.getItem(name);
+-   if (data) {
+-      return JSON.parse(data) as T[];
+-   } else {
+-      localStorage.setItem(name, JSON.stringify([]));
+-      return [] as T[];
+-   }
+-};
+diff --git a/supabase/migrations/0022_site_visit_cancellation.sql b/supabase/migrations/0022_site_visit_cancellation.sql
+new file mode 100644
+index 0000000..99e6815
+--- /dev/null
++++ b/supabase/migrations/0022_site_visit_cancellation.sql
+@@ -0,0 +1,189 @@
++-- 0022_site_visit_cancellation.sql
++--
++-- Implements the site-visit cancellation policy (client-confirmed, see PR
++-- description) on top of the existing site_visits/leads model from
++-- 0004_leads_site_visits_reveals.sql. Two things, both required together:
++--
++--   1. Buyers currently have NO update policy on site_visits at all (0004
++--      only gave them SELECT, via "site visits follow lead visibility").
++--      This adds a narrowly-scoped UPDATE policy + a BEFORE UPDATE trigger
++--      backstop (same pattern as enforce_seller_property_update, 0008 —
++--      RLS alone cannot compare OLD vs NEW status in one expression) so a
++--      buyer can cancel their own requested/confirmed visit and nothing
++--      else: no other column, no other buyer's row, no other status
++--      transition.
++--
++--   2. "the seller must be notified" has no existing infrastructure to
++--      hang off — the dashboard Notification.tsx component is static demo
++--      markup, not backed by any table. Rather than build a full
++--      notification system (email/push) that isn't asked for, this adds
++--      the minimal real, queryable, RLS-safe primitive: a `notifications`
++--      table with an admin/system-only write path (security definer
++--      trigger, same shape as seller_contact_reveals in 0004) and a
++--      recipient-scoped read policy. The UI to render it is a follow-up;
++--      this migration guarantees the data exists and is correctly scoped.
++--
++-- Explicitly per the confirmed policy:
++--   * No cancellation cutoff — buyer may cancel a requested/confirmed
++--     visit at any time, including shortly before the scheduled time.
++--   * Cancelling never touches the parent lead row.
++--   * The site_visits row is never deleted — status becomes 'cancelled',
++--     so admin visibility/history is automatically retained (existing
++--     "admins can manage all site visits" policy already covers reading
++--     cancelled rows; nothing new needed there).
++
++-- ===========================================================================
++-- 1. notifications table
++-- ===========================================================================
++
++create table notifications (
++  id            uuid primary key default gen_random_uuid(),
++  recipient_id  uuid not null references profiles (id) on delete cascade,
++  type          text not null,          -- e.g. 'site_visit_cancelled'
++  message       text not null,
++  site_visit_id uuid references site_visits (id) on delete set null,
++  lead_id       uuid references leads (id) on delete set null,
++  read          boolean not null default false,
++  created_at    timestamptz not null default now()
++);
++
++create index notifications_recipient_idx on notifications (recipient_id, created_at desc);
++
++alter table notifications enable row level security;
++
++create policy "recipients can read own notifications"
++  on notifications for select
++  using (recipient_id = auth.uid());
++
++create policy "recipients can mark own notifications read"
++  on notifications for update
++  using (recipient_id = auth.uid())
++  with check (recipient_id = auth.uid());
++
++create policy "admins can read all notifications"
++  on notifications for select
++  using (current_role_is('admin'));
++
++-- No INSERT policy for any role, including admin: notifications are only
++-- ever written by the trigger function below (security definer), never
++-- directly by a client. This mirrors seller_contact_reveals (0004).
++
++-- ===========================================================================
++-- 2. Buyer cancellation: RLS + column/transition-scoped trigger backstop
++-- ===========================================================================
++
++create policy "buyers can update own site visits"
++  on site_visits for update
++  using (
++    exists (
++      select 1 from leads l
++      where l.id = site_visits.lead_id and l.buyer_id = auth.uid()
++    )
++  )
++  with check (
++    exists (
++      select 1 from leads l
++      where l.id = site_visits.lead_id and l.buyer_id = auth.uid()
++    )
++  );
++
++-- RLS above only proves "this buyer owns the lead this visit belongs to" —
++-- it says nothing about which column or which status transition. Same gap
++-- enforce_seller_property_update (0008) closed for properties; same fix
++-- here for site_visits.
++
++create or replace function enforce_buyer_site_visit_update()
++returns trigger
++language plpgsql
++security definer set search_path = public
++as $$
++declare
++  v_is_buyer boolean;
++begin
++  -- Admins and the existing seller-update policy path are untouched by
++  -- this trigger's restrictions — only lock down the buyer path.
++  if current_role_is('admin') then
++    return new;
++  end if;
++
++  select exists (
++    select 1 from leads l
++    where l.id = old.lead_id and l.buyer_id = auth.uid()
++  ) into v_is_buyer;
++
++  -- Not the buyer on this visit's lead: this is the seller-update path
++  -- (0004's "sellers can update site visits on own-property leads"),
++  -- which this trigger does not restrict further.
++  if not v_is_buyer then
++    return new;
++  end if;
++
++  if new.lead_id is distinct from old.lead_id
++     or new.scheduled_at is distinct from old.scheduled_at
++     or new.notes is distinct from old.notes then
++    raise exception 'buyers may only cancel a site visit, not modify its details';
++  end if;
++
++  if new.status is distinct from old.status then
++    if old.status in ('requested', 'confirmed') and new.status = 'cancelled' then
++      -- allowed
++    else
++      raise exception
++        'buyers may only cancel a requested or confirmed site visit (attempted % -> %)',
++        old.status, new.status;
++    end if;
++  end if;
++
++  return new;
++end;
++$$;
++
++create trigger site_visits_00_enforce_buyer_scope
++  before update on site_visits
++  for each row execute function enforce_buyer_site_visit_update();
++
++-- ===========================================================================
++-- 3. Notify the seller when a visit is cancelled
++-- ===========================================================================
++
++create or replace function notify_seller_on_site_visit_cancelled()
++returns trigger
++language plpgsql
++security definer set search_path = public
++as $$
++declare
++  v_seller_id uuid;
++  v_property_title text;
++begin
++  if new.status = 'cancelled' and old.status in ('requested', 'confirmed') then
++    select p.owner_id, p.title
++      into v_seller_id, v_property_title
++    from leads l
++    join properties p on p.id = l.property_id
++    where l.id = new.lead_id;
++
++    if v_seller_id is not null then
++      insert into notifications (recipient_id, type, message, site_visit_id, lead_id)
++      values (
++        v_seller_id,
++        'site_visit_cancelled',
++        coalesce('The buyer cancelled their site visit for "' || v_property_title || '".',
++                 'A buyer cancelled a site visit on one of your listings.'),
++        new.id,
++        new.lead_id
++      );
++    end if;
++  end if;
++
++  return new;
++end;
++$$;
++
++-- AFTER UPDATE, not BEFORE: this only reads/inserts, never mutates NEW, so
++-- it runs after the buyer-scope trigger above has already validated (or
++-- rejected) the transition. Fires regardless of whether the cancellation
++-- came from the buyer path or an admin override — the seller should learn
++-- about a cancellation either way.
++create trigger site_visits_notify_seller_on_cancel
++  after update on site_visits
++  for each row execute function notify_seller_on_site_visit_cancelled();

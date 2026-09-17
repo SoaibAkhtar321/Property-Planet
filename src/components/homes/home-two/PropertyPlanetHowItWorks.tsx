@@ -18,7 +18,7 @@
 const steps = [
    {
       title: "Explore",
-      desc: "Browse verified plots, land, homes and projects across Hyderabad's South-East growth corridors.",
+      desc: "Browse curated plots, land, homes and projects across Hyderabad's South-East growth corridors.",
    },
    {
       title: "Choose",
@@ -42,7 +42,7 @@ const PropertyPlanetHowItWorks = () => {
                <div className="title-one text-center mb-50 lg-mb-40 wow fadeInUp">
                   <h2 className="font-garamond">How Property Planet Works</h2>
                   <p className="fs-22 mt-xs">
-                     Not just a listing site — a verified, advisory-backed route from browsing to a
+                     Not just a listing site — a moderated, advisory-backed route from browsing to a
                      real conversation about a real property.
                   </p>
                </div>

@@ -316,6 +316,60 @@ export async function createSiteVisit(
    return { success: true };
 }
 
+/**
+ * Cancels the buyer's own site visit (status requested/confirmed only).
+ *
+ * Authorization: "own" is re-derived server-side from the visit's parent
+ * lead (lead.buyer_id === ctx.userId), exactly like createSiteVisit() —
+ * never trusted from client input. The database is the actual backstop
+ * regardless (see 0022_site_visit_cancellation.sql's
+ * enforce_buyer_site_visit_update trigger + "buyers can update own site
+ * visits" RLS policy): even if this check were removed, a buyer's UPDATE
+ * could not reach another buyer's visit, a non-cancel status, or any
+ * column but status.
+ *
+ * Per the confirmed cancellation policy: no time cutoff (a visit may be
+ * cancelled at any point up to and including shortly before its scheduled
+ * time), the parent lead is never touched, and the site_visits row is
+ * never deleted — it becomes status='cancelled', preserving history for
+ * admin visibility. Seller notification is handled entirely in the
+ * database (site_visits_notify_seller_on_cancel trigger), not here, so
+ * this function performs a single UPDATE and nothing else.
+ */
+export async function cancelSiteVisit(siteVisitId: string): Promise<SiteVisitActionResult> {
+   if (!siteVisitId || typeof siteVisitId !== "string") {
+      return { success: false, error: "A site visit is required." };
+   }
+
+   const ctx = await requireRole(["buyer"]);
+   const supabase = await createClient();
+
+   const { data: visit, error: visitError } = await supabase
+      .from("site_visits")
+      .select("id, status, lead_id, leads!inner(buyer_id)")
+      .eq("id", siteVisitId)
+      .maybeSingle();
+
+   if (visitError || !visit || (visit as unknown as { leads: { buyer_id: string } }).leads.buyer_id !== ctx.userId) {
+      return { success: false, error: "This site visit could not be found." };
+   }
+
+   if (!["requested", "confirmed"].includes(visit.status)) {
+      return { success: false, error: "This site visit can no longer be cancelled." };
+   }
+
+   const { error: updateError } = await supabase
+      .from("site_visits")
+      .update({ status: "cancelled" })
+      .eq("id", siteVisitId);
+
+   if (updateError) {
+      return { success: false, error: "Failed to cancel the site visit. Please try again." };
+   }
+
+   return { success: true };
+}
+
 export interface RevealLocationResult {
    success: boolean;
    error?: string;
