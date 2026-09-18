@@ -18,10 +18,17 @@ import iconProjectsActive from "@/assets/images/dashboard/icon/icon_5_active.svg
 import iconBlog from "@/assets/images/dashboard/icon/icon_10.svg";
 import iconBlogActive from "@/assets/images/dashboard/icon/icon_10_active.svg";
 import iconAuditLog from "@/assets/images/dashboard/icon/icon_17.svg";
-import iconAuditLogActive from "@/assets/images/dashboard/icon/icon_17_active.svg";
 import iconSettings from "@/assets/images/dashboard/icon/icon_4.svg";
 import iconSettingsActive from "@/assets/images/dashboard/icon/icon_4_active.svg";
 import iconLogout from "@/assets/images/dashboard/icon/icon_41.svg";
+
+// No dedicated "active" variant ships for icon_17 in public/assets (unlike
+// icons 1,2,3,4,5,6,7,8,9,10,39,40, which all have an `_active` counterpart).
+// Reuse the base icon for the active state rather than referencing a file
+// that doesn't exist — importing a nonexistent asset fails the Next.js/
+// webpack build ("Module not found"), which is what broke the "audit
+// phase 1" Vercel deployment.
+const iconAuditLogActive = iconAuditLog;
 
 interface AdminSidebarProps {
    isActive: boolean;

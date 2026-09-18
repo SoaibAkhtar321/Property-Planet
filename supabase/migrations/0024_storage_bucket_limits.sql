@@ -61,7 +61,12 @@ set
   allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp']
 where id = 'blog-media';
 
-comment on column storage.buckets.file_size_limit is
-  'Phase 6 (0024): server-side ceiling matching each bucket''s upload '
-  'components, so the browser-side size check is backed by a real '
-  'boundary rather than being the only one.';
+-- NOTE: a `comment on column storage.buckets.file_size_limit is ...`
+-- statement originally lived here, documenting the above updates. It's
+-- removed because COMMENT ON requires table ownership, and on hosted
+-- Supabase projects storage.buckets is owned by supabase_storage_admin --
+-- the migration role only has UPDATE via grants, not ownership, so the
+-- comment statement fails with "must be owner of relation buckets"
+-- (42501) and blocks the whole migration even though the three updates
+-- above (the actual fix) succeed on their own. See this file's header
+-- comment for the same documentation instead.
