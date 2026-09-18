@@ -23,11 +23,11 @@ import InquiryButton from "@/components/inquiry/InquiryButton";
 const PropertyCard = ({
    item,
    isFavourited,
-   columnClassName = "col-md-6 col-lg-4",
+   columnClassName = "col-12 col-sm-6 col-md-6 col-lg-4",
 }: {
    item: Property;
    isFavourited?: boolean;
-   /** Grid column classes for the wrapping div. Defaults to 3-per-row (col-lg-4); pass "col-md-6 col-lg-3" for a 4-per-row grid. */
+   /** Grid column classes for the wrapping div. Defaults to 3-per-row (col-lg-4); pass "col-12 col-sm-6 col-md-6 col-lg-3" for a 4-per-row grid. Always include an explicit col-12 base -- without it, below `md` these had no width rule at all and sized to content instead of a predictable 1-/2-column mobile layout. */
    columnClassName?: string;
 }) => {
    const facts = [

@@ -7,6 +7,13 @@
     cream, $color-four) — nothing new is introduced.
 -----------------------------------------------------------------------------------*/
 
+/* Plain in-flow "browse all" CTA for sections where the theme's
+   `.section-btn` (absolute-positioned, meant to sit beside a section title)
+   would collide with content below it -- see ExploreProperties.tsx. */
+.pp-section-cta {
+   margin-top: 50px;
+}
+
 /* ============================================================ LISTING CARD === */
 
 .pp-card {
@@ -230,6 +237,13 @@
    padding: 34px 30px 30px;
    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
    animation: ppInquiryRise 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+   /* Without this, a form tall enough to exceed a short mobile viewport
+      (keyboard open, landscape, small-height devices) had no scroll of its
+      own; the overlay's own overflow-y:auto doesn't reliably reach a
+      flex-centered/bottom-aligned child taller than the viewport, so the
+      top of the form (title, name field) could end up unreachable. */
+   max-height: calc(100vh - 40px);
+   overflow-y: auto;
 
    input,
    textarea {
@@ -325,6 +339,7 @@
    }
    .pp-inquiry-dialog {
       max-width: 100%;
+      max-height: 92vh;
       border-radius: 18px 18px 0 0;
       padding: 30px 20px 24px;
    }

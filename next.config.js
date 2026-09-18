@@ -25,6 +25,21 @@ const nextConfig = {
       },
     ],
   },
+  // SEO fix (Stage 4 — Internal SEO Consistency): /about_us_02 was a
+  // template-leftover slug for the site's real, live About page (every
+  // internal link now points at the clean /about instead). A permanent
+  // redirect keeps any already-indexed/bookmarked/linked-from-elsewhere
+  // /about_us_02 URLs resolving instead of 404ing, and passes their
+  // link equity on to the new canonical URL.
+  async redirects() {
+    return [
+      {
+        source: "/about_us_02",
+        destination: "/about",
+        permanent: true,
+      },
+    ];
+  },
 }
 
 module.exports = nextConfig

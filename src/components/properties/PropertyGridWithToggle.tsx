@@ -27,7 +27,7 @@ const PropertyGridWithToggle = ({ items, isFavouritedIds }: { items: Property[];
                   key={item.id}
                   item={item}
                   isFavourited={isFavouritedIds?.has(item.id)}
-                  columnClassName="col-md-6 col-lg-3"
+                  columnClassName="col-12 col-sm-6 col-md-6 col-lg-3"
                />
             ))}
          </div>

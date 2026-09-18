@@ -57,7 +57,18 @@ const ExploreProperties = async () => {
                )}
 
                {hasMoreBeyondFetch && (
-                  <div className="section-btn text-center md-mt-60">
+                  // Not "section-btn": that class is styled by
+                  // `.property-listing-two .section-btn` (position: absolute;
+                  // top: 65px; right: 0) in _listing.scss, meant for a button
+                  // sitting inline next to a section title (see Property.tsx's
+                  // header). This CTA sits below the whole grid instead, so
+                  // inheriting that rule pulled it out of flow and stacked it
+                  // on top of the cards/title above -- the "Explore Property
+                  // section has incorrect top padding/spacing/positioning"
+                  // bug. Blog.tsx avoids this same collision by living inside
+                  // a differently-scoped section (`.blog-section-one`); here
+                  // we just use a plain in-flow class instead.
+                  <div className="pp-section-cta text-center md-mt-60">
                      <Link href="/properties" className="btn-eight">
                         <span>Browse All Properties</span> <i className="bi bi-arrow-up-right"></i>
                      </Link>

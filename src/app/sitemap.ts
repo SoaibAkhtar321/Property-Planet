@@ -27,7 +27,7 @@ const STATIC_ROUTES = [
    "/properties",
    "/projects",
    "/blog",
-   "/about_us_02",
+   "/about",
    "/contact",
    "/faq",
    "/sell-property",

@@ -20,7 +20,7 @@ const ProjectGridWithToggle = ({ items }: { items: Project[] }) => {
       <>
          <div className="row gx-xxl-5">
             {visibleItems.map((item) => (
-               <div key={item.id} className="col-lg-3 col-md-6 d-flex">
+               <div key={item.id} className="col-12 col-sm-6 col-md-6 col-lg-3 d-flex">
                   <ProjectCard item={item} />
                </div>
             ))}

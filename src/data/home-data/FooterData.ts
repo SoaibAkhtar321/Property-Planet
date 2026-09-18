@@ -22,11 +22,11 @@ const footer_data: DataType[] = [
       // on every real properties/projects/blog/places page. It previously
       // linked to template leftovers that 404 on this site
       // (/about_us_01, /blog_01, /blog_02, /pricing_02 — the real routes are
-      // /about_us_02 and /blog; there is no careers or pricing page) and to
+      // /about and /blog; there is no careers or pricing page) and to
       // /dashboard/dashboard-index, a signed-in-only route that doesn't
       // belong in a public, sitewide footer. Fixed to real routes only;
       // nothing invented for the pages that don't exist.
-      footer_link: [{ link: "/", link_title: "Home" }, { link: "/about_us_02", link_title: "About Company" }, { link: "/blog", link_title: "Blog" },]
+      footer_link: [{ link: "/", link_title: "Home" }, { link: "/about", link_title: "About Company" }, { link: "/blog", link_title: "Blog" },]
    },
    {
       id: 2,
@@ -50,8 +50,8 @@ const footer_data: DataType[] = [
       page: "home_3",
       widget_title: "Links",
       // SEO fix (Stage 2): same broken-link fix as the home_1 block above —
-      // this is FooterTwo's data, live on /about_us_02.
-      footer_link: [{ link: "/", link_title: "Home" }, { link: "/about_us_02", link_title: "About Company" }, { link: "/blog", link_title: "Blog" },]
+      // this is FooterTwo's data, live on /about.
+      footer_link: [{ link: "/", link_title: "Home" }, { link: "/about", link_title: "About Company" }, { link: "/blog", link_title: "Blog" },]
    },
    {
       id: 2,
@@ -66,7 +66,7 @@ const footer_data: DataType[] = [
       widget_title: "New Listing",
       // SEO fix (Stage 4): same /listing_01.."06 → /properties fix already
       // applied to the home_1 and home_5 blocks — missed this one (home_3,
-      // live on /about_us_02 via FooterTwo) in the earlier pass.
+      // live on /about via FooterTwo) in the earlier pass.
       footer_link: [{ link: "/properties", link_title: "​Buy Apartments" }, { link: "/properties", link_title: "Buy Condos" }, { link: "/properties", link_title: "Rent Houses" }, { link: "/properties", link_title: "Rent Industrial" }, { link: "/properties", link_title: "Buy Villas" }, { link: "/properties", link_title: "Rent Office" },]
    },
 
@@ -86,7 +86,7 @@ const footer_data: DataType[] = [
       // SEO fix (Stage 2): same broken-link fix as the home_1 block above —
       // this is FooterFour's data, live on /faq, /contact, /privacy-policy
       // and /terms-of-service.
-      footer_link: [{ link: "/", link_title: "Home" }, { link: "/about_us_02", link_title: "About Company" }, { link: "/blog", link_title: "Blog" },]
+      footer_link: [{ link: "/", link_title: "Home" }, { link: "/about", link_title: "About Company" }, { link: "/blog", link_title: "Blog" },]
    },
    {
       id: 2,

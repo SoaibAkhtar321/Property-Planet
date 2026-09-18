@@ -274,6 +274,17 @@
    .layout-two .input-box-one .label,.layout-two .input-box-one .nice-select,
    .layout-two .input-box-one .type-input {padding: 0;}
    .layout-two.search-wrapper-one .bg-wrapper .search-btn-two {width: 100%; height: 55px;}
+   /* Mobile hero filter fix: the shared .search-wrapper-one .bg-wrapper .row
+      rule (in _element.scss) forces flex-wrap: nowrap at every breakpoint so
+      desktop fields stretch evenly, but that squeezed every field from the
+      homepage hero filter (DropdownTwo, .layout-two) onto one unbreakable
+      line below 1200px, causing label/input text to overlap. Scoped to
+      .layout-two only so the other search-wrapper-one filter instances
+      (property/project listing pages) keep their existing behavior. The
+      border-bottom / full-width-button rules just above already assumed a
+      stacked layout -- they just never activated because nothing wrapped. */
+   .search-wrapper-one.layout-two .bg-wrapper .row {flex-wrap: wrap;}
+   .search-wrapper-one.layout-two .bg-wrapper .row > [class*="col-"] {flex: 1 1 100%; max-width: 100%; width: 100%;}
    .location-card-two {height: 250px;}
    .block-feature-seven .rating li:last-child {font-size: 18px;}
    .feedback-section-three .feedback-bg-wrapper .rating-box .rate {font-size: 18px;}
@@ -634,6 +645,12 @@
  /*Between Grid sm*/
  @media (min-width: 576px) and (max-width: 767px) {
    .footer-one .footer-nav {padding-left: 20px; padding-right: 20px;}
+   /* .footer-nav is `width: 33.333%` as a BASE rule in _footer.scss with no
+      responsive override until the max-width:575px bucket below -- so this
+      576-767px band (real phone widths on larger/landscape devices) kept
+      three 33%-wide footer columns with only 20px padding, each too narrow
+      for its link text. Stack it here too, same as the narrower bucket. */
+   .footer-one .footer-nav {width: 100%; border-right: none; padding-left: 0; padding-right: 0;}
    .grid-3column .grid-sizer, .grid-3column .isotop-item {width: 50%;}
  
  }

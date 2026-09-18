@@ -17,7 +17,7 @@ interface ContentType {
 }
 
 // SEO fix (Stage 2 — Trust Signals / Local SEO): this component is live on
-// /about_us_02 and previously showed a placeholder email ("Emile@gmail.com"),
+// /about and previously showed a placeholder email ("Emile@gmail.com"),
 // a placeholder phone ("+210 0000-0000") and three social icons that all
 // linked to "#" — fake business information on a real, published page.
 // FooterOne already solved this correctly (src/layouts/footers/FooterOne.tsx)

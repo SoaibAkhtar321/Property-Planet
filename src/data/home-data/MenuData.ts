@@ -46,7 +46,7 @@ const menu_data: MenuItem[] = [
         title: "Company",
         link: "#",
         sub_menus: [
-            { link: "/about_us_02", title: "About Property Planet" },
+            { link: "/about", title: "About Property Planet" },
             { link: "/contact", title: "Contact Us" },
             { link: "/faq", title: "FAQ's" },
             

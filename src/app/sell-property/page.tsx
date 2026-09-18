@@ -2,7 +2,7 @@ import SellProperty from "@/components/inner-pages/sell-property";
 import Wrapper from "@/layouts/Wrapper";
 
 // SEO fix: this page had only a bare `title` — no description, canonical,
-// or Open Graph, unlike every other static page (about_us_02, contact,
+// or Open Graph, unlike every other static page (about, contact,
 // faq). The page itself is a lead-capture form for owners/agents wanting
 // to list a property, which is what the description below actually says.
 const CANONICAL = "https://propertyplanet.in/sell-property";

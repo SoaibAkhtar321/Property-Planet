@@ -19,7 +19,7 @@ moderated — nothing here is auto-generated inventory.
   selling plots, land and property across Hyderabad's growth corridors.
 - [Sell / List Your Property](https://propertyplanet.in/sell-property):
   For owners and agents who want to list a property with Property Planet.
-- [About Us](https://propertyplanet.in/about_us_02)
+- [About Us](https://propertyplanet.in/about)
 - [Contact](https://propertyplanet.in/contact)
 - [FAQ](https://propertyplanet.in/faq)
 
