@@ -431,8 +431,31 @@
    .pp-how {
       padding: 36px 20px;
       border-radius: 18px;
-      &__grid { grid-template-columns: 1fr; }
-      &__step { padding: 22px 20px; }
+      &__grid {
+         /* Was a 1-column vertical stack (one step per screen, scroll to see
+            the next). Swap to a horizontal scroll-snap strip so at least
+            two steps are visible at once instead of one full-screen step
+            at a time. */
+         display: flex;
+         flex-wrap: nowrap;
+         grid-template-columns: none;
+         overflow-x: auto;
+         scroll-snap-type: x mandatory;
+         -webkit-overflow-scrolling: touch;
+         gap: 14px;
+         margin: 0 -20px;
+         padding: 0 20px 6px;
+         scrollbar-width: none;
+         &::-webkit-scrollbar { display: none; }
+         &:before { display: none; }
+      }
+      &__step {
+         flex: 0 0 48%;
+         padding: 18px 16px;
+         scroll-snap-align: start;
+      }
+      &__title { font-size: 17px; }
+      &__desc { font-size: 14px; }
    }
 }
 
@@ -449,4 +472,108 @@
 
    i { color: $color-one; }
    &:hover { color: $color-one; }
+}
+
+/* ================================================ MOBILE CARD CAROUSELS === */
+/* Featured Opportunities, Explore Properties (both render through
+   ProjectGridWithToggle / PropertyGridWithToggle inside a
+   `.property-listing-two .row.gx-xxl-5`) and Explore the Places with Most
+   Properties (BLockFeatureOne, `.block-feature-six .row.gx-xxl-5`) all used
+   Bootstrap's default 1-col-per-row stack below `md`, so every card took a
+   full mobile screen and the section was one long vertical scroll. Convert
+   both to horizontally-scrollable, snap-to-card strips on mobile only --
+   desktop/tablet grids (>= 768px) are untouched, no JSX changes needed. */
+@media (max-width: 767px) {
+   .property-listing-two .row.gx-xxl-5 {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      margin-left: 0;
+      margin-right: 0;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+      &::-webkit-scrollbar { display: none; }
+
+      /* Card wrapper divs: [item].col-12.col-sm-6.col-md-6.col-lg-3.d-flex */
+      > [class*="col-"] {
+         flex: 0 0 48%;
+         max-width: 48%;
+         width: 48%;
+         scroll-snap-align: start;
+      }
+   }
+
+   .pp-card {
+      &__body { padding: 14px 16px 16px; }
+      &__title { font-size: 16px; }
+      &__meta { font-size: 13px; }
+      &__facts { font-size: 12px; gap: 4px 10px; }
+      &__price { font-size: 17px; margin-top: 10px; }
+      &__actions { grid-template-columns: 1fr; gap: 8px; padding-top: 10px; }
+   }
+
+   .pp-card-btn {
+      min-height: 38px;
+      padding: 8px 10px;
+      font-size: 13px;
+   }
+
+   /* Explore the Places with Most Properties: was 1 full-width card per
+      screen, vertical scroll. Two rows of cards, scrollable sideways
+      together, so two columns of the grid are visible at once. */
+   .block-feature-six .row.gx-xxl-5 {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(2, auto);
+      grid-auto-columns: 47%;
+      gap: 14px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      margin-left: 0;
+      margin-right: 0;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+      &::-webkit-scrollbar { display: none; }
+
+      > [class*="col-"] {
+         width: 100%;
+         max-width: none;
+         scroll-snap-align: start;
+      }
+   }
+
+   .location-card-two {
+      height: 160px;
+      h5 { font-size: 22px; }
+   }
+
+   /* "How our clients get benefited by us" (BLockFeatureTwo — the Explore &
+      buy Home / Sell Now / Explore Plots & Land trio). Same problem: no
+      mobile column class at all, so each portrait card took a full
+      screen, stacked vertically. Horizontal scroll-snap, single line. */
+   .block-feature-seven .wrapper .row {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      margin-left: 0;
+      margin-right: 0;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+      &::-webkit-scrollbar { display: none; }
+
+      > [class*="col-"] {
+         flex: 0 0 58%;
+         max-width: 58%;
+         width: 58%;
+         scroll-snap-align: start;
+      }
+   }
 }
