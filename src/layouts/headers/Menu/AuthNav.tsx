@@ -29,7 +29,7 @@ const AuthNav = ({ style_2 }: AuthNavProps) => {
       // Brief, unavoidable moment while the session is resolved client-side.
       // Deliberately renders nothing rather than guessing logged-in vs
       // logged-out, so there is no flash of the wrong state.
-      return style_2 ? <li className="d-none d-md-flex me-4 me-xxl-5" style={{ width: 1 }} /> : <li className="d-none d-md-inline-block ms-3 ms-xl-4 me-xl-4" style={{ width: 1 }} />;
+      return style_2 ? <li className="d-flex me-2 me-md-4 me-xxl-5" style={{ width: 1 }} /> : <li className="d-inline-block ms-2 ms-md-3 ms-xl-4 me-2 me-xl-4" style={{ width: 1 }} />;
    }
 
    if (!user) {
@@ -38,10 +38,10 @@ const AuthNav = ({ style_2 }: AuthNavProps) => {
             <Link href="#" data-bs-toggle="modal" data-bs-target="#loginModal" className="login-btn-two rounded-circle tran3s d-flex align-items-center justify-content-center"><i className="fa-regular fa-lock"></i></Link>
          </li>
       ) : (
-         <li className="d-none d-md-inline-block ms-3 ms-xl-4 me-xl-4">
+         <li className="d-inline-block ms-2 ms-md-3 ms-xl-4 me-2 me-xl-4">
             <Link href="#" data-bs-toggle="modal" data-bs-target="#loginModal" className="auth-cta-btn tran3s d-inline-flex align-items-center">
                <i className="fa-regular fa-lock"></i>
-               <span>Login <span className="d-none d-sm-inline">/ Sign up</span></span>
+               <span><span className="d-none d-sm-inline">Login / </span>Sign up</span>
             </Link>
          </li>
       );
@@ -80,8 +80,8 @@ const AuthNav = ({ style_2 }: AuthNavProps) => {
    );
 
    const wrapperClass = style_2
-      ? "d-none d-md-flex align-items-center me-4 me-xxl-5 position-relative"
-      : "d-none d-md-flex align-items-center ms-3 ms-xl-4 me-xl-4 position-relative";
+      ? "d-flex align-items-center me-2 me-md-4 me-xxl-5 position-relative"
+      : "d-flex align-items-center ms-2 ms-md-3 ms-xl-4 me-2 me-xl-4 position-relative";
 
    const initial = displayName.trim().charAt(0).toUpperCase() || "U";
 

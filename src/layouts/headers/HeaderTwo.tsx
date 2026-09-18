@@ -40,9 +40,9 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
                               </a>
                            </li>
                               <AuthNav />
-                              <li className="d-none d-xl-block">
+                              <li className="pp-header-menu-btn">
                                  <button onClick={() => setOffCanvas(true)} style={{ cursor: "pointer" }} className="btn-one d-inline-flex align-items-center" type="button">
-                                    <i className="fa-sharp fa-light fa-bars-filter"></i> Menu
+                                    <i className="fa-sharp fa-light fa-bars-filter"></i> <span className="d-none d-sm-inline">Menu</span>
                                  </button>
                               </li></>) : (<>
                                  <li className="d-none d-md-flex align-items-center login-btn-one me-4 me-xxl-5">

@@ -36,7 +36,11 @@ const ExploreProperties = async () => {
    const hasMoreBeyondFetch = total > items.length;
 
    return (
-      <div className="property-listing-two position-relative z-1 mt-150 xl-mt-120 pb-150 xl-pb-120 lg-pb-80">
+      {/* No top margin here: the preceding "Featured Opportunities" section
+          already ends in pb-150 (xl-pb-120 / lg-pb-80). Stacking mt-150 on
+          top of that was doubling the gap between the two sections on both
+          desktop and mobile. */}
+      <div className="property-listing-two position-relative z-1 pb-150 xl-pb-120 lg-pb-80">
          <div className="container">
             <div className="position-relative">
                <div className="title-one mb-25 lg-mb-20 wow fadeInUp">

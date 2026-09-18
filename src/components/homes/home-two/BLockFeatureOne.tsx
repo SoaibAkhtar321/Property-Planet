@@ -16,7 +16,10 @@ const BLockFeatureOne = () => {
    const hasMore = locations.length > INITIAL_VISIBLE
 
    return (
-      <div className="block-feature-six mt-150 xl-mt-100">
+      {/* No top margin here for the same reason as ExploreProperties: the
+          preceding section already ends in bottom padding, so an added
+          mt-150 was doubling the gap. */}
+      <div className="block-feature-six">
          <div className="container">
             <div className="position-relative z-1">
                <div className="row">

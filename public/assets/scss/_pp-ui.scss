@@ -484,6 +484,15 @@
    both to horizontally-scrollable, snap-to-card strips on mobile only --
    desktop/tablet grids (>= 768px) are untouched, no JSX changes needed. */
 @media (max-width: 767px) {
+   /* Zero out Bootstrap's built-in gutter padding on these rows -- spacing
+      between cards is handled entirely by `gap` below instead, so we stop
+      stacking gutter padding + gap on top of each other (the "too much
+      unnecessary space between cards" complaint). */
+   .property-listing-two .row.gx-xxl-5,
+   .block-feature-six .row.gx-xxl-5 {
+      --bs-gutter-x: 0;
+   }
+
    .property-listing-two .row.gx-xxl-5 {
       display: flex;
       flex-wrap: nowrap;
@@ -491,65 +500,80 @@
       overflow-y: hidden;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
+      gap: 12px;
       margin-left: 0;
       margin-right: 0;
-      padding-bottom: 8px;
+      padding: 2px 2px 10px;
       scrollbar-width: none;
       &::-webkit-scrollbar { display: none; }
 
-      /* Card wrapper divs: [item].col-12.col-sm-6.col-md-6.col-lg-3.d-flex */
+      /* Card wrapper divs: [item].col-12.col-sm-6.col-md-6.col-lg-3.d-flex.
+         Sized so a bit over 2 cards fit the viewport -- the sliver of a
+         third card is the visual cue that the row scrolls sideways. */
       > [class*="col-"] {
-         flex: 0 0 48%;
-         max-width: 48%;
-         width: 48%;
+         flex: 0 0 44%;
+         max-width: 44%;
+         width: 44%;
+         margin-bottom: 0;
+         padding-left: 0;
+         padding-right: 0;
          scroll-snap-align: start;
       }
    }
 
+   /* Squarish cards instead of tall/narrow ones: a shorter image band and
+      a trimmed, single-line-per-field body so the whole card's aspect
+      ratio reads close to square rather than a tall rectangle. */
    .pp-card {
-      &__body { padding: 14px 16px 16px; }
-      &__title { font-size: 16px; }
-      &__meta { font-size: 13px; }
-      &__facts { font-size: 12px; gap: 4px 10px; }
-      &__price { font-size: 17px; margin-top: 10px; }
-      &__actions { grid-template-columns: 1fr; gap: 8px; padding-top: 10px; }
+      &__media { aspect-ratio: 6 / 5; }
+      &__body { padding: 10px 12px 12px; }
+      &__title { font-size: 14px; line-height: 1.25; }
+      &__meta { font-size: 11px; margin-bottom: 4px; }
+      &__facts { font-size: 11px; gap: 3px 8px; margin-bottom: 4px; }
+      &__price { font-size: 15px; margin-top: 6px; }
+      &__actions { grid-template-columns: 1fr; gap: 6px; padding-top: 8px; }
    }
 
    .pp-card-btn {
-      min-height: 38px;
-      padding: 8px 10px;
-      font-size: 13px;
+      min-height: 34px;
+      padding: 6px 8px;
+      font-size: 12px;
    }
 
-   /* Explore the Places with Most Properties: was 1 full-width card per
-      screen, vertical scroll. Two rows of cards, scrollable sideways
-      together, so two columns of the grid are visible at once. */
+   /* Explore the Places with Most Properties: one scrollable row instead
+      of a 2-row grid (the old grid scrolled both rows sideways together
+      as a single unit -- this puts every card on one line so the strip
+      scrolls one card at a time, same behaviour as the other sections). */
    .block-feature-six .row.gx-xxl-5 {
-      display: grid;
-      grid-auto-flow: column;
-      grid-template-rows: repeat(2, auto);
-      grid-auto-columns: 47%;
-      gap: 14px;
+      display: flex;
+      flex-wrap: nowrap;
       overflow-x: auto;
       overflow-y: hidden;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
+      gap: 12px;
       margin-left: 0;
       margin-right: 0;
-      padding-bottom: 8px;
+      padding: 2px 2px 10px;
       scrollbar-width: none;
       &::-webkit-scrollbar { display: none; }
 
       > [class*="col-"] {
-         width: 100%;
-         max-width: none;
+         flex: 0 0 44%;
+         max-width: 44%;
+         width: 44%;
+         margin-bottom: 0;
+         padding-left: 0;
+         padding-right: 0;
          scroll-snap-align: start;
       }
    }
 
+   /* Squarish location tiles to match, with room to peek at the next one. */
    .location-card-two {
-      height: 160px;
-      h5 { font-size: 22px; }
+      height: 38vw;
+      max-height: 190px;
+      h5 { font-size: 18px; }
    }
 
    /* "How our clients get benefited by us" (BLockFeatureTwo — the Explore &
@@ -575,5 +599,61 @@
          width: 58%;
          scroll-snap-align: start;
       }
+   }
+}
+/* ======================================================== MOBILE HEADER === */
+/* HeaderTwo (menu-style-two): on mobile the logo, the login/sign-up button
+   and the "Menu" (offcanvas: Become a Seller, Properties, Projects, Contact)
+   button were all set to d-none below md/xl, leaving only the plain nav
+   hamburger visible. AuthNav.tsx and HeaderTwo.tsx now render both at every
+   width; this trims their sizing so the row (logo + login + menu + nav
+   toggler) fits one line on a phone instead of overflowing/wrapping. */
+@media (max-width: 767px) {
+   .theme-main-menu .logo {
+      max-width: 128px;
+      img, svg { max-width: 100%; height: auto; }
+   }
+
+   .theme-main-menu .auth-cta-btn {
+      padding: 8px 12px;
+      font-size: 13px;
+      span { margin-left: 4px; }
+   }
+
+   .theme-main-menu .auth-avatar-btn {
+      width: 36px;
+      height: 36px;
+   }
+
+   .theme-main-menu .pp-header-menu-btn .btn-one {
+      padding: 8px 12px;
+      font-size: 13px;
+      i { margin-right: 0; }
+   }
+
+   .theme-main-menu .right-widget {
+      margin-right: 8px !important;
+   }
+}
+
+/* ========================================================== MOBILE HERO === */
+/* The hero kept its desktop bottom padding (pb-130, only reduced to
+   xl-pb-100 above 1199px) all the way down to phone widths, on top of the
+   search panel's own mt-60 top margin -- together that left a large empty
+   band between the search bar and the next section. Trimmed here instead
+   of touching the desktop-tuned pt-200/pb-130 values in HeroBanner.tsx. */
+@media (max-width: 767px) {
+   .hero-banner-two .position-relative.pt-200 {
+      padding-bottom: 50px !important;
+   }
+
+   .hero-banner-two .search-wrapper-one {
+      margin-top: 30px !important;
+   }
+}
+
+@media (max-width: 575px) {
+   .hero-banner-two .position-relative.pt-200 {
+      padding-bottom: 30px !important;
    }
 }
