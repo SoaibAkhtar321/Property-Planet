@@ -12,14 +12,14 @@ interface ChatMessage {
 
 const WELCOME_MESSAGE: ChatMessage = {
    role: "ai",
-   text: "Hi \uD83D\uDC4B I'm Property Planet AI. I can help you discover verified plots, compare locations and find opportunities based on your budget.",
+   text: "Hi \uD83D\uDC4B I'm Property Planet AI. I can help you discover plots, compare locations and find opportunities based on your budget.",
 };
 
 const SUGGESTED_PROMPTS = [
    "Find plots in Future City",
    "Best investment areas",
    "Properties under ₹50L",
-   "Show verified plots",
+   "Do you verify listings?",
    "What is Future City corridor?",
    "Plots vs villas — which is better?",
    "How do I book a site visit?",
@@ -128,12 +128,6 @@ const PropertyPlanetAIWidget = () => {
                                  </div>
                                  <div className="property-planet-ai-card-tags">
                                     {p.property_type && <span className="tag-type">{p.property_type}</span>}
-                                    {p.verification_status && (
-                                       <span className={`tag-verify ${p.verification_status === "Verified" ? "is-verified" : ""}`}>
-                                          {p.verification_status === "Verified" ? "\u2713 " : ""}{p.verification_status}
-                                       </span>
-                                    )}
-                                    {typeof p.trust_score === "number" && <span className="tag-trust">Trust {p.trust_score}</span>}
                                  </div>
                                  <div className="d-flex align-items-center justify-content-between mt-2">
                                     <strong className="property-planet-ai-card-price">{formatINR(p.price)}</strong>

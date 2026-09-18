@@ -18,7 +18,7 @@ const Feedback = async () => {
                <div className="col-lg-8 order-lg-last">
                   <div className="main-content position-relative z-1">
                      <div className="feedback-block-two">
-                       <blockquote className="font-garamond text-white">Serving Hyderabad&apos;s real estate market since 2012 &mdash; every listing <span>legally registered</span> and fully compliant.</blockquote>
+                       <blockquote className="font-garamond text-white">Serving Hyderabad&apos;s real estate market since 2012 &mdash; every listing <span>reviewed by our team</span> before it goes live.</blockquote>
                      </div>
                   </div>
                </div>
@@ -28,7 +28,7 @@ const Feedback = async () => {
                      <div className="row">
                         <div className="col-lg-12 col-md-6">
                            <div className="counter-block-two mb-85 xl-mb-50 md-mb-40">
-                              <p className="fs-20 fw-light m0">Verified plot listings across the Hyderabad corridor</p>
+                              <p className="fs-20 fw-light m0">Plot listings across the Hyderabad corridor</p>
                            </div>
                         </div>
                         <div className="col-lg-12 col-md-6">

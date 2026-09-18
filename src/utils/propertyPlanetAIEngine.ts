@@ -2,10 +2,17 @@
 //
 // Deterministic, rule-based "AI" response engine for the Property Planet AI assistant
 // prototype. It reads ONLY from the existing property_data source (the
-// "home_2" records, which already carry verification_status / trust_score /
-// suitable_for / last_verified — i.e. the same records rendered in the
-// "Featured Opportunities" section on the homepage). No property is
-// invented here.
+// "home_2" records, which are static ThemeForest/demo template rows, not
+// live Supabase listings). No property is invented here beyond what's
+// already in that demo file.
+//
+// IMPORTANT: verification_status / trust_score / last_verified from
+// property_data are fabricated demo values (see Section 14 audit) and are
+// deliberately NOT surfaced anywhere below — Property Planet does not
+// independently verify ownership/title/legal status, so this assistant
+// must never claim or imply that a listing is "Verified" or has a "trust
+// score". Real verification only ever comes from admin-managed data
+// (e.g. the site RERA certificate), never from this static file.
 //
 // This file has no React/DOM dependency so it is easy to unit-test and easy
 // to swap for a real LLM/API call later — the public surface
@@ -21,10 +28,7 @@ export interface PropertyPlanetProperty {
    price: number;
    price_text?: string;
    property_type?: string;
-   verification_status?: string;
-   trust_score?: number;
    suitable_for?: string;
-   last_verified?: string;
    tag: string;
 }
 
@@ -37,9 +41,10 @@ export interface PropertyPlanetAIResponse {
 // Dataset
 // ---------------------------------------------------------------------------
 
-// Only the "home_2" records carry the property-intelligence fields
-// (verification, trust score, suitable-for, last verified). That is the
-// canonical set the assistant is allowed to search and recommend from.
+// Only the "home_2" records carry the property-intelligence fields this
+// assistant uses. verification_status / trust_score / last_verified exist
+// on the source rows but are intentionally dropped here — see the file
+// header note above.
 const AI_DATASET: PropertyPlanetProperty[] = property_data
    .filter((item) => item.page === "home_2")
    .map((item) => ({
@@ -49,10 +54,7 @@ const AI_DATASET: PropertyPlanetProperty[] = property_data
       price: item.price,
       price_text: item.price_text,
       property_type: item.property_type,
-      verification_status: item.verification_status,
-      trust_score: item.trust_score,
       suitable_for: item.suitable_for,
-      last_verified: item.last_verified,
       tag: item.tag,
    }));
 
@@ -102,9 +104,6 @@ export const filterByType = (type: string, data: PropertyPlanetProperty[] = AI_D
    const q = type.toLowerCase();
    return data.filter((p) => (p.property_type ?? "").toLowerCase().includes(q));
 };
-
-export const filterByVerified = (data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] =>
-   data.filter((p) => p.verification_status === "Verified");
 
 // maxAmount is a plain rupee value (already converted from lakh/crore).
 export const filterByBudget = (maxAmount: number, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] =>
@@ -172,7 +171,7 @@ const GREETING_WORDS = ["hi", "hello", "hey", "hii", "helo", "yo", "namaste"];
 const THANKS_WORDS = ["thanks", "thank you", "thnx", "thx", "ty"];
 
 const INVESTMENT_WORDS = ["invest", "investment", "returns", "appreciation", "roi", "resale"];
-const VERIFIED_WORDS = ["verified", "verification", "genuine", "authentic", "trusted", "trust", "safe", "legit", "legal check", "clear title"];
+const VERIFICATION_QUESTION_WORDS = ["verified", "verification", "genuine", "authentic", "trusted", "trust score", "is it legit", "legit", "legal check", "clear title", "title check"];
 const CHEAP_WORDS = ["cheap", "affordable", "budget-friendly", "lowest price", "low budget"];
 const LOAN_WORDS = ["loan", "emi", "finance", "financing", "mortgage", "bank loan"];
 const VISIT_WORDS = ["site visit", "book a visit", "schedule a visit", "site tour", "visit the site", "book visit"];
@@ -190,7 +189,7 @@ export const generateAIResponse = (question: string): PropertyPlanetAIResponse =
    const q = question.toLowerCase().trim();
 
    if (!q) {
-      return { text: "Ask me about a location, a budget, a property type, or verified opportunities — for example \"plots in Mucherla under ₹1 crore\"." };
+      return { text: "Ask me about a location, a budget or a property type — for example \"plots in Mucherla under ₹1 crore\"." };
    }
 
    // 0a. Greeting.
@@ -206,7 +205,16 @@ export const generateAIResponse = (question: string): PropertyPlanetAIResponse =
    // 1. "Tell me about this property" — no property context in a global widget.
    if (q.includes("this property") || (q.includes("tell me about") && !findLocation(q) && !findType(q))) {
       return {
-         text: "Open a specific listing and I can walk you through its verification status, trust score and suitability — or tell me a location, budget or property type and I'll surface matching opportunities here.",
+         text: "Open a specific listing for its full details, or tell me a location, budget or property type and I'll surface matching opportunities here.",
+      };
+   }
+
+   // 1a. Verification / trust questions — answer honestly instead of
+   // filtering on a fabricated status. Property Planet does not
+   // independently verify ownership, title or legal status of listings.
+   if (includesAny(q, VERIFICATION_QUESTION_WORDS)) {
+      return {
+         text: "Property Planet doesn't independently verify ownership, title, RERA status or legal compliance for listings — sellers self-list, and admin approval only means the listing met our posting guidelines, not a legal check. For any legal or title verification, please do your own due diligence or consult a professional before buying. I can still help you find plots by location, budget or type — or our team can point you to the right next step on the Contact page.",
       };
    }
 
@@ -270,22 +278,19 @@ export const generateAIResponse = (question: string): PropertyPlanetAIResponse =
    const loc = findLocation(q);
    const type = findType(q);
    const budget = parseBudget(q);
-   const wantsVerified = includesAny(q, VERIFIED_WORDS);
    const wantsInvestment = includesAny(q, INVESTMENT_WORDS);
    const wantsCheapest = includesAny(q, CHEAP_WORDS);
    const wantsGeneric = q.includes("show me") || q.includes("plots") || q.includes("properties") || q.includes("available") || q.includes("looking for");
 
-   if (loc || type || budget !== null || wantsVerified || wantsInvestment || wantsCheapest || wantsGeneric) {
+   if (loc || type || budget !== null || wantsInvestment || wantsCheapest || wantsGeneric) {
       let pool = AI_DATASET;
       const understood: string[] = [];
 
       if (loc) { pool = filterByLocation(loc, pool); understood.push(cap(loc)); }
       if (type) { pool = filterByType(type, pool); understood.push(type); }
       if (budget !== null) { pool = filterByBudget(budget, pool); understood.push(`under ${formatINR(budget)}`); }
-      if (wantsVerified) { pool = pool.filter((p) => p.verification_status === "Verified"); understood.push("verified only"); }
       if (wantsInvestment) {
          pool = pool.filter((p) => (p.suitable_for ?? "").toLowerCase().includes("investor"));
-         pool = [...pool].sort((a, b) => (b.trust_score ?? 0) - (a.trust_score ?? 0));
          understood.push("investor-suited");
       }
       if (wantsCheapest && pool.length > 0) {
@@ -316,7 +321,7 @@ export const generateAIResponse = (question: string): PropertyPlanetAIResponse =
 
    // 6. Fallback — nudge toward what the assistant can actually do.
    return {
-      text: "I can help with locations (Future City, Mucherla, Shamshabad, Kollur, Maheshwaram, Adibatla, Shankarpally), budget, property type, verified listings, site visits or financing. Try something like \"verified plots under ₹1 crore in Mucherla\".",
+      text: "I can help with locations (Future City, Mucherla, Shamshabad, Kollur, Maheshwaram, Adibatla, Shankarpally), budget, property type, site visits or financing. Try something like \"plots under ₹1 crore in Mucherla\".",
    };
 };
 
