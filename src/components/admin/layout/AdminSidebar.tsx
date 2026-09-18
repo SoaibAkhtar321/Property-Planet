@@ -17,6 +17,8 @@ import iconProjects from "@/assets/images/dashboard/icon/icon_5.svg";
 import iconProjectsActive from "@/assets/images/dashboard/icon/icon_5_active.svg";
 import iconBlog from "@/assets/images/dashboard/icon/icon_10.svg";
 import iconBlogActive from "@/assets/images/dashboard/icon/icon_10_active.svg";
+import iconAuditLog from "@/assets/images/dashboard/icon/icon_17.svg";
+import iconAuditLogActive from "@/assets/images/dashboard/icon/icon_17_active.svg";
 import iconSettings from "@/assets/images/dashboard/icon/icon_4.svg";
 import iconSettingsActive from "@/assets/images/dashboard/icon/icon_4_active.svg";
 import iconLogout from "@/assets/images/dashboard/icon/icon_41.svg";
@@ -33,6 +35,7 @@ const NAV_ITEMS = [
    { href: "/admin/users", label: "Users", icon: iconUsers, iconActive: iconUsersActive, exact: false },
    { href: "/admin/projects", label: "Projects", icon: iconProjects, iconActive: iconProjectsActive, exact: false },
    { href: "/admin/blog", label: "Blog", icon: iconBlog, iconActive: iconBlogActive, exact: false },
+   { href: "/admin/audit-log", label: "Audit Log", icon: iconAuditLog, iconActive: iconAuditLogActive, exact: false },
    { href: "/admin/settings", label: "Settings", icon: iconSettings, iconActive: iconSettingsActive, exact: false },
 ];
 

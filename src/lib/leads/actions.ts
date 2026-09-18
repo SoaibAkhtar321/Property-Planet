@@ -483,6 +483,13 @@ export async function createGeneralInquiry(contact: GeneralContactInput): Promis
    });
 
    if (insertError) {
+      // Surface the rate-limit message from enforce_general_inquiry_rate_limit()
+      // (0025_general_inquiry_rate_limit.sql) as-is — it's already a safe,
+      // non-revealing, user-facing string. Anything else collapses to the
+      // generic message, same as every other action in this file.
+      if (insertError.message?.includes("Too many messages submitted recently")) {
+         return { success: false, error: "Too many messages submitted recently. Please try again later." };
+      }
       return { success: false, error: "Failed to send your message. Please try again." };
    }
 

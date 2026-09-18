@@ -12,6 +12,14 @@ interface FormData {
    user_email: string;
    user_phone: string;
    message: string;
+   // Honeypot: a real visitor never sees or fills this field (hidden via
+   // CSS below), but a simple bot filling every input on the page will.
+   // Not part of the validation schema — checked separately in sendEmail
+   // so a filled honeypot fails silently rather than showing a validation
+   // error that would tip a bot off. This is defense-in-depth alongside
+   // the DB-level rate limit (0025_general_inquiry_rate_limit.sql), which
+   // is the actual boundary since it can't be bypassed by skipping JS.
+   company_website?: string;
 }
 
 const schema = yup
@@ -30,6 +38,15 @@ const ContactForm = () => {
    const form = useRef<HTMLFormElement>(null);
 
    const sendEmail = async (data: FormData) => {
+      // Honeypot tripped: a real visitor never fills a field that's
+      // hidden with CSS. Pretend success (no error shown, form resets)
+      // so a bot gets no signal that it was caught, but never actually
+      // call the server action or EmailJS.
+      if (data.company_website) {
+         reset();
+         return;
+      }
+
       // Persist to the leads table first, so the enquiry reaches
       // Admin -> Leads even if the EmailJS notification below fails for
       // any reason (blocked script, rate limit, etc).
@@ -75,6 +92,18 @@ const ContactForm = () => {
          <h3>Send Message</h3>
          <div className="messages"></div>
          <div className="row controls">
+            {/* Honeypot field — hidden from real visitors, left visible to
+                simple bots that fill every field programmatically. */}
+            <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }} aria-hidden="true">
+               <label htmlFor="company_website">Leave this field empty</label>
+               <input
+                  type="text"
+                  id="company_website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  {...register("company_website")}
+               />
+            </div>
             <div className="col-12">
                <div className="input-group-meta form-group mb-30">
                   <label htmlFor="">Name*</label>

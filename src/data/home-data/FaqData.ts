@@ -44,7 +44,7 @@ const faq_data:DataType[] = [
       page: "home_2_faq_2",
       question: "What is Urban Crest?",
       answer:
-         "Urban Crest is a 17-acre plotted development by Elite Infra Group, located at Kongara Khurd-A in South Hyderabad. You can view available plots, pricing, master plan, and other project details on its dedicated project page.",
+         "Urban Crest is a plotted development project listed on Property Planet. Developer, location, size, pricing and availability are kept up to date on its dedicated project page — please check there for the current, verified details rather than relying on this answer.",
       showAnswer: false,
    },
    {
