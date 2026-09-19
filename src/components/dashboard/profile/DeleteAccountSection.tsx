@@ -139,7 +139,7 @@ const DeleteAccountSection = () => {
                            <li>Remove your profile information</li>
                            <li>Remove your saved/favourite properties</li>
                            <li>Remove personal contact details from your past enquiries</li>
-                           <li>Archive and unpublish any properties you've listed as a seller</li>
+                           <li>Archive and unpublish any properties you&apos;ve listed as a seller</li>
                            <li>Sign you out and prevent you from logging back into this account</li>
                         </ul>
                         <p className="mb-15">
