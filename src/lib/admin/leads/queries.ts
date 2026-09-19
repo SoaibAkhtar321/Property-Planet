@@ -34,13 +34,14 @@ export type LeadStatus = "new" | "contacted" | "qualified" | "site_visit" | "neg
  *   unit       -> property_id set AND that property has a project_id
  *   individual -> property_id set, no project
  */
-export type LeadKind = "project" | "unit" | "individual" | "general";
+export type LeadKind = "project" | "unit" | "individual" | "general" | "visitor_assistance";
 
 export const LEAD_KIND_LABELS: Record<LeadKind, string> = {
    project: "Project enquiry",
    unit: "Project unit enquiry",
    individual: "Individual property enquiry",
    general: "General contact form",
+   visitor_assistance: "Visitor assistance request",
 };
 
 export interface AdminLeadListRow {
@@ -65,6 +66,9 @@ export interface AdminLeadListRow {
    project_slug: string | null;
    seller_id: string;
    seller_name: string | null;
+   /** Set only on a visitor_assistance lead (0031) — what the visitor said
+    *  they're looking for. NULL for every other kind. */
+   requirement_type: string | null;
 }
 
 export interface AdminLeadFilters {
@@ -73,7 +77,7 @@ export interface AdminLeadFilters {
    search?: string; // matches buyer name, property title, project title or seller name
 }
 
-export const LEAD_KINDS: LeadKind[] = ["individual", "unit", "project", "general"];
+export const LEAD_KINDS: LeadKind[] = ["individual", "unit", "project", "general", "visitor_assistance"];
 
 interface LeadJoinRow {
    id: string;
@@ -90,6 +94,8 @@ interface LeadJoinRow {
    contact_name: string | null;
    contact_email: string | null;
    contact_phone: string | null;
+   /** Present since 0031; only populated on a visitor_assistance lead. */
+   requirement_type: string | null;
 }
 
 /**
@@ -105,7 +111,7 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
    let query = supabase
       .from("leads")
       .select(
-         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone"
+         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone, requirement_type"
       )
       .order("created_at", { ascending: false });
 
@@ -184,13 +190,15 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
       const project = projectId ? projectById.get(projectId) : undefined;
 
       const kind: LeadKind =
-         lead.source === "contact_form"
-            ? "general"
-            : !lead.property_id
-              ? "project"
-              : projectId
-                ? "unit"
-                : "individual";
+         lead.source === "visitor_assistance"
+            ? "visitor_assistance"
+            : lead.source === "contact_form"
+              ? "general"
+              : !lead.property_id
+                ? "project"
+                : projectId
+                  ? "unit"
+                  : "individual";
 
       return {
          id: lead.id,
@@ -214,6 +222,7 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
          project_slug: project?.slug ?? null,
          seller_id: property?.owner_id ?? "",
          seller_name: seller?.full_name ?? null,
+         requirement_type: lead.requirement_type,
       };
    });
 
@@ -251,7 +260,7 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
    const { data: lead, error } = await supabase
       .from("leads")
       .select(
-         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone"
+         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone, requirement_type"
       )
       .eq("id", id)
       .maybeSingle();
@@ -302,13 +311,15 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
    }
 
    const kind: LeadKind =
-      lead.source === "contact_form"
-         ? "general"
-         : !lead.property_id
-           ? "project"
-           : projectId
-             ? "unit"
-             : "individual";
+      lead.source === "visitor_assistance"
+         ? "visitor_assistance"
+         : lead.source === "contact_form"
+           ? "general"
+           : !lead.property_id
+             ? "project"
+             : projectId
+               ? "unit"
+               : "individual";
 
    return {
       id: lead.id,
@@ -336,5 +347,6 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail | 
       seller_name: seller?.full_name ?? null,
       seller_phone: seller?.phone ?? null,
       site_visits: siteVisits ?? [],
+      requirement_type: lead.requirement_type,
    };
 }

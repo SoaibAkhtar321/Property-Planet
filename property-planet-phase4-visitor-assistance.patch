@@ -1,0 +1,1548 @@
+diff --git a/public/assets/scss/_pp-ui.scss b/public/assets/scss/_pp-ui.scss
+index f19de4c..41b9f94 100644
+--- a/public/assets/scss/_pp-ui.scss
++++ b/public/assets/scss/_pp-ui.scss
+@@ -656,3 +656,99 @@
+       padding-bottom: 30px !important;
+    }
+ }
++
++/* ================================================== VISITOR ASSISTANCE === */
++/* Phase 4: small dismissible corner card, bottom-left so it never overlaps
++   PropertyPlanetAIWidget or ScrollToTop (both bottom-right). */
++.pp-visitor-assistance {
++   position: fixed;
++   left: 16px;
++   bottom: 16px;
++   z-index: 1040;
++   max-width: 320px;
++}
++
++.pp-visitor-assistance .pp-va-card {
++   position: relative;
++   background: #fff;
++   border-radius: 12px;
++   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
++   padding: 16px 18px;
++   animation: pp-va-fade-in 0.25s ease-out;
++}
++
++.pp-visitor-assistance .pp-va-close {
++   position: absolute;
++   top: 6px;
++   right: 8px;
++   background: none;
++   border: none;
++   font-size: 18px;
++   line-height: 1;
++   color: #888;
++   cursor: pointer;
++}
++
++.pp-visitor-assistance .pp-va-title {
++   font-weight: 600;
++   margin: 0 0 4px;
++   padding-right: 16px;
++}
++
++.pp-visitor-assistance .pp-va-subtitle {
++   font-size: 13px;
++   color: #666;
++   margin: 0 0 12px;
++}
++
++.pp-visitor-assistance .pp-va-field {
++   margin-bottom: 10px;
++}
++
++.pp-visitor-assistance .pp-va-field label {
++   display: block;
++   font-size: 12px;
++   color: #555;
++   margin-bottom: 4px;
++}
++
++.pp-visitor-assistance .pp-va-field input,
++.pp-visitor-assistance .pp-va-field select,
++.pp-visitor-assistance .pp-va-field textarea {
++   width: 100%;
++   padding: 8px 10px;
++   border: 1px solid #ddd;
++   border-radius: 6px;
++   font-size: 13px;
++}
++
++.pp-visitor-assistance .pp-va-btn {
++   width: 100%;
++   text-align: center;
++   justify-content: center;
++}
++
++.pp-visitor-assistance .pp-va-error {
++   color: #d9534f;
++   font-size: 12px;
++   margin: 4px 0 10px;
++}
++
++.pp-visitor-assistance .pp-va-form {
++   max-height: 80vh;
++   overflow-y: auto;
++}
++
++@keyframes pp-va-fade-in {
++   from { opacity: 0; transform: translateY(8px); }
++   to { opacity: 1; transform: translateY(0); }
++}
++
++@media (max-width: 480px) {
++   .pp-visitor-assistance {
++      left: 10px;
++      right: 10px;
++      bottom: 10px;
++      max-width: none;
++   }
++}
+diff --git a/src/app/admin/leads/[id]/page.tsx b/src/app/admin/leads/[id]/page.tsx
+index 71618f2..56ce0f4 100644
+--- a/src/app/admin/leads/[id]/page.tsx
++++ b/src/app/admin/leads/[id]/page.tsx
+@@ -1,6 +1,7 @@
+ import Link from "next/link";
+ import { notFound } from "next/navigation";
+ import { getAdminLeadDetail, LEAD_KIND_LABELS, type LeadStatus } from "@/lib/admin/leads/queries";
++import { VISITOR_REQUIREMENT_TYPE_LABELS, type VisitorRequirementType } from "@/lib/leads/assistanceOptions";
+ import { updateLeadStatus } from "@/lib/admin/leads/actions";
+ 
+ export const dynamic = "force-dynamic";
+@@ -56,9 +57,15 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
+                   <div>{lead.buyer_phone ?? "No phone on file"}</div>
+                   <div>{lead.buyer_email ?? <span className="text-muted">No email on file</span>}</div>
+                   <div className="text-muted small mt-2">Inquired {new Date(lead.created_at).toLocaleString()}</div>
++                  {lead.requirement_type && (
++                     <div className="mt-3">
++                        <div className="text-muted small">Looking for</div>
++                        <div>{VISITOR_REQUIREMENT_TYPE_LABELS[lead.requirement_type as VisitorRequirementType] ?? lead.requirement_type}</div>
++                     </div>
++                  )}
+                   {lead.message && (
+                      <div className="mt-3">
+-                        <div className="text-muted small">Message</div>
++                        <div className="text-muted small">{lead.kind === "visitor_assistance" ? "Details" : "Message"}</div>
+                         <div>{lead.message}</div>
+                      </div>
+                   )}
+diff --git a/src/app/admin/leads/page.tsx b/src/app/admin/leads/page.tsx
+index dafce5e..cb4c24c 100644
+--- a/src/app/admin/leads/page.tsx
++++ b/src/app/admin/leads/page.tsx
+@@ -26,6 +26,7 @@ const kindBadgeClass: Record<LeadKind, string> = {
+    unit: "bg-info text-dark",
+    individual: "bg-secondary",
+    general: "bg-dark",
++   visitor_assistance: "bg-success",
+ };
+ 
+ export default async function AdminLeadsPage({
+diff --git a/src/components/assistance/VisitorAssistance.tsx b/src/components/assistance/VisitorAssistance.tsx
+new file mode 100644
+index 0000000..bf0b279
+--- /dev/null
++++ b/src/components/assistance/VisitorAssistance.tsx
+@@ -0,0 +1,362 @@
++"use client";
++
++// src/components/assistance/VisitorAssistance.tsx
++//
++// Phase 4: Visitor Assistance / Property Lead Capture.
++//
++// A small, dismissible corner card that lets an actively browsing visitor
++// voluntarily ask Property Planet for help. It does NOT identify anonymous
++// visitors or obtain a phone number through anything but the visitor
++// typing it into the form themselves — no hover tracking, no device
++// fingerprinting, no hidden fields.
++//
++// Where it appears: only on /, /properties, /projects, /places (never
++// admin, dashboard, auth, or /contact — those already have their own
++// contact surface).
++//
++// Trigger (client-side engagement heuristic only — nothing server-side
++// depends on this, it only decides when to *show* the card):
++//   - 2+ property pages viewed this session, OR
++//   - 1 property page + ~40s of active time on it, OR
++//   - ~2 minutes of active browsing time overall
++// "Active" excludes idle time and hidden tabs (document.visibilityState).
++//
++// Dismissal (sessionStorage/localStorage only — no server-side tracking):
++//   - Closed -> hidden for 14 days
++//   - Submitted -> hidden for 30 days
++//   - Max 2 appearances per session
++//   - The existing enquiry dialog opening hides this for the rest of the
++//     session (avoids two competing "talk to us" surfaces at once)
++//
++// Positioned bottom-left specifically so it never overlaps the AI widget
++// or the scroll-to-top button, both of which live bottom-right.
++
++import { useEffect, useRef, useState } from "react";
++import { usePathname } from "next/navigation";
++import { submitVisitorAssistance, getVisitorAssistancePrefill } from "@/lib/leads/assistanceActions";
++import {
++   VISITOR_REQUIREMENT_TYPES,
++   VISITOR_REQUIREMENT_TYPE_LABELS,
++   type VisitorRequirementType,
++} from "@/lib/leads/assistanceOptions";
++import { onInquiryOpen } from "@/utils/inquiryBus";
++
++const ELIGIBLE_PREFIXES = ["/properties", "/projects", "/places"];
++const DISMISS_KEY = "pp_va_dismissed_until";
++const SUBMITTED_KEY = "pp_va_submitted_until";
++const SESSION_SHOWN_KEY = "pp_va_session_shown_count";
++const SESSION_SUPPRESS_KEY = "pp_va_session_suppressed";
++
++const MAX_APPEARANCES_PER_SESSION = 2;
++const DISMISS_DAYS = 14;
++const SUBMITTED_DAYS = 30;
++const ONE_PROPERTY_ACTIVE_SECONDS = 40;
++const GENERAL_ACTIVE_SECONDS = 120;
++const ACTIVE_TICK_MS = 1000;
++
++function isEligiblePath(pathname: string): boolean {
++   if (pathname === "/") return true;
++   return ELIGIBLE_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"));
++}
++
++function daysFromNow(days: number): number {
++   return Date.now() + days * 24 * 60 * 60 * 1000;
++}
++
++function readSuppressedUntil(key: string): number {
++   try {
++      const raw = window.localStorage.getItem(key);
++      return raw ? Number(raw) || 0 : 0;
++   } catch {
++      return 0;
++   }
++}
++
++function isCurrentlySuppressed(): boolean {
++   const now = Date.now();
++   if (readSuppressedUntil(DISMISS_KEY) > now) return true;
++   if (readSuppressedUntil(SUBMITTED_KEY) > now) return true;
++   try {
++      if (window.sessionStorage.getItem(SESSION_SUPPRESS_KEY) === "1") return true;
++      const shown = Number(window.sessionStorage.getItem(SESSION_SHOWN_KEY) ?? "0");
++      if (shown >= MAX_APPEARANCES_PER_SESSION) return true;
++   } catch {
++      /* sessionStorage unavailable — fail open on the session-only caps */
++   }
++   return false;
++}
++
++type Phase = "hidden" | "prompt" | "form" | "success";
++
++const VisitorAssistance = () => {
++   const pathname = usePathname() || "/";
++   const [phase, setPhase] = useState<Phase>("hidden");
++   const [name, setName] = useState("");
++   const [phone, setPhone] = useState("");
++   const [email, setEmail] = useState("");
++   const [requirementType, setRequirementType] = useState<VisitorRequirementType>("plot_land");
++   const [location, setLocation] = useState("");
++   const [budget, setBudget] = useState("");
++   const [details, setDetails] = useState("");
++   const [error, setError] = useState<string | null>(null);
++   const [submitting, setSubmitting] = useState(false);
++
++   const propertyPagesViewed = useRef(0);
++   const activeSeconds = useRef(0);
++   const activeSecondsOnThisPropertyPage = useRef(0);
++   const triggeredRef = useRef(false);
++   const lastPathRef = useRef<string | null>(null);
++   const prefillLoadedRef = useRef(false);
++
++   // Hide immediately (for the rest of this session) if the existing
++   // enquiry dialog is opened — never compete for the visitor's attention.
++   useEffect(() => {
++      const unsubscribe = onInquiryOpen(() => {
++         setPhase("hidden");
++         try {
++            window.sessionStorage.setItem(SESSION_SUPPRESS_KEY, "1");
++         } catch {
++            /* best effort only */
++         }
++      });
++      return unsubscribe;
++   }, []);
++
++   // Route eligibility + per-property-page view counting.
++   useEffect(() => {
++      if (!isEligiblePath(pathname)) {
++         setPhase("hidden");
++         return;
++      }
++
++      const isPropertyPage = pathname.startsWith("/properties/") && pathname !== "/properties";
++      if (lastPathRef.current !== pathname) {
++         lastPathRef.current = pathname;
++         activeSecondsOnThisPropertyPage.current = 0;
++         if (isPropertyPage) {
++            propertyPagesViewed.current += 1;
++         }
++      }
++   }, [pathname]);
++
++   // Active-time tracking (excludes idle tabs) + trigger evaluation.
++   useEffect(() => {
++      if (!isEligiblePath(pathname) || triggeredRef.current) return;
++      if (isCurrentlySuppressed()) return;
++
++      const isPropertyPage = pathname.startsWith("/properties/") && pathname !== "/properties";
++
++      const interval = window.setInterval(() => {
++         if (document.visibilityState !== "visible") return;
++
++         activeSeconds.current += 1;
++         if (isPropertyPage) {
++            activeSecondsOnThisPropertyPage.current += 1;
++         }
++
++         const twoPlusPropertyPages = propertyPagesViewed.current >= 2;
++         const onePropertyPagePlusTime =
++            propertyPagesViewed.current >= 1 && activeSecondsOnThisPropertyPage.current >= ONE_PROPERTY_ACTIVE_SECONDS;
++         const generalTime = activeSeconds.current >= GENERAL_ACTIVE_SECONDS;
++
++         if (twoPlusPropertyPages || onePropertyPagePlusTime || generalTime) {
++            triggeredRef.current = true;
++            if (!isCurrentlySuppressed()) {
++               setPhase("prompt");
++               try {
++                  const shown = Number(window.sessionStorage.getItem(SESSION_SHOWN_KEY) ?? "0");
++                  window.sessionStorage.setItem(SESSION_SHOWN_KEY, String(shown + 1));
++               } catch {
++                  /* best effort only */
++               }
++            }
++         }
++      }, ACTIVE_TICK_MS);
++
++      return () => window.clearInterval(interval);
++      // Re-created per pathname change so isPropertyPage stays correct;
++      // triggeredRef/propertyPagesViewed persist across that recreation.
++      // eslint-disable-next-line react-hooks/exhaustive-deps
++   }, [pathname]);
++
++   // Prefill for a signed-in visitor — only into empty fields, never
++   // overriding anything already typed, and nothing is auto-submitted.
++   useEffect(() => {
++      if (phase !== "form" || prefillLoadedRef.current) return;
++      prefillLoadedRef.current = true;
++      getVisitorAssistancePrefill()
++         .then((prefill) => {
++            if (!prefill) return;
++            setName((current) => current || prefill.name);
++            setPhone((current) => current || prefill.phone);
++            setEmail((current) => current || prefill.email);
++         })
++         .catch(() => {
++            /* best effort only — the form works fine without a prefill */
++         });
++   }, [phase]);
++
++   const dismiss = () => {
++      setPhase("hidden");
++      try {
++         window.localStorage.setItem(DISMISS_KEY, String(daysFromNow(DISMISS_DAYS)));
++      } catch {
++         /* best effort only */
++      }
++   };
++
++   const handleSubmit = async (e: React.FormEvent) => {
++      e.preventDefault();
++      setError(null);
++      setSubmitting(true);
++
++      const propertySlug = pathname.startsWith("/properties/") && pathname !== "/properties"
++         ? pathname.split("/").filter(Boolean).pop() ?? null
++         : null;
++
++      const result = await submitVisitorAssistance({
++         name,
++         phone,
++         email,
++         requirementType,
++         location,
++         budget,
++         details,
++         propertySlug,
++      });
++
++      setSubmitting(false);
++
++      if (!result.success) {
++         setError(result.error ?? "Something went wrong. Please try again.");
++         return;
++      }
++
++      setPhase("success");
++      try {
++         window.localStorage.setItem(SUBMITTED_KEY, String(daysFromNow(SUBMITTED_DAYS)));
++      } catch {
++         /* best effort only */
++      }
++   };
++
++   if (phase === "hidden") return null;
++
++   return (
++      <div className="pp-visitor-assistance" role="complementary" aria-label="Property assistance">
++         {phase === "prompt" && (
++            <div className="pp-va-card pp-va-prompt">
++               <button type="button" className="pp-va-close" aria-label="Dismiss" onClick={dismiss}>
++                  ×
++               </button>
++               <p className="pp-va-title">Need help finding the right property?</p>
++               <p className="pp-va-subtitle">Tell us what you're looking for and we'll reach out.</p>
++               <div className="pp-va-actions">
++                  <button type="button" className="btn-one pp-va-btn" onClick={() => setPhase("form")}>
++                     Get Assistance
++                  </button>
++               </div>
++            </div>
++         )}
++
++         {phase === "form" && (
++            <div className="pp-va-card pp-va-form">
++               <button type="button" className="pp-va-close" aria-label="Dismiss" onClick={dismiss}>
++                  ×
++               </button>
++               <p className="pp-va-title">Request assistance</p>
++               <form onSubmit={handleSubmit}>
++                  <div className="pp-va-field">
++                     <label htmlFor="pp-va-name">Name *</label>
++                     <input
++                        id="pp-va-name"
++                        type="text"
++                        value={name}
++                        onChange={(e) => setName(e.target.value)}
++                        required
++                        maxLength={120}
++                     />
++                  </div>
++                  <div className="pp-va-field">
++                     <label htmlFor="pp-va-phone">Phone *</label>
++                     <input
++                        id="pp-va-phone"
++                        type="tel"
++                        value={phone}
++                        onChange={(e) => setPhone(e.target.value)}
++                        required
++                     />
++                  </div>
++                  <div className="pp-va-field">
++                     <label htmlFor="pp-va-requirement">What you're looking for *</label>
++                     <select
++                        id="pp-va-requirement"
++                        value={requirementType}
++                        onChange={(e) => setRequirementType(e.target.value as VisitorRequirementType)}
++                        required
++                     >
++                        {VISITOR_REQUIREMENT_TYPES.map((t) => (
++                           <option key={t} value={t}>
++                              {VISITOR_REQUIREMENT_TYPE_LABELS[t]}
++                           </option>
++                        ))}
++                     </select>
++                  </div>
++                  <div className="pp-va-field">
++                     <label htmlFor="pp-va-email">Email (optional)</label>
++                     <input id="pp-va-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
++                  </div>
++                  <div className="pp-va-field">
++                     <label htmlFor="pp-va-location">Preferred location (optional)</label>
++                     <input
++                        id="pp-va-location"
++                        type="text"
++                        value={location}
++                        onChange={(e) => setLocation(e.target.value)}
++                        maxLength={120}
++                     />
++                  </div>
++                  <div className="pp-va-field">
++                     <label htmlFor="pp-va-budget">Budget (optional)</label>
++                     <input
++                        id="pp-va-budget"
++                        type="text"
++                        value={budget}
++                        onChange={(e) => setBudget(e.target.value)}
++                        maxLength={60}
++                     />
++                  </div>
++                  <div className="pp-va-field">
++                     <label htmlFor="pp-va-details">Additional details (optional)</label>
++                     <textarea
++                        id="pp-va-details"
++                        value={details}
++                        onChange={(e) => setDetails(e.target.value)}
++                        maxLength={1000}
++                        rows={3}
++                     />
++                  </div>
++
++                  {error && <p className="pp-va-error">{error}</p>}
++
++                  <button type="submit" className="btn-one pp-va-btn" disabled={submitting}>
++                     {submitting ? "Sending…" : "Send Request"}
++                  </button>
++               </form>
++            </div>
++         )}
++
++         {phase === "success" && (
++            <div className="pp-va-card pp-va-success">
++               <button type="button" className="pp-va-close" aria-label="Dismiss" onClick={() => setPhase("hidden")}>
++                  ×
++               </button>
++               <p className="pp-va-title">Thanks — we've got it!</p>
++               <p className="pp-va-subtitle">Our team will reach out to you shortly.</p>
++            </div>
++         )}
++      </div>
++   );
++};
++
++export default VisitorAssistance;
+diff --git a/src/layouts/Wrapper.tsx b/src/layouts/Wrapper.tsx
+index d2877af..eb71243 100644
+--- a/src/layouts/Wrapper.tsx
++++ b/src/layouts/Wrapper.tsx
+@@ -6,6 +6,7 @@ import { animationCreate } from "@/utils/utils";
+ import ScrollToTop from "@/components/common/ScrollToTop";
+ import PropertyPlanetAIWidget from "@/components/common/PropertyPlanetAIWidget";
+ import InquiryDialog from "@/components/inquiry/InquiryDialog";
++import VisitorAssistance from "@/components/assistance/VisitorAssistance";
+ 
+ const Wrapper = ({ children }: any) => {
+     useEffect(() => {
+@@ -43,6 +44,11 @@ const Wrapper = ({ children }: any) => {
+             button on the site (cards, detail pages, units) opens the same
+             dialog and writes through the same existing lead actions. */}
+         <InquiryDialog />
++        {/* Phase 4: Visitor Assistance — a small, dismissible corner card
++            that lets a browsing visitor voluntarily request help. Route-
++            gated and engagement-triggered internally; renders nothing on
++            ineligible pages or before its trigger conditions are met. */}
++        <VisitorAssistance />
+         <ToastContainer position="top-center" />
+     </>;
+ }
+diff --git a/src/lib/admin/leads/queries.ts b/src/lib/admin/leads/queries.ts
+index ab8e45b..19dce31 100644
+--- a/src/lib/admin/leads/queries.ts
++++ b/src/lib/admin/leads/queries.ts
+@@ -34,13 +34,14 @@ export type LeadStatus = "new" | "contacted" | "qualified" | "site_visit" | "neg
+  *   unit       -> property_id set AND that property has a project_id
+  *   individual -> property_id set, no project
+  */
+-export type LeadKind = "project" | "unit" | "individual" | "general";
++export type LeadKind = "project" | "unit" | "individual" | "general" | "visitor_assistance";
+ 
+ export const LEAD_KIND_LABELS: Record<LeadKind, string> = {
+    project: "Project enquiry",
+    unit: "Project unit enquiry",
+    individual: "Individual property enquiry",
+    general: "General contact form",
++   visitor_assistance: "Visitor assistance request",
+ };
+ 
+ export interface AdminLeadListRow {
+@@ -65,6 +66,9 @@ export interface AdminLeadListRow {
+    project_slug: string | null;
+    seller_id: string;
+    seller_name: string | null;
++   /** Set only on a visitor_assistance lead (0031) — what the visitor said
++    *  they're looking for. NULL for every other kind. */
++   requirement_type: string | null;
+ }
+ 
+ export interface AdminLeadFilters {
+@@ -73,7 +77,7 @@ export interface AdminLeadFilters {
+    search?: string; // matches buyer name, property title, project title or seller name
+ }
+ 
+-export const LEAD_KINDS: LeadKind[] = ["individual", "unit", "project", "general"];
++export const LEAD_KINDS: LeadKind[] = ["individual", "unit", "project", "general", "visitor_assistance"];
+ 
+ interface LeadJoinRow {
+    id: string;
+@@ -90,6 +94,8 @@ interface LeadJoinRow {
+    contact_name: string | null;
+    contact_email: string | null;
+    contact_phone: string | null;
++   /** Present since 0031; only populated on a visitor_assistance lead. */
++   requirement_type: string | null;
+ }
+ 
+ /**
+@@ -105,7 +111,7 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
+    let query = supabase
+       .from("leads")
+       .select(
+-         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone"
++         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone, requirement_type"
+       )
+       .order("created_at", { ascending: false });
+ 
+@@ -184,13 +190,15 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
+       const project = projectId ? projectById.get(projectId) : undefined;
+ 
+       const kind: LeadKind =
+-         lead.source === "contact_form"
+-            ? "general"
+-            : !lead.property_id
+-              ? "project"
+-              : projectId
+-                ? "unit"
+-                : "individual";
++         lead.source === "visitor_assistance"
++            ? "visitor_assistance"
++            : lead.source === "contact_form"
++              ? "general"
++              : !lead.property_id
++                ? "project"
++                : projectId
++                  ? "unit"
++                  : "individual";
+ 
+       return {
+          id: lead.id,
+@@ -214,6 +222,7 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
+          project_slug: project?.slug ?? null,
+          seller_id: property?.owner_id ?? "",
+          seller_name: seller?.full_name ?? null,
++         requirement_type: lead.requirement_type,
+       };
+    });
+ 
+@@ -251,7 +260,7 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail |
+    const { data: lead, error } = await supabase
+       .from("leads")
+       .select(
+-         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone"
++         "id, status, message, created_at, buyer_id, property_id, project_id, source, contact_name, contact_email, contact_phone, requirement_type"
+       )
+       .eq("id", id)
+       .maybeSingle();
+@@ -302,13 +311,15 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail |
+    }
+ 
+    const kind: LeadKind =
+-      lead.source === "contact_form"
+-         ? "general"
+-         : !lead.property_id
+-           ? "project"
+-           : projectId
+-             ? "unit"
+-             : "individual";
++      lead.source === "visitor_assistance"
++         ? "visitor_assistance"
++         : lead.source === "contact_form"
++           ? "general"
++           : !lead.property_id
++             ? "project"
++             : projectId
++               ? "unit"
++               : "individual";
+ 
+    return {
+       id: lead.id,
+@@ -336,5 +347,6 @@ export async function getAdminLeadDetail(id: string): Promise<AdminLeadDetail |
+       seller_name: seller?.full_name ?? null,
+       seller_phone: seller?.phone ?? null,
+       site_visits: siteVisits ?? [],
++      requirement_type: lead.requirement_type,
+    };
+ }
+diff --git a/src/lib/leads/assistanceActions.ts b/src/lib/leads/assistanceActions.ts
+new file mode 100644
+index 0000000..9f04eb3
+--- /dev/null
++++ b/src/lib/leads/assistanceActions.ts
+@@ -0,0 +1,102 @@
++"use server";
++
++// src/lib/leads/assistanceActions.ts
++//
++// Phase 4: the Visitor Assistance server action. Unlike createInquiry/
++// createProjectInquiry there is no requireRole()/resolveInquiryBuyer()
++// gate — an anonymous visitor can submit this form, exactly like
++// createGeneralInquiry(). Unlike createGeneralInquiry, this does not
++// insert into `leads` directly: it calls the
++// submit_visitor_assistance_request() SQL function
++// (0031_visitor_assistance_leads.sql), which is the only write path for
++// this lead shape (requester identity from auth.uid(), property slug
++// resolved against property_public, rate limiting) — nothing here
++// duplicates or second-guesses that logic.
++
++import { createClient } from "@/lib/supabase/server";
++import { getAuthContext } from "@/lib/auth/session";
++import { normalizeVisitorAssistance, type VisitorAssistanceInput } from "@/lib/leads/assistanceInput";
++
++export interface VisitorAssistanceResult {
++   success: boolean;
++   error?: string;
++   leadId?: string;
++}
++
++const PROPERTY_UNAVAILABLE_MESSAGE = "This property is no longer available.";
++const RATE_LIMIT_MESSAGE = "Too many requests submitted recently. Please try again later.";
++const GENERIC_ERROR_MESSAGE = "Failed to send your request. Please try again.";
++
++/**
++ * Submits a visitor-assistance request. Anonymous visitors may submit
++ * without an account; a signed-in visitor's request is additionally
++ * linked via requester_id (resolved server-side inside the RPC from
++ * auth.uid(), never from anything this function passes in).
++ */
++export async function submitVisitorAssistance(input: VisitorAssistanceInput): Promise<VisitorAssistanceResult> {
++   const normalized = normalizeVisitorAssistance(input);
++   if (!normalized.ok) {
++      return { success: false, error: normalized.error };
++   }
++
++   const supabase = await createClient();
++   const { value } = normalized;
++
++   const { data, error } = await supabase.rpc("submit_visitor_assistance_request", {
++      p_name: value.name,
++      p_phone: value.phone,
++      p_requirement_type: value.requirementType,
++      p_email: value.email,
++      p_location: value.location,
++      p_budget: value.budget,
++      p_details: value.details,
++      p_property_slug: value.propertySlug,
++   });
++
++   if (error) {
++      if (error.message?.includes("This property is no longer available")) {
++         return { success: false, error: PROPERTY_UNAVAILABLE_MESSAGE };
++      }
++      if (error.message?.includes("Too many requests submitted recently")) {
++         return { success: false, error: RATE_LIMIT_MESSAGE };
++      }
++      // Deliberately generic beyond the two known, safe RPC messages above
++      // — never pass through a raw Postgres exception to the client.
++      return { success: false, error: GENERIC_ERROR_MESSAGE };
++   }
++
++   return { success: true, leadId: data as string };
++}
++
++export interface VisitorAssistancePrefill {
++   name: string;
++   phone: string;
++   email: string;
++}
++
++/**
++ * Best-effort prefill for a signed-in visitor: name/phone/email already on
++ * their account, so the form can save them re-typing it. The visitor still
++ * reviews and submits the form themselves — nothing here auto-submits
++ * anything, and this is used to fill only currently-empty fields on the
++ * client, never to override what the visitor has already typed.
++ */
++export async function getVisitorAssistancePrefill(): Promise<VisitorAssistancePrefill | null> {
++   const ctx = await getAuthContext();
++   if (!ctx) {
++      return null;
++   }
++
++   const supabase = await createClient();
++   const { data: profile } = await supabase
++      .from("profiles")
++      .select("full_name, phone")
++      .eq("id", ctx.userId)
++      .maybeSingle();
++
++   return {
++      name: profile?.full_name ?? "",
++      phone: profile?.phone ?? "",
++      email: ctx.email ?? "",
++   };
++}
+diff --git a/src/lib/leads/assistanceInput.ts b/src/lib/leads/assistanceInput.ts
+new file mode 100644
+index 0000000..21b8882
+--- /dev/null
++++ b/src/lib/leads/assistanceInput.ts
+@@ -0,0 +1,112 @@
++// src/lib/leads/assistanceInput.ts
++//
++// Phase 4: server-side validation for the Visitor Assistance request
++// form (src/components/assistance/VisitorAssistance.tsx). Kept out of
++// assistanceActions.ts (which is "use server") for the same reason
++// inquiryInput.ts is separate from actions.ts — plain helpers, not server
++// actions.
++//
++// Required: name, phone, requirement type. Optional: email, location,
++// budget, additional details. This mirrors normalizeInquiryContact /
++// normalizeGeneralContact's shape-checks (phone/email regex, length
++// limits) rather than inventing new rules.
++
++import { validateContactName, MAX_CONTACT_NAME_LENGTH } from "@/lib/leads/inquiryInput";
++import { isVisitorRequirementType, type VisitorRequirementType } from "@/lib/leads/assistanceOptions";
++
++const PHONE_SHAPE = /^[0-9+\-\s()]{6,20}$/;
++const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
++
++export const MAX_ASSISTANCE_LOCATION_LENGTH = 120;
++export const MAX_ASSISTANCE_BUDGET_LENGTH = 60;
++export const MAX_ASSISTANCE_DETAILS_LENGTH = 1000;
++
++export { MAX_CONTACT_NAME_LENGTH };
++
++export interface VisitorAssistanceInput {
++   name?: string | null;
++   phone?: string | null;
++   requirementType?: string | null;
++   email?: string | null;
++   location?: string | null;
++   budget?: string | null;
++   details?: string | null;
++   /** Slug of the property being viewed, if any — never an id/title. The
++    *  server re-resolves this against published properties; it is never
++    *  trusted as-is. */
++   propertySlug?: string | null;
++}
++
++export interface NormalizedVisitorAssistance {
++   name: string;
++   phone: string;
++   requirementType: VisitorRequirementType;
++   email: string | null;
++   location: string | null;
++   budget: string | null;
++   details: string | null;
++   propertySlug: string | null;
++}
++
++export type VisitorAssistanceInputResult =
++   | { ok: true; value: NormalizedVisitorAssistance }
++   | { ok: false; error: string };
++
++export function normalizeVisitorAssistance(input: VisitorAssistanceInput): VisitorAssistanceInputResult {
++   const nameResult = validateContactName(input.name);
++   if (!nameResult.ok) {
++      return { ok: false, error: nameResult.error };
++   }
++
++   const phone = (input.phone ?? "").trim();
++   if (!phone) {
++      return { ok: false, error: "Phone number is required." };
++   }
++   if (!PHONE_SHAPE.test(phone) || phone.replace(/\D/g, "").length < 7) {
++      return { ok: false, error: "Please enter a valid phone number." };
++   }
++
++   if (!isVisitorRequirementType(input.requirementType)) {
++      return { ok: false, error: "Please choose what you're looking for." };
++   }
++
++   let email: string | null = null;
++   const rawEmail = (input.email ?? "").trim();
++   if (rawEmail) {
++      if (!EMAIL_SHAPE.test(rawEmail)) {
++         return { ok: false, error: "Please enter a valid email address." };
++      }
++      email = rawEmail;
++   }
++
++   const location = (input.location ?? "").trim();
++   if (location.length > MAX_ASSISTANCE_LOCATION_LENGTH) {
++      return { ok: false, error: `Location must be ${MAX_ASSISTANCE_LOCATION_LENGTH} characters or fewer.` };
++   }
++
++   const budget = (input.budget ?? "").trim();
++   if (budget.length > MAX_ASSISTANCE_BUDGET_LENGTH) {
++      return { ok: false, error: `Budget must be ${MAX_ASSISTANCE_BUDGET_LENGTH} characters or fewer.` };
++   }
++
++   const details = (input.details ?? "").trim();
++   if (details.length > MAX_ASSISTANCE_DETAILS_LENGTH) {
++      return { ok: false, error: `Details must be ${MAX_ASSISTANCE_DETAILS_LENGTH} characters or fewer.` };
++   }
++
++   const propertySlug = (input.propertySlug ?? "").trim();
++
++   return {
++      ok: true,
++      value: {
++         name: nameResult.value,
++         phone,
++         requirementType: input.requirementType,
++         email: email ? email : null,
++         location: location ? location : null,
++         budget: budget ? budget : null,
++         details: details ? details : null,
++         propertySlug: propertySlug ? propertySlug : null,
++      },
++   };
++}
+diff --git a/src/lib/leads/assistanceOptions.ts b/src/lib/leads/assistanceOptions.ts
+new file mode 100644
+index 0000000..b9556a7
+--- /dev/null
++++ b/src/lib/leads/assistanceOptions.ts
+@@ -0,0 +1,29 @@
++// src/lib/leads/assistanceOptions.ts
++//
++// Phase 4: the requirement-type categories offered on the Visitor
++// Assistance form. Deliberately identical to leads.requirement_type
++// (visitor_requirement_type enum, 0031_visitor_assistance_leads.sql) and
++// to the site's existing property categories — do not add categories the
++// database enum does not also have, and vice versa.
++
++export type VisitorRequirementType = "plot_land" | "villa" | "apartment" | "commercial" | "other";
++
++export const VISITOR_REQUIREMENT_TYPES: VisitorRequirementType[] = [
++   "plot_land",
++   "villa",
++   "apartment",
++   "commercial",
++   "other",
++];
++
++export const VISITOR_REQUIREMENT_TYPE_LABELS: Record<VisitorRequirementType, string> = {
++   plot_land: "Plot / Land",
++   villa: "Villa",
++   apartment: "Apartment",
++   commercial: "Commercial",
++   other: "Other",
++};
++
++export function isVisitorRequirementType(value: unknown): value is VisitorRequirementType {
++   return typeof value === "string" && (VISITOR_REQUIREMENT_TYPES as string[]).includes(value);
++}
+diff --git a/supabase/migrations/0031_visitor_assistance_leads.sql b/supabase/migrations/0031_visitor_assistance_leads.sql
+new file mode 100644
+index 0000000..153bc66
+--- /dev/null
++++ b/supabase/migrations/0031_visitor_assistance_leads.sql
+@@ -0,0 +1,399 @@
++-- 0031_visitor_assistance_leads.sql
++--
++-- Phase 4: Visitor Assistance / Property Lead Capture.
++--
++-- An actively browsing visitor may voluntarily ask Property Planet for
++-- help (find them a plot/villa/apartment/etc., or answer a question about
++-- a specific listing they're on). This is NOT a way to identify anonymous
++-- visitors or silently obtain a phone number — the visitor explicitly
++-- fills in and submits a form. Everything below reuses the existing
++-- `leads` table and lead-status system (0004, 0020, 0021, 0029) rather
++-- than introducing a second, competing table.
++--
++-- Shape of a visitor-assistance lead:
++--   source          = 'visitor_assistance'
++--   requirement_type = one of the existing site categories (below)
++--   requester_id    = the signed-in visitor, if any (NULL for anonymous) —
++--                      kept separate from buyer_id: this is not a buyer
++--                      enquiry against a specific listing, so overloading
++--                      buyer_id would incorrectly make it look like one
++--                      everywhere buyer_id is already relied on (RLS,
++--                      "my leads", etc).
++--   buyer_id        = always NULL for this lead shape (see below)
++--   property_id     = the property being viewed, if any, re-derived
++--                      server-side from a slug — never trusted from the
++--                      client (see submit_visitor_assistance_request()).
++--
++-- Privacy decision (unchanged from the brief, restated here since it's
++-- enforced in this migration): Visitor -> Property Planet Admin -> Admin
++-- contacts visitor. Sellers never see these leads, never get notified of
++-- them, and buyer_id stays NULL so no buyer-side "my leads" surface picks
++-- them up either.
++
++-- ===========================================================================
++-- 1. Columns
++-- ===========================================================================
++
++do $$
++begin
++  if not exists (
++    select 1 from pg_type t
++    join pg_enum e on e.enumtypid = t.oid
++    where t.typname = 'lead_status' -- sanity: lead_status already exists (0004)
++  ) then
++    raise exception 'lead_status enum not found — migrations out of order';
++  end if;
++end $$;
++
++create type visitor_requirement_type as enum
++  ('plot_land', 'villa', 'apartment', 'commercial', 'other');
++
++alter table leads
++  add column if not exists requirement_type visitor_requirement_type,
++  add column if not exists requester_id uuid references profiles (id) on delete set null;
++
++comment on column leads.requirement_type is
++  'What a visitor-assistance requester says they are looking for (source = '
++  '''visitor_assistance'' only). Matches the site''s existing property '
++  'categories: Plot/Land, Villa, Apartment, Commercial, Other. NULL for '
++  'every other lead shape.';
++
++comment on column leads.requester_id is
++  'The signed-in visitor who submitted a visitor-assistance request, if '
++  'any (NULL for an anonymous visitor). Deliberately separate from '
++  'buyer_id, which stays NULL for this lead shape — a visitor-assistance '
++  'request is not a buyer enquiry against a specific listing, and every '
++  'existing buyer_id-keyed surface (buyer "my leads", the leads_buyer_* '
++  'unique constraints) must not pick these rows up. ON DELETE SET NULL so '
++  'account deletion (0030) detaches the identity without deleting the '
++  'business record — its personal fields are additionally scrubbed by '
++  'request_own_account_deletion() below.';
++
++create index if not exists leads_requester_idx on leads (requester_id);
++
++-- The existing 0013 "project or property required" check already carves
++-- out source = 'contact_form'; extend it to also allow visitor_assistance
++-- rows to have neither (general assistance ask, not tied to any one
++-- listing) alongside the existing shapes.
++alter table leads
++  drop constraint if exists leads_project_or_property_required;
++alter table leads
++  add constraint leads_project_or_property_required
++  check (
++    project_id is not null
++    or property_id is not null
++    or source = 'contact_form'
++    or source = 'visitor_assistance'
++  );
++
++-- A visitor-assistance row must always carry its own submitted identity
++-- (name + phone are required by the form; see assistanceInput.ts) and a
++-- requirement_type, and must never carry a buyer_id — that column is
++-- reserved for an actual buyer-authenticated enquiry against a listing.
++alter table leads
++  drop constraint if exists leads_visitor_assistance_shape;
++alter table leads
++  add constraint leads_visitor_assistance_shape
++  check (
++    source <> 'visitor_assistance'
++    or (
++      buyer_id is null
++      and contact_name is not null
++      and contact_phone is not null
++      and requirement_type is not null
++    )
++  );
++
++-- ===========================================================================
++-- 2. Secure insertion function
++--
++-- There is deliberately NO direct client-callable RLS insert policy for
++-- source = 'visitor_assistance' (unlike the contact_form shape, 0021,
++-- which is a plain policy because it needs no server-side property
++-- resolution). Every visitor-assistance row is written through this
++-- SECURITY DEFINER function instead, because it has to do work a plain
++-- RLS `with check` cannot:
++--   - resolve a client-supplied property SLUG against property_public
++--     (never trust a client-supplied property id/title directly)
++--   - take the requester identity from auth.uid(), never from the client
++--   - apply the same contact_form-style rate limit
++-- ===========================================================================
++
++create or replace function submit_visitor_assistance_request(
++  p_name             text,
++  p_phone            text,
++  p_requirement_type visitor_requirement_type,
++  p_email            text default null,
++  p_location         text default null,
++  p_budget           text default null,
++  p_details          text default null,
++  p_property_slug    text default null
++)
++returns uuid
++language plpgsql
++security definer
++set search_path = public
++as $$
++declare
++  v_requester_id uuid := auth.uid(); -- NULL for an anonymous visitor; never client-supplied
++  v_property_id  uuid;
++  v_name         text := btrim(coalesce(p_name, ''));
++  v_phone        text := btrim(coalesce(p_phone, ''));
++  v_message      text;
++  v_recent_count integer;
++  v_lead_id      uuid;
++begin
++  if v_name = '' or char_length(v_name) > 120 then
++    raise exception 'A valid name is required.' using errcode = 'P0001';
++  end if;
++
++  if v_phone = '' then
++    raise exception 'A valid phone number is required.' using errcode = 'P0001';
++  end if;
++
++  -- Property context: the browser sends a SLUG, never an id/title. Resolve
++  -- it against property_public only — draft/pending/archived/rejected
++  -- properties can never be attached to a request this way, and a slug
++  -- that doesn't resolve to a published property fails the whole request
++  -- rather than silently dropping the property context (see Decision B in
++  -- the phase brief: stale property context fails, it doesn't degrade to
++  -- a property-less lead).
++  if p_property_slug is not null and btrim(p_property_slug) <> '' then
++    select id into v_property_id
++    from property_public
++    where slug = btrim(p_property_slug);
++
++    if v_property_id is null then
++      raise exception 'This property is no longer available.' using errcode = 'P0001';
++    end if;
++  end if;
++
++  -- Rate limit, same shape and threshold as enforce_general_inquiry_rate_limit
++  -- (0025): 3 requests per phone/email/account in the last hour. Applied
++  -- here rather than as a trigger since this function is the only writer
++  -- for this lead shape.
++  select count(*) into v_recent_count
++  from leads
++  where source = 'visitor_assistance'
++    and created_at > now() - interval '60 minutes'
++    and (
++      contact_phone = v_phone
++      or (p_email is not null and contact_email = btrim(p_email))
++      or (v_requester_id is not null and requester_id = v_requester_id)
++    );
++
++  if v_recent_count >= 3 then
++    raise exception 'Too many requests submitted recently. Please try again later.'
++      using errcode = 'P0001';
++  end if;
++
++  v_message := nullif(btrim(concat_ws(
++    E'\n',
++    case when p_location is not null and btrim(p_location) <> '' then 'Location: ' || btrim(p_location) end,
++    case when p_budget is not null and btrim(p_budget) <> '' then 'Budget: ' || btrim(p_budget) end,
++    case when p_details is not null and btrim(p_details) <> '' then btrim(p_details) end
++  )), '');
++
++  insert into leads (
++    buyer_id, property_id, project_id, source, requester_id,
++    requirement_type, contact_name, contact_phone, contact_email, message
++  ) values (
++    null, v_property_id, null, 'visitor_assistance', v_requester_id,
++    p_requirement_type, v_name, v_phone, nullif(btrim(coalesce(p_email, '')), ''), v_message
++  )
++  returning id into v_lead_id;
++
++  return v_lead_id;
++end;
++$$;
++
++comment on function submit_visitor_assistance_request is
++  'The only write path for a visitor-assistance lead. SECURITY DEFINER so '
++  'it can insert into `leads` with no direct client-callable RLS policy '
++  'for this shape, but every value that matters for authorization or '
++  'identity is re-derived here, never trusted from the client: requester '
++  'identity from auth.uid(), property context resolved from a slug '
++  'against property_public (draft/unpublished properties are rejected), '
++  'and a phone/email/account rate limit mirroring '
++  'enforce_general_inquiry_rate_limit (0025).';
++
++revoke all on function submit_visitor_assistance_request(
++  text, text, visitor_requirement_type, text, text, text, text, text
++) from public, anon;
++grant execute on function submit_visitor_assistance_request(
++  text, text, visitor_requirement_type, text, text, text, text, text
++) to authenticated, anon;
++
++-- ===========================================================================
++-- 3. Seller privacy: exclude visitor-assistance leads from seller_leads
++--
++-- seller_leads (0029) is filtered to properties.owner_id = auth.uid() but
++-- was not filtered by source — a visitor-assistance request tied to a
++-- seller's property would otherwise leak through it (buyer_name/message,
++-- even without phone/email). Re-declared with the same column list, plus
++-- one added predicate.
++-- ===========================================================================
++
++drop view if exists seller_leads;
++create view seller_leads
++  with (security_invoker = false, security_barrier = true) as
++  select
++    l.id,
++    l.property_id,
++    p.title                                            as property_title,
++    p.slug                                             as property_slug,
++    coalesce(nullif(btrim(l.contact_name), ''), nullif(btrim(pr.full_name), ''), 'Buyer')
++                                                       as buyer_name,
++    l.message,
++    l.status,
++    l.preferred_date,
++    l.preferred_time,
++    l.created_at
++  from leads l
++  join properties p on p.id = l.property_id
++  left join profiles pr on pr.id = l.buyer_id
++  where p.owner_id = auth.uid()
++    and l.source is distinct from 'visitor_assistance';
++
++comment on view seller_leads is
++  'Seller-facing projection of leads on the caller''s own properties. Runs '
++  'with owner rights but is hard-filtered to properties.owner_id = auth.uid(). '
++  'Contains NO buyer phone/email/id by construction, and (0031) excludes '
++  'visitor-assistance requests entirely -- those are handled Visitor -> '
++  'Property Planet Admin -> Admin contacts visitor, never surfaced to the '
++  'seller at all. Sellers have no direct access to `leads`.';
++
++revoke all on seller_leads from public, anon;
++grant select on seller_leads to authenticated;
++
++-- ===========================================================================
++-- 4. Seller notification: skip visitor-assistance leads
++-- ===========================================================================
++
++create or replace function notify_seller_on_new_lead()
++returns trigger
++language plpgsql
++security definer set search_path = public
++as $$
++declare
++  v_seller_id uuid;
++  v_property_title text;
++begin
++  -- Project-only lead (property_id null) has no property owner to notify.
++  if new.property_id is null then
++    return new;
++  end if;
++
++  -- 0031: visitor-assistance requests are admin-only by design (see
++  -- seller_leads above) — the seller must not be notified that one exists
++  -- either, even when it references one of their properties.
++  if new.source = 'visitor_assistance' then
++    return new;
++  end if;
++
++  select p.owner_id, p.title
++    into v_seller_id, v_property_title
++  from properties p
++  where p.id = new.property_id;
++
++  if v_seller_id is not null then
++    insert into notifications (recipient_id, type, message, lead_id)
++    values (
++      v_seller_id,
++      'new_lead',
++      coalesce('You have a new enquiry on "' || v_property_title || '".',
++               'You have a new enquiry on one of your listings.'),
++      new.id
++    );
++  end if;
++
++  return new;
++end;
++$$;
++
++comment on function notify_seller_on_new_lead is
++  'AFTER INSERT trigger on `leads`. Notifies the property owner of a new '
++  'property-level enquiry (project-only leads, property_id NULL, have no '
++  'single property owner and are skipped; visitor-assistance leads, 0031, '
++  'are skipped by design -- admin-only, never surfaced to the seller). '
++  'Recipient is re-derived from properties.owner_id, never trusted from '
++  'the inserted row directly.';
++
++-- ===========================================================================
++-- 5. Account deletion: also scrub requester_id leads
++--
++-- request_own_account_deletion() (0030) already scrubs every personal
++-- field on leads where buyer_id = the deleting account. A visitor-
++-- assistance request from that same account is keyed by requester_id
++-- instead (buyer_id is always NULL on that shape), so it needs the same
++-- treatment or its name/phone/email would survive the account's deletion.
++-- Re-declared in full; every other part of 0030's function is unchanged.
++-- ===========================================================================
++
++create or replace function request_own_account_deletion()
++returns void
++language plpgsql
++security definer
++set search_path = public
++as $$
++declare
++  v_uid  uuid := auth.uid();
++  v_role user_role;
++begin
++  if v_uid is null then
++    raise exception 'not authenticated';
++  end if;
++
++  select role into v_role from profiles where id = v_uid;
++
++  if v_role is null then
++    raise exception 'no profile found for this account';
++  end if;
++
++  if v_role = 'admin' then
++    raise exception 'admin accounts cannot be deleted through this function';
++  end if;
++
++  perform set_config('app.deleting_own_account', 'true', true);
++
++  delete from favourites where user_id = v_uid;
++
++  update leads
++     set contact_name  = null,
++         contact_email = null,
++         contact_phone = null,
++         message       = null
++   where buyer_id = v_uid;
++
++  -- 0031: visitor-assistance leads from this account are keyed by
++  -- requester_id, not buyer_id (which is always NULL on that shape) --
++  -- scrub those too. requirement_type is left in place: it is a category,
++  -- not personal data, and is useful admin business context the same way
++  -- an enquiry's existence is kept elsewhere in this function.
++  update leads
++     set contact_name  = null,
++         contact_email = null,
++         contact_phone = null,
++         message       = null
++   where requester_id = v_uid;
++
++  update properties
++     set status = 'archived'
++   where owner_id = v_uid
++     and status in ('draft', 'pending', 'published');
++end;
++$$;
++
++comment on function request_own_account_deletion is
++  'Self-service account deletion, step 1 of 2. SECURITY DEFINER so it can '
++  'write across favourites/leads/properties regardless of the caller''s '
++  'own RLS grants, but takes NO user_id parameter -- every write is '
++  'scoped to auth.uid() internally, so a caller can never target another '
++  'account, and admin accounts are explicitly refused. Scrubs both '
++  'buyer_id-keyed leads and (0031) requester_id-keyed visitor-assistance '
++  'leads. Step 2 (deleting the auth.users row) happens in server-side '
++  'application code via the service role, only after this function '
++  'returns successfully -- see src/lib/account/actions.ts.';
++
++revoke all on function request_own_account_deletion() from public, anon;
++grant execute on function request_own_account_deletion() to authenticated;
+diff --git a/supabase/tests/visitor_assistance_rls.sql b/supabase/tests/visitor_assistance_rls.sql
+new file mode 100644
+index 0000000..fedc9b6
+--- /dev/null
++++ b/supabase/tests/visitor_assistance_rls.sql
+@@ -0,0 +1,212 @@
++-- supabase/tests/visitor_assistance_rls.sql
++--
++-- Verifies the visitor-assistance feature (migration 0031) at the
++-- database level. Run against a scratch database that has migrations
++-- 0001..0031 applied:
++--
++--   psql "$DATABASE_URL" -f supabase/tests/visitor_assistance_rls.sql
++--
++-- Everything happens inside one transaction that is ROLLED BACK at the
++-- end, so it leaves no data behind. Each check prints "PASS <name>" or
++-- "FAIL <name>". Requires a role that can SET ROLE authenticated/anon
++-- (e.g. postgres). Do NOT run against production.
++
++\set ON_ERROR_STOP off
++begin;
++
++create function zz_t(p_name text, p_ok boolean) returns void language plpgsql as $$
++begin
++  if p_ok then raise notice 'PASS  %', p_name; else raise notice 'FAIL  %', p_name; end if;
++end $$;
++grant execute on function zz_t(text, boolean) to public;
++
++-- ---------------------------------------------------------------- seed (superuser)
++insert into auth.users (id, email) values
++  ('00000000-0000-0000-0000-0000000000e1', 'sellerC@example.com'),
++  ('00000000-0000-0000-0000-0000000000e2', 'visitorA@example.com');
++update profiles set role = 'seller', full_name = 'Seller C', phone = '+913333333333' where id = '00000000-0000-0000-0000-0000000000e1';
++update profiles set role = 'buyer',  full_name = 'Visitor A', phone = '+914444444444' where id = '00000000-0000-0000-0000-0000000000e2';
++
++insert into properties (id, owner_id, title, slug, property_type, listing_type, status, city, locality)
++values ('00000000-0000-0000-0000-0000000000f1', '00000000-0000-0000-0000-0000000000e1',
++        'Test Villa', 'test-villa-va', 'villa', 'sale', 'published', 'Hyderabad', 'Gachibowli');
++
++insert into properties (id, owner_id, title, slug, property_type, listing_type, status, city, locality)
++values ('00000000-0000-0000-0000-0000000000f2', '00000000-0000-0000-0000-0000000000e1',
++        'Draft Plot', 'draft-plot-va', 'plot', 'sale', 'draft', 'Hyderabad', 'Kondapur');
++
++-- =============================================================== 1. anonymous submit
++set role anon;
++select set_config('request.jwt.claim.sub', '', true);
++
++do $$
++declare v_id uuid;
++begin
++  select submit_visitor_assistance_request(
++    'Anon Visitor', '+919000000001', 'villa'::visitor_requirement_type,
++    null, 'Gachibowli', '50L-70L', 'Looking urgently', 'test-villa-va'
++  ) into v_id;
++  perform zz_t('anonymous visitor can submit', v_id is not null);
++end $$;
++
++reset role;
++select zz_t('anonymous request has NULL requester_id and buyer_id',
++  (select requester_id is null and buyer_id is null from leads
++   where source = 'visitor_assistance' and contact_phone = '+919000000001'));
++select zz_t('anonymous request resolved the property from the slug',
++  (select property_id = '00000000-0000-0000-0000-0000000000f1' from leads
++   where source = 'visitor_assistance' and contact_phone = '+919000000001'));
++
++-- =============================================================== 2. invalid input rejected
++set role anon;
++do $$
++declare v_failed boolean := false;
++begin
++  begin
++    perform submit_visitor_assistance_request('', '+919000000002', 'villa'::visitor_requirement_type);
++  exception when others then
++    v_failed := true;
++  end;
++  perform zz_t('empty name rejected', v_failed);
++end $$;
++
++do $$
++declare v_failed boolean := false;
++begin
++  begin
++    perform submit_visitor_assistance_request('Someone', '', 'villa'::visitor_requirement_type);
++  exception when others then
++    v_failed := true;
++  end;
++  perform zz_t('empty phone rejected', v_failed);
++end $$;
++reset role;
++
++-- =============================================================== 3. draft property rejected
++set role anon;
++do $$
++declare v_failed boolean := false;
++begin
++  begin
++    perform submit_visitor_assistance_request(
++      'Someone', '+919000000003', 'plot_land'::visitor_requirement_type,
++      null, null, null, null, 'draft-plot-va'
++    );
++  exception when others then
++    v_failed := true;
++  end;
++  perform zz_t('draft property slug rejected', v_failed);
++end $$;
++
++-- =============================================================== 4. unknown property rejected
++do $$
++declare v_failed boolean := false;
++begin
++  begin
++    perform submit_visitor_assistance_request(
++      'Someone', '+919000000004', 'plot_land'::visitor_requirement_type,
++      null, null, null, null, 'does-not-exist'
++    );
++  exception when others then
++    v_failed := true;
++  end;
++  perform zz_t('unknown property slug rejected', v_failed);
++end $$;
++reset role;
++
++-- =============================================================== 5. direct insert blocked (no RLS policy for this shape)
++set role anon;
++do $$
++declare v_failed boolean := false;
++begin
++  begin
++    insert into leads (source, contact_name, contact_phone, requirement_type)
++    values ('visitor_assistance', 'Direct Insert', '+919000000005', 'villa');
++  exception when others then
++    v_failed := true;
++  end;
++  perform zz_t('direct insert of a visitor_assistance lead is blocked', v_failed);
++end $$;
++reset role;
++
++-- =============================================================== 6. forged buyer_id blocked by the shape constraint
++set role postgres;
++do $$
++declare v_failed boolean := false;
++begin
++  begin
++    insert into leads (source, buyer_id, contact_name, contact_phone, requirement_type)
++    values ('visitor_assistance', '00000000-0000-0000-0000-0000000000e2', 'Forged', '+919000000006', 'villa');
++  exception when others then
++    v_failed := true;
++  end;
++  perform zz_t('visitor_assistance row with buyer_id set is rejected by the shape check', v_failed);
++end $$;
++
++-- =============================================================== 7. rate limiting
++set role anon;
++do $$
++declare v_id uuid; v_failed boolean := false;
++begin
++  perform submit_visitor_assistance_request('Rate A', '+919000000010', 'villa'::visitor_requirement_type);
++  perform submit_visitor_assistance_request('Rate A', '+919000000010', 'villa'::visitor_requirement_type);
++  perform submit_visitor_assistance_request('Rate A', '+919000000010', 'villa'::visitor_requirement_type);
++  begin
++    perform submit_visitor_assistance_request('Rate A', '+919000000010', 'villa'::visitor_requirement_type);
++  exception when others then
++    v_failed := true;
++  end;
++  perform zz_t('4th request from same phone within an hour is rate-limited', v_failed);
++end $$;
++reset role;
++
++-- =============================================================== 8. seller visibility protection
++set role authenticated;
++select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000e1', true);
++select zz_t('seller cannot see visitor_assistance leads via seller_leads',
++  not exists (select 1 from seller_leads where property_id = '00000000-0000-0000-0000-0000000000f1'
++              and buyer_name in ('Anon Visitor', 'Visitor A')));
++reset role;
++
++-- =============================================================== 9. seller notification protection
++select zz_t('no seller notification was created for the visitor_assistance lead',
++  not exists (
++    select 1 from notifications n
++    join leads l on l.id = n.lead_id
++    where l.source = 'visitor_assistance' and n.recipient_id = '00000000-0000-0000-0000-0000000000e1'
++  ));
++
++-- =============================================================== 10. admin visibility
++set role authenticated;
++-- (admin role check relies on profiles.role = 'admin'; using postgres/service role read here
++--  since this test doesn't seed a real admin session — see lead_privacy_rls.sql for that pattern)
++reset role;
++select zz_t('admin (service-level) can read the visitor_assistance lead directly',
++  exists (select 1 from leads where source = 'visitor_assistance' and contact_phone = '+919000000001'));
++
++-- =============================================================== 11. signed-in requester_id
++set role authenticated;
++select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000e2', true);
++do $$
++declare v_id uuid;
++begin
++  select submit_visitor_assistance_request('Visitor A', '+919000000020', 'apartment'::visitor_requirement_type)
++    into v_id;
++  perform zz_t('signed-in visitor request created', v_id is not null);
++end $$;
++reset role;
++select zz_t('signed-in visitor request carries requester_id, not buyer_id',
++  (select requester_id = '00000000-0000-0000-0000-0000000000e2' and buyer_id is null
++   from leads where source = 'visitor_assistance' and contact_phone = '+919000000020'));
++
++-- =============================================================== 12. account deletion scrubbing
++set role authenticated;
++select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000e2', true);
++select request_own_account_deletion();
++reset role;
++select zz_t('account deletion scrubs personal fields on requester_id-keyed leads',
++  (select contact_name is null and contact_phone is null from leads
++   where requester_id = '00000000-0000-0000-0000-0000000000e2'
++     and source = 'visitor_assistance' and contact_email is null and contact_phone is null));
++
++rollback;

@@ -656,3 +656,99 @@
       padding-bottom: 30px !important;
    }
 }
+
+/* ================================================== VISITOR ASSISTANCE === */
+/* Phase 4: small dismissible corner card, bottom-left so it never overlaps
+   PropertyPlanetAIWidget or ScrollToTop (both bottom-right). */
+.pp-visitor-assistance {
+   position: fixed;
+   left: 16px;
+   bottom: 16px;
+   z-index: 1040;
+   max-width: 320px;
+}
+
+.pp-visitor-assistance .pp-va-card {
+   position: relative;
+   background: #fff;
+   border-radius: 12px;
+   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+   padding: 16px 18px;
+   animation: pp-va-fade-in 0.25s ease-out;
+}
+
+.pp-visitor-assistance .pp-va-close {
+   position: absolute;
+   top: 6px;
+   right: 8px;
+   background: none;
+   border: none;
+   font-size: 18px;
+   line-height: 1;
+   color: #888;
+   cursor: pointer;
+}
+
+.pp-visitor-assistance .pp-va-title {
+   font-weight: 600;
+   margin: 0 0 4px;
+   padding-right: 16px;
+}
+
+.pp-visitor-assistance .pp-va-subtitle {
+   font-size: 13px;
+   color: #666;
+   margin: 0 0 12px;
+}
+
+.pp-visitor-assistance .pp-va-field {
+   margin-bottom: 10px;
+}
+
+.pp-visitor-assistance .pp-va-field label {
+   display: block;
+   font-size: 12px;
+   color: #555;
+   margin-bottom: 4px;
+}
+
+.pp-visitor-assistance .pp-va-field input,
+.pp-visitor-assistance .pp-va-field select,
+.pp-visitor-assistance .pp-va-field textarea {
+   width: 100%;
+   padding: 8px 10px;
+   border: 1px solid #ddd;
+   border-radius: 6px;
+   font-size: 13px;
+}
+
+.pp-visitor-assistance .pp-va-btn {
+   width: 100%;
+   text-align: center;
+   justify-content: center;
+}
+
+.pp-visitor-assistance .pp-va-error {
+   color: #d9534f;
+   font-size: 12px;
+   margin: 4px 0 10px;
+}
+
+.pp-visitor-assistance .pp-va-form {
+   max-height: 80vh;
+   overflow-y: auto;
+}
+
+@keyframes pp-va-fade-in {
+   from { opacity: 0; transform: translateY(8px); }
+   to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+   .pp-visitor-assistance {
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      max-width: none;
+   }
+}

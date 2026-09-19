@@ -6,6 +6,7 @@ import { animationCreate } from "@/utils/utils";
 import ScrollToTop from "@/components/common/ScrollToTop";
 import PropertyPlanetAIWidget from "@/components/common/PropertyPlanetAIWidget";
 import InquiryDialog from "@/components/inquiry/InquiryDialog";
+import VisitorAssistance from "@/components/assistance/VisitorAssistance";
 
 const Wrapper = ({ children }: any) => {
     useEffect(() => {
@@ -43,6 +44,11 @@ const Wrapper = ({ children }: any) => {
             button on the site (cards, detail pages, units) opens the same
             dialog and writes through the same existing lead actions. */}
         <InquiryDialog />
+        {/* Phase 4: Visitor Assistance — a small, dismissible corner card
+            that lets a browsing visitor voluntarily request help. Route-
+            gated and engagement-triggered internally; renders nothing on
+            ineligible pages or before its trigger conditions are met. */}
+        <VisitorAssistance />
         <ToastContainer position="top-center" />
     </>;
 }

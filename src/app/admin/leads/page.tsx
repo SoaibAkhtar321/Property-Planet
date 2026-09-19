@@ -26,6 +26,7 @@ const kindBadgeClass: Record<LeadKind, string> = {
    unit: "bg-info text-dark",
    individual: "bg-secondary",
    general: "bg-dark",
+   visitor_assistance: "bg-success",
 };
 
 export default async function AdminLeadsPage({

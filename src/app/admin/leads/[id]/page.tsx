@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminLeadDetail, LEAD_KIND_LABELS, type LeadStatus } from "@/lib/admin/leads/queries";
+import { VISITOR_REQUIREMENT_TYPE_LABELS, type VisitorRequirementType } from "@/lib/leads/assistanceOptions";
 import { updateLeadStatus } from "@/lib/admin/leads/actions";
 
 export const dynamic = "force-dynamic";
@@ -56,9 +57,15 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
                   <div>{lead.buyer_phone ?? "No phone on file"}</div>
                   <div>{lead.buyer_email ?? <span className="text-muted">No email on file</span>}</div>
                   <div className="text-muted small mt-2">Inquired {new Date(lead.created_at).toLocaleString()}</div>
+                  {lead.requirement_type && (
+                     <div className="mt-3">
+                        <div className="text-muted small">Looking for</div>
+                        <div>{VISITOR_REQUIREMENT_TYPE_LABELS[lead.requirement_type as VisitorRequirementType] ?? lead.requirement_type}</div>
+                     </div>
+                  )}
                   {lead.message && (
                      <div className="mt-3">
-                        <div className="text-muted small">Message</div>
+                        <div className="text-muted small">{lead.kind === "visitor_assistance" ? "Details" : "Message"}</div>
                         <div>{lead.message}</div>
                      </div>
                   )}
