@@ -610,8 +610,7 @@
    toggler) fits one line on a phone instead of overflowing/wrapping. */
 @media (max-width: 767px) {
    .theme-main-menu .logo {
-      max-width: 128px;
-      img, svg { max-width: 100%; height: auto; }
+      flex-shrink: 0;
    }
 
    .theme-main-menu .auth-cta-btn {

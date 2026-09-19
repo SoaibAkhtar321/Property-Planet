@@ -2,11 +2,10 @@
 import menu_data from "@/data/home-data/MenuData";
 import Link from "next/link.js";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import { useState } from "react";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 
-import logo from "@/assets/images/logo/logo_01.svg";
+import BrandLogo from "@/components/common/BrandLogo";
 
 const NavMenu = () => {
     const pathname = usePathname();
@@ -39,7 +38,7 @@ const NavMenu = () => {
             <li className="d-block d-lg-none">
                 <div className="logo">
                     <Link href="/" className="d-block">
-                        <Image src={logo} alt="" />
+                        <BrandLogo size="menu" />
                     </Link>
                 </div>
             </li>

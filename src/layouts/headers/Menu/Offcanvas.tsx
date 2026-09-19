@@ -1,9 +1,8 @@
 "use client"
-import Image from "next/image"
 import Link from "next/link"
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF, SOCIAL_LINKS } from "@/lib/site/contact"
 
-import offcanvasLogo from "@/assets/images/logo/logo_02.svg"
+import BrandLogo from "@/components/common/BrandLogo";
 
 // Phase 20: this panel is opened by the "Menu" button in the live header,
 // so everything in it was public. It previously showed three fabricated
@@ -38,7 +37,7 @@ const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
             <div className="offcanvas-header">
                <div className="logo order-lg-0">
                   <Link href="/" className="d-flex align-items-center">
-                     <Image src={offcanvasLogo} alt="Property Planet" />
+                     <BrandLogo size="menu" />
                   </Link>
                </div>
                <button onClick={() => setOffCanvas(false)} type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close menu"></button>

@@ -18,7 +18,7 @@ export default function GlobalJsonLd() {
       "@type": "Organization",
       name: "Property Planet",
       url: SITE_URL,
-      logo: `${SITE_URL}/favicon.png`,
+      logo: `${SITE_URL}/assets/images/logo/property-planet-icon.png`,
       description:
          "Property Planet is Hyderabad's AI-powered land and property advisory platform, connecting landowners, developers and buyers across Future City and the southern growth corridors.",
       telephone: `+91${CONTACT_PHONE}`,

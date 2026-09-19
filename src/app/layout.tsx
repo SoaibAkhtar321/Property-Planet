@@ -38,6 +38,9 @@ const ebGaramond = EB_Garamond({
 // were only ever reliable when a page passed a fully-qualified URL.
 
 const SITE_URL = "https://propertyplanet.in";
+// Permanent Property Planet symbol (icon only, no wordmark) -- also the
+// favicon PNG and the header icon on small screens.
+const ICON_URL = "/assets/images/logo/property-planet-icon.png";
 const SITE_DESCRIPTION =
    "Property Planet is Hyderabad's AI-powered land and property advisory platform, connecting landowners, developers and buyers across Future City and the southern growth corridors.";
 
@@ -60,22 +63,26 @@ export const metadata: Metadata = {
       description: SITE_DESCRIPTION,
       // The old value ("images/assets/ogg.png") was both a relative path
       // AND pointed at a file that does not exist anywhere in public/ --
-      // confirmed by searching the repo. Falling back to the real
-      // favicon.png so og:image at least resolves to something valid
+      // confirmed by searching the repo. Falling back to the
+      // brand icon so og:image at least resolves to something valid
       // rather than a broken/blank social preview, but this is a stopgap:
-      // favicon.png is a small square icon, not a proper 1200x630 social
+      // the icon is a square symbol, not a proper 1200x630 social
       // share image. Flagged in the final report -- replace with a real
       // OG image asset.
-      images: ["/favicon.png"],
+      images: [ICON_URL],
    },
    icons: {
-      icon: "/favicon.png",
+      icon: [
+         { url: "/favicon.ico", sizes: "any" },
+         { url: ICON_URL, type: "image/png", sizes: "512x512" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
    },
    twitter: {
       card: "summary_large_image",
       title: "Property Planet — Hyderabad's AI-Powered Land & Property Advisory Platform",
       description: SITE_DESCRIPTION,
-      images: ["/favicon.png"],
+      images: [ICON_URL],
    },
    other: {
       "msapplication-navbutton-color": "#0D1A1C",

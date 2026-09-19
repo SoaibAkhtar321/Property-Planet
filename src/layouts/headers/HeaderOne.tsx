@@ -1,13 +1,12 @@
 "use client"
 import NavMenu from "./Menu/NavMenu"
 import Link from "next/link"
-import Image from "next/image"
 import UseSticky from "@/hooks/UseSticky"
 import LoginModal from "@/modals/LoginModal"
 import AuthNav from "./Menu/AuthNav"
 import BecomeSellerNav from "./Menu/BecomeSellerNav"
 
-import logo_1 from "@/assets/images/logo/logo_01.svg";
+import BrandLogo from "@/components/common/BrandLogo";
 
 const HeaderOne = ({ style }: any) => {
    const { sticky } = UseSticky();
@@ -20,7 +19,7 @@ const HeaderOne = ({ style }: any) => {
                   <div className="d-flex align-items-center justify-content-between">
                      <div className="logo order-lg-0">
                         <Link href="/" className="d-flex align-items-center">
-                           <Image src={logo_1} alt="" />
+                           <BrandLogo size="header" mobileIcon priority />
                         </Link>
                      </div>
                      <div className="right-widget ms-auto ms-lg-0 me-3 me-lg-0 order-lg-3">

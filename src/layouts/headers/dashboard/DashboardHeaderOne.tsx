@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from "@/lib/supabase/client";
 
-import dashboardLogo from "@/assets/images/logo/logo_01.svg";
+import BrandLogo from "@/components/common/BrandLogo";
 import dashboardIconActive_1 from "@/assets/images/dashboard/icon/icon_1_active.svg";
 import dashboardIcon_1 from "@/assets/images/dashboard/icon/icon_1.svg";
 import dashboardIconActive_2 from "@/assets/images/dashboard/icon/icon_2_active.svg";
@@ -70,7 +70,7 @@ const DashboardHeaderOne = ({ isActive, setIsActive }: any) => {
          <div className="position-relative">
             <div className="logo d-md-block d-flex align-items-center justify-content-between plr bottom-line pb-30">
                <Link href="/dashboard-index">
-                  <Image src={dashboardLogo} alt="" />
+                  <BrandLogo size="menu" />
                </Link>
                <button onClick={() => setIsActive(false)} className="close-btn d-block d-md-none"><i className="fa-light fa-circle-xmark"></i></button>
             </div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-import dashboardLogo from "@/assets/images/logo/logo_01.svg";
+import BrandLogo from "@/components/common/BrandLogo";
 import iconOverview from "@/assets/images/dashboard/icon/icon_1.svg";
 import iconOverviewActive from "@/assets/images/dashboard/icon/icon_1_active.svg";
 import iconLeads from "@/assets/images/dashboard/icon/icon_2.svg";
@@ -71,7 +71,7 @@ const AdminSidebar = ({ isActive, setIsActive }: AdminSidebarProps) => {
          <div className="position-relative">
             <div className="logo d-md-block d-flex align-items-center justify-content-between plr bottom-line pb-30">
                <Link href="/admin">
-                  <Image src={dashboardLogo} alt="Property Planet" />
+                  <BrandLogo size="menu" />
                </Link>
                <button onClick={() => setIsActive(false)} className="close-btn d-block d-md-none">
                   <i className="fa-light fa-circle-xmark"></i>

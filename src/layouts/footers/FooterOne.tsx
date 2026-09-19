@@ -23,7 +23,7 @@ const FooterOne = ({ style }: any) => {
                         <div className="bg-wrapper">
                            <div className="logo mb-20">
                               <Link href="/">
-                                 <BrandLogo animate={false} variant={style ? "dark" : "light"} />
+                                 <BrandLogo size="footer" variant={style ? "dark" : "light"} />
                               </Link>
                            </div>
                            <p className="mb-20 lg-mb-15 md-mb-10">Hyderabad, Telangana</p>
