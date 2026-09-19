@@ -27,12 +27,34 @@ const quickLinks: { label: string; href: string; desc: string }[] = [
    { label: "Properties", href: "/properties", desc: "Verified plots, land, villas and apartments for sale" },
    { label: "Projects", href: "/projects", desc: "Developments and their available units" },
    { label: "Insights", href: "/blog", desc: "Market notes from the Property Planet team" },
-   { label: "Become a Seller", href: "/sell-property", desc: "List your land or property with us" },
    { label: "Contact", href: "/contact", desc: "Talk to an advisor" },
 ]
 
 const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
    const { user, role, loading } = useSupabaseUser();
+
+   // Phase 1 fix: this item previously pointed at the static
+   // /sell-property "list/upload property" prototype page — a
+   // regression that bypassed the real, session-aware seller journey
+   // (Seller Information -> Seller Registration -> Authorization ->
+   // Seller Dashboard). Mirrors the same resolution logic already used
+   // by the desktop nav (NavMenu.tsx / BecomeSellerNav.tsx) so mobile
+   // and desktop always agree on where "Become a Seller" goes:
+   //   - logged out             -> /seller/login (which links on to
+   //                                /seller/register for first-timers)
+   //   - logged in, role buyer  -> /seller/register
+   //   - logged in, role seller -> /dashboard/add-property directly
+   //   - logged in, role admin  -> hidden; admins manage listings from /admin
+   const sellerNav = (() => {
+      if (loading || role === "admin") return null;
+      if (user && role === "seller") {
+         return { label: "Add Listing", href: "/dashboard/add-property", desc: "Add a new listing to your seller dashboard" };
+      }
+      if (user && role === "buyer") {
+         return { label: "Become a Seller", href: "/seller/register", desc: "Register as a seller or agent with Property Planet" };
+      }
+      return { label: "Become a Seller", href: "/seller/login", desc: "List your land or property with us" };
+   })();
 
    // Phase 2: this is HeaderTwo's mobile navigation, so it needs the same
    // auth entry point NavMenu gained for desktop -- one line, no separate
@@ -73,6 +95,19 @@ const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
                               <span className="fs-15 opacity-75">{link.desc}</span>
                            </li>
                         ))}
+                        {sellerNav && (
+                           <li key={sellerNav.href} className="mb-25">
+                              <Link
+                                 href={sellerNav.href}
+                                 onClick={() => setOffCanvas(false)}
+                                 className="d-block color-dark fw-500 fs-22"
+                              >
+                                 {sellerNav.label}
+                                 <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
+                              </Link>
+                              <span className="fs-15 opacity-75">{sellerNav.desc}</span>
+                           </li>
+                        )}
                         {!loading && (
                            <li className="mb-25">
                               {user ? (

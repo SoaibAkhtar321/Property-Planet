@@ -41,8 +41,25 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
                            </li>
                               <AuthNav />
                               <li className="pp-header-menu-btn">
-                                 <button onClick={() => setOffCanvas(true)} style={{ cursor: "pointer" }} className="btn-one d-inline-flex align-items-center" type="button">
-                                    <i className="fa-sharp fa-light fa-bars-filter"></i> <span className="d-none d-sm-inline">Menu</span>
+                                 {/* Phase 2: fa-bars-filter (a "filter" glyph, three
+                                     unequal-width lines with dots) reads as a filter
+                                     control, not a menu trigger, and had no
+                                     accessible name once the "Menu" text hides
+                                     below 576px. Swapped for bootstrap-icons'
+                                     bi-list -- a plain three-line hamburger already
+                                     used elsewhere in this codebase -- plus proper
+                                     aria attributes tied to the offcanvas panel. */}
+                                 <button
+                                    onClick={() => setOffCanvas(true)}
+                                    style={{ cursor: "pointer" }}
+                                    className="btn-one d-inline-flex align-items-center"
+                                    type="button"
+                                    aria-label="Open menu"
+                                    aria-haspopup="true"
+                                    aria-expanded={offCanvas}
+                                    aria-controls="sideNav"
+                                 >
+                                    <i className="bi bi-list" aria-hidden="true"></i> <span className="d-none d-sm-inline">Menu</span>
                                  </button>
                               </li></>) : (<>
                                  <li className="d-none d-md-flex align-items-center login-btn-one me-4 me-xxl-5">

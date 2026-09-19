@@ -1,0 +1,384 @@
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/public/assets/scss/_brand-logo.scss Property-Planet-main/public/assets/scss/_brand-logo.scss
+--- a/public/assets/scss/_brand-logo.scss	2026-09-19 06:57:53.000000000 +0000
++++ b/public/assets/scss/_brand-logo.scss	2026-09-19 07:42:44.259462648 +0000
+@@ -38,15 +38,26 @@
+ }
+ 
+ // Header: the nav + right-hand widgets need ~1090px, so the full wordmark only
+-// fits on wide desktops. Between 992-1359px (and below 576px) the permanent
+-// icon is shown instead; tablets (768-991px) have room for a smaller full logo.
++// fits on wide desktops. Between 992-1359px the permanent icon is shown
++// instead (nav + widgets are too tight for the full wordmark there); tablets
++// (768-991px) have room for a smaller full logo.
++//
++// Phase 2 fix: this used to also collapse to the icon-only mark below 576px
++// (phone width), which meant the mobile header showed only a small icon
++// with no "Property Planet" text at all. Phones have their nav collapsed
++// into the offcanvas drawer, so there's no width pressure like the
++// 992-1359px tablet range has -- the full logo+wordmark fits comfortably
++// and should stay visible so the brand identity is recognizable on mobile.
+ @media (max-width: 1439px) {
+   .brand-logo.brand-logo--header { --brand-logo-h: 56px; }
+ }
+ @media (max-width: 991px) {
+   .brand-logo.brand-logo--footer { --brand-logo-h: 64px; }
+ }
+-@media (max-width: 575px), (min-width: 992px) and (max-width: 1359px) {
++@media (max-width: 575px) {
++  .brand-logo.brand-logo--header.brand-logo--icon-mobile { --brand-logo-h: 40px; }
++}
++@media (min-width: 992px) and (max-width: 1359px) {
+   .brand-logo.brand-logo--icon-mobile {
+     --brand-logo-h: 44px;
+     .brand-logo__full { display: none; }
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/public/assets/scss/_pp-ui.scss Property-Planet-main/public/assets/scss/_pp-ui.scss
+--- a/public/assets/scss/_pp-ui.scss	2026-09-19 06:57:53.000000000 +0000
++++ b/public/assets/scss/_pp-ui.scss	2026-09-19 07:50:39.761718530 +0000
+@@ -627,6 +627,14 @@
+    .theme-main-menu .pp-header-menu-btn .btn-one {
+       padding: 8px 12px;
+       font-size: 13px;
++      /* Phase 3: .btn-one carries a global `min-width: 120px` (meant for
++         larger CTA buttons) below 991px. Below 576px the "Menu" text
++         beside the icon is already hidden (d-none d-sm-inline), so that
++         120px minimum left a single small icon stranded inside a wide,
++         mostly-empty rectangle -- the "visually poor" trigger this phase
++         is meant to fix. Override it to a proper square icon-only touch
++         target instead. */
++      min-width: 0;
+       i { margin-right: 0; }
+    }
+ 
+@@ -635,6 +643,19 @@
+    }
+ }
+ 
++@media (max-width: 575px) {
++   .theme-main-menu .pp-header-menu-btn .btn-one {
++      width: 44px;
++      height: 44px;
++      min-width: 44px;
++      padding: 0;
++      display: inline-flex;
++      align-items: center;
++      justify-content: center;
++      font-size: 18px;
++   }
++}
++
+ /* ========================================================== MOBILE HERO === */
+ /* The hero kept its desktop bottom padding (pb-130, only reduced to
+    xl-pb-100 above 1199px) all the way down to phone widths, on top of the
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/components/common/BrandLogo.tsx Property-Planet-main/src/components/common/BrandLogo.tsx
+--- a/src/components/common/BrandLogo.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/components/common/BrandLogo.tsx	2026-09-19 07:42:49.771220621 +0000
+@@ -10,9 +10,14 @@
+ // and never changes between wordmark colour variants.
+ //
+ // Usage:
+-//   <BrandLogo size="header" mobileIcon />          header (icon-only < 576px)
++//   <BrandLogo size="header" mobileIcon />          header (icon-only 992-1359px only, see _brand-logo.scss)
+ //   <BrandLogo size="footer" variant="dark" />      footer on a dark background
+ //   <BrandLogo size="menu" />                       drawers / sidebars
++//
++// Phase 2: `mobileIcon` no longer collapses to icon-only below 576px -- the
++// full wordmark now stays visible on phones so "Property Planet" branding
++// remains recognizable on mobile (see _brand-logo.scss for the breakpoints
++// where the icon-only mark still applies).
+ 
+ import Image from "next/image";
+ import fullLight from "@/assets/images/logo/property-planet-logo.png";
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/components/dashboard/account-settings/index.tsx Property-Planet-main/src/components/dashboard/account-settings/index.tsx
+--- a/src/components/dashboard/account-settings/index.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/components/dashboard/account-settings/index.tsx	2026-09-19 07:58:48.745741730 +0000
+@@ -1,10 +1,11 @@
+-import DashboardHeaderOne from "@/layouts/headers/dashboard/DashboardHeaderOne";
+ import AccountSettingBody from "./AccountSettingBody";
+ 
++// Phase 5 fix: same duplicate-sidebar bug as message/index.tsx -- see that
++// file's comment. AccountSettingBody already renders DashboardHeaderTwo,
++// which renders the real, correctly wired DashboardHeaderOne itself.
+ const DashboardAccountSetting = () => {
+    return (
+       <>
+-         <DashboardHeaderOne />
+          <AccountSettingBody />
+       </>
+    )
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/components/dashboard/account-settings/password-change/index.tsx Property-Planet-main/src/components/dashboard/account-settings/password-change/index.tsx
+--- a/src/components/dashboard/account-settings/password-change/index.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/components/dashboard/account-settings/password-change/index.tsx	2026-09-19 07:58:59.172465783 +0000
+@@ -1,10 +1,11 @@
+-import DashboardHeaderOne from "@/layouts/headers/dashboard/DashboardHeaderOne"
+ import PasswordChangeBody from "./PasswordChangeBody"
+ 
++// Phase 5 fix: same duplicate-sidebar bug as message/index.tsx -- see that
++// file's comment. PasswordChangeBody already renders DashboardHeaderTwo,
++// which renders the real, correctly wired DashboardHeaderOne itself.
+ const PasswordChange = () => {
+    return (
+       <>
+-         <DashboardHeaderOne />
+          <PasswordChangeBody />
+       </>
+    )
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/components/dashboard/add-property/index.tsx Property-Planet-main/src/components/dashboard/add-property/index.tsx
+--- a/src/components/dashboard/add-property/index.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/components/dashboard/add-property/index.tsx	2026-09-19 07:59:03.621050222 +0000
+@@ -1,10 +1,11 @@
+-import DashboardHeaderOne from "@/layouts/headers/dashboard/DashboardHeaderOne"
+ import AddPropertyBody from "./AddPropertyBody"
+ 
++// Phase 5 fix: same duplicate-sidebar bug as message/index.tsx -- see that
++// file's comment. AddPropertyBody already renders DashboardHeaderTwo,
++// which renders the real, correctly wired DashboardHeaderOne itself.
+ const DashboardAddProperty = ({ error }: { error?: string }) => {
+    return (
+       <>
+-         <DashboardHeaderOne />
+          <AddPropertyBody error={error} />
+       </>
+    )
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/components/dashboard/edit-property/index.tsx Property-Planet-main/src/components/dashboard/edit-property/index.tsx
+--- a/src/components/dashboard/edit-property/index.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/components/dashboard/edit-property/index.tsx	2026-09-19 07:59:12.664746442 +0000
+@@ -1,5 +1,4 @@
+ import { redirect } from "next/navigation"
+-import DashboardHeaderOne from "@/layouts/headers/dashboard/DashboardHeaderOne"
+ import EditPropertyBody from "./EditPropertyBody"
+ import { getOwnPropertyById, getOwnPropertyMedia } from "@/lib/properties/queries"
+ import { updatePropertyListing } from "@/lib/properties/actions"
+@@ -22,8 +21,11 @@
+    };
+ 
+    return (
++      // Phase 5 fix: same duplicate-sidebar bug as message/index.tsx -- see
++      // that file's comment. EditPropertyBody already renders
++      // DashboardHeaderTwo, which renders the real, correctly wired
++      // DashboardHeaderOne itself.
+       <>
+-         <DashboardHeaderOne />
+          <EditPropertyBody property={property} media={media} error={error} onSubmit={submitUpdate} />
+       </>
+    )
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/components/dashboard/message/index.tsx Property-Planet-main/src/components/dashboard/message/index.tsx
+--- a/src/components/dashboard/message/index.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/components/dashboard/message/index.tsx	2026-09-19 07:58:39.810359039 +0000
+@@ -1,12 +1,16 @@
+-import DashboardHeaderOne from "@/layouts/headers/dashboard/DashboardHeaderOne"
+ import MessageBody from "./MessageBody"
+ import { MyEnquiry } from "@/lib/leads/queries"
+ import { SellerLead } from "@/lib/leads/sellerQueries"
+ 
++// Phase 5 fix: this used to also render a standalone <DashboardHeaderOne />
++// here, with no isActive/setIsActive props. MessageBody already renders
++// DashboardHeaderTwo, which renders the real, correctly wired
++// DashboardHeaderOne (sidebar) itself -- so this was a second, broken copy
++// of the sidebar stacked on the page. Its "close" button called an
++// undefined setIsActive and would throw if tapped on mobile.
+ const DashboardMessage = ({ enquiries, sellerLeads }: { enquiries: MyEnquiry[]; sellerLeads?: SellerLead[] }) => {
+    return (
+       <>
+-         <DashboardHeaderOne />
+          <MessageBody enquiries={enquiries} sellerLeads={sellerLeads} />
+       </>
+    )
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/components/dashboard/profile/index.tsx Property-Planet-main/src/components/dashboard/profile/index.tsx
+--- a/src/components/dashboard/profile/index.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/components/dashboard/profile/index.tsx	2026-09-19 07:58:44.249559938 +0000
+@@ -1,10 +1,11 @@
+-import DashboardHeaderOne from "@/layouts/headers/dashboard/DashboardHeaderOne"
+ import ProfileBody from "./ProfileBody"
+ 
++// Phase 5 fix: same duplicate-sidebar bug as message/index.tsx -- see that
++// file's comment. ProfileBody already renders DashboardHeaderTwo, which
++// renders the real, correctly wired DashboardHeaderOne itself.
+ const DashboardProfile = () => {
+    return (
+       <>
+-         <DashboardHeaderOne />
+          <ProfileBody />
+       </>
+    )
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/components/dashboard/properties-list/index.tsx Property-Planet-main/src/components/dashboard/properties-list/index.tsx
+--- a/src/components/dashboard/properties-list/index.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/components/dashboard/properties-list/index.tsx	2026-09-19 07:59:17.073164534 +0000
+@@ -1,10 +1,11 @@
+-import DashboardHeaderOne from "@/layouts/headers/dashboard/DashboardHeaderOne"
+ import PropertyListBody from "./PropertyListBody"
+ 
++// Phase 5 fix: same duplicate-sidebar bug as message/index.tsx -- see that
++// file's comment. PropertyListBody already renders DashboardHeaderTwo,
++// which renders the real, correctly wired DashboardHeaderOne itself.
+ const PropertyList = () => {
+    return (
+       <>
+-         <DashboardHeaderOne />
+          <PropertyListBody />
+       </>
+    )
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/layouts/headers/HeaderTwo.tsx Property-Planet-main/src/layouts/headers/HeaderTwo.tsx
+--- a/src/layouts/headers/HeaderTwo.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/layouts/headers/HeaderTwo.tsx	2026-09-19 07:42:57.507170225 +0000
+@@ -41,8 +41,25 @@
+                            </li>
+                               <AuthNav />
+                               <li className="pp-header-menu-btn">
+-                                 <button onClick={() => setOffCanvas(true)} style={{ cursor: "pointer" }} className="btn-one d-inline-flex align-items-center" type="button">
+-                                    <i className="fa-sharp fa-light fa-bars-filter"></i> <span className="d-none d-sm-inline">Menu</span>
++                                 {/* Phase 2: fa-bars-filter (a "filter" glyph, three
++                                     unequal-width lines with dots) reads as a filter
++                                     control, not a menu trigger, and had no
++                                     accessible name once the "Menu" text hides
++                                     below 576px. Swapped for bootstrap-icons'
++                                     bi-list -- a plain three-line hamburger already
++                                     used elsewhere in this codebase -- plus proper
++                                     aria attributes tied to the offcanvas panel. */}
++                                 <button
++                                    onClick={() => setOffCanvas(true)}
++                                    style={{ cursor: "pointer" }}
++                                    className="btn-one d-inline-flex align-items-center"
++                                    type="button"
++                                    aria-label="Open menu"
++                                    aria-haspopup="true"
++                                    aria-expanded={offCanvas}
++                                    aria-controls="sideNav"
++                                 >
++                                    <i className="bi bi-list" aria-hidden="true"></i> <span className="d-none d-sm-inline">Menu</span>
+                                  </button>
+                               </li></>) : (<>
+                                  <li className="d-none d-md-flex align-items-center login-btn-one me-4 me-xxl-5">
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/layouts/headers/Menu/Offcanvas.tsx Property-Planet-main/src/layouts/headers/Menu/Offcanvas.tsx
+--- a/src/layouts/headers/Menu/Offcanvas.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/layouts/headers/Menu/Offcanvas.tsx	2026-09-19 07:33:58.731176129 +0000
+@@ -27,13 +27,35 @@
+    { label: "Properties", href: "/properties", desc: "Verified plots, land, villas and apartments for sale" },
+    { label: "Projects", href: "/projects", desc: "Developments and their available units" },
+    { label: "Insights", href: "/blog", desc: "Market notes from the Property Planet team" },
+-   { label: "Become a Seller", href: "/sell-property", desc: "List your land or property with us" },
+    { label: "Contact", href: "/contact", desc: "Talk to an advisor" },
+ ]
+ 
+ const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
+    const { user, role, loading } = useSupabaseUser();
+ 
++   // Phase 1 fix: this item previously pointed at the static
++   // /sell-property "list/upload property" prototype page — a
++   // regression that bypassed the real, session-aware seller journey
++   // (Seller Information -> Seller Registration -> Authorization ->
++   // Seller Dashboard). Mirrors the same resolution logic already used
++   // by the desktop nav (NavMenu.tsx / BecomeSellerNav.tsx) so mobile
++   // and desktop always agree on where "Become a Seller" goes:
++   //   - logged out             -> /seller/login (which links on to
++   //                                /seller/register for first-timers)
++   //   - logged in, role buyer  -> /seller/register
++   //   - logged in, role seller -> /dashboard/add-property directly
++   //   - logged in, role admin  -> hidden; admins manage listings from /admin
++   const sellerNav = (() => {
++      if (loading || role === "admin") return null;
++      if (user && role === "seller") {
++         return { label: "Add Listing", href: "/dashboard/add-property", desc: "Add a new listing to your seller dashboard" };
++      }
++      if (user && role === "buyer") {
++         return { label: "Become a Seller", href: "/seller/register", desc: "Register as a seller or agent with Property Planet" };
++      }
++      return { label: "Become a Seller", href: "/seller/login", desc: "List your land or property with us" };
++   })();
++
+    // Phase 2: this is HeaderTwo's mobile navigation, so it needs the same
+    // auth entry point NavMenu gained for desktop -- one line, no separate
+    // Login and Sign up (buyer auth is a single Google-OAuth action, see
+@@ -73,6 +95,19 @@
+                               <span className="fs-15 opacity-75">{link.desc}</span>
+                            </li>
+                         ))}
++                        {sellerNav && (
++                           <li key={sellerNav.href} className="mb-25">
++                              <Link
++                                 href={sellerNav.href}
++                                 onClick={() => setOffCanvas(false)}
++                                 className="d-block color-dark fw-500 fs-22"
++                              >
++                                 {sellerNav.label}
++                                 <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
++                              </Link>
++                              <span className="fs-15 opacity-75">{sellerNav.desc}</span>
++                           </li>
++                        )}
+                         {!loading && (
+                            <li className="mb-25">
+                               {user ? (
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/layouts/headers/dashboard/DashboardHeaderOne.tsx Property-Planet-main/src/layouts/headers/dashboard/DashboardHeaderOne.tsx
+--- a/src/layouts/headers/dashboard/DashboardHeaderOne.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/layouts/headers/dashboard/DashboardHeaderOne.tsx	2026-09-19 07:52:41.306794576 +0000
+@@ -69,7 +69,10 @@
+       <aside className={`dash-aside-navbar ${isActive ? "show" : ""}`}>
+          <div className="position-relative">
+             <div className="logo d-md-block d-flex align-items-center justify-content-between plr bottom-line pb-30">
+-               <Link href="/dashboard-index">
++               {/* Phase 4 fix: this pointed at /dashboard-index (no /dashboard
++                   prefix), a route that doesn't exist -- clicking the sidebar
++                   logo 404'd instead of returning to the dashboard home. */}
++               <Link href="/dashboard/dashboard-index">
+                   <BrandLogo size="menu" />
+                </Link>
+                <button onClick={() => setIsActive(false)} className="close-btn d-block d-md-none"><i className="fa-light fa-circle-xmark"></i></button>
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/layouts/headers/dashboard/DashboardHeaderTwo.tsx Property-Planet-main/src/layouts/headers/dashboard/DashboardHeaderTwo.tsx
+--- a/src/layouts/headers/dashboard/DashboardHeaderTwo.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/layouts/headers/dashboard/DashboardHeaderTwo.tsx	2026-09-19 07:53:05.287780781 +0000
+@@ -7,7 +7,6 @@
+ import DashboardHeaderOne from "./DashboardHeaderOne";
+ import { createClient } from "@/lib/supabase/client";
+ 
+-import dashboardIcon_1 from "@/assets/images/dashboard/icon/icon_43.svg";
+ import dashboardIcon_2 from "@/assets/images/dashboard/icon/icon_11.svg";
+ import dashboardAvatar from "@/assets/images/dashboard/avatar_01.jpg";
+ 
+@@ -58,10 +57,11 @@
+                <button onClick={() => setIsActive(true)} className="dash-mobile-nav-toggler d-block d-md-none me-auto">
+                   <span></span>
+                </button>
+-               <form onSubmit={(e) => e.preventDefault()} className="search-form ms-auto">
+-                  <input type="text" placeholder="Search here.." />
+-                  <button><Image src={dashboardIcon_1} alt="" className="lazy-img m-auto" /></button>
+-               </form>
++               {/* Phase 4: removed a "Search here.." box that did nothing --
++                   its form onSubmit was e.preventDefault() with no search
++                   implementation behind it anywhere in the dashboard. Rather
++                   than leave dead UI in every dashboard page's header, it's
++                   removed until a real dashboard search exists to wire it to. */}
+                <div className="profile-notification position-relative dropdown-center ms-3 ms-md-5 me-4">
+                   <button className="noti-btn dropdown-toggle" type="button" id="notification-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                      <Image src={dashboardIcon_2} alt="" className="lazy-img" />
+@@ -71,7 +71,10 @@
+                </div>
+                {isSeller && (
+                   <div className="d-none d-md-block me-3">
+-                     <Link href="/add-property" className="btn-two"><span>Add Listing</span> <i className="fa-thin fa-arrow-up-right"></i></Link>
++                     {/* Phase 4 fix: was href="/add-property" (no /dashboard
++                         prefix) -- that route doesn't exist, so this button
++                         404'd for every seller who clicked it. */}
++                     <Link href="/dashboard/add-property" className="btn-two"><span>Add Listing</span> <i className="fa-thin fa-arrow-up-right"></i></Link>
+                   </div>
+                )}
+                <div className="user-data position-relative">
+diff -ru --exclude node_modules --exclude .git --exclude package-lock.json orig_ref/Property-Planet-main/src/layouts/headers/dashboard/Profile.tsx Property-Planet-main/src/layouts/headers/dashboard/Profile.tsx
+--- a/src/layouts/headers/dashboard/Profile.tsx	2026-09-19 06:57:53.000000000 +0000
++++ b/src/layouts/headers/dashboard/Profile.tsx	2026-09-19 07:53:18.064153669 +0000
+@@ -24,10 +24,14 @@
+          <div className="user-name-data">
+             <ul className="dropdown-menu" aria-labelledby="profile-dropdown">
+                <li>
+-                  <Link className="dropdown-item d-flex align-items-center" href="/profile"><Image src={profileIcon_1} alt="" className="lazy-img" /><span className="ms-2 ps-1">Profile</span></Link>
++                  {/* Phase 4 fix: was href="/profile" (no /dashboard prefix) --
++                      that route doesn't exist, so this link 404'd for every
++                      buyer/seller who opened this dropdown. */}
++                  <Link className="dropdown-item d-flex align-items-center" href="/dashboard/profile"><Image src={profileIcon_1} alt="" className="lazy-img" /><span className="ms-2 ps-1">Profile</span></Link>
+                </li>
+                <li>
+-                  <Link className="dropdown-item d-flex align-items-center" href="/account-settings"><Image src={profileIcon_2} alt="" className="lazy-img" /><span className="ms-2 ps-1">Account Settings</span></Link>
++                  {/* Phase 4 fix: same bug as above -- was href="/account-settings". */}
++                  <Link className="dropdown-item d-flex align-items-center" href="/dashboard/account-settings"><Image src={profileIcon_2} alt="" className="lazy-img" /><span className="ms-2 ps-1">Account Settings</span></Link>
+                </li>
+                <li>
+                   <button type="button" onClick={handleLogout} className="dropdown-item d-flex align-items-center border-0 bg-transparent w-100 text-start"><span className="ms-2 ps-1">Logout</span></button>

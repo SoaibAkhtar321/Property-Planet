@@ -24,10 +24,14 @@ const Profile = () => {
          <div className="user-name-data">
             <ul className="dropdown-menu" aria-labelledby="profile-dropdown">
                <li>
-                  <Link className="dropdown-item d-flex align-items-center" href="/profile"><Image src={profileIcon_1} alt="" className="lazy-img" /><span className="ms-2 ps-1">Profile</span></Link>
+                  {/* Phase 4 fix: was href="/profile" (no /dashboard prefix) --
+                      that route doesn't exist, so this link 404'd for every
+                      buyer/seller who opened this dropdown. */}
+                  <Link className="dropdown-item d-flex align-items-center" href="/dashboard/profile"><Image src={profileIcon_1} alt="" className="lazy-img" /><span className="ms-2 ps-1">Profile</span></Link>
                </li>
                <li>
-                  <Link className="dropdown-item d-flex align-items-center" href="/account-settings"><Image src={profileIcon_2} alt="" className="lazy-img" /><span className="ms-2 ps-1">Account Settings</span></Link>
+                  {/* Phase 4 fix: same bug as above -- was href="/account-settings". */}
+                  <Link className="dropdown-item d-flex align-items-center" href="/dashboard/account-settings"><Image src={profileIcon_2} alt="" className="lazy-img" /><span className="ms-2 ps-1">Account Settings</span></Link>
                </li>
                <li>
                   <button type="button" onClick={handleLogout} className="dropdown-item d-flex align-items-center border-0 bg-transparent w-100 text-start"><span className="ms-2 ps-1">Logout</span></button>

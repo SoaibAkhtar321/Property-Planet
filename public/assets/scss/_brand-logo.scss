@@ -38,15 +38,26 @@
 }
 
 // Header: the nav + right-hand widgets need ~1090px, so the full wordmark only
-// fits on wide desktops. Between 992-1359px (and below 576px) the permanent
-// icon is shown instead; tablets (768-991px) have room for a smaller full logo.
+// fits on wide desktops. Between 992-1359px the permanent icon is shown
+// instead (nav + widgets are too tight for the full wordmark there); tablets
+// (768-991px) have room for a smaller full logo.
+//
+// Phase 2 fix: this used to also collapse to the icon-only mark below 576px
+// (phone width), which meant the mobile header showed only a small icon
+// with no "Property Planet" text at all. Phones have their nav collapsed
+// into the offcanvas drawer, so there's no width pressure like the
+// 992-1359px tablet range has -- the full logo+wordmark fits comfortably
+// and should stay visible so the brand identity is recognizable on mobile.
 @media (max-width: 1439px) {
   .brand-logo.brand-logo--header { --brand-logo-h: 56px; }
 }
 @media (max-width: 991px) {
   .brand-logo.brand-logo--footer { --brand-logo-h: 64px; }
 }
-@media (max-width: 575px), (min-width: 992px) and (max-width: 1359px) {
+@media (max-width: 575px) {
+  .brand-logo.brand-logo--header.brand-logo--icon-mobile { --brand-logo-h: 40px; }
+}
+@media (min-width: 992px) and (max-width: 1359px) {
   .brand-logo.brand-logo--icon-mobile {
     --brand-logo-h: 44px;
     .brand-logo__full { display: none; }

@@ -69,7 +69,10 @@ const DashboardHeaderOne = ({ isActive, setIsActive }: any) => {
       <aside className={`dash-aside-navbar ${isActive ? "show" : ""}`}>
          <div className="position-relative">
             <div className="logo d-md-block d-flex align-items-center justify-content-between plr bottom-line pb-30">
-               <Link href="/dashboard-index">
+               {/* Phase 4 fix: this pointed at /dashboard-index (no /dashboard
+                   prefix), a route that doesn't exist -- clicking the sidebar
+                   logo 404'd instead of returning to the dashboard home. */}
+               <Link href="/dashboard/dashboard-index">
                   <BrandLogo size="menu" />
                </Link>
                <button onClick={() => setIsActive(false)} className="close-btn d-block d-md-none"><i className="fa-light fa-circle-xmark"></i></button>

@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import DashboardHeaderOne from "./DashboardHeaderOne";
 import { createClient } from "@/lib/supabase/client";
 
-import dashboardIcon_1 from "@/assets/images/dashboard/icon/icon_43.svg";
 import dashboardIcon_2 from "@/assets/images/dashboard/icon/icon_11.svg";
 import dashboardAvatar from "@/assets/images/dashboard/avatar_01.jpg";
 
@@ -58,10 +57,11 @@ const DashboardHeaderTwo = ({title}:any) => {
                <button onClick={() => setIsActive(true)} className="dash-mobile-nav-toggler d-block d-md-none me-auto">
                   <span></span>
                </button>
-               <form onSubmit={(e) => e.preventDefault()} className="search-form ms-auto">
-                  <input type="text" placeholder="Search here.." />
-                  <button><Image src={dashboardIcon_1} alt="" className="lazy-img m-auto" /></button>
-               </form>
+               {/* Phase 4: removed a "Search here.." box that did nothing --
+                   its form onSubmit was e.preventDefault() with no search
+                   implementation behind it anywhere in the dashboard. Rather
+                   than leave dead UI in every dashboard page's header, it's
+                   removed until a real dashboard search exists to wire it to. */}
                <div className="profile-notification position-relative dropdown-center ms-3 ms-md-5 me-4">
                   <button className="noti-btn dropdown-toggle" type="button" id="notification-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                      <Image src={dashboardIcon_2} alt="" className="lazy-img" />
@@ -71,7 +71,10 @@ const DashboardHeaderTwo = ({title}:any) => {
                </div>
                {isSeller && (
                   <div className="d-none d-md-block me-3">
-                     <Link href="/add-property" className="btn-two"><span>Add Listing</span> <i className="fa-thin fa-arrow-up-right"></i></Link>
+                     {/* Phase 4 fix: was href="/add-property" (no /dashboard
+                         prefix) -- that route doesn't exist, so this button
+                         404'd for every seller who clicked it. */}
+                     <Link href="/dashboard/add-property" className="btn-two"><span>Add Listing</span> <i className="fa-thin fa-arrow-up-right"></i></Link>
                   </div>
                )}
                <div className="user-data position-relative">

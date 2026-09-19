@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation"
-import DashboardHeaderOne from "@/layouts/headers/dashboard/DashboardHeaderOne"
 import EditPropertyBody from "./EditPropertyBody"
 import { getOwnPropertyById, getOwnPropertyMedia } from "@/lib/properties/queries"
 import { updatePropertyListing } from "@/lib/properties/actions"
@@ -22,8 +21,11 @@ const DashboardEditProperty = async ({ id, error }: { id: string; error?: string
    };
 
    return (
+      // Phase 5 fix: same duplicate-sidebar bug as message/index.tsx -- see
+      // that file's comment. EditPropertyBody already renders
+      // DashboardHeaderTwo, which renders the real, correctly wired
+      // DashboardHeaderOne itself.
       <>
-         <DashboardHeaderOne />
          <EditPropertyBody property={property} media={media} error={error} onSubmit={submitUpdate} />
       </>
    )

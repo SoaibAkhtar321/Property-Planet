@@ -627,11 +627,32 @@
    .theme-main-menu .pp-header-menu-btn .btn-one {
       padding: 8px 12px;
       font-size: 13px;
+      /* Phase 3: .btn-one carries a global `min-width: 120px` (meant for
+         larger CTA buttons) below 991px. Below 576px the "Menu" text
+         beside the icon is already hidden (d-none d-sm-inline), so that
+         120px minimum left a single small icon stranded inside a wide,
+         mostly-empty rectangle -- the "visually poor" trigger this phase
+         is meant to fix. Override it to a proper square icon-only touch
+         target instead. */
+      min-width: 0;
       i { margin-right: 0; }
    }
 
    .theme-main-menu .right-widget {
       margin-right: 8px !important;
+   }
+}
+
+@media (max-width: 575px) {
+   .theme-main-menu .pp-header-menu-btn .btn-one {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
    }
 }
 

@@ -10,9 +10,14 @@
 // and never changes between wordmark colour variants.
 //
 // Usage:
-//   <BrandLogo size="header" mobileIcon />          header (icon-only < 576px)
+//   <BrandLogo size="header" mobileIcon />          header (icon-only 992-1359px only, see _brand-logo.scss)
 //   <BrandLogo size="footer" variant="dark" />      footer on a dark background
 //   <BrandLogo size="menu" />                       drawers / sidebars
+//
+// Phase 2: `mobileIcon` no longer collapses to icon-only below 576px -- the
+// full wordmark now stays visible on phones so "Property Planet" branding
+// remains recognizable on mobile (see _brand-logo.scss for the breakpoints
+// where the icon-only mark still applies).
 
 import Image from "next/image";
 import fullLight from "@/assets/images/logo/property-planet-logo.png";
