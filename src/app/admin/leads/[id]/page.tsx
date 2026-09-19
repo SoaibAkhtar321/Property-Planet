@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getAdminLeadDetail, LEAD_KIND_LABELS, type LeadStatus } from "@/lib/admin/leads/queries";
 import { VISITOR_REQUIREMENT_TYPE_LABELS, type VisitorRequirementType } from "@/lib/leads/assistanceOptions";
 import { updateLeadStatus } from "@/lib/admin/leads/actions";
@@ -8,8 +8,15 @@ export const dynamic = "force-dynamic";
 
 const STATUS_OPTIONS: LeadStatus[] = ["new", "contacted", "qualified", "site_visit", "negotiation", "closed", "lost"];
 
-export default async function AdminLeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AdminLeadDetailPage({
+   params,
+   searchParams,
+}: {
+   params: Promise<{ id: string }>;
+   searchParams: Promise<{ error?: string }>;
+}) {
    const { id } = await params;
+   const { error: statusError } = await searchParams;
    const lead = await getAdminLeadDetail(id);
 
    if (!lead) {
@@ -19,7 +26,13 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
    const updateStatus = async (formData: FormData) => {
       "use server";
       const status = String(formData.get("status")) as LeadStatus;
-      await updateLeadStatus(id, status);
+      const result = await updateLeadStatus(id, status);
+      // Surface a failed update instead of silently re-rendering the old
+      // status. redirect() also clears any earlier error on success.
+      if (!result.success) {
+         redirect(`/admin/leads/${id}?error=${encodeURIComponent(result.error ?? "Could not update status.")}`);
+      }
+      redirect(`/admin/leads/${id}`);
    };
 
    return (
@@ -49,10 +62,16 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
             </form>
          </div>
 
+         {statusError && (
+            <div className="alert alert-danger" role="alert">
+               Status not updated: {statusError}
+            </div>
+         )}
+
          <div className="row g-4">
             <div className="col-md-4">
                <div className="border rounded p-3 h-100">
-                  <h6 className="text-muted">Buyer</h6>
+                  <h6 className="text-muted">{lead.kind === "visitor_assistance" ? "Visitor" : "Buyer"}</h6>
                   <div className="fw-bold">{lead.buyer_name ?? "—"}</div>
                   <div>{lead.buyer_phone ?? "No phone on file"}</div>
                   <div>{lead.buyer_email ?? <span className="text-muted">No email on file</span>}</div>
@@ -88,7 +107,7 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
                         <div className="mt-2">
                            <span className="badge bg-secondary">{lead.property_status}</span>
                         </div>
-                        {lead.property_slug && (
+                        {lead.property_slug && lead.property_status === "published" && (
                            <div className="mt-3">
                               <Link
                                  href={`/properties/${lead.property_slug}`}
@@ -102,7 +121,11 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
                      </>
                   ) : (
                      <div className="text-muted small">
-                        Project-level enquiry — the buyer asked about the project as a whole, not a specific unit.
+                        {lead.kind === "visitor_assistance"
+                           ? "General assistance request — the visitor was not viewing a specific property."
+                           : lead.kind === "general"
+                             ? "Website contact form — not about a specific listing."
+                             : "Project-level enquiry — the buyer asked about the project as a whole, not a specific unit."}
                      </div>
                   )}
 
@@ -139,10 +162,17 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
                      <>
                         <div className="fw-bold">{lead.seller_name ?? "—"}</div>
                         <div>{lead.seller_phone ?? "No phone on file"}</div>
+                        {lead.kind === "visitor_assistance" && (
+                           <div className="text-muted small mt-2">
+                              Admin-only request — the seller is not notified and cannot see it.
+                           </div>
+                        )}
                      </>
                   ) : (
                      <div className="text-muted small">
-                        No individual seller — project enquiries are handled by the Property Planet team.
+                        {lead.kind === "visitor_assistance" || lead.kind === "general"
+                           ? "No seller — this request is handled by the Property Planet team."
+                           : "No individual seller — project enquiries are handled by the Property Planet team."}
                      </div>
                   )}
                </div>

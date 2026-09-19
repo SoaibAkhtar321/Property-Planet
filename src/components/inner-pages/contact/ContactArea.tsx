@@ -1,4 +1,3 @@
-import Link from "next/link"
 import Image from "next/image"
 
 import circleImg from "@/assets/images/icon/icon_39.svg"

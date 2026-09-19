@@ -209,4 +209,11 @@ select zz_t('account deletion scrubs personal fields on requester_id-keyed leads
    where requester_id = '00000000-0000-0000-0000-0000000000e2'
      and source = 'visitor_assistance' and contact_email is null and contact_phone is null));
 
+-- 0032: the scrub above must not violate leads_visitor_assistance_shape, and
+-- the business record (with its requirement_type) must survive deletion.
+select zz_t('scrubbed visitor-assistance lead is retained with requirement_type',
+  (select requirement_type = 'apartment' from leads
+   where requester_id = '00000000-0000-0000-0000-0000000000e2'
+     and source = 'visitor_assistance'));
+
 rollback;

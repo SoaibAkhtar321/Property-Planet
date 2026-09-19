@@ -30,7 +30,6 @@ const STATIC_ROUTES = [
    "/about",
    "/contact",
    "/faq",
-   "/sell-property",
    "/privacy-policy",
    "/terms-of-service",
 ];

@@ -38,10 +38,17 @@ export async function updateLeadStatus(leadId: string, status: LeadStatus): Prom
 
    const supabase = await createClient();
 
-   const { error } = await supabase.from("leads").update({ status }).eq("id", leadId);
+   // .select("id") returns the rows actually updated. RLS filters a
+   // disallowed/nonexistent row out silently (no error, zero rows), so
+   // without this check the UI would report a status change that never
+   // happened.
+   const { data, error } = await supabase.from("leads").update({ status }).eq("id", leadId).select("id");
 
    if (error) {
       return { success: false, error: error.message };
+   }
+   if (!data || data.length === 0) {
+      return { success: false, error: "Lead not found, or you don't have permission to update it." };
    }
 
    revalidatePath("/admin/leads");

@@ -38,6 +38,16 @@ const nextConfig = {
         destination: "/about",
         permanent: true,
       },
+      // The old static /sell-property "list your property" page was a
+      // non-functional prototype (its submit button was disabled) and has
+      // been removed. Sellers now use the real, session-aware flow that
+      // starts at /seller/login (-> /seller/register -> seller dashboard).
+      // Redirected rather than 404'd because the URL was in the sitemap.
+      {
+        source: "/sell-property",
+        destination: "/seller/login",
+        permanent: true,
+      },
     ];
   },
 }

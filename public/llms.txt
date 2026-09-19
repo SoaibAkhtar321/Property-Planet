@@ -17,8 +17,6 @@ moderated — nothing here is auto-generated inventory.
   developments/projects, each containing multiple individual units.
 - [Insights](https://propertyplanet.in/blog): Guidance on buying and
   selling plots, land and property across Hyderabad's growth corridors.
-- [Sell / List Your Property](https://propertyplanet.in/sell-property):
-  For owners and agents who want to list a property with Property Planet.
 - [About Us](https://propertyplanet.in/about)
 - [Contact](https://propertyplanet.in/contact)
 - [FAQ](https://propertyplanet.in/faq)

@@ -24,7 +24,6 @@
 //     those are admin-only / not implemented, by design.
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
@@ -32,13 +31,6 @@ export interface ActionResult {
    success: boolean;
    error?: string;
 }
-
-const slugify = (value: string) =>
-   value
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
 
 const numberOrNull = (value: FormDataEntryValue | null) => {
    if (!value || String(value).trim() === "") return null;
@@ -91,77 +83,6 @@ export async function initDraftProperty(): Promise<{ id: string } | { error: str
    return { id: data.id };
 }
 
-/**
- * Creates a new listing owned by the current seller, always in `draft`.
- * Redirects into the properties list on success, or back to the form with
- * an error on failure — same convention as createProject().
- */
-export async function createPropertyListing(formData: FormData): Promise<void> {
-   const ctx = await requireRole(["seller"]);
-   const supabase = await createClient();
-
-   const title = String(formData.get("title") ?? "").trim();
-   if (title.length < 3) {
-      redirect("/dashboard/add-property?error=" + encodeURIComponent("Title must be at least 3 characters."));
-   }
-
-   const price = numberOrNull(formData.get("price"));
-   if (price === null || price < 0) {
-      redirect("/dashboard/add-property?error=" + encodeURIComponent("A valid price is required."));
-   }
-
-   const city = textOrNull(formData.get("city"));
-   const locality = textOrNull(formData.get("locality"));
-   if (!city || !locality) {
-      redirect("/dashboard/add-property?error=" + encodeURIComponent("City and locality are required."));
-   }
-
-   const propertyType = textOrNull(formData.get("property_type"));
-   if (!propertyType) {
-      redirect("/dashboard/add-property?error=" + encodeURIComponent("Property type is required."));
-   }
-
-   const slugSeed = `${title}-${city}`;
-   const slug = `${slugify(slugSeed)}-${Date.now().toString(36)}`;
-
-   const { data, error } = await supabase
-      .from("properties")
-      .insert({
-         owner_id: ctx.userId,
-         title,
-         slug,
-         property_type: propertyType,
-         // Phase 20: always 'sale'. The seller form no longer offers a
-         // rent option and this ignores the posted field entirely, so a
-         // crafted request cannot create unsupported rental inventory.
-         listing_type: "sale",
-         price,
-         area: numberOrNull(formData.get("area")),
-         area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",
-         bedrooms: numberOrNull(formData.get("bedrooms")),
-         bathrooms: numberOrNull(formData.get("bathrooms")),
-         description: textOrNull(formData.get("description")),
-         city,
-         locality,
-         // status intentionally omitted — column default is 'draft'.
-      })
-      .select("id")
-      .single();
-
-   if (error || !data) {
-      redirect("/dashboard/add-property?error=" + encodeURIComponent(error?.message ?? "Failed to create listing."));
-   }
-
-     revalidatePath("/dashboard/properties-list");
-   // Land on Edit rather than the list: that page already has the full
-   // media uploader (PropertyMediaUpload), so the seller's very next step
-   // is adding photos, not a second trip through the dashboard to find
-   // where to do that. A property row must exist before any storage path
-   // can reference it (storage_path is `{property_id}/...`), so this
-   // create -> edit handoff is the two-step the architecture requires,
-   // not an extra one.
-   redirect(`/dashboard/edit-property/${data.id}`);
-}
 /**
  * Updates the seller-editable fields on one of the caller's own listings.
  * Only permitted while the listing is still `draft` — once submitted

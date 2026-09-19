@@ -33,7 +33,6 @@
 // (0002) is a BEFORE UPDATE trigger and never fires on INSERT.
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -59,13 +58,6 @@ const textOrNull = (value: FormDataEntryValue | null) => {
    const s = value ? String(value).trim() : "";
    return s === "" ? null : s;
 };
-
-const slugify = (value: string) =>
-   value
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
 
 /**
  * Creates an empty placeholder listing as admin, mirroring
@@ -104,85 +96,6 @@ export async function initDraftAdminProperty(): Promise<{ id: string } | { error
    }
 
    return { id: data.id };
-}
-
-/**
- * Creates a property listing as admin. Reuses the exact same form fields
- * as the seller's createPropertyListing() (src/lib/properties/actions.ts)
- * — same columns, same validation, same slugify convention — the only
- * differences are the auth guard (requireAdmin vs requireRole(["seller"]))
- * and that the admin may publish immediately instead of always landing in
- * `draft`.
- */
-export async function createAdminPropertyListing(formData: FormData): Promise<void> {
-   const session = await requireAdmin();
-   const supabase = await createClient();
-
-   const title = String(formData.get("title") ?? "").trim();
-   if (title.length < 3) {
-      redirect("/admin/properties/new?error=" + encodeURIComponent("Title must be at least 3 characters."));
-   }
-
-   const price = numberOrNull(formData.get("price"));
-   if (price === null || price < 0) {
-      redirect("/admin/properties/new?error=" + encodeURIComponent("A valid price is required."));
-   }
-
-   const city = textOrNull(formData.get("city"));
-   const locality = textOrNull(formData.get("locality"));
-   if (!city || !locality) {
-      redirect("/admin/properties/new?error=" + encodeURIComponent("City and locality are required."));
-   }
-
-   const propertyType = textOrNull(formData.get("property_type"));
-   if (!propertyType) {
-      redirect("/admin/properties/new?error=" + encodeURIComponent("Property type is required."));
-   }
-
-   const publishNow = formData.get("publish_now") === "on";
-
-   const slugSeed = `${title}-${city}`;
-   const slug = `${slugify(slugSeed)}-${Date.now().toString(36)}`;
-
-   const { data, error } = await supabase
-      .from("properties")
-      .insert({
-         owner_id: session.userId,
-         title,
-         slug,
-         property_type: propertyType,
-         // Phase 20: always 'sale'. The rental option was removed from the
-         // admin UI, and this ignores the field entirely so a hand-crafted
-         // POST cannot reintroduce unsupported rental inventory.
-         listing_type: "sale",
-         price,
-         area: numberOrNull(formData.get("area")),
-         area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",
-         bedrooms: numberOrNull(formData.get("bedrooms")),
-         bathrooms: numberOrNull(formData.get("bathrooms")),
-         description: textOrNull(formData.get("description")),
-         city,
-         locality,
-         // Admin-created listings are Individual Properties by definition
-         // (Phase 6). Explicit rather than relying on the column default,
-         // so the invariant is visible at the insert site; Project Units
-         // are created from the project screen instead
-         // (src/lib/admin/units/actions.ts).
-         project_id: null,
-         status: publishNow ? "published" : "draft",
-         // Trigger-set on UPDATE only (0002) — set it directly here since
-         // this is an INSERT going straight to `published`.
-         published_at: publishNow ? new Date().toISOString() : null,
-      })
-      .select("id")
-      .single();
-
-   if (error || !data) {
-      redirect("/admin/properties/new?error=" + encodeURIComponent(error?.message ?? "Failed to create listing."));
-   }
-
-   revalidatePropertyPaths(data.id);
-   redirect(`/admin/properties/${data.id}`);
 }
 
 /** Approves a property: status -> published. */
