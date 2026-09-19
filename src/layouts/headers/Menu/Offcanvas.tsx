@@ -1,6 +1,7 @@
 "use client"
 import Link from "next/link"
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF, SOCIAL_LINKS } from "@/lib/site/contact"
+import { useSupabaseUser } from "@/hooks/useSupabaseUser"
 
 import BrandLogo from "@/components/common/BrandLogo";
 
@@ -31,6 +32,17 @@ const quickLinks: { label: string; href: string; desc: string }[] = [
 ]
 
 const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
+   const { user, role, loading } = useSupabaseUser();
+
+   // Phase 2: this is HeaderTwo's mobile navigation, so it needs the same
+   // auth entry point NavMenu gained for desktop -- one line, no separate
+   // Login and Sign up (buyer auth is a single Google-OAuth action, see
+   // LoginModal.tsx). Logged in, the equivalent isn't a link at all: it's
+   // the account menu already visible in the header (AuthNav avatar), so
+   // this row just points at that person's own dashboard instead, and
+   // never duplicates Login/Sign up/Logout at once.
+   const dashboardHref = role === "admin" ? "/admin" : "/dashboard/dashboard-index";
+
    return (
       <>
          <div className={`offcanvas offcanvas-end sidebar-nav ${offCanvas ? "show" : ""}`} id="sideNav">
@@ -61,6 +73,32 @@ const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
                               <span className="fs-15 opacity-75">{link.desc}</span>
                            </li>
                         ))}
+                        {!loading && (
+                           <li className="mb-25">
+                              {user ? (
+                                 <Link
+                                    href={dashboardHref}
+                                    onClick={() => setOffCanvas(false)}
+                                    className="d-block color-dark fw-500 fs-22"
+                                 >
+                                    My Dashboard
+                                    <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
+                                 </Link>
+                              ) : (
+                                 <a
+                                    href="#"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#loginModal"
+                                    onClick={() => setOffCanvas(false)}
+                                    className="d-block color-dark fw-500 fs-22"
+                                    style={{ cursor: "pointer" }}
+                                 >
+                                    Login / Sign up
+                                    <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
+                                 </a>
+                              )}
+                           </li>
+                        )}
                      </ul>
                   </nav>
 

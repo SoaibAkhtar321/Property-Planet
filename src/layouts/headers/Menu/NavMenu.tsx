@@ -109,6 +109,25 @@ const NavMenu = () => {
                 </li>
                 );
             })}
+            {/* Phase 2: Login/Sign up moved out of the standalone header
+                button (see AuthNav.tsx) and into the nav itself, so it's
+                still reachable without being the first thing a new visitor
+                sees. Buyer login and sign-up are the same action (Google
+                OAuth via #loginModal, see LoginModal.tsx) -- one entry,
+                not two. Hidden once logged in; the account menu (avatar in
+                the header) takes over from there. */}
+            {!loading && !user && (
+                <li className="nav-item auth-nav-item">
+                    <Link
+                        href="#"
+                        data-bs-toggle="modal"
+                        data-bs-target="#loginModal"
+                        className="nav-link"
+                    >
+                        Login / Sign up
+                    </Link>
+                </li>
+            )}
         </ul>
     );
 };

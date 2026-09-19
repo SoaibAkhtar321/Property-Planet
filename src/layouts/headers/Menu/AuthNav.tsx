@@ -33,18 +33,13 @@ const AuthNav = ({ style_2 }: AuthNavProps) => {
    }
 
    if (!user) {
-      return style_2 ? (
-         <li>
-            <Link href="#" data-bs-toggle="modal" data-bs-target="#loginModal" className="login-btn-two rounded-circle tran3s d-flex align-items-center justify-content-center"><i className="fa-regular fa-lock"></i></Link>
-         </li>
-      ) : (
-         <li className="d-inline-block ms-2 ms-md-3 ms-xl-4 me-2 me-xl-4">
-            <Link href="#" data-bs-toggle="modal" data-bs-target="#loginModal" className="auth-cta-btn tran3s d-inline-flex align-items-center">
-               <i className="fa-regular fa-lock"></i>
-               <span><span className="d-none d-sm-inline">Login / </span>Sign up</span>
-            </Link>
-         </li>
-      );
+      // Phase 2: logged-out visitors no longer get a standalone Login/Sign up
+      // button occupying prominent header space -- that action now lives in
+      // NavMenu (desktop nav / HeaderOne mobile collapse) and Offcanvas
+      // (HeaderTwo mobile menu) instead, both using the same #loginModal
+      // trigger. Render nothing here so the header stays focused on
+      // discovery for new visitors.
+      return null;
    }
 
    const displayName = fullName || user.email || "Account";

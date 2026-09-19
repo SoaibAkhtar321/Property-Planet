@@ -58,11 +58,14 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
                      </div>
 
                      <nav className="navbar navbar-expand-lg p0 ms-lg-4 order-lg-2">
-                        <button className="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse"
-                           data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                           aria-label="Toggle navigation">
-                           <span></span>
-                        </button>
+                        {/* Phase 2: no separate hamburger here. Below lg, the
+                            "Menu" button above (right-widget) already opens
+                            Offcanvas as the single mobile nav trigger -- a
+                            second toggler for this collapse would be a
+                            duplicate menu system opening a different panel.
+                            This collapse now only needs to show/hide with
+                            the lg breakpoint itself, which navbar-expand-lg
+                            already does. */}
                         <div className={`collapse navbar-collapse ${style_2 ? "ms-xl-5" : ""}`} id="navbarNav">
                            <NavMenu />
                         </div>

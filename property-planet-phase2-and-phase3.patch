@@ -1,0 +1,765 @@
+diff --git a/src/components/dashboard/profile/DeleteAccountSection.tsx b/src/components/dashboard/profile/DeleteAccountSection.tsx
+new file mode 100644
+index 0000000..83b8960
+--- /dev/null
++++ b/src/components/dashboard/profile/DeleteAccountSection.tsx
+@@ -0,0 +1,191 @@
++"use client"
++// src/components/dashboard/profile/DeleteAccountSection.tsx
++//
++// Phase 3: Delete Account, rendered at the bottom of /dashboard/profile —
++// the one profile/settings page shared by buyers and sellers (see
++// AuthNav.tsx: both roles' account menu links here as "Profile"). Kept
++// visually separated from the rest of the page (its own red-bordered
++// card, below everything else) precisely because it should not read like
++// an ordinary "Save" action.
++//
++// Buyer auth is Google OAuth only (see src/modals/LoginModal.tsx) — this
++// app has no password to re-check. The confirmation step instead requires
++// typing DELETE, which (like a password prompt would) makes accidental
++// activation practically impossible without adding a re-authentication
++// flow the app has no way to support.
++//
++// The actual deletion runs through the server action in
++// src/lib/account/actions.ts — nothing here ever touches
++// SUPABASE_SERVICE_ROLE_KEY or calls the Supabase Auth admin API
++// directly; this component only ever calls the RLS-respecting browser
++// client (for the final sign-out) plus the imported server action.
++
++import { useState } from "react"
++import { useRouter } from "next/navigation"
++import { createClient } from "@/lib/supabase/client"
++import { deleteOwnAccount } from "@/lib/account/actions"
++
++type Status = "idle" | "confirming" | "deleting" | "error";
++
++const CONFIRM_PHRASE = "DELETE";
++
++const DeleteAccountSection = () => {
++   const router = useRouter();
++   const [status, setStatus] = useState<Status>("idle");
++   const [confirmText, setConfirmText] = useState("");
++   const [error, setError] = useState("");
++
++   const openConfirm = () => {
++      setConfirmText("");
++      setError("");
++      setStatus("confirming");
++   };
++
++   const closeConfirm = () => {
++      if (status === "deleting") return; // don't allow closing mid-request
++      setStatus("idle");
++      setConfirmText("");
++      setError("");
++   };
++
++   const handleConfirmDelete = async () => {
++      if (confirmText.trim().toUpperCase() !== CONFIRM_PHRASE) {
++         setError(`Please type ${CONFIRM_PHRASE} to confirm.`);
++         return;
++      }
++
++      setStatus("deleting");
++      setError("");
++
++      try {
++         const result = await deleteOwnAccount();
++
++         if (!result.success) {
++            setError(result.error ?? "Something went wrong. Please try again.");
++            setStatus("error");
++            return;
++         }
++
++         // Best-effort client-side cleanup so no stale profile data or
++         // session token lingers in the browser, even though the account
++         // is already gone server-side at this point.
++         try {
++            const supabase = createClient();
++            await supabase.auth.signOut();
++         } catch {
++            // Non-fatal — the server-side deletion already succeeded and
++            // the auth account no longer exists either way.
++         }
++
++         router.push("/");
++         router.refresh();
++      } catch (err) {
++         console.error("Account deletion request failed:", err);
++         setError("Something went wrong. Please try again, or contact support if this continues.");
++         setStatus("error");
++      }
++   };
++
++   const isOpen = status === "confirming" || status === "deleting" || status === "error";
++   const isDeleting = status === "deleting";
++
++   return (
++      <div className="bg-white card-box border-20 mt-30" style={{ border: "1px solid #f3c6c6" }}>
++         <h4 className="dash-title-three" style={{ color: "#c0392b" }}>Delete Account</h4>
++         <p className="mb-20">
++            Permanently delete your Property Planet account. This cannot be undone from the app.
++            Deleting your account may affect your profile information, saved/favourite properties,
++            enquiries or other personal activity, and — if you&apos;re a seller — your listings and
++            seller account information. Some records may be retained in a limited, non-personal
++            form where we have a legitimate operational, security, or legal reason to keep them —
++            we don&apos;t claim every historical record is physically destroyed the instant you
++            delete your account.
++         </p>
++         <button
++            type="button"
++            className="delete-btn tran3s"
++            onClick={openConfirm}
++            style={{ cursor: "pointer" }}
++         >
++            Delete Account
++         </button>
++
++         {isOpen && (
++            <div
++               className="modal fade show d-block"
++               role="dialog"
++               aria-modal="true"
++               aria-labelledby="deleteAccountModalTitle"
++               style={{ background: "rgba(0,0,0,0.5)" }}
++            >
++               <div className="modal-dialog modal-dialog-centered">
++                  <div className="modal-content p-20">
++                     <div className="modal-header border-0">
++                        <h5 className="modal-title" id="deleteAccountModalTitle" style={{ color: "#c0392b" }}>
++                           Permanently delete your account?
++                        </h5>
++                        {!isDeleting && (
++                           <button
++                              type="button"
++                              className="btn-close"
++                              aria-label="Cancel"
++                              onClick={closeConfirm}
++                           ></button>
++                        )}
++                     </div>
++                     <div className="modal-body">
++                        <p className="mb-15">This will:</p>
++                        <ul className="mb-20">
++                           <li>Remove your profile information</li>
++                           <li>Remove your saved/favourite properties</li>
++                           <li>Remove personal contact details from your past enquiries</li>
++                           <li>Archive and unpublish any properties you've listed as a seller</li>
++                           <li>Sign you out and prevent you from logging back into this account</li>
++                        </ul>
++                        <p className="mb-15">
++                           Some non-personal business records (such as that an enquiry occurred on a
++                           listing) may be retained for legitimate operational, security, or legal
++                           reasons, with your personal details removed from them.
++                        </p>
++                        <div className="dash-input-wrapper mb-10">
++                           <label htmlFor="deleteAccountConfirmInput">
++                              Type <strong>{CONFIRM_PHRASE}</strong> to confirm
++                           </label>
++                           <input
++                              type="text"
++                              id="deleteAccountConfirmInput"
++                              value={confirmText}
++                              disabled={isDeleting}
++                              onChange={(e) => setConfirmText(e.target.value)}
++                              autoComplete="off"
++                           />
++                        </div>
++                        {error && <div className="alert-text mb-10">{error}</div>}
++                     </div>
++                     <div className="modal-footer border-0">
++                        <button
++                           type="button"
++                           className="dash-cancel-btn tran3s"
++                           onClick={closeConfirm}
++                           disabled={isDeleting}
++                        >
++                           Cancel
++                        </button>
++                        <button
++                           type="button"
++                           className="delete-btn tran3s"
++                           onClick={handleConfirmDelete}
++                           disabled={isDeleting || confirmText.trim().toUpperCase() !== CONFIRM_PHRASE}
++                        >
++                           {isDeleting ? "Deleting..." : "Yes, permanently delete my account"}
++                        </button>
++                     </div>
++                  </div>
++               </div>
++            </div>
++         )}
++      </div>
++   );
++};
++
++export default DeleteAccountSection
+diff --git a/src/components/dashboard/profile/ProfileBody.tsx b/src/components/dashboard/profile/ProfileBody.tsx
+index bb81317..a9afdd5 100644
+--- a/src/components/dashboard/profile/ProfileBody.tsx
++++ b/src/components/dashboard/profile/ProfileBody.tsx
+@@ -6,6 +6,7 @@ import UserAvatarSetting from "./UserAvatarSetting";
+ import AddressAndLocation from "./AddressAndLocation";
+ import Link from "next/link";
+ import SocialMediaLink from "./SocialMediaLink";
++import DeleteAccountSection from "./DeleteAccountSection";
+ import { createClient } from "@/lib/supabase/client";
+ 
+ import avatar_1 from "@/assets/images/dashboard/avatar_02.jpg";
+@@ -125,6 +126,12 @@ const ProfileBody = () => {
+                <button className="dash-btn-two tran3s me-3" onClick={handleSave}>Save</button>
+                <Link href="#" className="dash-cancel-btn tran3s">Cancel</Link>
+             </div>
++
++            {/* Phase 3: kept visually separated (its own card, bottom of
++                page) from the ordinary edit/save flow above — see
++                DeleteAccountSection.tsx. Same location for both buyers and
++                sellers, since this page is shared by both roles. */}
++            <DeleteAccountSection />
+          </div>
+       </div>
+    );
+diff --git a/src/layouts/headers/HeaderTwo.tsx b/src/layouts/headers/HeaderTwo.tsx
+index a1c3961..027e493 100644
+--- a/src/layouts/headers/HeaderTwo.tsx
++++ b/src/layouts/headers/HeaderTwo.tsx
+@@ -58,11 +58,14 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
+                      </div>
+ 
+                      <nav className="navbar navbar-expand-lg p0 ms-lg-4 order-lg-2">
+-                        <button className="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse"
+-                           data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+-                           aria-label="Toggle navigation">
+-                           <span></span>
+-                        </button>
++                        {/* Phase 2: no separate hamburger here. Below lg, the
++                            "Menu" button above (right-widget) already opens
++                            Offcanvas as the single mobile nav trigger -- a
++                            second toggler for this collapse would be a
++                            duplicate menu system opening a different panel.
++                            This collapse now only needs to show/hide with
++                            the lg breakpoint itself, which navbar-expand-lg
++                            already does. */}
+                         <div className={`collapse navbar-collapse ${style_2 ? "ms-xl-5" : ""}`} id="navbarNav">
+                            <NavMenu />
+                         </div>
+diff --git a/src/layouts/headers/Menu/AuthNav.tsx b/src/layouts/headers/Menu/AuthNav.tsx
+index 475ab65..35eb858 100644
+--- a/src/layouts/headers/Menu/AuthNav.tsx
++++ b/src/layouts/headers/Menu/AuthNav.tsx
+@@ -33,18 +33,13 @@ const AuthNav = ({ style_2 }: AuthNavProps) => {
+    }
+ 
+    if (!user) {
+-      return style_2 ? (
+-         <li>
+-            <Link href="#" data-bs-toggle="modal" data-bs-target="#loginModal" className="login-btn-two rounded-circle tran3s d-flex align-items-center justify-content-center"><i className="fa-regular fa-lock"></i></Link>
+-         </li>
+-      ) : (
+-         <li className="d-inline-block ms-2 ms-md-3 ms-xl-4 me-2 me-xl-4">
+-            <Link href="#" data-bs-toggle="modal" data-bs-target="#loginModal" className="auth-cta-btn tran3s d-inline-flex align-items-center">
+-               <i className="fa-regular fa-lock"></i>
+-               <span><span className="d-none d-sm-inline">Login / </span>Sign up</span>
+-            </Link>
+-         </li>
+-      );
++      // Phase 2: logged-out visitors no longer get a standalone Login/Sign up
++      // button occupying prominent header space -- that action now lives in
++      // NavMenu (desktop nav / HeaderOne mobile collapse) and Offcanvas
++      // (HeaderTwo mobile menu) instead, both using the same #loginModal
++      // trigger. Render nothing here so the header stays focused on
++      // discovery for new visitors.
++      return null;
+    }
+ 
+    const displayName = fullName || user.email || "Account";
+diff --git a/src/layouts/headers/Menu/NavMenu.tsx b/src/layouts/headers/Menu/NavMenu.tsx
+index bfc4f61..7e5035d 100644
+--- a/src/layouts/headers/Menu/NavMenu.tsx
++++ b/src/layouts/headers/Menu/NavMenu.tsx
+@@ -109,6 +109,25 @@ const NavMenu = () => {
+                 </li>
+                 );
+             })}
++            {/* Phase 2: Login/Sign up moved out of the standalone header
++                button (see AuthNav.tsx) and into the nav itself, so it's
++                still reachable without being the first thing a new visitor
++                sees. Buyer login and sign-up are the same action (Google
++                OAuth via #loginModal, see LoginModal.tsx) -- one entry,
++                not two. Hidden once logged in; the account menu (avatar in
++                the header) takes over from there. */}
++            {!loading && !user && (
++                <li className="nav-item auth-nav-item">
++                    <Link
++                        href="#"
++                        data-bs-toggle="modal"
++                        data-bs-target="#loginModal"
++                        className="nav-link"
++                    >
++                        Login / Sign up
++                    </Link>
++                </li>
++            )}
+         </ul>
+     );
+ };
+diff --git a/src/layouts/headers/Menu/Offcanvas.tsx b/src/layouts/headers/Menu/Offcanvas.tsx
+index f90ea36..c97385d 100644
+--- a/src/layouts/headers/Menu/Offcanvas.tsx
++++ b/src/layouts/headers/Menu/Offcanvas.tsx
+@@ -1,6 +1,7 @@
+ "use client"
+ import Link from "next/link"
+ import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF, SOCIAL_LINKS } from "@/lib/site/contact"
++import { useSupabaseUser } from "@/hooks/useSupabaseUser"
+ 
+ import BrandLogo from "@/components/common/BrandLogo";
+ 
+@@ -31,6 +32,17 @@ const quickLinks: { label: string; href: string; desc: string }[] = [
+ ]
+ 
+ const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
++   const { user, role, loading } = useSupabaseUser();
++
++   // Phase 2: this is HeaderTwo's mobile navigation, so it needs the same
++   // auth entry point NavMenu gained for desktop -- one line, no separate
++   // Login and Sign up (buyer auth is a single Google-OAuth action, see
++   // LoginModal.tsx). Logged in, the equivalent isn't a link at all: it's
++   // the account menu already visible in the header (AuthNav avatar), so
++   // this row just points at that person's own dashboard instead, and
++   // never duplicates Login/Sign up/Logout at once.
++   const dashboardHref = role === "admin" ? "/admin" : "/dashboard/dashboard-index";
++
+    return (
+       <>
+          <div className={`offcanvas offcanvas-end sidebar-nav ${offCanvas ? "show" : ""}`} id="sideNav">
+@@ -61,6 +73,32 @@ const Offcanvas = ({ offCanvas, setOffCanvas }: any) => {
+                               <span className="fs-15 opacity-75">{link.desc}</span>
+                            </li>
+                         ))}
++                        {!loading && (
++                           <li className="mb-25">
++                              {user ? (
++                                 <Link
++                                    href={dashboardHref}
++                                    onClick={() => setOffCanvas(false)}
++                                    className="d-block color-dark fw-500 fs-22"
++                                 >
++                                    My Dashboard
++                                    <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
++                                 </Link>
++                              ) : (
++                                 <a
++                                    href="#"
++                                    data-bs-toggle="modal"
++                                    data-bs-target="#loginModal"
++                                    onClick={() => setOffCanvas(false)}
++                                    className="d-block color-dark fw-500 fs-22"
++                                    style={{ cursor: "pointer" }}
++                                 >
++                                    Login / Sign up
++                                    <i className="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
++                                 </a>
++                              )}
++                           </li>
++                        )}
+                      </ul>
+                   </nav>
+ 
+diff --git a/src/lib/account/actions.ts b/src/lib/account/actions.ts
+new file mode 100644
+index 0000000..337bd29
+--- /dev/null
++++ b/src/lib/account/actions.ts
+@@ -0,0 +1,114 @@
++"use server";
++
++// src/lib/account/actions.ts
++//
++// Phase 3: self-service account deletion, backing the Delete Account
++// section on /dashboard/profile (see
++// src/components/dashboard/profile/DeleteAccountSection.tsx).
++//
++// Identity is ALWAYS derived server-side from the caller's own session
++// via getAuthContext() (src/lib/auth/session.ts) — this action takes no
++// user id from the client at all, so there is nothing for a client to
++// spoof into deleting someone else's account. Mirrors the identity
++// discipline already used everywhere else in this codebase (owner_id in
++// src/lib/properties/actions.ts, actor_id in the admin audit log, etc).
++//
++// Two-step delete, matching the split supabase/migrations/0030 documents:
++//   1. request_own_account_deletion() (RPC, RLS-respecting client) —
++//      scrubs/anonymizes personal data this account is responsible for
++//      and archives any properties it owns.
++//   2. auth.admin.deleteUser() (service-role client, server-only) —
++//      removes the Supabase Auth identity itself. Only ever called with
++//      ctx.userId (the caller's own, server-derived id), and only after
++//      step 1 has already succeeded.
++//
++// SUPABASE_SERVICE_ROLE_KEY is only ever touched here via
++// createServiceClient() (src/lib/supabase/server.ts), which is server-only
++// and never imported from a "use client" file — never exposed to the
++// browser, never a NEXT_PUBLIC_* variable.
++
++import { getAuthContext } from "@/lib/auth/session";
++import { createClient, createServiceClient } from "@/lib/supabase/server";
++
++export interface DeleteAccountResult {
++   success: boolean;
++   error?: string;
++}
++
++export async function deleteOwnAccount(): Promise<DeleteAccountResult> {
++   const ctx = await getAuthContext();
++
++   if (!ctx) {
++      return { success: false, error: "You need to be signed in to delete your account." };
++   }
++
++   // Admin accounts are deliberately out of scope for this self-service
++   // flow (see Phase 3 brief §14/§19) — this is a normal user-facing
++   // feature, not an account-management tool. request_own_account_deletion()
++   // also refuses this server-side as defense-in-depth, so this check is
++   // belt-and-suspenders, not the only gate.
++   if (ctx.role === "admin") {
++      return {
++         success: false,
++         error: "Admin accounts can't be deleted from this page. Contact another admin.",
++      };
++   }
++
++   const supabase = await createClient();
++
++   // Step 1: scrub/anonymize related personal data + archive listings.
++   // Authorized entirely by the caller's own session — the RPC takes no
++   // parameters, so there is nothing here for a client to redirect at
++   // another account.
++   const { error: cleanupError } = await supabase.rpc("request_own_account_deletion");
++
++   if (cleanupError) {
++      console.error("Account deletion cleanup failed:", cleanupError.message);
++      return {
++         success: false,
++         error: "We couldn't process your deletion request. Please try again, or contact support if this continues.",
++      };
++   }
++
++   // Step 2: remove the Supabase Auth identity itself. Only reachable
++   // after step 1 succeeded, and only ever for ctx.userId.
++   let service;
++   try {
++      service = createServiceClient();
++   } catch (err) {
++      console.error("Service client unavailable for account deletion:", err);
++      return {
++         success: false,
++         error:
++            "Your data was removed, but we couldn't finish closing your login. Please contact support so we can complete this.",
++      };
++   }
++
++   const { error: authDeleteError } = await service.auth.admin.deleteUser(ctx.userId);
++
++   if (authDeleteError) {
++      console.error("Auth user deletion failed:", authDeleteError.message);
++      // Partial failure: personal data is already scrubbed, but the
++      // account can still technically authenticate. Do not claim
++      // success — surface this clearly so the person knows to follow up,
++      // rather than silently leaving a stale, unusable-looking account.
++      return {
++         success: false,
++         error:
++            "Your data was removed, but we couldn't finish closing your login. Please contact support so we can complete this.",
++      };
++   }
++
++   // Best-effort server-side session cleanup. The client also signs out
++   // and clears its own state right after calling this action (see
++   // DeleteAccountSection.tsx) — this is defense-in-depth, not the only
++   // place that happens, and its outcome doesn't change the result
++   // reported to the user: the account is already gone at this point.
++   try {
++      await supabase.auth.signOut();
++   } catch (err) {
++      console.error("Post-deletion sign-out failed (non-fatal):", err);
++   }
++
++   return { success: true };
++}
+diff --git a/supabase/migrations/0030_account_deletion.sql b/supabase/migrations/0030_account_deletion.sql
+new file mode 100644
+index 0000000..ca82033
+--- /dev/null
++++ b/supabase/migrations/0030_account_deletion.sql
+@@ -0,0 +1,270 @@
++-- 0030_account_deletion.sql
++-- Phase 3: self-service account deletion for buyers and sellers.
++--
++-- Two-step delete, matching the split already established elsewhere in
++-- this schema between "what RLS-respecting code can do" and "what only
++-- the service role can do" (see src/lib/supabase/server.ts):
++--
++--   1. request_own_account_deletion() -- this migration. Runs as the
++--      calling user via the RLS-respecting client. Scrubs/anonymizes the
++--      personal data this account is directly responsible for and
++--      archives (unpublishes) any properties it owns. Takes NO user_id
++--      parameter -- it only ever operates on auth.uid() -- so there is
++--      nothing for a client to spoof into deleting someone else's data.
++--
++--   2. Deleting the auth.users row itself -- done from server-side
++--      application code via createServiceClient().auth.admin.deleteUser(),
++--      AFTER step 1 succeeds (see src/lib/account/actions.ts). Postgres/
++--      RLS has no ability to call the Supabase Auth admin API, so this
++--      part cannot live in a SQL function. That delete then cascades
++--      (profiles.id -> auth.users(id) ON DELETE CASCADE, 0001) to remove
++--      the profile row itself, plus favourites (already emptied below)
++--      and notifications (purely personal, 0022) via their own existing
++--      ON DELETE CASCADE.
++--
++-- Three existing foreign keys pointed straight at profiles(id) with
++-- ON DELETE CASCADE or (for seller_contact_reveals) no delete action at
++-- all -- meaning a profile disappearing would previously either silently
++-- wipe out business records the property owner / admin still legitimately
++-- need (a seller's properties, and every lead ever filed against them),
++-- or block the delete outright with a foreign-key violation
++-- (seller_contact_reveals.revealed_to, NOT NULL with no ON DELETE action).
++-- Both are wrong for this feature: deleting *a person* should not delete
++-- *the business records about them*. All three are changed here to
++-- ON DELETE SET NULL instead, so the row survives with the personal link
++-- removed:
++--
++--   * properties.owner_id  -- a seller's listings are archived by this
++--     function (below) while still owned, then detached (owner_id NULL)
++--     only once the profile row is actually deleted. Never cascade-
++--     deleted: buyers who already inquired, and the seller's own past
++--     listing history, are not erased just because the seller account
++--     closed.
++--   * leads.buyer_id       -- already nullable since 0021 (general
++--     contact-form leads). The row (property, status, dates) is kept as
++--     the seller's/admin's business record that an enquiry happened;
++--     every free-text/contact field the buyer supplied is scrubbed by
++--     this function first, so no personal data rides along on the
++--     orphaned row.
++--   * seller_contact_reveals.revealed_to -- this is a security audit
++--     trail (who was shown an exact address, and when); it must survive
++--     the person leaving, just with the identity redacted.
++
++-- ===========================================================================
++-- 1. Loosen the three FKs
++-- ===========================================================================
++
++alter table properties
++  alter column owner_id drop not null;
++alter table properties
++  drop constraint if exists properties_owner_id_fkey;
++alter table properties
++  add constraint properties_owner_id_fkey
++  foreign key (owner_id) references profiles (id) on delete set null;
++
++comment on column properties.owner_id is
++  'The seller who owns this listing. NULL if that seller''s account has '
++  'since been deleted (see request_own_account_deletion(), 0030) -- the '
++  'property itself is preserved (archived, not cascade-deleted) rather '
++  'than disappearing along with the account.';
++
++alter table leads
++  drop constraint if exists leads_buyer_id_fkey;
++alter table leads
++  add constraint leads_buyer_id_fkey
++  foreign key (buyer_id) references profiles (id) on delete set null;
++
++comment on column leads.buyer_id is
++  'The signed-in buyer this lead belongs to. NULL for a general '
++  'contact-form lead (0021), or once that buyer''s account has since been '
++  'deleted (0030) -- contact_name/contact_email/contact_phone/message are '
++  'scrubbed by request_own_account_deletion() before the buyer_id link is '
++  'ever removed, so no personal data rides along on the orphaned row.';
++
++alter table seller_contact_reveals
++  alter column revealed_to drop not null;
++alter table seller_contact_reveals
++  drop constraint if exists seller_contact_reveals_revealed_to_fkey;
++alter table seller_contact_reveals
++  add constraint seller_contact_reveals_revealed_to_fkey
++  foreign key (revealed_to) references profiles (id) on delete set null;
++
++comment on column seller_contact_reveals.revealed_to is
++  'Who an exact address was revealed to. NULL if that account has since '
++  'been deleted (0030) -- this audit trail (which lead, when, why) is a '
++  'security record and is preserved even though the identity behind it '
++  'is not.';
++
++-- ===========================================================================
++-- 2. Let request_own_account_deletion() archive a seller's properties
++--    regardless of their current status.
++--
++-- enforce_seller_property_update() (0008) otherwise only allows a
++-- non-admin caller to move a property draft -> pending or draft ->
++-- archived. That is correct for ordinary seller edits, but account
++-- deletion legitimately needs to archive a *published* (or pending)
++-- listing too. Re-stated in full (create or replace) with one additional,
++-- narrowly-scoped bypass: a session-local flag that ONLY
++-- request_own_account_deletion() ever sets, and only for the duration of
++-- its own transaction -- there is no client-callable path that can set
++-- it. Every other rule in this function (owner_id immutable,
++-- published_at immutable, draft -> pending/archived for ordinary seller
++-- edits) is unchanged.
++-- ===========================================================================
++
++create or replace function enforce_seller_property_update()
++returns trigger
++language plpgsql
++security definer set search_path = public
++as $$
++begin
++  -- Admins keep unrestricted update rights (moderation transitions,
++  -- corrections, etc.) — this trigger only constrains non-admin callers.
++  if current_role_is('admin') then
++    return new;
++  end if;
++
++  -- 0030: account deletion needs to archive a seller's properties
++  -- whatever their current status (a published listing included), which
++  -- the ordinary seller-edit rule below does not allow. Only
++  -- request_own_account_deletion() ever sets this, transaction-locally,
++  -- on itself — never reachable from any client-callable path.
++  if current_setting('app.deleting_own_account', true) = 'true' then
++    return new;
++  end if;
++
++  -- owner_id is never transferable by anyone but an admin (defense in
++  -- depth on top of the RLS check, which already requires
++  -- auth.uid() = owner_id on both the old and new row).
++  if new.owner_id is distinct from old.owner_id then
++    raise exception 'owner_id cannot be changed';
++  end if;
++
++  -- published_at is derived, not seller-settable. The only trigger that
++  -- may set it is properties_set_published_at, and a non-admin can never
++  -- drive a transition into 'published' (see status check below), so pin
++  -- it to its previous value for non-admin callers.
++  if new.published_at is distinct from old.published_at then
++    raise exception 'published_at cannot be set directly';
++  end if;
++
++  -- Seller-owned lifecycle: draft -> pending (submit for review) and
++  -- draft -> archived (seller's removal mechanism — see brief, no physical
++  -- delete). Any other transition, including no-op edits to a non-draft
++  -- row's status column, is a moderation action and belongs to admin only.
++  if new.status is distinct from old.status then
++    if old.status = 'draft' and new.status in ('pending', 'archived') then
++      -- allowed
++    else
++      raise exception
++        'sellers may only move a property from draft to pending or archived (attempted % -> %)',
++        old.status, new.status;
++    end if;
++  end if;
++
++  return new;
++end;
++$$;
++
++comment on function enforce_seller_property_update is
++  'BEFORE UPDATE trigger backstop for `properties`. RLS (0002) already '
++  'restricts non-admin updates to rows the caller owns; this adds the '
++  'column/transition-level restriction RLS cannot express (no OLD-vs-NEW '
++  'comparison in a single policy): non-admin callers cannot change '
++  'owner_id or published_at, and may only move status draft -> pending or '
++  'draft -> archived for an ordinary edit. Admins are exempt and keep '
++  'full moderation rights. request_own_account_deletion() (0030) is '
++  'exempt for the single archive-on-deletion write it performs, via a '
++  'transaction-local session flag only that function ever sets.';
++
++-- ===========================================================================
++-- 3. request_own_account_deletion()
++-- ===========================================================================
++
++create or replace function request_own_account_deletion()
++returns void
++language plpgsql
++security definer
++set search_path = public
++as $$
++declare
++  v_uid  uuid := auth.uid();
++  v_role user_role;
++begin
++  if v_uid is null then
++    raise exception 'not authenticated';
++  end if;
++
++  select role into v_role from profiles where id = v_uid;
++
++  if v_role is null then
++    raise exception 'no profile found for this account';
++  end if;
++
++  if v_role = 'admin' then
++    raise exception 'admin accounts cannot be deleted through this function';
++  end if;
++
++  -- Let the one archive write below bypass the ordinary seller
++  -- draft-only status-transition rule (see enforce_seller_property_update
++  -- above). Local to this transaction only -- never visible to, or
++  -- settable by, any other session or any client-callable path.
++  perform set_config('app.deleting_own_account', 'true', true);
++
++  -- Favourites: purely personal, no business-record value once the
++  -- account is gone.
++  delete from favourites where user_id = v_uid;
++
++  -- Leads this account filed as a buyer: scrub every personal/free-text
++  -- field submitted with the enquiry. The row itself (property_id,
++  -- status, preferred_date/time, created_at) stays -- it is the
++  -- seller's/admin's own business record that an enquiry happened, not
++  -- the buyer's personal data, and sellers already cannot read
++  -- contact_name/contact_email/contact_phone/buyer_id at all (0029 --
++  -- seller_leads view). buyer_id is left in place here; it is nulled
++  -- automatically when the profile row is deleted (ON DELETE SET NULL,
++  -- above), by the application code that deletes auth.users.
++  update leads
++     set contact_name  = null,
++         contact_email = null,
++         contact_phone = null,
++         message       = null
++   where buyer_id = v_uid;
++
++  -- Properties owned by this account (relevant to sellers only, but
++  -- harmless to run for a buyer with none): archive rather than delete,
++  -- so a published listing does not vanish out from under buyers who
++  -- already inquired about it, and so the seller's own past listing
++  -- history is not destroyed. Leaves 'sold'/'rejected'/'archived' rows
++  -- untouched -- already not publicly live, or already a terminal state
++  -- worth keeping as-is. owner_id is left in place here for the same
++  -- reason as buyer_id above; it is nulled when the profile row is
++  -- deleted.
++  update properties
++     set status = 'archived'
++   where owner_id = v_uid
++     and status in ('draft', 'pending', 'published');
++
++  -- Nothing else to do here: profiles.id -> auth.users(id) already
++  -- cascades (0001), so the profile row itself, plus every table that
++  -- still legitimately CASCADEs from it (favourites -- now already
++  -- empty, notifications -- purely personal, 0022), is removed
++  -- automatically once the caller's application code deletes the
++  -- auth.users row via the service role (see src/lib/account/actions.ts).
++  -- This function never touches auth.users itself -- it has no ability
++  -- to from plain SQL.
++end;
++$$;
++
++comment on function request_own_account_deletion is
++  'Self-service account deletion, step 1 of 2. SECURITY DEFINER so it can '
++  'write across favourites/leads/properties regardless of the caller''s '
++  'own RLS grants, but takes NO user_id parameter -- every write is '
++  'scoped to auth.uid() internally, so a caller can never target another '
++  'account, and admin accounts are explicitly refused. Step 2 (deleting '
++  'the auth.users row) happens in server-side application code via the '
++  'service role, only after this function returns successfully -- see '
++  'src/lib/account/actions.ts.';
++
++revoke all on function request_own_account_deletion() from public, anon;
++grant execute on function request_own_account_deletion() to authenticated;

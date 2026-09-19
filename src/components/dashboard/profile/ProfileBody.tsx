@@ -6,6 +6,7 @@ import UserAvatarSetting from "./UserAvatarSetting";
 import AddressAndLocation from "./AddressAndLocation";
 import Link from "next/link";
 import SocialMediaLink from "./SocialMediaLink";
+import DeleteAccountSection from "./DeleteAccountSection";
 import { createClient } from "@/lib/supabase/client";
 
 import avatar_1 from "@/assets/images/dashboard/avatar_02.jpg";
@@ -125,6 +126,12 @@ const ProfileBody = () => {
                <button className="dash-btn-two tran3s me-3" onClick={handleSave}>Save</button>
                <Link href="#" className="dash-cancel-btn tran3s">Cancel</Link>
             </div>
+
+            {/* Phase 3: kept visually separated (its own card, bottom of
+                page) from the ordinary edit/save flow above — see
+                DeleteAccountSection.tsx. Same location for both buyers and
+                sellers, since this page is shared by both roles. */}
+            <DeleteAccountSection />
          </div>
       </div>
    );
