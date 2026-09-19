@@ -226,7 +226,7 @@ export function normalizeGeneralContact(input: GeneralContactInput): GeneralCont
 }
 
 export type InquiryBuyerResult =
-   | { ok: true; userId: string }
+   | { ok: true; userId: string; email: string | null }
    | { ok: false; error: string; needsAuth?: boolean };
 
 /**
@@ -247,7 +247,7 @@ export async function resolveInquiryBuyer(): Promise<InquiryBuyerResult> {
       };
    }
 
-   return { ok: true, userId: ctx.userId };
+   return { ok: true, userId: ctx.userId, email: ctx.email };
 }
 
 /**

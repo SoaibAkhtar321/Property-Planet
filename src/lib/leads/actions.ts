@@ -147,6 +147,10 @@ export async function createInquiry(
       // — never as a fabricated placeholder value.
       contact_name: normalized.value.contact_name,
       contact_phone: normalized.value.contact_phone,
+      // Buyer's account email, taken from the server-side session -- never
+      // from the client. Stored so ADMIN can see it; sellers cannot read
+      // this column (0029_lead_privacy_seller_view.sql).
+      contact_email: buyer.email,
       preferred_date: normalized.value.preferred_date,
       preferred_time: normalized.value.preferred_time,
       // Phase 10: exactly one server-side read decides both halves of the
@@ -564,6 +568,8 @@ export async function createProjectInquiry(
       message: normalized.value.message,
       contact_name: normalized.value.contact_name,
       contact_phone: normalized.value.contact_phone,
+      // Server-side session email, admin-only (see createInquiry above).
+      contact_email: buyer.email,
       preferred_date: normalized.value.preferred_date,
       preferred_time: normalized.value.preferred_time,
       // status intentionally omitted — column default is 'new', same as

@@ -65,20 +65,13 @@ async function getSellerStats(supabase: Awaited<ReturnType<typeof createClient>>
       .eq("owner_id", userId)
       .in("status", ["draft", "pending"]);
 
-   // Leads received on properties this seller owns.
-   const { data: ownedPropertyIds } = await supabase
-      .from("properties")
-      .select("id")
-      .eq("owner_id", userId);
-
-   let leadsReceived = 0;
-   if (ownedPropertyIds && ownedPropertyIds.length > 0) {
-      const { count } = await supabase
-         .from("leads")
-         .select("id", { count: "exact", head: true })
-         .in("property_id", ownedPropertyIds.map((p) => p.id));
-      leadsReceived = count ?? 0;
-   }
+   // Leads received on properties this seller owns. Counted through the
+   // seller_leads view (0029): sellers have no access to the `leads` table
+   // itself, and the view is already filtered to their own properties.
+   const { count: leadsCount } = await supabase
+      .from("seller_leads")
+      .select("id", { count: "exact", head: true });
+   const leadsReceived = leadsCount ?? 0;
 
    return [
       { id: "seller-total", title: "My Properties", value: String(totalProperties ?? 0) },

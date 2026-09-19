@@ -54,6 +54,7 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
                   <h6 className="text-muted">Buyer</h6>
                   <div className="fw-bold">{lead.buyer_name ?? "—"}</div>
                   <div>{lead.buyer_phone ?? "No phone on file"}</div>
+                  <div>{lead.buyer_email ?? <span className="text-muted">No email on file</span>}</div>
                   <div className="text-muted small mt-2">Inquired {new Date(lead.created_at).toLocaleString()}</div>
                   {lead.message && (
                      <div className="mt-3">

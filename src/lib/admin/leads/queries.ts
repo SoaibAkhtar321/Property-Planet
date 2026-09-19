@@ -15,11 +15,10 @@
 // shorthand, so the exact columns selected are visible and auditable here.
 //
 // This is the one place in the app that intentionally reads both sides of
-// a lead (buyer + seller) together — see project brief section 7: the
-// admin is the only role permitted to see both, and the seller's own
-// lead read (0004's "sellers can read leads on own properties" policy)
-// stays untouched by anything in this file; nothing here grants that
-// policy, it already existed.
+// a lead (buyer + seller) together — the admin is the only role permitted
+// to see buyer contact details. Sellers have no access to `leads` at all
+// (0029_lead_privacy_seller_view.sql); they read seller_leads, which omits
+// buyer phone/email (see src/lib/leads/sellerQueries.ts).
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -171,12 +170,12 @@ export async function getAdminLeads(filters: AdminLeadFilters = {}): Promise<Adm
 
    const sellerById = new Map((sellerProfiles ?? []).map((p) => [p.id, p]));
 
-   // Buyer email isn't stored in `profiles` — Supabase Auth owns email on
-   // auth.users, which this client-side createClient() has no admin access
-   // to read for other users. Buyer contact here is therefore phone (the
-   // field the schema actually gives admins for this) plus name; there is
-   // no email column to surface without a service-role auth.admin call,
-   // which this app deliberately does not use for RLS-respecting reads.
+   // Buyer contact: the name/phone/email given with this enquiry live on the
+   // lead itself (contact_name / contact_phone / contact_email). Email comes
+   // from the buyer's account at submission time (0029 also backfills older
+   // leads from auth.users), so admin has it without any service-role read.
+   // These columns are admin-only: sellers cannot read `leads` and use the
+   // seller_leads view instead (0029_lead_privacy_seller_view.sql).
    const rows: AdminLeadListRow[] = leadRows.map((lead) => {
       const buyer = lead.buyer_id ? buyerById.get(lead.buyer_id) : undefined;
       const property = lead.property_id ? propertyById.get(lead.property_id) : undefined;
