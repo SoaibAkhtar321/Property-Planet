@@ -1,5 +1,6 @@
 import AboutUsTwo from "@/components/inner-pages/about-us/about-us-two";
 import Wrapper from "@/layouts/Wrapper";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 const CANONICAL = "https://propertyplanet.in/about";
 const DESCRIPTION =
@@ -14,6 +15,7 @@ export const metadata = {
       description: DESCRIPTION,
       url: CANONICAL,
       type: "website",
+      images: OG_IMAGES,
    },
 };
 const index = () => {

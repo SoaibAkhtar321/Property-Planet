@@ -9,6 +9,7 @@ import {
    PROPERTY_SORTS,
    type PropertySort,
 } from "@/lib/properties/queries";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 // Always fetch fresh — published inventory changes independently of any
 // build, and this route reads through Supabase (RLS-scoped to published
@@ -31,6 +32,7 @@ export const metadata = {
       description: DESCRIPTION,
       url: CANONICAL,
       type: "website",
+      images: OG_IMAGES,
       siteName: "Property Planet",
    },
    // SEO fix (Section 20 — Twitter/X Card): without its own `twitter`
@@ -42,6 +44,7 @@ export const metadata = {
       card: "summary_large_image",
       title: "Explore Properties | Property Planet",
       description: DESCRIPTION,
+      images: [OG_IMAGE_URL],
    },
 };
 

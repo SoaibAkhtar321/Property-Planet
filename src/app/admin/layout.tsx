@@ -14,6 +14,9 @@ import AdminHeader from "@/components/admin/layout/AdminHeader";
 // under it (a shared link, a redirect chain) must not index it. This is
 // belt-and-braces alongside src/middleware.ts, not the access control.
 export const metadata = {
+   // Private, never indexed. The default title only keeps browser tabs and
+   // history entries meaningful for admin pages that set no title of their own.
+   title: "Admin | Property Planet",
    robots: { index: false, follow: false },
 };
 

@@ -2,7 +2,14 @@ import Link from "next/link"
 import BreadcrumbOne from "@/components/common/breadcrumb/BreadcrumbOne"
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/site/contact"
 
-const LAST_UPDATED = "17 September 2026"
+// OWNER-REVIEW / LEGAL REVIEW REQUIRED: written from what the application
+// actually does; not reviewed by a lawyer. Section 1 previously stated that
+// Property Planet is "not a licensed real-estate broker". The owner has said
+// Property Planet holds a RERA registration to operate as a real estate
+// business, so that statement was removed rather than left contradicting it.
+// Confirm the correct description of the company's regulatory status, the
+// legal entity name, and the governing-law / jurisdiction clause with a lawyer.
+const LAST_UPDATED = "20 September 2026"
 
 const TermsOfServiceArea = () => {
    return (
@@ -24,10 +31,11 @@ const TermsOfServiceArea = () => {
                      <h4 className="mt-50 mb-20">1. What Property Planet Is</h4>
                      <p>Property Planet is an online platform that lists properties — primarily plots and
                         land, alongside villas and apartments — and connects buyers with the sellers and
-                        agents who list them. <strong>Property Planet is not a licensed real-estate broker,
-                        agent, or party to any transaction.</strong> We do not own, inspect, value, or
-                        guarantee any property listed on the Service, and we are not involved in negotiating,
-                        financing, or completing any sale.</p>
+                        agents who list them. <strong>Property Planet is not a party to any sale between a
+buyer and a seller.</strong> We do not own, inspect, value, or guarantee any property
+listed on the Service, and we do not complete, finance or guarantee any transaction.
+Property Planet&apos;s RERA registration relates to the company&apos;s own operation as a
+real estate business; it is not a verification of any individual listing.</p>
 
                      <h4 className="mt-50 mb-20">2. Accounts and Roles</h4>
                      <p><strong>Buyers</strong> sign in with Google. <strong>Sellers/agents</strong> register
@@ -51,7 +59,24 @@ const TermsOfServiceArea = () => {
                         both, so they can follow up with you. You are responsible for the accuracy of the
                         contact details you submit.</p>
 
-                     <h4 className="mt-50 mb-20">5. Acceptable Use</h4>
+                     <h4 className="mt-50 mb-20">5. Site Visits and Exact Locations</h4>
+<p>You can request a site visit for a listing after sending an enquiry. Visits are
+subject to confirmation by our team and may be rescheduled or cancelled; you can cancel
+a requested or confirmed visit from your dashboard. A property&apos;s exact location is
+only revealed once your visit is confirmed, and must be used only for that visit.</p>
+
+<h4 className="mt-50 mb-20">6. Moderation and Availability</h4>
+<p>Our team may review, edit, unpublish or remove any listing or account at any time,
+including to keep the Service accurate and safe. Listings shown as published may be sold
+or withdrawn without notice, and we do not guarantee availability or price.</p>
+
+<h4 className="mt-50 mb-20">7. AI Assistant</h4>
+<p>The Property Planet AI assistant searches our published listings and answers common
+questions. Its answers are informational only — they are not legal, financial or
+investment advice and do not verify any listing. Please confirm details with our team
+and independent professionals.</p>
+
+<h4 className="mt-50 mb-20">8. Acceptable Use</h4>
                      <p>You agree not to:</p>
                      <ul className="style-none list-style-disc ps-3">
                         <li>List a property you do not have the right to list, or post false, misleading or fraudulent information;</li>
@@ -62,34 +87,34 @@ const TermsOfServiceArea = () => {
                      <p>We may suspend or terminate accounts that violate these Terms, remove listings that
                         breach them, or refuse service at our discretion.</p>
 
-                     <h4 className="mt-50 mb-20">6. Intellectual Property</h4>
+                     <h4 className="mt-50 mb-20">9. Intellectual Property</h4>
                      <p>The Property Planet name, logo, and platform design are our property. Content you
                         submit (listing details, photos, messages) remains yours, but by submitting it you
                         grant us a license to display and use it as needed to operate the Service — for
                         example, showing your listing to buyers.</p>
 
-                     <h4 className="mt-50 mb-20">7. Disclaimers &amp; Limitation of Liability</h4>
+                     <h4 className="mt-50 mb-20">10. Disclaimers &amp; Limitation of Liability</h4>
                      <p>The Service is provided &quot;as is&quot;, without warranties of any kind. We do not
                         guarantee that any listing is accurate, available, or that any transaction will be
                         completed. To the maximum extent permitted by law, Property Planet and its team are not
                         liable for any loss or damage arising from your use of the Service, reliance on a
                         listing, or dealings with any buyer, seller or agent you connect with through it.</p>
 
-                     <h4 className="mt-50 mb-20">8. Third-Party Services</h4>
+                     <h4 className="mt-50 mb-20">11. Third-Party Services</h4>
                      <p>The Service relies on third-party providers, including Google (sign-in and maps) and
                         Supabase (hosting and authentication). Your use of those features is also subject to
                         the respective provider&apos;s own terms.</p>
 
-                     <h4 className="mt-50 mb-20">9. Changes to These Terms</h4>
+                     <h4 className="mt-50 mb-20">12. Changes to These Terms</h4>
                      <p>We may update these Terms from time to time. Material changes will be reflected by
                         updating the &quot;Last updated&quot; date above. Continued use of the Service after
                         changes take effect constitutes acceptance of the revised Terms.</p>
 
-                     <h4 className="mt-50 mb-20">10. Governing Law</h4>
+                     <h4 className="mt-50 mb-20">13. Governing Law</h4>
                      <p>These Terms are governed by the laws of India, and any disputes will be subject to the
                         exclusive jurisdiction of the courts in Hyderabad, Telangana.</p>
 
-                     <h4 className="mt-50 mb-20">11. Contact Us</h4>
+                     <h4 className="mt-50 mb-20">14. Contact Us</h4>
                      <p>
                         Questions about these Terms? Reach us at{" "}
                         <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link> or call{" "}

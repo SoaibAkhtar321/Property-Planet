@@ -7,6 +7,7 @@ import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
 import BreadcrumbTrail from "@/components/common/breadcrumb/BreadcrumbTrail";
 import PropertyJsonLd from "@/components/common/seo/PropertyJsonLd";
 import { getPropertyBySlug, getSimilarProperties } from "@/lib/properties/queries";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
          url,
          type: "website",
          siteName: "Property Planet",
-         images: property.images[0] ? [{ url: property.images[0] }] : undefined,
+         images: property.images[0] ? [{ url: property.images[0] }] : OG_IMAGES,
       },
       // SEO fix (Section 20 — Twitter/X Card): see the identical note in
       // src/app/properties/page.tsx. Mirrors the openGraph block above —
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
          card: "summary_large_image",
          title,
          description,
-         images: property.images[0] ? [property.images[0]] : undefined,
+         images: property.images[0] ? [property.images[0]] : [OG_IMAGE_URL],
       },
    };
 }

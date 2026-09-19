@@ -7,6 +7,7 @@ import ArticleJsonLd from "@/components/common/seo/ArticleJsonLd";
 import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
 import BreadcrumbTrail from "@/components/common/breadcrumb/BreadcrumbTrail";
 import { getPostBySlug, getOtherPublishedPosts } from "@/lib/blog/queries";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 // Same reasoning as /blog and /properties/[slug]: published/unpublished
 // state can change independently of any build, and an unpublished or
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
          description,
          url,
          type: "article",
-         images: post.ogImageUrl ? [post.ogImageUrl] : undefined,
+         images: post.ogImageUrl ? [post.ogImageUrl] : [OG_IMAGE_URL],
       },
       // SEO fix (Section 20 — Twitter/X Card): see the identical note in
       // src/app/properties/page.tsx. Mirrors the openGraph block above —
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
          card: "summary_large_image",
          title: post.seoTitle ?? post.title,
          description,
-         images: post.ogImageUrl ? [post.ogImageUrl] : undefined,
+         images: post.ogImageUrl ? [post.ogImageUrl] : [OG_IMAGE_URL],
       },
    };
 }

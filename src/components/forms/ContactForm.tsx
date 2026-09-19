@@ -1,5 +1,5 @@
 "use client"
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { toast } from 'react-toastify';
 import * as yup from "yup";
@@ -33,17 +33,23 @@ const schema = yup
 
 const ContactForm = () => {
 
-   const { register, handleSubmit, reset, formState: { errors }, } = useForm<FormData>({ resolver: yupResolver(schema), });
+   const { register, handleSubmit, reset, formState: { errors, isSubmitting }, } = useForm<FormData>({ resolver: yupResolver(schema), });
+   // Persistent confirmation (a toast alone disappears in seconds and is easy
+   // to miss on a phone). The lead is saved before this is ever set.
+   const [sent, setSent] = useState(false);
+   const [submitError, setSubmitError] = useState<string | null>(null);
 
    const form = useRef<HTMLFormElement>(null);
 
    const sendEmail = async (data: FormData) => {
+      setSubmitError(null);
       // Honeypot tripped: a real visitor never fills a field that's
       // hidden with CSS. Pretend success (no error shown, form resets)
       // so a bot gets no signal that it was caught, but never actually
       // call the server action or EmailJS.
       if (data.company_website) {
          reset();
+         setSent(true);
          return;
       }
 
@@ -58,34 +64,41 @@ const ContactForm = () => {
             message: data.message,
          });
          if (!result.success) {
-            toast(result.error ?? 'Failed to send message. Please try again.', { position: 'top-center' });
+            setSubmitError(result.error ?? 'Failed to send message. Please try again.');
             return;
          }
       } catch (err) {
          console.error(err);
-         toast('Failed to send message. Please try again.', { position: 'top-center' });
+         setSubmitError('We could not send your message. Please check your connection and try again.');
          return;
       }
 
+      // The lead is already saved at this point, so an email-relay hiccup
+      // must not look like the enquiry was lost — success is shown either way.
+      // Awaited so the button stays disabled until the relay settles.
       if (form.current) {
-         emailjs.sendForm('service_070078r', 'template_lojvsvb', form.current, 'mtLgOuG25NnIwGeKm')
-            .then((result) => {
-               const notify = () => toast('Message sent successfully', { position: 'top-center' });
-               notify();
-               reset();
-               console.log(result.text);
-            }, (error) => {
-               // The lead is already saved at this point — an email-relay
-               // hiccup should not look like the enquiry was lost.
-               const notify = () => toast('Message sent successfully', { position: 'top-center' });
-               notify();
-               reset();
-               console.log(error.text);
-            });
-      } else {
-         console.error("Form reference is null");
+         try {
+            await emailjs.sendForm('service_070078r', 'template_lojvsvb', form.current, 'mtLgOuG25NnIwGeKm');
+         } catch (relayError) {
+            console.error(relayError);
+         }
       }
+      toast('Message sent successfully', { position: 'top-center' });
+      reset();
+      setSent(true);
    };
+
+   if (sent) {
+      return (
+         <div className="alert alert-success" role="status">
+            <h3 className="mb-10">Thank you — your message has been received</h3>
+            <p className="mb-20">Our team will get back to you soon.</p>
+            <button type="button" className="btn-nine text-uppercase rounded-3 fw-normal" onClick={() => setSent(false)}>
+               Send another message
+            </button>
+         </div>
+      );
+   }
 
    return (
       <form ref={form} onSubmit={handleSubmit(sendEmail)}>
@@ -131,8 +144,15 @@ const ContactForm = () => {
                   <p className="form_error">{errors.message?.message}</p>
                </div>
             </div>
+            {submitError && (
+               <div className="col-12">
+                  <div className="alert alert-danger mb-25" role="alert">{submitError}</div>
+               </div>
+            )}
             <div className="col-12">
-               <button type='submit' className="btn-nine text-uppercase rounded-3 fw-normal w-100">Send Message</button>
+               <button type='submit' className="btn-nine text-uppercase rounded-3 fw-normal w-100" disabled={isSubmitting}>
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+               </button>
             </div>
          </div>
       </form>

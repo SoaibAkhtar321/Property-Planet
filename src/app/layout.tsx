@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { EB_Garamond } from "next/font/google";
 import ReduxProvider from "@/redux/ReduxProvider";
 import GlobalJsonLd from "@/components/common/seo/GlobalJsonLd";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 // SEO/perf fix: EB Garamond (the site's `.font-garamond` heading font —
 // see public/assets/scss/_variables.scss's $sub-font) was previously
@@ -61,15 +62,10 @@ export const metadata: Metadata = {
       type: "website",
       title: "Property Planet — Hyderabad's AI-Powered Land & Property Advisory Platform",
       description: SITE_DESCRIPTION,
-      // The old value ("images/assets/ogg.png") was both a relative path
-      // AND pointed at a file that does not exist anywhere in public/ --
-      // confirmed by searching the repo. Falling back to the
-      // brand icon so og:image at least resolves to something valid
-      // rather than a broken/blank social preview, but this is a stopgap:
-      // the icon is a square symbol, not a proper 1200x630 social
-      // share image. Flagged in the final report -- replace with a real
-      // OG image asset.
-      images: [ICON_URL],
+      // 1200x630 brand card (existing logo + tagline). Pages that define their
+      // own `openGraph` replace this object entirely, so each passes OG_IMAGES
+      // itself — see src/lib/site/seo.ts.
+      images: OG_IMAGES,
    },
    icons: {
       icon: [
@@ -82,7 +78,7 @@ export const metadata: Metadata = {
       card: "summary_large_image",
       title: "Property Planet — Hyderabad's AI-Powered Land & Property Advisory Platform",
       description: SITE_DESCRIPTION,
-      images: [ICON_URL],
+      images: [OG_IMAGE_URL],
    },
    other: {
       "msapplication-navbutton-color": "#0D1A1C",

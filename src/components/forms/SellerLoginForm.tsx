@@ -122,7 +122,21 @@ const SellerLoginForm = () => {
                   <input type={isPasswordVisible ? "text" : "password"} {...register("password")} placeholder="Enter Password" className="pass_log_id" />
                   <span className="placeholder_icon">
                      <span className={`passVicon ${isPasswordVisible ? "eye-slash" : ""}`}>
-                        <Image onClick={togglePasswordVisibility} src={OpenEye} alt="" />
+                        <Image
+                           onClick={togglePasswordVisibility}
+                           onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                 e.preventDefault();
+                                 togglePasswordVisibility();
+                              }
+                           }}
+                           role="button"
+                           tabIndex={0}
+                           aria-pressed={isPasswordVisible}
+                           src={OpenEye}
+                           alt="Show password"
+                           style={{ cursor: "pointer" }}
+                        />
                      </span>
                   </span>
                   <p className="form_error">{errors.password?.message}</p>

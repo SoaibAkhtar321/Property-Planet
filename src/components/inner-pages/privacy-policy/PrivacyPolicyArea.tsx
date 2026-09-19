@@ -2,7 +2,13 @@ import Link from "next/link"
 import BreadcrumbOne from "@/components/common/breadcrumb/BreadcrumbOne"
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/site/contact"
 
-const LAST_UPDATED = "17 September 2026"
+// OWNER-REVIEW: this policy was written from what the application actually
+// does and has NOT had legal review. Before relying on it, the owner should
+// confirm: (1) the legal entity name and registered address to state here,
+// (2) any grievance-officer / data-protection contact required for an Indian
+// online platform, (3) retention periods, (4) whether a consent notice is
+// needed for the embedded Google Maps on the Contact page.
+const LAST_UPDATED = "20 September 2026"
 
 const PrivacyPolicyArea = () => {
    return (
@@ -40,10 +46,15 @@ const PrivacyPolicyArea = () => {
                         location, shown to all visitors, and an exact address, which is only revealed to a
                         buyer once specific conditions are met (for example, a confirmed site visit) — see
                         &quot;How We Share Information&quot; below.</p>
-                     <p><strong>Usage information.</strong> Like most websites, our hosting and analytics
-                        providers automatically log standard technical data such as IP address, browser type,
-                        device information and pages visited, used to keep the Service secure and working
-                        correctly.</p>
+                     <p><strong>Usage information.</strong> Like most websites, our hosting infrastructure automatically logs standard technical data such as IP address, browser type, device information and pages visited, used to keep the Service secure and working correctly. We do not currently use a third-party analytics or advertising service.</p>
+                     <p><strong>Assistance requests.</strong> If you ask for help finding or visiting a
+                        property through the on-site assistance prompt, we record your request, the property
+                        it relates to and the contact details you provide. These requests are handled by our
+                        own team and are not passed to sellers as ordinary enquiries.</p>
+                     <p><strong>AI assistant.</strong> The Property Planet AI assistant answers questions
+                        using our published listings. Your questions are processed on our servers to produce a
+                        reply and are not saved to our database, and we do not send them to an external AI
+                        provider.</p>
 
                      <h4 className="mt-50 mb-20">2. How We Use Your Information</h4>
                      <ul className="style-none list-style-disc ps-3">
@@ -63,9 +74,7 @@ const PrivacyPolicyArea = () => {
                         to the specific buyer whose enquiry qualifies (e.g. a confirmed site visit), never
                         published to buyers generally.</p>
                      <p><strong>Service providers.</strong> We use third-party providers to run the Service,
-                        including Supabase (authentication and database hosting), Google (Google Sign-In and
-                        Google Maps, for account sign-in and displaying property locations), and EmailJS (for
-                        delivering contact-form messages). These providers process data on our behalf and are
+                        including Supabase (authentication and database hosting), Google (Google Sign-In and Google Maps, for account sign-in and displaying property locations), OpenStreetMap (map tiles on our homepage map, which receive your IP address when loaded), and EmailJS (for delivering contact-form messages). These providers process data on our behalf and are
                         bound by their own privacy and security terms.</p>
                      <p><strong>Legal requirements.</strong> We may disclose information if required by law,
                         or to protect the rights, property or safety of Property Planet, our users, or the
@@ -73,8 +82,11 @@ const PrivacyPolicyArea = () => {
                      <p>We do not share your information with advertisers or data brokers.</p>
 
                      <h4 className="mt-50 mb-20">4. Cookies</h4>
-                     <p>We use essential cookies to keep you signed in and to remember basic preferences.
-                        We do not currently use third-party advertising or tracking cookies.</p>
+                     <p>We use essential cookies to keep you signed in. Your browser&apos;s local and session
+                        storage is also used for small preferences, such as remembering that you dismissed an
+                        on-site prompt or that a page animation has already played. We do not currently use
+                        third-party advertising or tracking cookies. Embedded content from Google Maps may set
+                        its own cookies when it loads; see Google&apos;s policies.</p>
 
                      <h4 className="mt-50 mb-20">5. Data Retention</h4>
                      <p>We retain account, listing and enquiry information for as long as your account is
@@ -110,6 +122,8 @@ const PrivacyPolicyArea = () => {
                         <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link> or call{" "}
                         {CONTACT_PHONE_DISPLAY}.
                      </p>
+                     {/* OWNER-REVIEW: no verified physical/registered address exists in the project
+                         (src/lib/site/contact.ts). Add one here only once supplied by the owner. */}
                   </div>
                </div>
             </div>

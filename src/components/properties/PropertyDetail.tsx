@@ -9,6 +9,7 @@ import VideoTour from "./detail/VideoTour";
 import Location from "./detail/Location";
 import SimilarProperties from "./detail/SimilarProperties";
 import Sidebar from "./detail/Sidebar";
+import PropertyStickyCta from "./detail/PropertyStickyCta";
 import FavouriteButton from "./FavouriteButton";
 
 // Mortgage calculator and reviews are intentionally deferred (Phase 3 scope
@@ -136,6 +137,12 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
                   </div>
                </div>
                <Sidebar property={property} />
+               <PropertyStickyCta
+                  propertyId={property.id}
+                  propertyTitle={property.title}
+                  propertyAddress={property.address}
+                  priceLabel={`₹${property.price.toLocaleString("en-IN")}${property.priceUnit ? property.priceUnit : ""}`}
+               />
             </div>
          </div>
       </div>

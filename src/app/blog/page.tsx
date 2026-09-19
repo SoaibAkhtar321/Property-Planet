@@ -3,6 +3,7 @@ import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
 import BlogListing from "@/components/blog/BlogListing";
 import { getPublishedPosts } from "@/lib/blog/queries";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 // Always fetch fresh — published inventory changes independently of any
 // build, and this route reads through Supabase (RLS-scoped to published
@@ -22,6 +23,7 @@ export const metadata = {
       description: DESCRIPTION,
       url: CANONICAL,
       type: "website",
+      images: OG_IMAGES,
    },
    // SEO fix (Section 20 — Twitter/X Card): see the identical note in
    // src/app/properties/page.tsx — this page had no twitter block either.
@@ -29,6 +31,7 @@ export const metadata = {
       card: "summary_large_image",
       title: "Insights | Property Planet",
       description: DESCRIPTION,
+      images: [OG_IMAGE_URL],
    },
 };
 

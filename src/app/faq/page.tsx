@@ -1,5 +1,6 @@
 import Faq from "@/components/inner-pages/faq";
 import Wrapper from "@/layouts/Wrapper";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 const CANONICAL = "https://propertyplanet.in/faq";
 const DESCRIPTION =
@@ -14,6 +15,7 @@ export const metadata = {
       description: DESCRIPTION,
       url: CANONICAL,
       type: "website",
+      images: OG_IMAGES,
    },
 };
 const index = () => {

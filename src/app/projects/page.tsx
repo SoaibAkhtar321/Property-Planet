@@ -3,6 +3,7 @@ import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
 import ProjectsListing from "@/components/projects/ProjectsListing";
 import { getPublishedProjects } from "@/lib/projects/queries";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 // Always fetch fresh — published inventory changes independently of any
 // build, and this route reads through Supabase (RLS-scoped to published
@@ -22,6 +23,7 @@ export const metadata = {
       description: DESCRIPTION,
       url: CANONICAL,
       type: "website",
+      images: OG_IMAGES,
       siteName: "Property Planet",
    },
    // SEO fix (Section 20 — Twitter/X Card): see the identical note in
@@ -30,6 +32,7 @@ export const metadata = {
       card: "summary_large_image",
       title: "Featured Opportunities | Property Planet",
       description: DESCRIPTION,
+      images: [OG_IMAGE_URL],
    },
 };
 

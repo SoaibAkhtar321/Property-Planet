@@ -18,6 +18,7 @@ import { useCallback, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { OwnPropertyMediaRow } from "@/lib/properties/queries";
+import { friendlyError } from "@/lib/errors";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50MB — a short walkthrough clip
@@ -63,7 +64,7 @@ const PropertyMediaUpload = ({ propertyId, initialMedia }: { propertyId: string;
 
                const { error: uploadError } = await supabase.storage.from("property-media").upload(path, file);
                if (uploadError) {
-                  setError(`${file.name}: ${uploadError.message}`);
+                  setError(`${file.name}: ${friendlyError(uploadError, "upload failed. Please try again.", "media.upload")}`);
                   continue;
                }
 
@@ -79,7 +80,7 @@ const PropertyMediaUpload = ({ propertyId, initialMedia }: { propertyId: string;
                   // property_media row means the UI never renders it, and a
                   // retry uploads a fresh path rather than colliding with
                   // this one.
-                  setError(`${file.name}: uploaded but failed to save (${insertError?.message ?? "unknown error"}).`);
+                  setError(`${file.name}: uploaded but couldn't be saved. ${friendlyError(insertError, "Please try again.", "media.insert")}`);
                   continue;
                }
 
@@ -101,13 +102,13 @@ const PropertyMediaUpload = ({ propertyId, initialMedia }: { propertyId: string;
 
          const { error: deleteError } = await supabase.storage.from("property-media").remove([item.storage_path]);
          if (deleteError) {
-            setError(deleteError.message);
+            setError(friendlyError(deleteError, "Could not remove the file. Please try again.", "media.delete"));
             return;
          }
 
          const { error: rowError } = await supabase.from("property_media").delete().eq("id", item.id);
          if (rowError) {
-            setError(rowError.message);
+            setError(friendlyError(rowError, "Could not remove the file. Please try again.", "media.row"));
             return;
          }
 

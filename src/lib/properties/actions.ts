@@ -26,6 +26,7 @@
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
+import { friendlyError } from "@/lib/errors";
 
 export interface ActionResult {
    success: boolean;
@@ -77,7 +78,7 @@ export async function initDraftProperty(): Promise<{ id: string } | { error: str
       .single();
 
    if (error || !data) {
-      return { error: error?.message ?? "Could not start a new listing." };
+      return { error: friendlyError(error, "Could not start a new listing. Please try again.", "initDraftProperty") };
    }
 
    return { id: data.id };
@@ -157,7 +158,7 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
       .eq("id", id);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not save your changes. Please try again.", "properties") };
    }
 
    // Upsert property_location. approx_lat/approx_lng are only set here as
@@ -193,7 +194,7 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
         });
 
    if (locationError) {
-      return { success: false, error: locationError.message };
+      return { success: false, error: friendlyError(locationError, "Could not save the location. Please try again.", "properties.location") };
    }
 
    revalidatePath("/dashboard/properties-list");
@@ -218,7 +219,7 @@ export async function submitPropertyForReview(id: string): Promise<ActionResult>
       .eq("status", "draft");
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not save your changes. Please try again.", "properties") };
    }
 
    revalidatePath("/dashboard/properties-list");
@@ -243,7 +244,7 @@ export async function archivePropertyListing(id: string): Promise<ActionResult> 
       .eq("status", "draft");
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not save your changes. Please try again.", "properties") };
    }
 
    revalidatePath("/dashboard/properties-list");

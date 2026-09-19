@@ -7,6 +7,7 @@ import BreadcrumbJsonLd from "@/components/common/seo/BreadcrumbJsonLd";
 import BreadcrumbTrail from "@/components/common/breadcrumb/BreadcrumbTrail";
 import ProjectJsonLd from "@/components/common/seo/ProjectJsonLd";
 import { getProjectBySlug, getProjectUnits, getProjectUnitCounts } from "@/lib/projects/queries";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 // Same reasoning as /projects: published/unpublished state can change
 // independently of any build, and an unpublished or invalid slug must 404
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
          siteName: "Property Planet",
          // Only the project's own gallery image — never a buyer/seller
          // asset, and never anything from a non-published record.
-         images: project.images[0] ? [{ url: project.images[0] }] : undefined,
+         images: project.images[0] ? [{ url: project.images[0] }] : OG_IMAGES,
       },
       // SEO fix (Section 20 — Twitter/X Card): see the identical note in
       // src/app/properties/page.tsx. Mirrors the openGraph block above —
@@ -43,7 +44,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
          card: "summary_large_image",
          title,
          description,
-         images: project.images[0] ? [project.images[0]] : undefined,
+         images: project.images[0] ? [project.images[0]] : [OG_IMAGE_URL],
       },
    };
 }

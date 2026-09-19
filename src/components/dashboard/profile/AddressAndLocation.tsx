@@ -96,7 +96,7 @@ const AddressAndLocation = () => {
                <label htmlFor="">Map Location*</label>
                <div className="position-relative">
                   <input type="text" placeholder="XC23+6XC, Moiran, N105" />
-                  <button className="location-pin tran3s"><Image src={locationImage} alt="" className="lazy-img m-auto" /></button>
+                  <button type="button" className="location-pin tran3s" aria-label="Use current location"><Image src={locationImage} alt="" className="lazy-img m-auto" /></button>
                </div>
                <div className="map-frame mt-30">
                   <div className="gmap_canvas h-100 w-100">

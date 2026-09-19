@@ -11,9 +11,16 @@ const ErrorArea = () => {
             <div className="row">
                <div className="col-xxl-8 col-xl-6 col-lg-7 col-md-8 m-auto">
                   <div className="title-one text-center mb-75 lg-mb-20 wow fadeInUp">
-                     <h3><span>Oops! <Image src={titleShape} alt="" className="lazy-img" /></span>It looks like you&apos;re lost.</h3>
-                     <p className="fs-20 pb-45">The page you&apos;re looking for isn&apos;t available. Try to search again or use the go to</p>
-                     <Link href="/" className="btn-five sm fw-normal text-uppercase">Back to home</Link>
+                     <h3><span>Oops! <Image src={titleShape} alt="" className="lazy-img" /></span>Page not found</h3>
+                     <p className="fs-20 pb-45">
+                        We couldn&apos;t find the page you were looking for. It may have been moved, removed,
+                        or the link may be mistyped. You can head back to the homepage or browse our
+                        available properties.
+                     </p>
+                     <div className="d-flex flex-wrap justify-content-center gap-3">
+                        <Link href="/" className="btn-five sm fw-normal text-uppercase">Back to home</Link>
+                        <Link href="/properties" className="btn-four sm fw-normal text-uppercase">Browse properties</Link>
+                     </div>
                   </div>
                </div>
             </div>

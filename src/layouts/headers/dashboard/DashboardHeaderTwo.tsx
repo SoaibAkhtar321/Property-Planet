@@ -78,7 +78,7 @@ const DashboardHeaderTwo = ({title}:any) => {
                   </div>
                )}
                <div className="user-data position-relative">
-                  <button className="user-avatar online position-relative rounded-circle dropdown-toggle" type="button" id="profile-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                  <button className="user-avatar online position-relative rounded-circle dropdown-toggle" type="button" id="profile-dropdown" aria-label="Account menu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                      <Image src={dashboardAvatar} alt="" className="lazy-img" />
                   </button>
                   <Profile />

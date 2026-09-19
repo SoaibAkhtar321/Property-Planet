@@ -76,7 +76,7 @@ const FeaturedImageUpload = ({ postId, initialImageUrl }: { postId: string; init
 
          {imageUrl && (
             <div className="position-relative mb-20" style={{ width: 240, height: 160 }}>
-               <Image src={imageUrl} alt="" fill style={{ objectFit: "cover", borderRadius: 8 }} unoptimized />
+               <Image src={imageUrl} alt="Featured image preview" fill style={{ objectFit: "cover", borderRadius: 8 }} unoptimized />
             </div>
          )}
 

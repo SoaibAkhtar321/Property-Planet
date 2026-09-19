@@ -1,5 +1,6 @@
 import Contact from "@/components/inner-pages/contact";
 import Wrapper from "@/layouts/Wrapper";
+import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 const CANONICAL = "https://propertyplanet.in/contact";
 const DESCRIPTION =
@@ -14,6 +15,7 @@ export const metadata = {
       description: DESCRIPTION,
       url: CANONICAL,
       type: "website",
+      images: OG_IMAGES,
    },
 };
 const index = () => {
