@@ -2,6 +2,7 @@
 import NavMenu from "./Menu/NavMenu"
 import Link from "next/link"
 import { useState } from "react"
+import { useSupabaseUser } from "@/hooks/useSupabaseUser"
 import UseSticky from "@/hooks/UseSticky"
 import LoginModal from "@/modals/LoginModal"
 import AuthNav from "./Menu/AuthNav"
@@ -9,6 +10,32 @@ import Offcanvas from "./Menu/Offcanvas"
 import HeaderSearchbar from "./Menu/HeaderSearchbar"
 import AnimatedBrandLogo from "@/components/common/AnimatedBrandLogo"
 import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF } from "@/lib/site/contact"
+
+// Mobile/tablet "Become a Seller" button (shown below lg only; desktop already
+// has this item in NavMenu). Same session-aware destinations as NavMenu,
+// BecomeSellerNav and Offcanvas: logged out -> /seller/login, buyer ->
+// /seller/register, seller -> Add Listing, admin -> hidden. It renders nothing
+// while the session is resolving, so there is no flash of the wrong label.
+const HeaderSellerButton = () => {
+   const { user, role, loading } = useSupabaseUser();
+
+   if (loading || role === "admin") return null;
+
+   let href = "/seller/login";
+   let label = "Become a Seller";
+   if (user && role === "seller") {
+      href = "/dashboard/add-property";
+      label = "Add Listing";
+   } else if (user && role === "buyer") {
+      href = "/seller/register";
+   }
+
+   return (
+      <Link href={href} className="pp-header-seller-btn">
+         {label}
+      </Link>
+   );
+};
 
 const HeaderTwo = ({ style_1, style_2 }: any) => {
    const { sticky } = UseSticky();
@@ -39,6 +66,9 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
                                  <span>{CONTACT_PHONE_DISPLAY}</span>
                               </a>
                            </li>
+                              <li className="d-lg-none pp-header-seller">
+                                 <HeaderSellerButton />
+                              </li>
                               <AuthNav />
                               <li className="pp-header-menu-btn">
                                  {/* Phase 2: fa-bars-filter (a "filter" glyph, three
@@ -95,6 +125,40 @@ const HeaderTwo = ({ style_1, style_2 }: any) => {
          <Offcanvas offCanvas={offCanvas} setOffCanvas={setOffCanvas} />
          <LoginModal />
          <HeaderSearchbar isSearch={isSearch} setIsSearch={setIsSearch} />
+
+         <style jsx global>{`
+            .theme-main-menu .pp-header-seller-btn {
+               display: inline-flex;
+               align-items: center;
+               justify-content: center;
+               white-space: nowrap;
+               background: #ff6725;
+               color: #fff;
+               border: 1px solid #ff6725;
+               border-radius: 10px;
+               font-size: 13px;
+               font-weight: 500;
+               line-height: 1;
+               padding: 0 12px;
+               height: 36px;
+               margin-right: 8px;
+               transition: background 0.2s ease, border-color 0.2s ease;
+            }
+            .theme-main-menu .pp-header-seller-btn:hover,
+            .theme-main-menu .pp-header-seller-btn:focus-visible {
+               background: #e5561a;
+               border-color: #e5561a;
+               color: #fff;
+            }
+            @media (max-width: 575px) {
+               .theme-main-menu .pp-header-seller-btn {
+                  height: 44px;
+                  padding: 0 10px;
+                  font-size: 12px;
+                  margin-right: 6px;
+               }
+            }
+         `}</style>
       </>
    )
 }

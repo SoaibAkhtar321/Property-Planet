@@ -36,7 +36,7 @@ const steps = [
 
 const PropertyPlanetHowItWorks = () => {
    return (
-      <div className="property-planet-how-it-works position-relative z-1 mt-150 xl-mt-120 md-mt-80">
+      <div className="property-planet-how-it-works pp-band pp-band--peach">
          <div className="container">
             <div className="pp-how">
                <div className="title-one text-center mb-50 lg-mb-40 wow fadeInUp">

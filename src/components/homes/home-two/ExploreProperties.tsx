@@ -40,13 +40,13 @@ const ExploreProperties = async () => {
       //     already ends in pb-150 (xl-pb-120 / lg-pb-80). Stacking mt-150 on
       //     top of that was doubling the gap between the two sections on both
       //     desktop and mobile. */}
-      <div className="property-listing-two position-relative z-1 pb-150 xl-pb-120 lg-pb-80">
+      <div className="property-listing-two pp-band pp-band--sky">
                   <div className="container">
             <div className="position-relative">
                <div className="title-one mb-25 lg-mb-20 wow fadeInUp">
                   <h2 className="font-garamond">Explore Properties</h2>
                   <p className="fs-22 mt-xs">
-                     Standalone plots, villas, houses and apartments ready to buy or rent — browse independently of our
+                     Standalone plots, villas, houses and apartments ready to buy — browse independently of our
                      Featured Opportunities projects.
                   </p>
                </div>

@@ -46,7 +46,7 @@ const Property = async () => {
    const hasFeatured = featuredProjects.length > 0 || featuredProperties.length > 0;
 
    return (
-      <div className="xl-mt-120 property-listing-two position-relative z-1 mt-150 pb-150 xl-pb-120 lg-pb-80">
+      <div className="property-listing-two pp-band pp-band--warm">
          <div className="container">
             <div className="position-relative">
                <div className="title-one mb-25 lg-mb-20 wow fadeInUp">
