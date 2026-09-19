@@ -250,7 +250,7 @@ const VisitorAssistance = () => {
                   ×
                </button>
                <p className="pp-va-title">Need help finding the right property?</p>
-               <p className="pp-va-subtitle">Tell us what you're looking for and we'll reach out.</p>
+               <p className="pp-va-subtitle">Tell us what you&apos;re looking for and we&apos;ll reach out.</p>
                <div className="pp-va-actions">
                   <button type="button" className="btn-one pp-va-btn" onClick={() => setPhase("form")}>
                      Get Assistance
@@ -288,7 +288,7 @@ const VisitorAssistance = () => {
                      />
                   </div>
                   <div className="pp-va-field">
-                     <label htmlFor="pp-va-requirement">What you're looking for *</label>
+                     <label htmlFor="pp-va-requirement">What you&apos;re looking for *</label>
                      <select
                         id="pp-va-requirement"
                         value={requirementType}
@@ -351,7 +351,7 @@ const VisitorAssistance = () => {
                <button type="button" className="pp-va-close" aria-label="Dismiss" onClick={() => setPhase("hidden")}>
                   ×
                </button>
-               <p className="pp-va-title">Thanks — we've got it!</p>
+               <p className="pp-va-title">Thanks — we&apos;ve got it!</p>
                <p className="pp-va-subtitle">Our team will reach out to you shortly.</p>
             </div>
          )}
