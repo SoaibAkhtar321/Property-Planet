@@ -45,7 +45,7 @@ const Feedback = async () => {
                                        <p className="fs-18 text-white fw-normal m0">{certificate.title || "RERA Registered"}</p>
 <p className="fs-14 fw-light text-white opacity-75 mt-5 mb-0">
    {certificate.description ||
-      "This project is RERA registered. View the certificate below for verified, transparent registration details."}
+      "Property Planet is RERA registered to operate as a real estate business. View the certificate below for the registration details."}
 </p>
                                     </div>
                                  </div>

@@ -15,6 +15,15 @@ import { createClient } from "@/lib/supabase/server";
 
 export type LeadStatus = "new" | "contacted" | "qualified" | "site_visit" | "negotiation" | "closed" | "lost";
 
+export type SiteVisitStatus = "requested" | "confirmed" | "completed" | "cancelled" | "no_show";
+
+/** A buyer's own site visit on one of their leads (read via "site visits follow lead visibility", 0004). */
+export interface MySiteVisit {
+   id: string;
+   status: SiteVisitStatus;
+   scheduledAt: string | null;
+}
+
 export interface MyEnquiry {
    id: string;
    status: LeadStatus;
@@ -26,6 +35,8 @@ export interface MyEnquiry {
    projectId: string | null;
    projectTitle: string | null;
    projectSlug: string | null;
+   /** Newest first. Empty for project-only leads (site visits are plot-specific). */
+   siteVisits: MySiteVisit[];
 }
 
 /** The caller's own enquiries (leads), newest first. Empty (never throws) if not signed in. */
@@ -75,6 +86,25 @@ export async function getMyEnquiries(): Promise<MyEnquiry[]> {
       }
    }
 
+   // Phase 9: the buyer's own visits, so the dashboard can show them and offer
+   // cancellation. RLS scopes this to visits on the caller's own leads; the
+   // explicit lead_id filter just keeps the query narrow.
+   const visitsByLeadId = new Map<string, MySiteVisit[]>();
+   const { data: visits } = await supabase
+      .from("site_visits")
+      .select("id, lead_id, status, scheduled_at")
+      .in(
+         "lead_id",
+         leads.map((l) => l.id)
+      )
+      .order("created_at", { ascending: false });
+
+   for (const v of visits ?? []) {
+      const list = visitsByLeadId.get(v.lead_id) ?? [];
+      list.push({ id: v.id, status: v.status as SiteVisitStatus, scheduledAt: v.scheduled_at });
+      visitsByLeadId.set(v.lead_id, list);
+   }
+
    return leads.map((lead) => {
       const property = lead.property_id ? titleByPropertyId.get(lead.property_id) : undefined;
       const project = lead.project_id ? titleByProjectId.get(lead.project_id) : undefined;
@@ -89,6 +119,7 @@ export async function getMyEnquiries(): Promise<MyEnquiry[]> {
          projectId: lead.project_id,
          projectTitle: project?.title ?? null,
          projectSlug: project?.slug ?? null,
+         siteVisits: visitsByLeadId.get(lead.id) ?? [],
       };
    });
 }

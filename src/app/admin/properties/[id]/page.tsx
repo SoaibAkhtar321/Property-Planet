@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getPropertyForModeration } from "@/lib/admin/properties/queries";
 import {
    approveProperty,
@@ -46,9 +46,16 @@ export default async function AdminPropertyDetailPage({
       notFound();
    }
 
+   // Phase 9: surfaced in the UI below. The action itself enforces admin-only,
+   // published-only and not-a-project-unit; a refusal is shown through the
+   // same ?error= banner the rest of this page already uses instead of being
+   // swallowed.
    const toggleFeatured = async () => {
       "use server";
-      await setPropertyFeatured(id, !property.is_featured);
+      const result = await setPropertyFeatured(id, !property.is_featured);
+      if (!result.success) {
+         redirect(`/admin/properties/${id}?error=${encodeURIComponent(result.error ?? "Could not update Featured.")}`);
+      }
    };
 
    const approve = async () => {
@@ -108,6 +115,32 @@ export default async function AdminPropertyDetailPage({
                This listing is a unit of a project, so it is not shown in the public Individual Properties listing.
                Manage it from{" "}
                <Link href={`/admin/projects/${property.project_id}`}>its project&apos;s Units section</Link>.
+            </div>
+         )}
+
+         {!property.project_id && (
+            <div className="border rounded p-3 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
+               <div>
+                  <strong>Homepage Featured</strong>
+                  <span className={`badge ms-2 ${property.is_featured ? "bg-success" : "bg-light text-dark"}`}>
+                     {property.is_featured ? "Featured" : "Not featured"}
+                  </span>
+                  <div className="text-muted small mt-1">
+                     Featuring only adds this listing to the homepage Featured section. It stays in Properties.
+                     {property.status !== "published" && !property.is_featured
+                        ? " Only a published property can be featured."
+                        : ""}
+                  </div>
+               </div>
+               <form action={toggleFeatured}>
+                  <button
+                     type="submit"
+                     className={`btn btn-sm ${property.is_featured ? "btn-outline-secondary" : "btn-outline-primary"}`}
+                     disabled={!property.is_featured && property.status !== "published"}
+                  >
+                     {property.is_featured ? "Remove from Featured" : "Feature on homepage"}
+                  </button>
+               </form>
             </div>
          )}
 

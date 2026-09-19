@@ -54,6 +54,7 @@ export default async function AdminPropertiesPage({ searchParams }: { searchPara
                         <th>Location</th>
                         <th>Seller</th>
                         <th>Status</th>
+                        <th>Featured</th>
                         <th>Submitted</th>
                         <th></th>
                      </tr>
@@ -76,6 +77,7 @@ export default async function AdminPropertiesPage({ searchParams }: { searchPara
                            <td>
                               <span className={`badge ${statusBadgeClass[p.status] ?? "bg-secondary"}`}>{p.status}</span>
                            </td>
+                           <td>{p.is_featured ? <span className="badge bg-success">Featured</span> : "—"}</td>
                            <td className="text-muted small">{new Date(p.created_at).toLocaleDateString()}</td>
                            <td>
                               <Link href={`/admin/properties/${p.id}`} className="btn btn-sm btn-outline-primary">

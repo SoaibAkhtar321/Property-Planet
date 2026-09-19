@@ -1,7 +1,8 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { generateAIResponse, formatINR, type PropertyPlanetProperty } from "@/utils/propertyPlanetAIEngine"
+import { formatINR, type PropertyPlanetProperty } from "@/utils/propertyPlanetAIEngine"
+import { askPropertyPlanetAI } from "@/lib/ai/actions"
 import { onPropertyPlanetAIOpen } from "@/utils/propertyPlanetAIBus"
 
 interface ChatMessage {
@@ -12,35 +13,28 @@ interface ChatMessage {
 
 const WELCOME_MESSAGE: ChatMessage = {
    role: "ai",
-   text: "Hi \uD83D\uDC4B I'm Property Planet AI. I can help you discover plots, compare locations and find opportunities based on your budget.",
+   text: "Hi \uD83D\uDC4B I'm Property Planet AI. I can search our published listings by location, budget and property type.",
 };
 
 const SUGGESTED_PROMPTS = [
-   "Find plots in Future City",
-   "Best investment areas",
+   "Find plots in Adibatla",
    "Properties under ₹50L",
    "Do you verify listings?",
-   "What is Future City corridor?",
+   "Do you have RERA registration?",
+   "How do I contact your team?",
+   "How do I sell my property?",
    "Plots vs villas — which is better?",
    "How do I book a site visit?",
    "Is home loan available for plots?",
 ];
 
 const typeIcon = (type?: string): string => {
-   switch (type) {
-      case "Plot":
-      case "Land":
-      case "Corporate Land":
-         return "fa-map-location-dot";
-      case "Villa":
-         return "fa-house-chimney";
-      case "Apartment":
-         return "fa-building";
-      case "Commercial":
-         return "fa-shop";
-      default:
-         return "fa-location-dot";
-   }
+   const t = (type ?? "").toLowerCase();
+   if (t.includes("plot") || t.includes("land")) return "fa-map-location-dot";
+   if (t.includes("villa")) return "fa-house-chimney";
+   if (t.includes("apartment") || t.includes("flat")) return "fa-building";
+   if (t.includes("commercial")) return "fa-shop";
+   return "fa-location-dot";
 };
 
 const PropertyPlanetAIWidget = () => {
@@ -74,13 +68,19 @@ const PropertyPlanetAIWidget = () => {
       setMessages((prev) => [...prev, { role: "user", text: trimmed }]);
       setInput("");
       setTyping(true);
-      // Simulated "thinking" delay — this is the seam where a real LLM/API
-      // call will eventually replace generateAIResponse().
-      setTimeout(() => {
-         const response = generateAIResponse(trimmed);
-         setMessages((prev) => [...prev, { role: "ai", text: response.text, properties: response.properties }]);
-         setTyping(false);
-      }, 700 + Math.random() * 400);
+      // Answers come from a server action over real published listings
+      // (src/lib/ai/actions.ts); nothing privileged runs in the browser.
+      askPropertyPlanetAI(trimmed)
+         .then((response) => {
+            setMessages((prev) => [...prev, { role: "ai", text: response.text, properties: response.properties }]);
+         })
+         .catch(() => {
+            setMessages((prev) => [
+               ...prev,
+               { role: "ai", text: "Something went wrong. Please try again, or contact our team on the Contact page." },
+            ]);
+         })
+         .finally(() => setTyping(false));
    };
 
    return (
@@ -107,7 +107,7 @@ const PropertyPlanetAIWidget = () => {
                   <i className="fa-regular fa-xmark"></i>
                </button>
             </div>
-            <div className="property-planet-ai-demo-note">Preview assistant — answers from sample listings. Live AI coming soon.</div>
+            <div className="property-planet-ai-demo-note">Answers use Property Planet&apos;s published listings only. Not legal, financial or investment advice.</div>
 
             <div className="property-planet-ai-body" ref={bodyRef}>
                {messages.map((m, i) => (
@@ -119,15 +119,22 @@ const PropertyPlanetAIWidget = () => {
                               <div key={p.id} className="property-planet-ai-card">
                                  <div className="d-flex align-items-start">
                                     <span className="property-planet-ai-card-icon d-flex align-items-center justify-content-center">
-                                       <i className={`fa-regular ${typeIcon(p.property_type)}`}></i>
+                                       <i className={`fa-regular ${typeIcon(p.propertyType)}`}></i>
                                     </span>
                                     <div className="ms-2 flex-grow-1">
-                                       <div className="property-planet-ai-card-title">{p.title}</div>
-                                       <div className="property-planet-ai-card-meta">{p.address}</div>
+                                       <div className="property-planet-ai-card-title">
+                                          <Link href={`/properties/${p.slug}`} className="color-dark">
+                                             {p.title}
+                                          </Link>
+                                       </div>
+                                       <div className="property-planet-ai-card-meta">
+                                          {p.locality}, {p.city}
+                                          {p.areaText ? ` · ${p.areaText}` : ""}
+                                       </div>
                                     </div>
                                  </div>
                                  <div className="property-planet-ai-card-tags">
-                                    {p.property_type && <span className="tag-type">{p.property_type}</span>}
+                                    {p.propertyType && <span className="tag-type">{p.propertyType}</span>}
                                  </div>
                                  <div className="d-flex align-items-center justify-content-between mt-2">
                                     <strong className="property-planet-ai-card-price">{formatINR(p.price)}</strong>

@@ -358,3 +358,14 @@ $hb-cycle: 18s;
       .hb-stage { z-index: 1; }
    }
 }
+
+/* Phone and tablet: below 992px the build animation is a decorative block
+   stacked AFTER the search panel, which is what left a tall empty sky-blue
+   band under the filter. The hero now ends with the filter. Desktop
+   (>=992px), where the animation is a background layer beside the copy, is
+   untouched. */
+@media (max-width: 991px) {
+   .hero-banner-two .hb-stage {
+      display: none;
+   }
+}

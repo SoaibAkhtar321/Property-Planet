@@ -662,6 +662,14 @@
    search panel's own mt-60 top margin -- together that left a large empty
    band between the search bar and the next section. Trimmed here instead
    of touching the desktop-tuned pt-200/pb-130 values in HeroBanner.tsx. */
+/* Tablet: with the stacked animation hidden (see _hero-build.scss) the hero
+   ends after the filter, so it needs the same trimmed bottom padding. */
+@media (min-width: 768px) and (max-width: 991px) {
+   .hero-banner-two .position-relative.pt-200 {
+      padding-bottom: 60px !important;
+   }
+}
+
 @media (max-width: 767px) {
    .hero-banner-two .position-relative.pt-200 {
       padding-bottom: 50px !important;

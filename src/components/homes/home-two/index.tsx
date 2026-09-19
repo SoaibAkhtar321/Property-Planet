@@ -13,13 +13,6 @@ import FancyBannerTwo from "./FancyBannerTwo"
 import HeaderTwo from "@/layouts/headers/HeaderTwo"
 import PropertyPlanetHowItWorks from "./PropertyPlanetHowItWorks"
 import PropertyPlanetMapIntelligence from "./PropertyPlanetMapIntelligence"
-// TODO(ai-widget): PropertyPlanetAIAdvisor is disabled — its current dataset
-// (src/data/home-data/PropertyData.ts via src/utils/propertyPlanetAIEngine.ts)
-// is static template/demo data with fabricated verification status, trust
-// scores, and prices. Do not re-enable until it is wired to real Supabase
-// property/project data. Component and data files are intentionally left
-// in place for that future work.
-// import PropertyPlanetAIAdvisor from "./PropertyPlanetAIAdvisor"
 
 const HomeTwo = () => {
   return (
@@ -33,7 +26,6 @@ const HomeTwo = () => {
       <BLockFeatureOne />
       <FancyBannerOne />
       <PropertyPlanetMapIntelligence />
-      {/* PropertyPlanetAIAdvisor disabled — see TODO(ai-widget) above */}
       <BLockFeatureTwo />
       <FeedbackTwo />
       <Blog style={false} />

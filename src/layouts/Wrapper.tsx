@@ -35,10 +35,8 @@ const Wrapper = ({ children }: any) => {
     return <>
         {children}
         <ScrollToTop />
-        {/* PropertyPlanetAIWidget: enabled with sample/reference Q&A only.
-            Verification/trust badges are intentionally not rendered here —
-            see PropertyPlanetAIWidget.tsx — until this is wired to real
-            Supabase property data and a real AI backend. */}
+        {/* PropertyPlanetAIWidget: answers come from a server action over real
+            published listings (src/lib/ai/actions.ts). No demo data. */}
         <PropertyPlanetAIWidget />
         {/* Universal inquiry flow: mounted once here so every "Send Inquiry"
             button on the site (cards, detail pages, units) opens the same

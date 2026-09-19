@@ -1,5 +1,17 @@
 import Link from "next/link";
-import { MyEnquiry, LeadStatus } from "@/lib/leads/queries";
+import { MyEnquiry, LeadStatus, SiteVisitStatus } from "@/lib/leads/queries";
+import CancelSiteVisitButton from "./CancelSiteVisitButton";
+
+const visitStatusLabel: Record<SiteVisitStatus, string> = {
+   requested: "Requested",
+   confirmed: "Confirmed",
+   completed: "Completed",
+   cancelled: "Cancelled",
+   no_show: "Missed",
+};
+
+const formatDateTime = (iso: string) =>
+   new Date(iso).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
 
 const statusLabel: Record<LeadStatus, string> = {
    new: "New",
@@ -65,6 +77,28 @@ const EnquiriesList = ({ enquiries }: { enquiries: MyEnquiry[] }) => {
                         </div>
                      </div>
                      {enquiry.message && <p className="fs-16 mt-15 mb-0">{enquiry.message}</p>}
+                     {enquiry.siteVisits.length > 0 && (
+                        <div className="mt-15">
+                           <div className="fs-14 fw-500 mb-5">Site visits</div>
+                           <ul className="style-none">
+                              {enquiry.siteVisits.map((visit) => (
+                                 <li
+                                    key={visit.id}
+                                    className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-5"
+                                 >
+                                    <span className="fs-14">
+                                       {visit.scheduledAt ? formatDateTime(visit.scheduledAt) : "Time to be confirmed"}
+                                       {" · "}
+                                       {visitStatusLabel[visit.status]}
+                                    </span>
+                                    {(visit.status === "requested" || visit.status === "confirmed") && (
+                                       <CancelSiteVisitButton siteVisitId={visit.id} />
+                                    )}
+                                 </li>
+                              ))}
+                           </ul>
+                        </div>
+                     )}
                   </li>
                );
             })}

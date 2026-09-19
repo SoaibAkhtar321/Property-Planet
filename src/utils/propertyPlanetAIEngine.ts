@@ -1,35 +1,45 @@
 // propertyPlanetAIEngine.ts
 //
-// Deterministic, rule-based "AI" response engine for the Property Planet AI assistant
-// prototype. It reads ONLY from the existing property_data source (the
-// "home_2" records, which are static ThemeForest/demo template rows, not
-// live Supabase listings). No property is invented here beyond what's
-// already in that demo file.
+// Deterministic, rule-based response engine for the Property Planet AI
+// assistant. It has NO built-in inventory: every property it can mention is
+// passed in by the caller. The only caller is the server action in
+// src/lib/ai/actions.ts, which loads the dataset from the public
+// `property_public` view (published, sale, individual listings only), so the
+// assistant can never surface a demo, unpublished, private or fabricated
+// listing.
 //
-// IMPORTANT: verification_status / trust_score / last_verified from
-// property_data are fabricated demo values (see Section 14 audit) and are
-// deliberately NOT surfaced anywhere below — Property Planet does not
-// independently verify ownership/title/legal status, so this assistant
-// must never claim or imply that a listing is "Verified" or has a "trust
-// score". Real verification only ever comes from admin-managed data
-// (e.g. the site RERA certificate), never from this static file.
+// What this engine deliberately does NOT do:
+//   - invent properties, prices, availability, verification status, trust
+//     scores or RERA/legal claims;
+//   - make investment-return, appreciation or infrastructure claims — there is
+//     no data source for them, so it says so;
+//   - see seller/buyer contact details, leads or exact locations — the
+//     dataset shape below simply has no field for them.
 //
-// This file has no React/DOM dependency so it is easy to unit-test and easy
-// to swap for a real LLM/API call later — the public surface
-// (generateAIResponse) intentionally returns the same shape a future
-// API-backed implementation would return.
+// Anything outside what it can answer is handed to the business's real,
+// verified contact details (src/lib/site/contact.ts) instead of guessed at.
+//
+// No React/DOM dependency and no I/O: easy to unit-test, and the public
+// surface (generateAIResponse) is the seam a real LLM/API could replace later
+// without touching the widget.
 
-import property_data from "@/data/home-data/PropertyData";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/site/contact";
 
 export interface PropertyPlanetProperty {
-   id: number;
+   id: string;
    title: string;
-   address: string;
+   slug: string;
+   propertyType: string;
    price: number;
-   price_text?: string;
-   property_type?: string;
-   suitable_for?: string;
-   tag: string;
+   city: string;
+   locality: string;
+   /** e.g. "200 sqyd" — only when the listing actually has both area and unit. */
+   areaText?: string;
+}
+
+export interface PropertyPlanetAIContext {
+   /** True only when an admin has actually uploaded the site RERA certificate. */
+   hasReraCertificate?: boolean;
 }
 
 export interface PropertyPlanetAIResponse {
@@ -37,76 +47,42 @@ export interface PropertyPlanetAIResponse {
    properties?: PropertyPlanetProperty[];
 }
 
-// ---------------------------------------------------------------------------
-// Dataset
-// ---------------------------------------------------------------------------
-
-// Only the "home_2" records carry the property-intelligence fields this
-// assistant uses. verification_status / trust_score / last_verified exist
-// on the source rows but are intentionally dropped here — see the file
-// header note above.
-const AI_DATASET: PropertyPlanetProperty[] = property_data
-   .filter((item) => item.page === "home_2")
-   .map((item) => ({
-      id: item.id,
-      title: item.title,
-      address: item.address,
-      price: item.price,
-      price_text: item.price_text,
-      property_type: item.property_type,
-      suitable_for: item.suitable_for,
-      tag: item.tag,
-   }));
-
-export const getAllProperties = (): PropertyPlanetProperty[] => AI_DATASET;
-
-// Known growth-corridor locations (mirrors the search dropdown + map
-// intelligence markers). Used only to recognise a location mentioned in a
-// question and to give an honest "not in current listings" answer when no
-// property matches.
-const KNOWN_LOCATIONS = [
-   "future city",
-   "mucherla",
-   "shamshabad",
-   "kollur",
-   "maheshwaram",
+// Localities specified by the client for the homepage locality section. Used
+// only to RECOGNISE a place named in a question, so the assistant can say
+// honestly that nothing is currently listed there. Nothing is said about
+// them beyond what the live dataset contains.
+const CLIENT_LOCALITIES = [
+   "raviryala",
+   "tukkuguda",
+   "kongara kalan",
    "adibatla",
-   "shankarpally",
+   "kongara khurd",
+   "nadargul",
+   "maheshwaram",
 ];
 
-// Short, clearly-labelled corridor notes for comparison-style questions.
-// Prototype content only — not property listings, so this does not violate
-// the "don't invent properties" rule.
-const LOCATION_NOTES: Record<string, string> = {
-   "future city": "the anchor node of the corridor — the upcoming Future City master-planned zone itself.",
-   "mucherla": "immediately adjacent to Future City, currently the most active zone for plotted land and early institutional interest.",
-   "shamshabad": "closest to Rajiv Gandhi International Airport, popular for villas and airport-linked commercial use.",
-   "kollur": "an established western-corridor residential pocket, generally more developed than the newer southern nodes.",
-   "maheshwaram": "on the southern arm of the corridor, positioned for long-horizon land appreciation as infrastructure extends outward.",
-   "adibatla": "on NH-44, oriented toward industrial and corporate land parcels rather than residential plots.",
-   "shankarpally": "on the western growth belt, currently more villa/residential in character than the southern plot corridor.",
-};
+const MAX_CARDS = 6;
+
+// Every "ask the team" hand-off uses this one string, built from the single
+// source of truth for contact details.
+const CONTACT_LINE = `Call us on ${CONTACT_PHONE_DISPLAY} or email ${CONTACT_EMAIL}.`;
 
 // ---------------------------------------------------------------------------
 // Filters (composable, deterministic)
 // ---------------------------------------------------------------------------
 
-// Matches against both the address AND the title, since a corridor name
-// like "Future City" often appears in a listing's title (e.g. "Future City
-// Premium Plot") rather than its literal address (e.g. "Mucherla,
-// Hyderabad") — both are legitimately "near Future City" for a buyer.
-export const filterByLocation = (query: string, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] => {
+export const filterByLocation = (query: string, data: PropertyPlanetProperty[]): PropertyPlanetProperty[] => {
    const q = query.toLowerCase();
-   return data.filter((p) => p.address.toLowerCase().includes(q) || p.title.toLowerCase().includes(q));
+   return data.filter(
+      (p) => p.locality.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || p.title.toLowerCase().includes(q)
+   );
 };
 
-export const filterByType = (type: string, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] => {
-   const q = type.toLowerCase();
-   return data.filter((p) => (p.property_type ?? "").toLowerCase().includes(q));
-};
+export const filterByType = (types: string[], data: PropertyPlanetProperty[]): PropertyPlanetProperty[] =>
+   data.filter((p) => types.some((t) => p.propertyType.toLowerCase().includes(t)));
 
 // maxAmount is a plain rupee value (already converted from lakh/crore).
-export const filterByBudget = (maxAmount: number, data: PropertyPlanetProperty[] = AI_DATASET): PropertyPlanetProperty[] =>
+export const filterByBudget = (maxAmount: number, data: PropertyPlanetProperty[]): PropertyPlanetProperty[] =>
    data.filter((p) => p.price <= maxAmount);
 
 // ---------------------------------------------------------------------------
@@ -140,189 +116,299 @@ const parseBudget = (text: string): number | null => {
    return null;
 };
 
-const findLocation = (text: string): string | null => {
-   const q = text.toLowerCase();
-   return KNOWN_LOCATIONS.find((loc) => q.includes(loc)) ?? null;
-};
+const cap = (s: string): string => s.replace(/\b\w/g, (c) => c.toUpperCase());
 
-const findType = (text: string): string | null => {
+// Returns the property_type substrings to match, plus a label for the reply.
+const findType = (text: string): { match: string[]; label: string } | null => {
    const q = text.toLowerCase();
-   if (q.includes("corporate land") || q.includes("industrial")) return "Corporate Land";
-   if (q.includes("plot")) return "Plot";
-   if (q.includes("land")) return "Land";
-   if (q.includes("villa")) return "Villa";
-   if (q.includes("apartment") || q.includes("flat")) return "Apartment";
-   if (q.includes("commercial")) return "Commercial";
+   if (q.includes("plot")) return { match: ["plot"], label: "Plot" };
+   if (q.includes("land")) return { match: ["land", "plot"], label: "Land" };
+   if (q.includes("villa")) return { match: ["villa"], label: "Villa" };
+   if (q.includes("apartment") || q.includes("flat")) return { match: ["apartment", "flat"], label: "Apartment" };
+   if (q.includes("commercial")) return { match: ["commercial"], label: "Commercial" };
    return null;
 };
 
 // ---------------------------------------------------------------------------
 // Keyword understanding
 // ---------------------------------------------------------------------------
-//
-// A lightweight synonym layer so the assistant reacts to how people actually
-// phrase things ("cheap", "genuine", "EMI", "tour") instead of only the exact
-// words used in the four canned suggestion chips. Still fully rule-based —
-// no external API — but it lets one question carry several signals at once
-// (location + type + budget + verified) instead of matching only the first
-// branch that happens to fire.
 
 const GREETING_WORDS = ["hi", "hello", "hey", "hii", "helo", "yo", "namaste"];
 const THANKS_WORDS = ["thanks", "thank you", "thnx", "thx", "ty"];
 
+const ABOUT_WORDS = ["who are you", "about property planet", "what is property planet", "what do you do", "what can you do", "about you", "your company", "about the company"];
+const CONTACT_WORDS = ["contact", "phone", "call", "email", "e-mail", "mail", "whatsapp", "number", "address", "office", "agent", "human", "advisor", "talk to", "speak to", "reach you", "helpline", "customer care", "support"];
+const RERA_WORDS = ["rera"];
+const VERIFICATION_QUESTION_WORDS = ["verify", "verified", "verification", "genuine", "authentic", "trusted", "trust score", "is it legit", "legit", "legal check", "clear title", "title check", "legal", "documents", "document"];
 const INVESTMENT_WORDS = ["invest", "investment", "returns", "appreciation", "roi", "resale"];
-const VERIFICATION_QUESTION_WORDS = ["verified", "verification", "genuine", "authentic", "trusted", "trust score", "is it legit", "legit", "legal check", "clear title", "title check"];
+const INFRA_WORDS = ["infrastructure", "corridor", "future city", "orr", "airport", "highway"];
 const CHEAP_WORDS = ["cheap", "affordable", "budget-friendly", "lowest price", "low budget"];
 const LOAN_WORDS = ["loan", "emi", "finance", "financing", "mortgage", "bank loan"];
-const VISIT_WORDS = ["site visit", "book a visit", "schedule a visit", "site tour", "visit the site", "book visit"];
-const CORRIDOR_WORDS = ["future city corridor", "what is future city", "about future city", "corridor mean", "what is the corridor"];
+const VISIT_WORDS = ["site visit", "book a visit", "schedule a visit", "site tour", "visit the site", "book visit", "visit"];
 const COMPARE_TYPE_WORDS = ["plots vs villas", "plot vs villa", "plot or villa", "villa or plot", "which is better"];
+const SELL_WORDS = ["sell my", "sell property", "sell a property", "sell with", "become a seller", "be a seller", "list my", "list a property", "list property", "post my property", "post a property", "seller", "add listing", "add property"];
+const RENT_WORDS = ["rent", "rental", "lease", "pg"];
+const ENQUIRY_WORDS = ["enquiry", "inquiry", "enquire", "inquire", "interested", "i want to buy", "how to buy", "how do i buy", "buy a plot", "buy a property"];
+const ACCOUNT_WORDS = ["login", "log in", "sign in", "sign up", "signup", "register", "create account", "account", "password"];
+const FAVOURITE_WORDS = ["favourite", "favorite", "wishlist", "save property", "saved"];
+const PROJECT_WORDS = ["project", "projects", "layout", "layouts", "gated", "developer"];
+const LOCALITY_LIST_WORDS = ["which areas", "what areas", "which locations", "what locations", "areas do you", "locations do you", "where do you have", "localities", "which localities", "areas you cover"];
+const MONEY_TERMS_WORDS = ["commission", "brokerage", "fee", "fees", "charges", "discount", "negotiate", "negotiation", "token", "advance", "booking amount", "payment", "registration cost", "stamp duty", "gst", "tax"];
+const LOCATION_PRIVACY_WORDS = ["exact location", "exact address", "google map", "maps", "pin location", "where exactly"];
+const PRIVACY_WORDS = ["privacy", "my data", "delete my account", "delete account", "terms"];
 
 const includesAny = (q: string, words: string[]): boolean =>
    words.some((w) => new RegExp(`(^|[^a-z])${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z]|$)`).test(q));
+
+const showing = (n: number, total: number) => (total > n ? ` Showing the first ${n}.` : "");
 
 // ---------------------------------------------------------------------------
 // Main entry point
 // ---------------------------------------------------------------------------
 
-export const generateAIResponse = (question: string): PropertyPlanetAIResponse => {
+export const generateAIResponse = (
+   question: string,
+   dataset: PropertyPlanetProperty[],
+   context: PropertyPlanetAIContext = {}
+): PropertyPlanetAIResponse => {
    const q = question.toLowerCase().trim();
 
+   // Locations the assistant can recognise: the client's localities plus every
+   // locality that actually appears in the live dataset.
+   const knownLocations = Array.from(
+      new Set([...CLIENT_LOCALITIES, ...dataset.map((p) => p.locality.toLowerCase().trim()).filter(Boolean)])
+   );
+   const findLocation = (text: string): string | null => knownLocations.find((loc) => text.includes(loc)) ?? null;
+
    if (!q) {
-      return { text: "Ask me about a location, a budget or a property type — for example \"plots in Mucherla under ₹1 crore\"." };
+      return { text: "Ask me about a location, a budget or a property type — for example \"plots in Adibatla under ₹1 crore\"." };
    }
 
    // 0a. Greeting.
    if (GREETING_WORDS.some((w) => q === w || q.startsWith(w + " ") || q.startsWith(w + "!"))) {
-      return { text: "Hey! I can help you find plots, villas, apartments or commercial land across the Future City corridor — tell me a location, a budget, or what you're looking for." };
+      return { text: "Hey! I can help you find plots, villas or apartments from Property Planet's published listings — tell me a location, a budget, or what you're looking for." };
    }
 
    // 0b. Thanks / closing.
    if (includesAny(q, THANKS_WORDS)) {
-      return { text: "Happy to help! If you want a human touch too, our team is a message away on the Contact page." };
+      return { text: `Happy to help! If you'd like to talk to our team directly: ${CONTACT_LINE}` };
    }
 
-   // 1. "Tell me about this property" — no property context in a global widget.
+   // 1. About Property Planet.
+   if (includesAny(q, ABOUT_WORDS)) {
+      return {
+         text: "Property Planet is a real estate platform for discovering plots, land, villas and apartments across Hyderabad's emerging growth areas. You can browse published listings and projects, send an enquiry, and request a site visit. I can search listings by location, budget and type — and our team handles everything else.",
+      };
+   }
+
+   // 2. RERA — the certificate belongs to the COMPANY (registration to operate
+   // as a real estate business), and is only mentioned as held when it has
+   // actually been uploaded. It is never presented as a per-listing check.
+   if (includesAny(q, RERA_WORDS)) {
+      return {
+         text: context.hasReraCertificate
+            ? `Yes — Property Planet is RERA registered to operate as a real estate business, and the certificate is displayed on our homepage. That registration is for the company itself; it doesn't mean each individual listing has been independently verified, so please do your own due diligence on any property. For specific questions: ${CONTACT_LINE}`
+            : `Our RERA registration details will be shown on the website once the certificate is published there. For any RERA question right now: ${CONTACT_LINE}`,
+      };
+   }
+
+   // 3. Contact / talk to a person.
+   if (includesAny(q, CONTACT_WORDS)) {
+      return {
+         text: `You can reach the Property Planet team directly — ${CONTACT_LINE} You can also use the Contact page on this website.`,
+      };
+   }
+
+   // 4. "Tell me about this property" — no property context in a global widget.
    if (q.includes("this property") || (q.includes("tell me about") && !findLocation(q) && !findType(q))) {
       return {
-         text: "Open a specific listing for its full details, or tell me a location, budget or property type and I'll surface matching opportunities here.",
+         text: `Open a specific listing for its full details, or tell me a location, budget or property type and I'll surface matching listings here. For anything about a particular property: ${CONTACT_LINE}`,
       };
    }
 
-   // 1a. Verification / trust questions — answer honestly instead of
-   // filtering on a fabricated status. Property Planet does not
-   // independently verify ownership, title or legal status of listings.
+   // 5. Verification / legal / documents — answer honestly instead of implying
+   // a check that does not exist.
    if (includesAny(q, VERIFICATION_QUESTION_WORDS)) {
       return {
-         text: "Property Planet doesn't independently verify ownership, title, RERA status or legal compliance for listings — sellers self-list, and admin approval only means the listing met our posting guidelines, not a legal check. For any legal or title verification, please do your own due diligence or consult a professional before buying. I can still help you find plots by location, budget or type — or our team can point you to the right next step on the Contact page.",
+         text: `Property Planet doesn't independently verify ownership, title or legal compliance for individual listings — admin approval only means a listing met our posting guidelines, not a legal check. Please do your own due diligence or consult a professional before buying. For questions about documents for a specific property, our team can guide you: ${CONTACT_LINE}`,
       };
    }
 
-   // 2. Comparison between two known locations.
+   // 6. Money terms — fees, commission, discounts, payment: nothing here is
+   // published, so hand off rather than guess.
+   if (includesAny(q, MONEY_TERMS_WORDS)) {
+      return {
+         text: `Fees, charges, negotiation and payment terms depend on the specific property, and I don't have them. Please check with our team: ${CONTACT_LINE}`,
+      };
+   }
+
+   // 7. Comparison between two locations — counts come from the live dataset only.
    if (q.includes("difference between") || q.includes(" vs ") || q.includes(" versus ")) {
-      const mentioned = KNOWN_LOCATIONS.filter((loc) => q.includes(loc));
+      const mentioned = knownLocations.filter((loc) => q.includes(loc));
       if (mentioned.length >= 2) {
          const [a, b] = mentioned;
-         const propsA = filterByLocation(a);
-         const propsB = filterByLocation(b);
+         const propsA = filterByLocation(a, dataset);
+         const propsB = filterByLocation(b, dataset);
+         const combined = [...propsA, ...propsB].filter((p, i, arr) => arr.findIndex((x) => x.id === p.id) === i);
          const text =
-            `${cap(a)} is ${LOCATION_NOTES[a]} ${cap(b)} is ${LOCATION_NOTES[b]} ` +
-            `Currently we have ${propsA.length} listed opportunit${propsA.length === 1 ? "y" : "ies"} in ${cap(a)} and ` +
-            `${propsB.length} in ${cap(b)}.`;
-         return { text, properties: [...propsA, ...propsB] };
+            `I don't have area guides for ${cap(a)} or ${cap(b)}, but here is what's currently published: ` +
+            `${propsA.length} listing${propsA.length === 1 ? "" : "s"} in ${cap(a)} and ` +
+            `${propsB.length} in ${cap(b)}.${showing(MAX_CARDS, combined.length)}`;
+         return { text, properties: combined.slice(0, MAX_CARDS) };
       }
    }
 
-   // 2b. "Plots vs villas — which is better?" — a type-level comparison, not a
-   // location comparison, so it needs its own honest, non-fabricated answer.
+   // 7b. Plot vs villa — a general, non-fabricated answer.
    if (includesAny(q, COMPARE_TYPE_WORDS)) {
       return {
-         text: "It depends on your goal. Plots suit buyers focused on long-horizon land appreciation and flexibility to build later, with generally lower entry cost. Villas suit buyers who want a ready or near-ready home and are willing to pay more upfront for construction and amenities. Tell me your budget and I can show what's currently available in each.",
+         text: "It depends on your goal. Plots suit buyers who want flexibility to build later and generally a lower entry cost. Villas suit buyers who want a ready or near-ready home and are willing to pay more upfront for construction. Tell me your budget and I can show what's currently published in each.",
       };
    }
 
-   // 2c. "What is Future City corridor?" — explainer, not a listing search.
-   if (includesAny(q, CORRIDOR_WORDS)) {
+   // 8. Exact location — mirrors the real reveal rule.
+   if (includesAny(q, LOCATION_PRIVACY_WORDS)) {
       return {
-         text: "The Future City corridor is the southern growth belt of Hyderabad anchored by the upcoming Future City master-planned zone, stretching through nodes like Mucherla, Adibatla and Maheshwaram along NH-44. It's where most of the plotted-land and industrial-land activity on this platform is concentrated. Ask me about a specific node and I'll tell you more.",
+         text: "Listings show the general area. The exact location unlocks once your site visit for that property is confirmed by our team — send an enquiry and request a site visit from the listing page.",
       };
    }
 
-   // 2d. Site visit process.
+   // 9. Site visit process — mirrors the real flow.
    if (includesAny(q, VISIT_WORDS)) {
       return {
-         text: "Open any listing and use the \"Request Site Visit\" option on the property page — our team will confirm a slot and share the contact once approved. Want me to pull up a specific property or location first?",
+         text: "Send an enquiry from the listing page, then use \"Request Site Visit\" on that page. Our team will confirm a slot, and the exact location unlocks once your visit is confirmed. You can cancel a requested or confirmed visit from your dashboard Messages. Want me to pull up a location or budget first?",
       };
    }
 
-   // 2e. Home loan / financing.
+   // 10. How to enquire / buy.
+   if (includesAny(q, ENQUIRY_WORDS)) {
+      return {
+         text: `Open the property you like and use the enquiry button — you can sign in while sending it, and our team will follow up. You can track your enquiries in your dashboard Messages. To speak to someone directly: ${CONTACT_LINE}`,
+      };
+   }
+
+   // 11. Selling / listing.
+   if (includesAny(q, SELL_WORDS)) {
+      return {
+         text: `To list a property, use "Become a Seller" in the menu and register as a seller. Listings are reviewed by our team before they are published. Questions about becoming a seller: ${CONTACT_LINE}`,
+      };
+   }
+
+   // 12. Rentals — not offered.
+   if (includesAny(q, RENT_WORDS)) {
+      return {
+         text: `Property Planet focuses on properties for sale — plots, land, villas and apartments — and doesn't list rentals. I can search sale listings by location, budget or type. For anything else: ${CONTACT_LINE}`,
+      };
+   }
+
+   // 13. Account / login.
+   if (includesAny(q, ACCOUNT_WORDS)) {
+      return {
+         text: `Use Login / Sign up in the menu to create an account or sign in — you'll need one to send an enquiry, request a site visit and track them from your dashboard. If you're stuck, use "Forgot password" on the login page, or: ${CONTACT_LINE}`,
+      };
+   }
+
+   // 14. Favourites.
+   if (includesAny(q, FAVOURITE_WORDS)) {
+      return {
+         text: "Sign in, then use the save/heart option on a listing. Your saved properties appear under Favourites in your dashboard.",
+      };
+   }
+
+   // 15. Projects.
+   if (includesAny(q, PROJECT_WORDS) && !findLocation(q)) {
+      return {
+         text: `Browse published projects on the Projects page in the menu. Each project page shows its details and lets you send an enquiry. For anything specific to a project: ${CONTACT_LINE}`,
+      };
+   }
+
+   // 16. Which localities — recognised areas + what is actually listed.
+   if (includesAny(q, LOCALITY_LIST_WORDS)) {
+      const listed = Array.from(new Set(dataset.map((p) => p.locality).filter(Boolean)));
+      const featured = CLIENT_LOCALITIES.map(cap).join(", ");
+      return {
+         text:
+            `We feature localities including ${featured}. ` +
+            (listed.length > 0
+               ? `Right now, published listings are in: ${listed.slice(0, 12).join(", ")}.`
+               : "There are no listings published right now.") +
+            " Tell me a locality and I'll show what's available.",
+      };
+   }
+
+   // 17. Home loan / financing — general, not property-specific.
    if (includesAny(q, LOAN_WORDS)) {
       return {
-         text: "Financing availability depends on the property type and lender — villas and apartments are generally easier to get a home loan against, while plot/land loans are a separate (and sometimes more limited) category with most banks. Worth confirming with your bank for the specific property before you commit.",
+         text: "Financing depends on the property type and the lender — villas and apartments are generally easier to get a home loan against, while plot/land loans are a separate (and sometimes more limited) category with most banks. Worth confirming with your bank for the specific property before you commit.",
       };
    }
 
-   // 3. Proximity to upcoming infrastructure (NH-44, ORR, airport, Future City).
-   if (q.includes("infrastructure") || q.includes("closest") || q.includes("nearest")) {
+   // 18. Privacy / terms.
+   if (includesAny(q, PRIVACY_WORDS)) {
       return {
-         text: `Future City itself is the anchor node of the corridor. ${cap("mucherla")} sits immediately next to it on the NH-44 / Bangalore Highway belt, while ${cap("adibatla")} is the industrial node further along NH-44 and ${cap("shamshabad")} is closest to Rajiv Gandhi International Airport. These are generally the areas closest to confirmed infrastructure right now.`,
-         properties: filterByLocation("future city").concat(filterByLocation("mucherla")).concat(filterByLocation("adibatla")).filter((p, i, arr) => arr.findIndex((x) => x.id === p.id) === i),
+         text: `You'll find our Privacy Policy and Terms of Service linked in the website footer. For privacy questions: ${CONTACT_LINE}`,
       };
    }
 
-   // 4. Combined-signal search — the core "understands keywords, not just one
-   // exact phrase" behaviour. Collects every signal present in the question
-   // (location, type, budget, verified-only, investment-suited, cheapest)
-   // and applies them together, then reflects back what it understood so the
-   // person can see it's reading the whole sentence, not pattern-matching.
+   // 19. Investment / infrastructure — no data source for returns,
+   // appreciation or infrastructure timelines, so don't invent any.
+   if (includesAny(q, INVESTMENT_WORDS) || includesAny(q, INFRA_WORDS)) {
+      return {
+         text: `I can't rate investment returns, appreciation or infrastructure timelines — I only have the listing details our team has published. I can filter listings by location, budget or type, and our team can talk you through an area: ${CONTACT_LINE}`,
+      };
+   }
+
+   // 20. Combined-signal search over the live dataset.
    const loc = findLocation(q);
    const type = findType(q);
    const budget = parseBudget(q);
-   const wantsInvestment = includesAny(q, INVESTMENT_WORDS);
    const wantsCheapest = includesAny(q, CHEAP_WORDS);
    const wantsGeneric = q.includes("show me") || q.includes("plots") || q.includes("properties") || q.includes("available") || q.includes("looking for");
 
-   if (loc || type || budget !== null || wantsInvestment || wantsCheapest || wantsGeneric) {
-      let pool = AI_DATASET;
+   if (loc || type || budget !== null || wantsCheapest || wantsGeneric) {
+      if (dataset.length === 0) {
+         return { text: `There are no listings published right now. Please check back soon, or ${CONTACT_LINE.charAt(0).toLowerCase()}${CONTACT_LINE.slice(1)}` };
+      }
+
+      let pool = dataset;
       const understood: string[] = [];
 
       if (loc) { pool = filterByLocation(loc, pool); understood.push(cap(loc)); }
-      if (type) { pool = filterByType(type, pool); understood.push(type); }
+      if (type) { pool = filterByType(type.match, pool); understood.push(type.label); }
       if (budget !== null) { pool = filterByBudget(budget, pool); understood.push(`under ${formatINR(budget)}`); }
-      if (wantsInvestment) {
-         pool = pool.filter((p) => (p.suitable_for ?? "").toLowerCase().includes("investor"));
-         understood.push("investor-suited");
-      }
       if (wantsCheapest && pool.length > 0) {
-         pool = [...pool].sort((a, b) => a.price - b.price).slice(0, 1);
+         pool = [...pool].sort((a, b) => a.price - b.price);
          understood.push("lowest price first");
       }
 
       if (pool.length === 0) {
          const what = understood.length > 0 ? understood.join(", ") : "that";
-         return { text: `I couldn't find a matching property in the current listings for ${what}. Try widening the budget or location.` };
+         return { text: `I couldn't find a published listing for ${what} right now. Try widening the budget or location — or ${CONTACT_LINE.charAt(0).toLowerCase()}${CONTACT_LINE.slice(1)}` };
       }
 
       const prefix = understood.length > 0 ? `Looking for ${understood.join(", ")} — ` : "";
       return {
-         text: `${prefix}I found ${pool.length} matching opportunit${pool.length === 1 ? "y" : "ies"}.`,
-         properties: pool,
+         text: `${prefix}I found ${pool.length} published listing${pool.length === 1 ? "" : "s"}.${showing(MAX_CARDS, pool.length)}`,
+         properties: pool.slice(0, MAX_CARDS),
       };
    }
 
-   // 5. Price range for a location, with no other filters detected above.
+   // 21. Price range across current listings.
    if (q.includes("price range") || q.includes("price")) {
-      const pool = AI_DATASET;
-      const prices = pool.map((p) => p.price);
+      if (dataset.length === 0) {
+         return { text: `There are no listings published right now. ${CONTACT_LINE}` };
+      }
+      const prices = dataset.map((p) => p.price);
       const min = Math.min(...prices);
       const max = Math.max(...prices);
-      return { text: `Current listed opportunities range from ${formatINR(min)} to ${formatINR(max)}.`, properties: pool };
+      return {
+         text: `Currently published listings range from ${formatINR(min)} to ${formatINR(max)}.${showing(MAX_CARDS, dataset.length)}`,
+         properties: dataset.slice(0, MAX_CARDS),
+      };
    }
 
-   // 6. Fallback — nudge toward what the assistant can actually do.
+   // 22. Anything else is outside what this assistant can answer — hand off
+   // to the real contact details rather than guess.
    return {
-      text: "I can help with locations (Future City, Mucherla, Shamshabad, Kollur, Maheshwaram, Adibatla, Shankarpally), budget, property type, site visits or financing. Try something like \"plots under ₹1 crore in Mucherla\".",
+      text: `I can search published listings by location, budget or property type, and answer common questions about site visits, enquiries, selling and RERA. For anything else, our team will be happy to help — ${CONTACT_LINE}`,
    };
 };
-
-const cap = (s: string): string => s.replace(/\b\w/g, (c) => c.toUpperCase());
