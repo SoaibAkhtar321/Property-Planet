@@ -13,6 +13,7 @@ import VideoTour from "./detail/VideoTour";
 import Documents from "./detail/Documents";
 import Units from "./detail/Units";
 import ProjectInquiryForm from "./detail/ProjectInquiryForm";
+import PropertyStickyCta from "@/components/properties/detail/PropertyStickyCta";
 
 // Every section below (Location, Landmarks, Connectivity, Features, Area
 // Distribution, Pricing, Master Plan, Floor Plan, Video, Documents) renders
@@ -224,6 +225,20 @@ const ProjectDetail = ({
                   </div>
                </div>
             )}
+
+            {/* Mobile/tablet sticky enquiry bar — the same component the
+                property page uses, so the primary action stays in reach
+                on a long page. It opens the same universal inquiry dialog
+                as #project-enquiry above and defers to that block while it
+                is on screen. Hidden from lg up, like the property page. */}
+            <PropertyStickyCta
+               kind="project"
+               id={project.id}
+               title={project.title}
+               subtitle={project.location}
+               summaryLabel={unitPriceRange ? "Price range" : "Project"}
+               summaryValue={unitPriceRange ?? project.title}
+            />
          </div>
       </div>
    );

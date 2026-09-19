@@ -2,10 +2,18 @@
 
 // src/components/properties/detail/PropertyStickyCta.tsx
 //
-// Mobile/tablet-only sticky action bar for the public property detail page.
+// Mobile/tablet-only sticky action bar for the public property detail page
+// and, via `kind="project"`, the project detail page.
 // On phones the enquiry panel lives at the very bottom of a long page (the
 // sidebar stacks under the content), so the primary action was several
 // screens away from the price and gallery.
+//
+// One component for both pages on purpose: same bar, same styles, same
+// universal InquiryButton -> InquiryDialog flow. `kind` only changes which
+// target the button files against and which on-page panel the bar defers to.
+// Projects have no "existing lead" state (ProjectInquiryForm always shows
+// the plain Send Inquiry button to buyers and guests), so the lead lookup
+// and the site-visit variant below apply to properties only.
 //
 // It adds NO new lead path and reveals no seller data:
 //   - guests and buyers without a lead -> the same universal InquiryButton
@@ -27,19 +35,33 @@ import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 import { getMyLeadForProperty } from "@/lib/leads/actions";
 import InquiryButton from "@/components/inquiry/InquiryButton";
 
-const PANEL_ID = "property-enquiry-panel";
+type StickyCtaKind = "property" | "project";
+
+// The existing inline enquiry block on each page. The bar hides while it is
+// on screen so the two never duplicate.
+const PANEL_IDS: Record<StickyCtaKind, string> = {
+   property: "property-enquiry-panel",
+   project: "project-enquiry",
+};
 
 const PropertyStickyCta = ({
-   propertyId,
-   propertyTitle,
-   propertyAddress,
-   priceLabel,
+   kind = "property",
+   id,
+   title,
+   subtitle,
+   summaryLabel = "Price",
+   summaryValue,
 }: {
-   propertyId: string;
-   propertyTitle: string;
-   propertyAddress?: string;
-   priceLabel: string;
+   kind?: StickyCtaKind;
+   /** properties.id or projects.id, matching `kind`. */
+   id: string;
+   title: string;
+   subtitle?: string;
+   /** Small caption above the value on the left of the bar. */
+   summaryLabel?: string;
+   summaryValue: string;
 }) => {
+   const PANEL_ID = PANEL_IDS[kind];
    const { user, role, loading } = useSupabaseUser();
    const [hasLead, setHasLead] = useState(false);
    const [leadChecked, setLeadChecked] = useState(false);
@@ -48,13 +70,13 @@ const PropertyStickyCta = ({
    // Same lookup InquiryForm uses; scoped server-side to the caller's own lead.
    useEffect(() => {
       if (loading) return;
-      if (!user || role !== "buyer") {
+      if (kind !== "property" || !user || role !== "buyer") {
          setHasLead(false);
          setLeadChecked(true);
          return;
       }
       let mounted = true;
-      getMyLeadForProperty(propertyId)
+      getMyLeadForProperty(id)
          .then((lead) => {
             if (!mounted) return;
             setHasLead(Boolean(lead?.leadId));
@@ -68,7 +90,7 @@ const PropertyStickyCta = ({
       return () => {
          mounted = false;
       };
-   }, [loading, user, role, propertyId]);
+   }, [loading, user, role, kind, id]);
 
    // Hide while the sidebar enquiry panel is in view.
    useEffect(() => {
@@ -79,7 +101,7 @@ const PropertyStickyCta = ({
       });
       observer.observe(panel);
       return () => observer.disconnect();
-   }, []);
+   }, [PANEL_ID]);
 
    const visible = !loading && leadChecked && (!role || role === "buyer");
 
@@ -105,8 +127,8 @@ const PropertyStickyCta = ({
             aria-label="Quick actions"
          >
             <div className="pp-sticky-cta__price">
-               <span className="pp-sticky-cta__label">Price</span>
-               <span className="pp-sticky-cta__value">{priceLabel}</span>
+               <span className="pp-sticky-cta__label">{summaryLabel}</span>
+               <span className="pp-sticky-cta__value">{summaryValue}</span>
             </div>
             {hasLead ? (
                <button type="button" className="btn-four pp-sticky-cta__btn" onClick={scrollToPanel}>
@@ -114,10 +136,10 @@ const PropertyStickyCta = ({
                </button>
             ) : (
                <InquiryButton
-                  kind="property"
-                  id={propertyId}
-                  title={propertyTitle}
-                  subtitle={propertyAddress}
+                  kind={kind}
+                  id={id}
+                  title={title}
+                  subtitle={subtitle}
                   className="btn-four pp-sticky-cta__btn"
                   label="Send Inquiry"
                />

@@ -138,10 +138,11 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
                </div>
                <Sidebar property={property} />
                <PropertyStickyCta
-                  propertyId={property.id}
-                  propertyTitle={property.title}
-                  propertyAddress={property.address}
-                  priceLabel={`₹${property.price.toLocaleString("en-IN")}${property.priceUnit ? property.priceUnit : ""}`}
+                  kind="property"
+                  id={property.id}
+                  title={property.title}
+                  subtitle={property.address}
+                  summaryValue={`₹${property.price.toLocaleString("en-IN")}${property.priceUnit ? property.priceUnit : ""}`}
                />
             </div>
          </div>
