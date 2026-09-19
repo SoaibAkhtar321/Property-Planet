@@ -35,6 +35,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
+import { friendlyError } from "@/lib/errors";
 
 export interface ActionResult {
    success: boolean;
@@ -92,7 +93,7 @@ export async function initDraftAdminProperty(): Promise<{ id: string } | { error
       .single();
 
    if (error || !data) {
-      return { error: error?.message ?? "Could not start a new listing." };
+      return { error: friendlyError(error, "Could not start a new listing. Please try again.", "admin.properties.initDraftAdminProperty") };
    }
 
    return { id: data.id };
@@ -109,7 +110,7 @@ export async function approveProperty(id: string): Promise<ActionResult> {
       .eq("id", id);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not approve the property. Please try again.", "admin.properties.approveProperty") };
    }
 
    revalidatePropertyPaths(id);
@@ -164,7 +165,7 @@ export async function setPropertyFeatured(id: string, featured: boolean): Promis
    const { error } = await supabase.from("properties").update({ is_featured: featured }).eq("id", id);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not update the Featured setting. Please try again.", "admin.properties.setPropertyFeatured") };
    }
 
    revalidatePropertyPaths(id);
@@ -185,7 +186,7 @@ export async function rejectProperty(id: string, reason?: string): Promise<Actio
       .eq("id", id);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not reject the property. Please try again.", "admin.properties.rejectProperty") };
    }
 
    revalidatePropertyPaths(id);
@@ -271,7 +272,7 @@ export async function updateAdminProperty(id: string, formData: FormData): Promi
       })
       .eq("id", id);
 
-   if (error) return { success: false, error: error.message };
+   if (error) return { success: false, error: friendlyError(error, "Could not save the property details. Please try again.", "admin.properties.updateAdminProperty") };
 
    // The Add Listing screen now collects exact address/lat/lng on this
    // same form (see PropertyLocation.tsx) instead of only on a later,
@@ -346,7 +347,7 @@ export async function updateAdminPropertyLocation(id: string, formData: FormData
            approx_lng: exactLng,
         });
 
-   if (error) return { success: false, error: error.message };
+   if (error) return { success: false, error: friendlyError(error, "Could not save the property location. Please try again.", "admin.properties.updateAdminPropertyLocation") };
 
    revalidatePropertyPaths(id);
    return { success: true };
@@ -380,7 +381,7 @@ export async function setAdminPropertyStatus(id: string, status: AdminPropertySt
       })
       .eq("id", id);
 
-   if (error) return { success: false, error: error.message };
+   if (error) return { success: false, error: friendlyError(error, "Could not update the property status. Please try again.", "admin.properties.setAdminPropertyStatus") };
 
    revalidatePropertyPaths(id);
    return { success: true };
@@ -419,7 +420,7 @@ export async function addAdminPropertyMedia(id: string, formData: FormData): Pro
       sort_order: numberOrNull(formData.get("sort_order")) ?? 0,
    });
 
-   if (error) return { success: false, error: error.message };
+   if (error) return { success: false, error: friendlyError(error, "Could not add the media. Please try again.", "admin.properties.addAdminPropertyMedia") };
 
    revalidatePropertyPaths(id);
    return { success: true };
@@ -444,7 +445,7 @@ export async function deleteAdminPropertyMedia(id: string, mediaId: string): Pro
    }
 
    const { error } = await supabase.from("property_media").delete().eq("id", mediaId);
-   if (error) return { success: false, error: error.message };
+   if (error) return { success: false, error: friendlyError(error, "Could not remove the media. Please try again.", "admin.properties.deleteAdminPropertyMedia") };
 
    // Best-effort: an orphaned object costs storage but is never rendered
    // (the UI only ever lists property_media rows), so a failure here is

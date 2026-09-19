@@ -14,6 +14,7 @@ import { useCallback, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { setFeaturedImage } from "@/lib/admin/blog/actions";
+import { friendlyError } from "@/lib/errors";
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -46,7 +47,7 @@ const FeaturedImageUpload = ({ postId, initialImageUrl }: { postId: string; init
 
             const { error: uploadError } = await supabase.storage.from("blog-media").upload(path, file);
             if (uploadError) {
-               setError(uploadError.message);
+               setError(friendlyError(uploadError, "Upload failed. Please try again.", "admin.blog.featuredImageUpload"));
                return;
             }
 

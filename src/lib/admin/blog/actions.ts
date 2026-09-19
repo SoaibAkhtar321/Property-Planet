@@ -18,6 +18,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
+import { friendlyError } from "@/lib/errors";
 
 export type BlogPostStatus = "draft" | "pending" | "published" | "archived";
 
@@ -75,7 +76,7 @@ export async function createPost(formData: FormData): Promise<void> {
       .single();
 
    if (error || !data) {
-      const message = error?.code === "23505" ? "That slug is already in use." : error?.message ?? "Failed to create post.";
+      const message = error?.code === "23505" ? "That slug is already in use." : friendlyError(error, "Could not create the post. Please try again.", "admin.blog.createPost");
       redirect("/admin/blog/new?error=" + encodeURIComponent(message));
    }
 
@@ -111,7 +112,7 @@ export async function updatePostBasics(id: string, formData: FormData): Promise<
       .eq("id", id);
 
    if (error) {
-      return { success: false, error: error.code === "23505" ? "That slug is already in use." : error.message };
+      return { success: false, error: error.code === "23505" ? "That slug is already in use." : friendlyError(error, "Could not save the post details. Please try again.", "admin.blog.updatePostBasics") };
    }
 
    revalidatePath("/admin/blog");
@@ -133,7 +134,7 @@ export async function setPostStatus(id: string, status: BlogPostStatus): Promise
    const { error } = await supabase.from("blog_posts").update({ status }).eq("id", id);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not update the post status. Please try again.", "admin.blog.setPostStatus") };
    }
 
    revalidatePath("/admin/blog");
@@ -150,7 +151,7 @@ export async function setFeaturedImage(id: string, storagePath: string): Promise
    const { error } = await supabase.from("blog_posts").update({ featured_image_path: storagePath }).eq("id", id);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not update the featured image. Please try again.", "admin.blog.setFeaturedImage") };
    }
 
    revalidatePath(`/admin/blog/${id}`);

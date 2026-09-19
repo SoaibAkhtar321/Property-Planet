@@ -1,0 +1,558 @@
+diff --git a/src/components/admin/blog/FeaturedImageUpload.tsx b/src/components/admin/blog/FeaturedImageUpload.tsx
+index 6600deb..fabf15b 100644
+--- a/src/components/admin/blog/FeaturedImageUpload.tsx
++++ b/src/components/admin/blog/FeaturedImageUpload.tsx
+@@ -14,6 +14,7 @@ import { useCallback, useRef, useState, useTransition } from "react";
+ import Image from "next/image";
+ import { createClient } from "@/lib/supabase/client";
+ import { setFeaturedImage } from "@/lib/admin/blog/actions";
++import { friendlyError } from "@/lib/errors";
+ 
+ const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB
+ const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+@@ -46,7 +47,7 @@ const FeaturedImageUpload = ({ postId, initialImageUrl }: { postId: string; init
+ 
+             const { error: uploadError } = await supabase.storage.from("blog-media").upload(path, file);
+             if (uploadError) {
+-               setError(uploadError.message);
++               setError(friendlyError(uploadError, "Upload failed. Please try again.", "admin.blog.featuredImageUpload"));
+                return;
+             }
+ 
+diff --git a/src/components/admin/projects/ProjectMediaUpload.tsx b/src/components/admin/projects/ProjectMediaUpload.tsx
+index 26bd0e2..4b7e477 100644
+--- a/src/components/admin/projects/ProjectMediaUpload.tsx
++++ b/src/components/admin/projects/ProjectMediaUpload.tsx
+@@ -22,6 +22,7 @@ import { useCallback, useMemo, useRef, useState, useTransition } from "react";
+ import { useRouter } from "next/navigation";
+ import { createClient } from "@/lib/supabase/client";
+ import type { ActionResult } from "@/lib/admin/projects/actions";
++import { friendlyError } from "@/lib/errors";
+ 
+ const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25MB — generous enough for master-plan/floor-plan scans and PDFs
+ 
+@@ -74,7 +75,7 @@ const ProjectMediaUpload = ({ projectId, mediaType, nextSortOrder, multiple = fa
+ 
+                const { error: uploadError } = await supabase.storage.from("project-media").upload(path, file);
+                if (uploadError) {
+-                  setError(`${file.name}: ${uploadError.message}`);
++                  setError(`${file.name}: ${friendlyError(uploadError, "upload failed. Please try again.", "admin.projects.mediaUpload")}`);
+                   continue;
+                }
+ 
+diff --git a/src/components/admin/properties/AdminPropertyMediaUpload.tsx b/src/components/admin/properties/AdminPropertyMediaUpload.tsx
+index 9b0c42c..a949d30 100644
+--- a/src/components/admin/properties/AdminPropertyMediaUpload.tsx
++++ b/src/components/admin/properties/AdminPropertyMediaUpload.tsx
+@@ -17,6 +17,7 @@ import { useCallback, useRef, useState, useTransition } from "react";
+ import { useRouter } from "next/navigation";
+ import { createClient } from "@/lib/supabase/client";
+ import type { ActionResult } from "@/lib/admin/properties/actions";
++import { friendlyError } from "@/lib/errors";
+ 
+ const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB, matching the seller uploader
+ const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+@@ -60,7 +61,7 @@ const AdminPropertyMediaUpload = ({
+ 
+                const { error: uploadError } = await supabase.storage.from("property-media").upload(path, file);
+                if (uploadError) {
+-                  setError(`${file.name}: ${uploadError.message}`);
++                  setError(`${file.name}: ${friendlyError(uploadError, "upload failed. Please try again.", "admin.properties.mediaUpload")}`);
+                   continue;
+                }
+ 
+diff --git a/src/components/admin/settings/ReraCertificateUpload.tsx b/src/components/admin/settings/ReraCertificateUpload.tsx
+index f9a1521..9c57c55 100644
+--- a/src/components/admin/settings/ReraCertificateUpload.tsx
++++ b/src/components/admin/settings/ReraCertificateUpload.tsx
+@@ -15,6 +15,7 @@ import { useCallback, useRef, useState, useTransition } from "react";
+ import { useRouter } from "next/navigation";
+ import { createClient } from "@/lib/supabase/client";
+ import type { ActionResult } from "@/lib/admin/settings/actions";
++import { friendlyError } from "@/lib/errors";
+ 
+ const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25MB — matches ProjectMediaUpload's document limit
+ const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+@@ -53,7 +54,7 @@ const ReraCertificateUpload = ({ setCertificateAction }: ReraCertificateUploadPr
+ 
+             const { error: uploadError } = await supabase.storage.from("project-media").upload(path, file);
+             if (uploadError) {
+-               setError(`${file.name}: ${uploadError.message}`);
++               setError(`${file.name}: ${friendlyError(uploadError, "upload failed. Please try again.", "admin.settings.certificateUpload")}`);
+                if (inputRef.current) inputRef.current.value = "";
+                return;
+             }
+diff --git a/src/lib/admin/blog/actions.ts b/src/lib/admin/blog/actions.ts
+index 2eb0722..dc9916c 100644
+--- a/src/lib/admin/blog/actions.ts
++++ b/src/lib/admin/blog/actions.ts
+@@ -18,6 +18,7 @@ import { revalidatePath } from "next/cache";
+ import { redirect } from "next/navigation";
+ import { requireAdmin } from "@/lib/admin/auth";
+ import { createClient } from "@/lib/supabase/server";
++import { friendlyError } from "@/lib/errors";
+ 
+ export type BlogPostStatus = "draft" | "pending" | "published" | "archived";
+ 
+@@ -75,7 +76,7 @@ export async function createPost(formData: FormData): Promise<void> {
+       .single();
+ 
+    if (error || !data) {
+-      const message = error?.code === "23505" ? "That slug is already in use." : error?.message ?? "Failed to create post.";
++      const message = error?.code === "23505" ? "That slug is already in use." : friendlyError(error, "Could not create the post. Please try again.", "admin.blog.createPost");
+       redirect("/admin/blog/new?error=" + encodeURIComponent(message));
+    }
+ 
+@@ -111,7 +112,7 @@ export async function updatePostBasics(id: string, formData: FormData): Promise<
+       .eq("id", id);
+ 
+    if (error) {
+-      return { success: false, error: error.code === "23505" ? "That slug is already in use." : error.message };
++      return { success: false, error: error.code === "23505" ? "That slug is already in use." : friendlyError(error, "Could not save the post details. Please try again.", "admin.blog.updatePostBasics") };
+    }
+ 
+    revalidatePath("/admin/blog");
+@@ -133,7 +134,7 @@ export async function setPostStatus(id: string, status: BlogPostStatus): Promise
+    const { error } = await supabase.from("blog_posts").update({ status }).eq("id", id);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not update the post status. Please try again.", "admin.blog.setPostStatus") };
+    }
+ 
+    revalidatePath("/admin/blog");
+@@ -150,7 +151,7 @@ export async function setFeaturedImage(id: string, storagePath: string): Promise
+    const { error } = await supabase.from("blog_posts").update({ featured_image_path: storagePath }).eq("id", id);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not update the featured image. Please try again.", "admin.blog.setFeaturedImage") };
+    }
+ 
+    revalidatePath(`/admin/blog/${id}`);
+diff --git a/src/lib/admin/leads/actions.ts b/src/lib/admin/leads/actions.ts
+index 595b2b0..bb99671 100644
+--- a/src/lib/admin/leads/actions.ts
++++ b/src/lib/admin/leads/actions.ts
+@@ -20,6 +20,7 @@ import { revalidatePath } from "next/cache";
+ import { requireAdmin } from "@/lib/admin/auth";
+ import { createClient } from "@/lib/supabase/server";
+ import type { LeadStatus } from "./queries";
++import { friendlyError } from "@/lib/errors";
+ 
+ export interface ActionResult {
+    success: boolean;
+@@ -45,7 +46,7 @@ export async function updateLeadStatus(leadId: string, status: LeadStatus): Prom
+    const { data, error } = await supabase.from("leads").update({ status }).eq("id", leadId).select("id");
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not update the lead status. Please try again.", "admin.leads.updateLeadStatus") };
+    }
+    if (!data || data.length === 0) {
+       return { success: false, error: "Lead not found, or you don't have permission to update it." };
+diff --git a/src/lib/admin/projects/actions.ts b/src/lib/admin/projects/actions.ts
+index 0d1f09f..f4541d2 100644
+--- a/src/lib/admin/projects/actions.ts
++++ b/src/lib/admin/projects/actions.ts
+@@ -28,6 +28,7 @@ import { revalidatePath } from "next/cache";
+ import { redirect } from "next/navigation";
+ import { requireAdmin } from "@/lib/admin/auth";
+ import { createClient } from "@/lib/supabase/server";
++import { friendlyError } from "@/lib/errors";
+ 
+ export type ProjectStatus = "draft" | "pending" | "published" | "archived";
+ 
+@@ -83,7 +84,7 @@ export async function createProject(formData: FormData): Promise<void> {
+       .single();
+ 
+    if (error || !data) {
+-      const message = error?.code === "23505" ? "That slug is already in use." : error?.message ?? "Failed to create project.";
++      const message = error?.code === "23505" ? "That slug is already in use." : friendlyError(error, "Could not create the project. Please try again.", "admin.projects.createProject");
+       redirect("/admin/projects/new?error=" + encodeURIComponent(message));
+    }
+ 
+@@ -124,7 +125,7 @@ export async function updateProjectBasics(id: string, formData: FormData): Promi
+       .eq("id", id);
+ 
+    if (error) {
+-      return { success: false, error: error.code === "23505" ? "That slug is already in use." : error.message };
++      return { success: false, error: error.code === "23505" ? "That slug is already in use." : friendlyError(error, "Could not save the project details. Please try again.", "admin.projects.updateProjectBasics") };
+    }
+ 
+    revalidatePath("/admin/projects");
+@@ -148,7 +149,7 @@ export async function updateProjectLocation(id: string, formData: FormData): Pro
+    });
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not save the project location. Please try again.", "admin.projects.updateProjectLocation") };
+    }
+ 
+    revalidatePath(`/admin/projects/${id}`);
+@@ -169,7 +170,7 @@ export async function setProjectStatus(id: string, status: ProjectStatus): Promi
+    const { error } = await supabase.from("projects").update({ status }).eq("id", id);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not update the project status. Please try again.", "admin.projects.setProjectStatus") };
+    }
+ 
+    revalidatePath("/admin/projects");
+@@ -207,7 +208,7 @@ export async function addProjectPricingRow(projectId: string, formData: FormData
+    });
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not add the pricing row. Please try again.", "admin.projects.addProjectPricingRow") };
+    }
+ 
+    revalidatePath(`/admin/projects/${projectId}`);
+@@ -251,7 +252,7 @@ export async function updateProjectPricingRow(
+       .eq("project_id", projectId);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not update the pricing row. Please try again.", "admin.projects.updateProjectPricingRow") };
+    }
+ 
+    revalidatePath(`/admin/projects/${projectId}`);
+@@ -271,7 +272,7 @@ export async function deleteProjectPricingRow(projectId: string, pricingRowId: s
+       .eq("project_id", projectId);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not delete the pricing row. Please try again.", "admin.projects.deleteProjectPricingRow") };
+    }
+ 
+    revalidatePath(`/admin/projects/${projectId}`);
+@@ -337,7 +338,7 @@ export async function addProjectMediaRow(projectId: string, formData: FormData):
+          .eq("is_primary", true);
+ 
+       if (clearError) {
+-         return { success: false, error: `Failed to update existing primary media: ${clearError.message}` };
++         return { success: false, error: friendlyError(clearError, "Could not update the existing primary image. Please try again.", "admin.projects.addProjectMediaRow") };
+       }
+    }
+ 
+@@ -351,7 +352,7 @@ export async function addProjectMediaRow(projectId: string, formData: FormData):
+    });
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not add the media. Please try again.", "admin.projects.addProjectMediaRow") };
+    }
+ 
+    revalidatePath(`/admin/projects/${projectId}`);
+@@ -382,7 +383,7 @@ export async function updateProjectMediaRow(
+          .neq("id", mediaRowId);
+ 
+       if (clearError) {
+-         return { success: false, error: `Failed to update existing primary media: ${clearError.message}` };
++         return { success: false, error: friendlyError(clearError, "Could not update the existing primary image. Please try again.", "admin.projects.updateProjectMediaRow") };
+       }
+    }
+ 
+@@ -398,7 +399,7 @@ export async function updateProjectMediaRow(
+       .eq("project_id", projectId);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not update the media. Please try again.", "admin.projects.updateProjectMediaRow") };
+    }
+ 
+    revalidatePath(`/admin/projects/${projectId}`);
+@@ -427,7 +428,7 @@ export async function deleteProjectMediaRow(projectId: string, mediaRowId: strin
+       .maybeSingle();
+ 
+    if (fetchError) {
+-      return { success: false, error: fetchError.message };
++      return { success: false, error: friendlyError(fetchError, "Could not find the media record. Please refresh and try again.", "admin.projects.deleteProjectMediaRow") };
+    }
+    if (!row) {
+       return { success: false, error: "Media item not found." };
+@@ -435,7 +436,7 @@ export async function deleteProjectMediaRow(projectId: string, mediaRowId: strin
+ 
+    const { error: storageError } = await supabase.storage.from("project-media").remove([row.storage_path]);
+    if (storageError) {
+-      return { success: false, error: `Failed to delete file from storage: ${storageError.message}` };
++      return { success: false, error: friendlyError(storageError, "Could not delete the file from storage. Please try again.", "admin.projects.deleteProjectMediaRow") };
+    }
+ 
+    const { error: deleteError } = await supabase
+@@ -447,7 +448,7 @@ export async function deleteProjectMediaRow(projectId: string, mediaRowId: strin
+    if (deleteError) {
+       return {
+          success: false,
+-         error: `File was removed from storage, but the record could not be deleted: ${deleteError.message}`,
++         error: friendlyError(deleteError, "The file was removed from storage, but its record could not be deleted. Please refresh and try again.", "admin.projects.deleteProjectMediaRow"),
+       };
+    }
+ 
+diff --git a/src/lib/admin/properties/actions.ts b/src/lib/admin/properties/actions.ts
+index 1df6a7e..9f466c3 100644
+--- a/src/lib/admin/properties/actions.ts
++++ b/src/lib/admin/properties/actions.ts
+@@ -35,6 +35,7 @@
+ import { revalidatePath } from "next/cache";
+ import { requireAdmin } from "@/lib/admin/auth";
+ import { createClient } from "@/lib/supabase/server";
++import { friendlyError } from "@/lib/errors";
+ 
+ export interface ActionResult {
+    success: boolean;
+@@ -92,7 +93,7 @@ export async function initDraftAdminProperty(): Promise<{ id: string } | { error
+       .single();
+ 
+    if (error || !data) {
+-      return { error: error?.message ?? "Could not start a new listing." };
++      return { error: friendlyError(error, "Could not start a new listing. Please try again.", "admin.properties.initDraftAdminProperty") };
+    }
+ 
+    return { id: data.id };
+@@ -109,7 +110,7 @@ export async function approveProperty(id: string): Promise<ActionResult> {
+       .eq("id", id);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not approve the property. Please try again.", "admin.properties.approveProperty") };
+    }
+ 
+    revalidatePropertyPaths(id);
+@@ -164,7 +165,7 @@ export async function setPropertyFeatured(id: string, featured: boolean): Promis
+    const { error } = await supabase.from("properties").update({ is_featured: featured }).eq("id", id);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not update the Featured setting. Please try again.", "admin.properties.setPropertyFeatured") };
+    }
+ 
+    revalidatePropertyPaths(id);
+@@ -185,7 +186,7 @@ export async function rejectProperty(id: string, reason?: string): Promise<Actio
+       .eq("id", id);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not reject the property. Please try again.", "admin.properties.rejectProperty") };
+    }
+ 
+    revalidatePropertyPaths(id);
+@@ -271,7 +272,7 @@ export async function updateAdminProperty(id: string, formData: FormData): Promi
+       })
+       .eq("id", id);
+ 
+-   if (error) return { success: false, error: error.message };
++   if (error) return { success: false, error: friendlyError(error, "Could not save the property details. Please try again.", "admin.properties.updateAdminProperty") };
+ 
+    // The Add Listing screen now collects exact address/lat/lng on this
+    // same form (see PropertyLocation.tsx) instead of only on a later,
+@@ -346,7 +347,7 @@ export async function updateAdminPropertyLocation(id: string, formData: FormData
+            approx_lng: exactLng,
+         });
+ 
+-   if (error) return { success: false, error: error.message };
++   if (error) return { success: false, error: friendlyError(error, "Could not save the property location. Please try again.", "admin.properties.updateAdminPropertyLocation") };
+ 
+    revalidatePropertyPaths(id);
+    return { success: true };
+@@ -380,7 +381,7 @@ export async function setAdminPropertyStatus(id: string, status: AdminPropertySt
+       })
+       .eq("id", id);
+ 
+-   if (error) return { success: false, error: error.message };
++   if (error) return { success: false, error: friendlyError(error, "Could not update the property status. Please try again.", "admin.properties.setAdminPropertyStatus") };
+ 
+    revalidatePropertyPaths(id);
+    return { success: true };
+@@ -419,7 +420,7 @@ export async function addAdminPropertyMedia(id: string, formData: FormData): Pro
+       sort_order: numberOrNull(formData.get("sort_order")) ?? 0,
+    });
+ 
+-   if (error) return { success: false, error: error.message };
++   if (error) return { success: false, error: friendlyError(error, "Could not add the media. Please try again.", "admin.properties.addAdminPropertyMedia") };
+ 
+    revalidatePropertyPaths(id);
+    return { success: true };
+@@ -444,7 +445,7 @@ export async function deleteAdminPropertyMedia(id: string, mediaId: string): Pro
+    }
+ 
+    const { error } = await supabase.from("property_media").delete().eq("id", mediaId);
+-   if (error) return { success: false, error: error.message };
++   if (error) return { success: false, error: friendlyError(error, "Could not remove the media. Please try again.", "admin.properties.deleteAdminPropertyMedia") };
+ 
+    // Best-effort: an orphaned object costs storage but is never rendered
+    // (the UI only ever lists property_media rows), so a failure here is
+diff --git a/src/lib/admin/settings/actions.ts b/src/lib/admin/settings/actions.ts
+index 419b709..933f09b 100644
+--- a/src/lib/admin/settings/actions.ts
++++ b/src/lib/admin/settings/actions.ts
+@@ -14,6 +14,7 @@
+ import { revalidatePath } from "next/cache";
+ import { requireAdmin } from "@/lib/admin/auth";
+ import { createClient } from "@/lib/supabase/server";
++import { friendlyError } from "@/lib/errors";
+ 
+ export interface ActionResult {
+    success: boolean;
+@@ -42,7 +43,7 @@ export async function setSiteReraCertificate(formData: FormData): Promise<Action
+       .maybeSingle();
+ 
+    if (fetchError) {
+-      return { success: false, error: fetchError.message };
++      return { success: false, error: friendlyError(fetchError, "Could not load the current certificate. Please try again.", "admin.settings.setSiteReraCertificate") };
+    }
+ 
+    const { error } = await supabase
+@@ -51,7 +52,7 @@ export async function setSiteReraCertificate(formData: FormData): Promise<Action
+       .eq("id", true);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not save the certificate. Please try again.", "admin.settings.setSiteReraCertificate") };
+    }
+ 
+    // Best-effort cleanup of the previous file now that the row points at
+@@ -83,7 +84,7 @@ export async function updateSiteReraCertificateDetails(formData: FormData): Prom
+       .eq("id", true);
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not update the certificate details. Please try again.", "admin.settings.updateSiteReraCertificateDetails") };
+    }
+ 
+    revalidatePath("/admin/settings");
+@@ -103,7 +104,7 @@ export async function removeSiteReraCertificate(): Promise<ActionResult> {
+       .maybeSingle();
+ 
+    if (fetchError) {
+-      return { success: false, error: fetchError.message };
++      return { success: false, error: friendlyError(fetchError, "Could not load the current certificate. Please try again.", "admin.settings.removeSiteReraCertificate") };
+    }
+    if (!existing?.storage_path) {
+       return { success: false, error: "No certificate currently uploaded." };
+@@ -111,12 +112,12 @@ export async function removeSiteReraCertificate(): Promise<ActionResult> {
+ 
+    const { error: storageError } = await supabase.storage.from("project-media").remove([existing.storage_path]);
+    if (storageError) {
+-      return { success: false, error: `Failed to delete file from storage: ${storageError.message}` };
++      return { success: false, error: friendlyError(storageError, "Could not delete the certificate file from storage. Please try again.", "admin.settings.removeSiteReraCertificate") };
+    }
+ 
+    const { error } = await supabase.from("site_rera_certificate").update({ storage_path: null }).eq("id", true);
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not remove the certificate. Please try again.", "admin.settings.removeSiteReraCertificate") };
+    }
+ 
+    revalidatePath("/admin/settings");
+diff --git a/src/lib/admin/units/actions.ts b/src/lib/admin/units/actions.ts
+index 5c54977..9d67d4c 100644
+--- a/src/lib/admin/units/actions.ts
++++ b/src/lib/admin/units/actions.ts
+@@ -35,6 +35,7 @@
+ import { revalidatePath } from "next/cache";
+ import { requireAdmin } from "@/lib/admin/auth";
+ import { createClient } from "@/lib/supabase/server";
++import { friendlyError } from "@/lib/errors";
+ 
+ export interface ActionResult {
+    success: boolean;
+@@ -165,7 +166,7 @@ export async function createProjectUnit(projectId: string, formData: FormData):
+       .single();
+ 
+    if (error || !data) {
+-      return { success: false, error: error?.message ?? "Failed to create unit." };
++      return { success: false, error: friendlyError(error, "Could not create the unit. Please try again.", "admin.units.createProjectUnit") };
+    }
+ 
+    const exactAddress = textOrNull(formData.get("exact_address"));
+@@ -190,7 +191,7 @@ export async function createProjectUnit(projectId: string, formData: FormData):
+ 
+       if (locationError) {
+          revalidateUnitPaths(projectId);
+-         return { success: false, error: `Unit created, but its location could not be saved: ${locationError.message}` };
++         return { success: false, error: friendlyError(locationError, "The unit was created, but its location could not be saved. Please try saving the location again.", "admin.units.createProjectUnit") };
+       }
+    }
+ 
+@@ -237,7 +238,7 @@ export async function updateProjectUnit(projectId: string, unitId: string, formD
+       .eq("id", unitId)
+       .eq("project_id", projectId);
+ 
+-   if (error) return { success: false, error: error.message };
++   if (error) return { success: false, error: friendlyError(error, "Could not update the unit. Please try again.", "admin.units.updateProjectUnit") };
+ 
+    revalidateUnitPaths(projectId);
+    return { success: true };
+@@ -267,7 +268,7 @@ export async function setProjectUnitStatus(projectId: string, unitId: string, st
+       .eq("id", unitId)
+       .eq("project_id", projectId);
+ 
+-   if (error) return { success: false, error: error.message };
++   if (error) return { success: false, error: friendlyError(error, "Could not update the unit status. Please try again.", "admin.units.setProjectUnitStatus") };
+ 
+    revalidateUnitPaths(projectId);
+    return { success: true };
+@@ -304,7 +305,7 @@ export async function attachPropertyToProject(projectId: string, formData: FormD
+       .eq("id", propertyId)
+       .is("project_id", null);
+ 
+-   if (error) return { success: false, error: error.message };
++   if (error) return { success: false, error: friendlyError(error, "Could not attach the property to the project. Please try again.", "admin.units.attachPropertyToProject") };
+ 
+    revalidateUnitPaths(projectId);
+    return { success: true };
+@@ -328,7 +329,7 @@ export async function detachUnitFromProject(projectId: string, unitId: string):
+       .eq("id", unitId)
+       .eq("project_id", projectId);
+ 
+-   if (error) return { success: false, error: error.message };
++   if (error) return { success: false, error: friendlyError(error, "Could not detach the unit from the project. Please try again.", "admin.units.detachUnitFromProject") };
+ 
+    revalidateUnitPaths(projectId);
+    return { success: true };
+diff --git a/src/lib/admin/users/actions.ts b/src/lib/admin/users/actions.ts
+index 626f967..a45d2b8 100644
+--- a/src/lib/admin/users/actions.ts
++++ b/src/lib/admin/users/actions.ts
+@@ -23,6 +23,7 @@
+ import { revalidatePath } from "next/cache";
+ import { requireAdmin } from "@/lib/admin/auth";
+ import { createClient } from "@/lib/supabase/server";
++import { friendlyError } from "@/lib/errors";
+ 
+ export interface ActionResult {
+    success: boolean;
+@@ -45,7 +46,7 @@ export async function grantSellerAccess(targetUserId: string): Promise<ActionRes
+    });
+ 
+    if (error) {
+-      return { success: false, error: error.message };
++      return { success: false, error: friendlyError(error, "Could not grant seller access. Please try again.", "admin.users.grantSellerAccess") };
+    }
+ 
+    revalidatePath("/admin/users");
+diff --git a/src/lib/errors.ts b/src/lib/errors.ts
+index 47b51b8..304f69a 100644
+--- a/src/lib/errors.ts
++++ b/src/lib/errors.ts
+@@ -26,6 +26,19 @@ export function friendlyError(error: unknown, fallback: string, context?: string
+    if (e.code === "42501" || message.includes("row-level security") || message.includes("row level security")) {
+       return "You don't have permission to do that.";
+    }
++   // Database triggers/functions guard admin-only and immutable fields with
++   // plain `raise exception` text (e.g. "only admins can change roles",
++   // "published_at cannot be set directly"). Those are internal rule names,
++   // not something to show as-is.
++   if (message.includes("only admins") || message.includes("by an admin") || message.includes("not authorized")) {
++      return "You don't have permission to do that.";
++   }
++   if (message.includes("not authenticated") || message.includes("jwt expired")) {
++      return "Your session has expired. Please sign in again.";
++   }
++   if (e.code === "22P02" || e.code === "23502" || e.code === "23514" || e.code === "22001") {
++      return "Some of the values entered aren't valid. Please check them and try again.";
++   }
+    if (message.includes("failed to fetch") || message.includes("network") || message.includes("timeout")) {
+       return "We couldn't reach the server. Please check your connection and try again.";
+    }

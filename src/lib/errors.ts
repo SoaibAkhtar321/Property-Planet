@@ -26,6 +26,19 @@ export function friendlyError(error: unknown, fallback: string, context?: string
    if (e.code === "42501" || message.includes("row-level security") || message.includes("row level security")) {
       return "You don't have permission to do that.";
    }
+   // Database triggers/functions guard admin-only and immutable fields with
+   // plain `raise exception` text (e.g. "only admins can change roles",
+   // "published_at cannot be set directly"). Those are internal rule names,
+   // not something to show as-is.
+   if (message.includes("only admins") || message.includes("by an admin") || message.includes("not authorized")) {
+      return "You don't have permission to do that.";
+   }
+   if (message.includes("not authenticated") || message.includes("jwt expired")) {
+      return "Your session has expired. Please sign in again.";
+   }
+   if (e.code === "22P02" || e.code === "23502" || e.code === "23514" || e.code === "22001") {
+      return "Some of the values entered aren't valid. Please check them and try again.";
+   }
    if (message.includes("failed to fetch") || message.includes("network") || message.includes("timeout")) {
       return "We couldn't reach the server. Please check your connection and try again.";
    }

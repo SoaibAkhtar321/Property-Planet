@@ -20,6 +20,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { LeadStatus } from "./queries";
+import { friendlyError } from "@/lib/errors";
 
 export interface ActionResult {
    success: boolean;
@@ -45,7 +46,7 @@ export async function updateLeadStatus(leadId: string, status: LeadStatus): Prom
    const { data, error } = await supabase.from("leads").update({ status }).eq("id", leadId).select("id");
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not update the lead status. Please try again.", "admin.leads.updateLeadStatus") };
    }
    if (!data || data.length === 0) {
       return { success: false, error: "Lead not found, or you don't have permission to update it." };

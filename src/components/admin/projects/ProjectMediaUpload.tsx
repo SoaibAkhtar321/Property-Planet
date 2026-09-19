@@ -22,6 +22,7 @@ import { useCallback, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { ActionResult } from "@/lib/admin/projects/actions";
+import { friendlyError } from "@/lib/errors";
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25MB — generous enough for master-plan/floor-plan scans and PDFs
 
@@ -74,7 +75,7 @@ const ProjectMediaUpload = ({ projectId, mediaType, nextSortOrder, multiple = fa
 
                const { error: uploadError } = await supabase.storage.from("project-media").upload(path, file);
                if (uploadError) {
-                  setError(`${file.name}: ${uploadError.message}`);
+                  setError(`${file.name}: ${friendlyError(uploadError, "upload failed. Please try again.", "admin.projects.mediaUpload")}`);
                   continue;
                }
 

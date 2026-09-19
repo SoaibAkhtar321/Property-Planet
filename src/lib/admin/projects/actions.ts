@@ -28,6 +28,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
+import { friendlyError } from "@/lib/errors";
 
 export type ProjectStatus = "draft" | "pending" | "published" | "archived";
 
@@ -83,7 +84,7 @@ export async function createProject(formData: FormData): Promise<void> {
       .single();
 
    if (error || !data) {
-      const message = error?.code === "23505" ? "That slug is already in use." : error?.message ?? "Failed to create project.";
+      const message = error?.code === "23505" ? "That slug is already in use." : friendlyError(error, "Could not create the project. Please try again.", "admin.projects.createProject");
       redirect("/admin/projects/new?error=" + encodeURIComponent(message));
    }
 
@@ -124,7 +125,7 @@ export async function updateProjectBasics(id: string, formData: FormData): Promi
       .eq("id", id);
 
    if (error) {
-      return { success: false, error: error.code === "23505" ? "That slug is already in use." : error.message };
+      return { success: false, error: error.code === "23505" ? "That slug is already in use." : friendlyError(error, "Could not save the project details. Please try again.", "admin.projects.updateProjectBasics") };
    }
 
    revalidatePath("/admin/projects");
@@ -148,7 +149,7 @@ export async function updateProjectLocation(id: string, formData: FormData): Pro
    });
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not save the project location. Please try again.", "admin.projects.updateProjectLocation") };
    }
 
    revalidatePath(`/admin/projects/${id}`);
@@ -169,7 +170,7 @@ export async function setProjectStatus(id: string, status: ProjectStatus): Promi
    const { error } = await supabase.from("projects").update({ status }).eq("id", id);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not update the project status. Please try again.", "admin.projects.setProjectStatus") };
    }
 
    revalidatePath("/admin/projects");
@@ -207,7 +208,7 @@ export async function addProjectPricingRow(projectId: string, formData: FormData
    });
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not add the pricing row. Please try again.", "admin.projects.addProjectPricingRow") };
    }
 
    revalidatePath(`/admin/projects/${projectId}`);
@@ -251,7 +252,7 @@ export async function updateProjectPricingRow(
       .eq("project_id", projectId);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not update the pricing row. Please try again.", "admin.projects.updateProjectPricingRow") };
    }
 
    revalidatePath(`/admin/projects/${projectId}`);
@@ -271,7 +272,7 @@ export async function deleteProjectPricingRow(projectId: string, pricingRowId: s
       .eq("project_id", projectId);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not delete the pricing row. Please try again.", "admin.projects.deleteProjectPricingRow") };
    }
 
    revalidatePath(`/admin/projects/${projectId}`);
@@ -337,7 +338,7 @@ export async function addProjectMediaRow(projectId: string, formData: FormData):
          .eq("is_primary", true);
 
       if (clearError) {
-         return { success: false, error: `Failed to update existing primary media: ${clearError.message}` };
+         return { success: false, error: friendlyError(clearError, "Could not update the existing primary image. Please try again.", "admin.projects.addProjectMediaRow") };
       }
    }
 
@@ -351,7 +352,7 @@ export async function addProjectMediaRow(projectId: string, formData: FormData):
    });
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not add the media. Please try again.", "admin.projects.addProjectMediaRow") };
    }
 
    revalidatePath(`/admin/projects/${projectId}`);
@@ -382,7 +383,7 @@ export async function updateProjectMediaRow(
          .neq("id", mediaRowId);
 
       if (clearError) {
-         return { success: false, error: `Failed to update existing primary media: ${clearError.message}` };
+         return { success: false, error: friendlyError(clearError, "Could not update the existing primary image. Please try again.", "admin.projects.updateProjectMediaRow") };
       }
    }
 
@@ -398,7 +399,7 @@ export async function updateProjectMediaRow(
       .eq("project_id", projectId);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not update the media. Please try again.", "admin.projects.updateProjectMediaRow") };
    }
 
    revalidatePath(`/admin/projects/${projectId}`);
@@ -427,7 +428,7 @@ export async function deleteProjectMediaRow(projectId: string, mediaRowId: strin
       .maybeSingle();
 
    if (fetchError) {
-      return { success: false, error: fetchError.message };
+      return { success: false, error: friendlyError(fetchError, "Could not find the media record. Please refresh and try again.", "admin.projects.deleteProjectMediaRow") };
    }
    if (!row) {
       return { success: false, error: "Media item not found." };
@@ -435,7 +436,7 @@ export async function deleteProjectMediaRow(projectId: string, mediaRowId: strin
 
    const { error: storageError } = await supabase.storage.from("project-media").remove([row.storage_path]);
    if (storageError) {
-      return { success: false, error: `Failed to delete file from storage: ${storageError.message}` };
+      return { success: false, error: friendlyError(storageError, "Could not delete the file from storage. Please try again.", "admin.projects.deleteProjectMediaRow") };
    }
 
    const { error: deleteError } = await supabase
@@ -447,7 +448,7 @@ export async function deleteProjectMediaRow(projectId: string, mediaRowId: strin
    if (deleteError) {
       return {
          success: false,
-         error: `File was removed from storage, but the record could not be deleted: ${deleteError.message}`,
+         error: friendlyError(deleteError, "The file was removed from storage, but its record could not be deleted. Please refresh and try again.", "admin.projects.deleteProjectMediaRow"),
       };
    }
 

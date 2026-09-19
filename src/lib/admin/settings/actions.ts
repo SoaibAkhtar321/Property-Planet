@@ -14,6 +14,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
+import { friendlyError } from "@/lib/errors";
 
 export interface ActionResult {
    success: boolean;
@@ -42,7 +43,7 @@ export async function setSiteReraCertificate(formData: FormData): Promise<Action
       .maybeSingle();
 
    if (fetchError) {
-      return { success: false, error: fetchError.message };
+      return { success: false, error: friendlyError(fetchError, "Could not load the current certificate. Please try again.", "admin.settings.setSiteReraCertificate") };
    }
 
    const { error } = await supabase
@@ -51,7 +52,7 @@ export async function setSiteReraCertificate(formData: FormData): Promise<Action
       .eq("id", true);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not save the certificate. Please try again.", "admin.settings.setSiteReraCertificate") };
    }
 
    // Best-effort cleanup of the previous file now that the row points at
@@ -83,7 +84,7 @@ export async function updateSiteReraCertificateDetails(formData: FormData): Prom
       .eq("id", true);
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not update the certificate details. Please try again.", "admin.settings.updateSiteReraCertificateDetails") };
    }
 
    revalidatePath("/admin/settings");
@@ -103,7 +104,7 @@ export async function removeSiteReraCertificate(): Promise<ActionResult> {
       .maybeSingle();
 
    if (fetchError) {
-      return { success: false, error: fetchError.message };
+      return { success: false, error: friendlyError(fetchError, "Could not load the current certificate. Please try again.", "admin.settings.removeSiteReraCertificate") };
    }
    if (!existing?.storage_path) {
       return { success: false, error: "No certificate currently uploaded." };
@@ -111,12 +112,12 @@ export async function removeSiteReraCertificate(): Promise<ActionResult> {
 
    const { error: storageError } = await supabase.storage.from("project-media").remove([existing.storage_path]);
    if (storageError) {
-      return { success: false, error: `Failed to delete file from storage: ${storageError.message}` };
+      return { success: false, error: friendlyError(storageError, "Could not delete the certificate file from storage. Please try again.", "admin.settings.removeSiteReraCertificate") };
    }
 
    const { error } = await supabase.from("site_rera_certificate").update({ storage_path: null }).eq("id", true);
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not remove the certificate. Please try again.", "admin.settings.removeSiteReraCertificate") };
    }
 
    revalidatePath("/admin/settings");

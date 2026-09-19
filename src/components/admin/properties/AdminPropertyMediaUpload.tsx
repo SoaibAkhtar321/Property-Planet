@@ -17,6 +17,7 @@ import { useCallback, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { ActionResult } from "@/lib/admin/properties/actions";
+import { friendlyError } from "@/lib/errors";
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB, matching the seller uploader
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -60,7 +61,7 @@ const AdminPropertyMediaUpload = ({
 
                const { error: uploadError } = await supabase.storage.from("property-media").upload(path, file);
                if (uploadError) {
-                  setError(`${file.name}: ${uploadError.message}`);
+                  setError(`${file.name}: ${friendlyError(uploadError, "upload failed. Please try again.", "admin.properties.mediaUpload")}`);
                   continue;
                }
 

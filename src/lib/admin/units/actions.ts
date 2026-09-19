@@ -35,6 +35,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
+import { friendlyError } from "@/lib/errors";
 
 export interface ActionResult {
    success: boolean;
@@ -165,7 +166,7 @@ export async function createProjectUnit(projectId: string, formData: FormData): 
       .single();
 
    if (error || !data) {
-      return { success: false, error: error?.message ?? "Failed to create unit." };
+      return { success: false, error: friendlyError(error, "Could not create the unit. Please try again.", "admin.units.createProjectUnit") };
    }
 
    const exactAddress = textOrNull(formData.get("exact_address"));
@@ -190,7 +191,7 @@ export async function createProjectUnit(projectId: string, formData: FormData): 
 
       if (locationError) {
          revalidateUnitPaths(projectId);
-         return { success: false, error: `Unit created, but its location could not be saved: ${locationError.message}` };
+         return { success: false, error: friendlyError(locationError, "The unit was created, but its location could not be saved. Please try saving the location again.", "admin.units.createProjectUnit") };
       }
    }
 
@@ -237,7 +238,7 @@ export async function updateProjectUnit(projectId: string, unitId: string, formD
       .eq("id", unitId)
       .eq("project_id", projectId);
 
-   if (error) return { success: false, error: error.message };
+   if (error) return { success: false, error: friendlyError(error, "Could not update the unit. Please try again.", "admin.units.updateProjectUnit") };
 
    revalidateUnitPaths(projectId);
    return { success: true };
@@ -267,7 +268,7 @@ export async function setProjectUnitStatus(projectId: string, unitId: string, st
       .eq("id", unitId)
       .eq("project_id", projectId);
 
-   if (error) return { success: false, error: error.message };
+   if (error) return { success: false, error: friendlyError(error, "Could not update the unit status. Please try again.", "admin.units.setProjectUnitStatus") };
 
    revalidateUnitPaths(projectId);
    return { success: true };
@@ -304,7 +305,7 @@ export async function attachPropertyToProject(projectId: string, formData: FormD
       .eq("id", propertyId)
       .is("project_id", null);
 
-   if (error) return { success: false, error: error.message };
+   if (error) return { success: false, error: friendlyError(error, "Could not attach the property to the project. Please try again.", "admin.units.attachPropertyToProject") };
 
    revalidateUnitPaths(projectId);
    return { success: true };
@@ -328,7 +329,7 @@ export async function detachUnitFromProject(projectId: string, unitId: string): 
       .eq("id", unitId)
       .eq("project_id", projectId);
 
-   if (error) return { success: false, error: error.message };
+   if (error) return { success: false, error: friendlyError(error, "Could not detach the unit from the project. Please try again.", "admin.units.detachUnitFromProject") };
 
    revalidateUnitPaths(projectId);
    return { success: true };

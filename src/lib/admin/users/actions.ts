@@ -23,6 +23,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
+import { friendlyError } from "@/lib/errors";
 
 export interface ActionResult {
    success: boolean;
@@ -45,7 +46,7 @@ export async function grantSellerAccess(targetUserId: string): Promise<ActionRes
    });
 
    if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "Could not grant seller access. Please try again.", "admin.users.grantSellerAccess") };
    }
 
    revalidatePath("/admin/users");
