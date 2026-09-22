@@ -407,7 +407,25 @@
    .title-one p.mt-xs {margin-top: 12px;}
    .btn-one {min-width: 120px;}
    .hero-banner-one .hero-heading {font-size: 45px; line-height: 1.25em;}
-   .hero-banner-two .hero-heading,.hero-banner-three .hero-heading {font-size: 55px; line-height: 1.15em;}
+   .hero-banner-three .hero-heading {font-size: 55px; line-height: 1.15em;}
+   /* Mobile-only treatment for hero-banner-two: the desktop version (black
+      text + light halo, see _banner.scss) is only marginally readable once
+      the hero is a full-bleed video/photo rather than the flat pastel
+      background it was designed against, and mobile has no scrim at all
+      over the top of the section where this heading sits (see
+      _hero-build.scss). Switching to solid white with a dark outline here
+      -- independent of the desktop color -- is the standard fix for text
+      over moving video: it stays legible no matter what's playing behind
+      it, rather than depending on the footage being light enough. */
+   .hero-banner-two .hero-heading {
+      font-size: 48px;
+      line-height: 1.2em;
+      color: #fff;
+      text-shadow:
+         0 1px 3px rgba(0, 0, 0, 0.65),
+         0 2px 10px rgba(0, 0, 0, 0.55),
+         0 0 2px rgba(0, 0, 0, 0.5);
+   }
    .hero-banner-five .hero-heading {font-size: 55px; line-height: 1.1em;}
    .hero-banner-two .hero-heading span img {width: 30px;}
    .hero-banner-two .shape_01 {display: none;}

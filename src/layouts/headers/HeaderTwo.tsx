@@ -132,6 +132,24 @@ const HeaderTwo = ({ style_1, style_2, staticHeader = false }: any) => {
          <HeaderSearchbar isSearch={isSearch} setIsSearch={setIsSearch} />
 
          <style jsx global>{`
+            .theme-main-menu .pp-header-menu-btn .btn-one {
+               /* .btn-one is a shared outline-style button (transparent
+                  center, border + text only) used across admin uploads,
+                  the dashboard, etc. -- fine on a plain background, but
+                  over this header's hero video/photo the transparent
+                  center just lets the busy footage show through, making
+                  the trigger hard to see. Fill it solid for this one
+                  usage instead of touching the shared .btn-one class. */
+               background: #ff6725;
+               border-color: #ff6725;
+               color: #fff;
+            }
+            .theme-main-menu .pp-header-menu-btn .btn-one:hover,
+            .theme-main-menu .pp-header-menu-btn .btn-one:focus-visible {
+               background: #e5561a;
+               border-color: #e5561a;
+               color: #fff;
+            }
             .theme-main-menu .pp-header-seller-btn {
                display: inline-flex;
                align-items: center;
