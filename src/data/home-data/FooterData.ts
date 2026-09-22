@@ -33,7 +33,7 @@ const footer_data: DataType[] = [
       widget_class: "xs-mt-30",
       page: "home_1",
       widget_title: "Legal",
-      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
+      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" },]
    },
    {
       id: 3,
@@ -58,7 +58,7 @@ const footer_data: DataType[] = [
       widget_class: "col-xxl-3 col-xl-4",
       page: "home_3",
       widget_title: "Legal",
-      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
+      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" },]
    },
    {
       id: 3,
@@ -93,7 +93,7 @@ const footer_data: DataType[] = [
       widget_class: "col-lg-3",
       page: "home_5",
       widget_title: "Legal",
-      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
+      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" },]
    },
    {
       id: 3,

@@ -1,7 +1,6 @@
 import FaqThree from "@/components/common/faq/FaqThree"
 import Image from "next/image"
 import Link from "next/link"
-import Count from "@/components/common/Count"
 
 import titleShape from "@/assets/images/shape/shape_37.svg"
 import featureImg from "@/assets/images/assets/screen_10.png"
@@ -32,29 +31,11 @@ const BLockFeatureOne = () => {
                   </div>
                </div>
             </div>
-
-            <div className="wrapper mt-90 lg-mt-40">
-               <div className="row justify-content-center">
-                  <div className="col-md-4 col-sm-6">
-                     <div className="counter-block-two text-center dark mt-30">
-                        <div className="main-count sm font-garamond fw-500"><span className="counter"><Count number={720} /></span>k+</div>
-                        <p className="fs-20 mt-15 md-mt-10">Project handover</p>
-                     </div>
-                  </div>
-                  <div className="col-md-4 col-sm-6">
-                     <div className="counter-block-two text-center dark mt-30">
-                        <div className="main-count sm font-garamond fw-500"><span className="counter"><Count number={1.3} /></span>%</div>
-                        <p className="fs-20 mt-15 md-mt-10">Low Interest</p>
-                     </div>
-                  </div>
-                  <div className="col-md-4 col-sm-6">
-                     <div className="counter-block-two text-center dark mt-30">
-                        <div className="main-count sm font-garamond fw-500"><span className="counter">{<Count number={1.9} />}</span>mil+</div>
-                        <p className="fs-20 mt-15 md-mt-10">Happy customers</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
+            {/* Phase 4K: removed a "720k+ Project handover / 1.3% Low
+                Interest / 1.9 mil+ Happy customers" counter block here --
+                fabricated template placeholder numbers with no basis in
+                real Property Planet data. Not replaced with invented
+                figures; add back with real numbers if/when available. */}
          </div>
       </div>
    )

@@ -36,7 +36,7 @@ const schema = yup
 
 const SellerLoginForm = () => {
    const router = useRouter();
-   const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({ resolver: yupResolver(schema) });
+   const { register, handleSubmit, formState: { errors, isSubmitting }, getValues } = useForm<FormData>({ resolver: yupResolver(schema) });
    const [isPasswordVisible, setPasswordVisibility] = useState(false);
    const [needsConfirmation, setNeedsConfirmation] = useState(false);
    const [resending, setResending] = useState(false);
@@ -161,7 +161,9 @@ const SellerLoginForm = () => {
                </div>
             </div>
             <div className="col-12">
-               <button type="submit" className="btn-two w-100 text-uppercase d-block mt-20">Login</button>
+               <button type="submit" className="btn-two w-100 text-uppercase d-block mt-20" disabled={isSubmitting}>
+                  {isSubmitting ? "Logging in..." : "Login"}
+               </button>
             </div>
             <div className="col-12 text-center mt-20">
                <p className="fs-16 color-dark">New seller/agent? <Link href="/seller/register">Register here</Link></p>

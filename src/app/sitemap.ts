@@ -29,7 +29,9 @@ const STATIC_ROUTES = [
    "/blog",
    "/about",
    "/contact",
-   "/faq",
+   // Phase 4K: /faq removed from the sitemap along with the nav/footer
+   // entries -- it currently has no real content (placeholder Lorem
+   // Ipsum, see FaqData.ts). Restore once real FAQ copy is authored.
    "/privacy-policy",
    "/terms-of-service",
 ];

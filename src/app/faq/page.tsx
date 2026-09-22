@@ -10,6 +10,11 @@ export const metadata = {
    title: "Frequently Asked Questions | Property Planet",
    description: DESCRIPTION,
    alternates: { canonical: CANONICAL },
+   // Phase 4K: not linked from nav/footer/sitemap right now -- the page's
+   // content is still placeholder Lorem Ipsum (see FaqData.ts). noindex
+   // keeps it out of search results if reached directly, same pattern as
+   // /auth/forgot-password. Remove once real FAQ copy is authored.
+   robots: { index: false, follow: false },
    openGraph: {
       title: "Frequently Asked Questions | Property Planet",
       description: DESCRIPTION,

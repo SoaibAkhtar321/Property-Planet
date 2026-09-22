@@ -22,7 +22,11 @@ const BLockFeatureTwo = () => {
             <div className="container">
                <div className="title-one text-center mb-70 xl-mb-40 lg-mb-20">
                   <h2 className="font-garamond star-shape"><span className="star-shape"><Image src={titleShape} alt="" className="lazy-img" /></span> Buy, Rent & Sell</h2>
-                  <p className="fs-22 mt-xs color-dark">Over 745K listings of apartments, lots, plots - available today.</p>
+                  {/* Phase 4K: removed "Over 745K listings of apartments,
+                      lots, plots - available today" -- fabricated template
+                      placeholder inventory figure with no basis in real
+                      Property Planet data. Not replaced with an invented
+                      number. */}
                </div>
 
                <div className="row justify-content-center gx-xxl-5">

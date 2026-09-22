@@ -48,7 +48,9 @@ const menu_data: MenuItem[] = [
         sub_menus: [
             { link: "/about", title: "About Property Planet" },
             { link: "/contact", title: "Contact Us" },
-            { link: "/faq", title: "FAQ's" },
+            // Phase 4K: FAQ nav entry removed -- /faq currently has no real
+            // content (placeholder Lorem Ipsum), see FaqData.ts. Restore this
+            // entry once real FAQ copy is authored.
             
         ],
     },

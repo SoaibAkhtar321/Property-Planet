@@ -1,0 +1,233 @@
+From 369ba85ff05ec9fdd84633ec84d8512db5cbc2b9 Mon Sep 17 00:00:00 2001
+From: Soaib Akhtar <soaib@spesio.dev>
+Date: Tue, 22 Sep 2026 12:01:22 +0000
+Subject: [PATCH] fix: polish remaining public pages
+
+---
+ src/app/faq/page.tsx                          |  5 ++++
+ src/app/sitemap.ts                            |  4 ++-
+ src/components/forms/SellerLoginForm.tsx      |  6 ++--
+ src/components/homes/home-two/FAQ.tsx         |  6 +++-
+ .../about-us/about-us-two/BLockFeatureOne.tsx | 29 ++++---------------
+ .../about-us/about-us-two/BLockFeatureTwo.tsx |  6 +++-
+ .../about-us/about-us-two/index.tsx           |  9 ++++--
+ src/data/home-data/FooterData.ts              |  6 ++--
+ src/data/home-data/MenuData.ts                |  4 ++-
+ 9 files changed, 40 insertions(+), 35 deletions(-)
+
+diff --git a/src/app/faq/page.tsx b/src/app/faq/page.tsx
+index 0590860..8a33381 100644
+--- a/src/app/faq/page.tsx
++++ b/src/app/faq/page.tsx
+@@ -10,6 +10,11 @@ export const metadata = {
+    title: "Frequently Asked Questions | Property Planet",
+    description: DESCRIPTION,
+    alternates: { canonical: CANONICAL },
++   // Phase 4K: not linked from nav/footer/sitemap right now -- the page's
++   // content is still placeholder Lorem Ipsum (see FaqData.ts). noindex
++   // keeps it out of search results if reached directly, same pattern as
++   // /auth/forgot-password. Remove once real FAQ copy is authored.
++   robots: { index: false, follow: false },
+    openGraph: {
+       title: "Frequently Asked Questions | Property Planet",
+       description: DESCRIPTION,
+diff --git a/src/app/sitemap.ts b/src/app/sitemap.ts
+index f9a898d..cca472c 100644
+--- a/src/app/sitemap.ts
++++ b/src/app/sitemap.ts
+@@ -29,7 +29,9 @@ const STATIC_ROUTES = [
+    "/blog",
+    "/about",
+    "/contact",
+-   "/faq",
++   // Phase 4K: /faq removed from the sitemap along with the nav/footer
++   // entries -- it currently has no real content (placeholder Lorem
++   // Ipsum, see FaqData.ts). Restore once real FAQ copy is authored.
+    "/privacy-policy",
+    "/terms-of-service",
+ ];
+diff --git a/src/components/forms/SellerLoginForm.tsx b/src/components/forms/SellerLoginForm.tsx
+index b2eed4d..4532d6a 100644
+--- a/src/components/forms/SellerLoginForm.tsx
++++ b/src/components/forms/SellerLoginForm.tsx
+@@ -36,7 +36,7 @@ const schema = yup
+ 
+ const SellerLoginForm = () => {
+    const router = useRouter();
+-   const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({ resolver: yupResolver(schema) });
++   const { register, handleSubmit, formState: { errors, isSubmitting }, getValues } = useForm<FormData>({ resolver: yupResolver(schema) });
+    const [isPasswordVisible, setPasswordVisibility] = useState(false);
+    const [needsConfirmation, setNeedsConfirmation] = useState(false);
+    const [resending, setResending] = useState(false);
+@@ -161,7 +161,9 @@ const SellerLoginForm = () => {
+                </div>
+             </div>
+             <div className="col-12">
+-               <button type="submit" className="btn-two w-100 text-uppercase d-block mt-20">Login</button>
++               <button type="submit" className="btn-two w-100 text-uppercase d-block mt-20" disabled={isSubmitting}>
++                  {isSubmitting ? "Logging in..." : "Login"}
++               </button>
+             </div>
+             <div className="col-12 text-center mt-20">
+                <p className="fs-16 color-dark">New seller/agent? <Link href="/seller/register">Register here</Link></p>
+diff --git a/src/components/homes/home-two/FAQ.tsx b/src/components/homes/home-two/FAQ.tsx
+index 072a500..ea51b92 100644
+--- a/src/components/homes/home-two/FAQ.tsx
++++ b/src/components/homes/home-two/FAQ.tsx
+@@ -14,7 +14,11 @@ const FAQ = () => {
+                      <h2 className="font-garamond">Frequently Asked Question</h2>
+                      <p className="fs-20 mt-xs pt-20 md-pt-10">Don’t find the answer? We can help you.</p>
+                   </div>
+-                  <Link href="/faq" className="btn-five sm text-uppercase rounded-0">ASK QUESTIONs</Link>
++                  {/* Phase 4K: pointed at /faq, which currently has no real
++                      content (placeholder Lorem Ipsum, see FaqData.ts).
++                      Routed to /contact -- our actual "ask us anything"
++                      channel -- until real FAQ copy exists. */}
++                  <Link href="/contact" className="btn-five sm text-uppercase rounded-0">ASK QUESTIONs</Link>
+                </div>
+ 
+                <div className="col-lg-7">
+diff --git a/src/components/inner-pages/about-us/about-us-two/BLockFeatureOne.tsx b/src/components/inner-pages/about-us/about-us-two/BLockFeatureOne.tsx
+index 379aad3..24be019 100644
+--- a/src/components/inner-pages/about-us/about-us-two/BLockFeatureOne.tsx
++++ b/src/components/inner-pages/about-us/about-us-two/BLockFeatureOne.tsx
+@@ -1,7 +1,6 @@
+ import FaqThree from "@/components/common/faq/FaqThree"
+ import Image from "next/image"
+ import Link from "next/link"
+-import Count from "@/components/common/Count"
+ 
+ import titleShape from "@/assets/images/shape/shape_37.svg"
+ import featureImg from "@/assets/images/assets/screen_10.png"
+@@ -32,29 +31,11 @@ const BLockFeatureOne = () => {
+                   </div>
+                </div>
+             </div>
+-
+-            <div className="wrapper mt-90 lg-mt-40">
+-               <div className="row justify-content-center">
+-                  <div className="col-md-4 col-sm-6">
+-                     <div className="counter-block-two text-center dark mt-30">
+-                        <div className="main-count sm font-garamond fw-500"><span className="counter"><Count number={720} /></span>k+</div>
+-                        <p className="fs-20 mt-15 md-mt-10">Project handover</p>
+-                     </div>
+-                  </div>
+-                  <div className="col-md-4 col-sm-6">
+-                     <div className="counter-block-two text-center dark mt-30">
+-                        <div className="main-count sm font-garamond fw-500"><span className="counter"><Count number={1.3} /></span>%</div>
+-                        <p className="fs-20 mt-15 md-mt-10">Low Interest</p>
+-                     </div>
+-                  </div>
+-                  <div className="col-md-4 col-sm-6">
+-                     <div className="counter-block-two text-center dark mt-30">
+-                        <div className="main-count sm font-garamond fw-500"><span className="counter">{<Count number={1.9} />}</span>mil+</div>
+-                        <p className="fs-20 mt-15 md-mt-10">Happy customers</p>
+-                     </div>
+-                  </div>
+-               </div>
+-            </div>
++            {/* Phase 4K: removed a "720k+ Project handover / 1.3% Low
++                Interest / 1.9 mil+ Happy customers" counter block here --
++                fabricated template placeholder numbers with no basis in
++                real Property Planet data. Not replaced with invented
++                figures; add back with real numbers if/when available. */}
+          </div>
+       </div>
+    )
+diff --git a/src/components/inner-pages/about-us/about-us-two/BLockFeatureTwo.tsx b/src/components/inner-pages/about-us/about-us-two/BLockFeatureTwo.tsx
+index 45afa23..47b05ff 100644
+--- a/src/components/inner-pages/about-us/about-us-two/BLockFeatureTwo.tsx
++++ b/src/components/inner-pages/about-us/about-us-two/BLockFeatureTwo.tsx
+@@ -22,7 +22,11 @@ const BLockFeatureTwo = () => {
+             <div className="container">
+                <div className="title-one text-center mb-70 xl-mb-40 lg-mb-20">
+                   <h2 className="font-garamond star-shape"><span className="star-shape"><Image src={titleShape} alt="" className="lazy-img" /></span> Buy, Rent & Sell</h2>
+-                  <p className="fs-22 mt-xs color-dark">Over 745K listings of apartments, lots, plots - available today.</p>
++                  {/* Phase 4K: removed "Over 745K listings of apartments,
++                      lots, plots - available today" -- fabricated template
++                      placeholder inventory figure with no basis in real
++                      Property Planet data. Not replaced with an invented
++                      number. */}
+                </div>
+ 
+                <div className="row justify-content-center gx-xxl-5">
+diff --git a/src/components/inner-pages/about-us/about-us-two/index.tsx b/src/components/inner-pages/about-us/about-us-two/index.tsx
+index 7802bdb..12d72ca 100644
+--- a/src/components/inner-pages/about-us/about-us-two/index.tsx
++++ b/src/components/inner-pages/about-us/about-us-two/index.tsx
+@@ -2,11 +2,17 @@ import BreadcrumbTwo from "@/components/common/breadcrumb/BreadcrumbTwo";
+ import HeaderTwo from "@/layouts/headers/HeaderTwo";
+ import BLockFeatureOne from "./BLockFeatureOne";
+ import BLockFeatureTwo from "./BLockFeatureTwo";
+-import Feedback from "@/components/homes/home-six/Feedback";
+ import Brand from "./Brand";
+ import FancyBanner from "./FancyBanner";
+ import FooterTwo from "@/layouts/footers/FooterTwo";
+ 
++// Phase 4K: the client-testimonial section (Feedback, from
++// @/components/homes/home-six/Feedback -- used exclusively here, confirmed
++// before removal) was removed. It showed fabricated names, fabricated
++// locations ("Miami, USA"), stock photos, and a fabricated "9.3 Rating"
++// under "Rely on Clients, Not Just Our Claims." -- none of it real
++// Property Planet client feedback. Not replaced with invented
++// testimonials; add back with real reviews if/when available.
+ const AboutUsTwo = () => {
+    return (
+       <>
+@@ -14,7 +20,6 @@ const AboutUsTwo = () => {
+          <BreadcrumbTwo title="About Agency" sub_title="About us" />
+          <BLockFeatureOne />
+          <BLockFeatureTwo />
+-         <Feedback />
+          <Brand />
+          <FancyBanner />
+          <FooterTwo />
+diff --git a/src/data/home-data/FooterData.ts b/src/data/home-data/FooterData.ts
+index 3c9e5d2..9e9758c 100644
+--- a/src/data/home-data/FooterData.ts
++++ b/src/data/home-data/FooterData.ts
+@@ -33,7 +33,7 @@ const footer_data: DataType[] = [
+       widget_class: "xs-mt-30",
+       page: "home_1",
+       widget_title: "Legal",
+-      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
++      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" },]
+    },
+    {
+       id: 3,
+@@ -58,7 +58,7 @@ const footer_data: DataType[] = [
+       widget_class: "col-xxl-3 col-xl-4",
+       page: "home_3",
+       widget_title: "Legal",
+-      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
++      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" },]
+    },
+    {
+       id: 3,
+@@ -93,7 +93,7 @@ const footer_data: DataType[] = [
+       widget_class: "col-lg-3",
+       page: "home_5",
+       widget_title: "Legal",
+-      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" }, { link: "/faq", link_title: "Faq’s" },]
++      footer_link: [{ link: "/terms-of-service", link_title: "Terms & conditions" }, { link: "/privacy-policy", link_title: "Privacy policy" },]
+    },
+    {
+       id: 3,
+diff --git a/src/data/home-data/MenuData.ts b/src/data/home-data/MenuData.ts
+index 1067da3..d753dff 100644
+--- a/src/data/home-data/MenuData.ts
++++ b/src/data/home-data/MenuData.ts
+@@ -48,7 +48,9 @@ const menu_data: MenuItem[] = [
+         sub_menus: [
+             { link: "/about", title: "About Property Planet" },
+             { link: "/contact", title: "Contact Us" },
+-            { link: "/faq", title: "FAQ's" },
++            // Phase 4K: FAQ nav entry removed -- /faq currently has no real
++            // content (placeholder Lorem Ipsum), see FaqData.ts. Restore this
++            // entry once real FAQ copy is authored.
+             
+         ],
+     },
+-- 
+2.43.0
+
