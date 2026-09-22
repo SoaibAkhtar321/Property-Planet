@@ -1462,3 +1462,139 @@
         box-shadow: none;
     }
 }
+
+// Phase B Step 1: scope default Bootstrap component styling to the
+// Property Planet dashboard (admin + seller) so it matches the brand
+// instead of looking like unstyled Bootstrap. Intentionally scoped
+// under .dashboard-body only -- does not touch global Bootstrap.
+.dashboard-body {
+    .btn-primary {
+        background: $color-one;
+        border-color: $color-one;
+        border-radius: 10px;
+        box-shadow: none;
+        &:hover,
+        &:focus,
+        &:active {
+            background: $color-two !important;
+            border-color: $color-two !important;
+            box-shadow: none !important;
+        }
+        &:disabled,
+        &.disabled {
+            background: $color-one;
+            border-color: $color-one;
+            opacity: 0.55;
+        }
+    }
+
+    .btn-outline-primary {
+        color: $color-one;
+        border-color: $color-one;
+        border-radius: 10px;
+        background: transparent;
+        &:hover,
+        &:focus,
+        &:active {
+            background: $color-one !important;
+            border-color: $color-one !important;
+            color: #fff !important;
+            box-shadow: none !important;
+        }
+    }
+
+    .btn-outline-danger {
+        border-radius: 10px;
+        &:hover,
+        &:focus,
+        &:active {
+            box-shadow: none !important;
+        }
+    }
+
+    .btn-success {
+        background: $color-six;
+        border-color: $color-six;
+        border-radius: 10px;
+        box-shadow: none;
+        &:hover,
+        &:focus,
+        &:active {
+            background: darken($color-six, 8%) !important;
+            border-color: darken($color-six, 8%) !important;
+            box-shadow: none !important;
+        }
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 10px 20px;
+        font-size: 15px;
+        color: $text-dark;
+        background-color: #fff;
+        box-shadow: none;
+        &:focus {
+            border-color: $color-one;
+            box-shadow: 0 0 0 0.2rem rgba(255, 103, 37, 0.15);
+        }
+        &::placeholder {
+            color: rgba(0, 0, 0, 0.4);
+        }
+        &:disabled,
+        &[readonly] {
+            background-color: $color-three;
+            opacity: 0.8;
+        }
+    }
+
+    .table {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.05);
+        background: #fff;
+        margin-bottom: 0;
+        > thead {
+            th {
+                background: $color-three;
+                color: $text-dark;
+                font-weight: 600;
+                border-bottom: none;
+                vertical-align: middle;
+                white-space: nowrap;
+            }
+        }
+        > tbody {
+            td {
+                vertical-align: middle;
+                color: $text-color;
+                border-color: rgba(0, 0, 0, 0.06);
+            }
+            tr:last-child td {
+                border-bottom: none;
+            }
+        }
+    }
+
+    .alert {
+        border-radius: 10px;
+        border: none;
+        padding: 15px 20px;
+        font-size: 15px;
+        &.alert-primary {
+            background: $color-three;
+            color: $color-two;
+        }
+        &.alert-success {
+            background: rgba(0, 181, 121, 0.1);
+            color: $color-six;
+        }
+        &.alert-danger {
+            background: rgba(220, 53, 69, 0.08);
+        }
+        &.alert-warning {
+            background: rgba(255, 193, 7, 0.12);
+        }
+    }
+}
