@@ -60,7 +60,15 @@ const FeedbackTwo = () => {
    return (
       <div className="feedback-section-three mt-170 xl-mt-150 lg-mt-100">
          <div className="container">
-            <div className="bg-line position-relative z-1 pt-200 xl-pt-150 lg-pt-80 pb-180 xl-pb-150">
+            {/* Step 3F: pb-180/xl-pb-150 had no lg-/md- reduction, so this
+                section kept a 150px bottom pad all the way down through
+                tablet and phone widths on top of PropertyPlanetCorridorStats
+                immediately below it -- part of the "padded between every
+                element" mobile spacing complaint. md-pb-90 (existing
+                utility, same convention as the lg-/xl- classes already on
+                this element) brings it in line with the already-reduced
+                lg-pt-80 top padding at <=991px; untouched above that. */}
+            <div className="bg-line position-relative z-1 pt-200 xl-pt-150 lg-pt-80 pb-180 xl-pb-150 md-pb-90">
                <div className="row gx-lg-0">
                   <div className="col-lg-5 col-md-8">
                      <div className="title-one">

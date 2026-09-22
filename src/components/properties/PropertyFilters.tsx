@@ -133,10 +133,18 @@ const PropertyFilters = ({
                   </select>
                </div>
 
-               <button type="submit" className="btn-four w-100 justify-content-center mb-15">
+               {/* Phase 4A: .btn-four is a 50x50px square icon-only button
+                   (fixed height, 1.3em icon-sized font) -- forcing it full
+                   width with w-100 kept the fixed height/oversized font but
+                   dropped the fixed width, so these two full-width text
+                   CTAs rendered squashed and oversized instead of like the
+                   rest of the site's buttons. Swapped for .pp-card-btn, the
+                   same button already used for every card action (Send
+                   Inquiry / See Details) elsewhere on this exact page. */}
+               <button type="submit" className="pp-card-btn pp-card-btn--primary w-100 justify-content-center mb-15">
                   Apply Filters
                </button>
-               <a href="/properties" className="btn-four w-100 justify-content-center">
+               <a href="/properties" className="pp-card-btn pp-card-btn--ghost w-100 justify-content-center">
                   Reset Filters
                </a>
             </form>

@@ -144,8 +144,16 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
                            className="d-flex justify-content-center align-items-center gap-2 mt-50 flex-wrap"
                            aria-label="Property listing pages"
                         >
+                           {/* Phase 4A: these were bare text links with no
+                               button chrome at all -- correct touch-target
+                               padding (px-3 py-2) but visually invisible as
+                               controls, the one part of the page not using
+                               the card system's own button language. Reusing
+                               .pp-card-btn (already the site's card-action
+                               button) instead of inventing a new pagination
+                               style. */}
                            {page > 1 && (
-                              <Link href={buildHref(filters, page - 1)} className="fw-500 px-3 py-2">
+                              <Link href={buildHref(filters, page - 1)} className="pp-card-btn pp-card-btn--ghost">
                                  &larr; Prev
                               </Link>
                            )}
@@ -153,10 +161,7 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
                               <Link
                                  key={p}
                                  href={buildHref(filters, p)}
-                                 // Touch target: the theme has no pagination
-                                 // component, so the tap area is set here
-                                 // rather than left at the text's own height.
-                                 className={`px-3 py-2 ${p === page ? "fw-500 color-dark text-decoration-underline" : ""}`}
+                                 className={`pp-card-btn ${p === page ? "pp-card-btn--primary" : "pp-card-btn--ghost"}`}
                                  aria-current={p === page ? "page" : undefined}
                                  aria-label={`Page ${p}`}
                               >
@@ -164,7 +169,7 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
                               </Link>
                            ))}
                            {page < totalPages && (
-                              <Link href={buildHref(filters, page + 1)} className="fw-500 px-3 py-2">
+                              <Link href={buildHref(filters, page + 1)} className="pp-card-btn pp-card-btn--ghost">
                                  Next &rarr;
                               </Link>
                            )}
