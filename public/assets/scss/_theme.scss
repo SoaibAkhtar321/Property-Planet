@@ -56,7 +56,7 @@
   --pp-input-bg: #122226;
   --pp-input-border: rgba(255, 255, 255, 0.16);
   --pp-scrollbar-track: #0d1a1c;
-  --pp-scrollbar-thumb: #ff6725;
+  --pp-scrollbar-thumb: #1faa59;
   --pp-card-bg: #162a30;
   --pp-card-border: rgba(255, 255, 255, 0.1);
 }
@@ -308,10 +308,41 @@ body {
   .card-style-two,
   .card-style-three,
   [class*="listing-card"],
-  [class*="property-card"] {
+  [class*="property-card"],
+  .pp-card {
     background-color: var(--pp-card-bg) !important;
     color: var(--pp-text) !important;
     border-color: var(--pp-card-border) !important;
+  }
+
+  /* .pp-card (PropertyCard.tsx / ProjectCard.tsx) isn't matched by the
+     [class*="listing-card"] / [class*="property-card"] attribute selectors
+     above -- "pp-card" doesn't contain either substring -- so its title/meta
+     text was left on the generic light-mode $text-dark / $text-color values.
+     Those are near-black, and with the card background now dark, that made
+     the title and address unreadable (and, before this rule existed at all,
+     white-on-white: the global `a:not([class*="btn"])...` rule further up
+     already recolors the __title link to var(--pp-text-strong), but nothing
+     ever darkened the still-white card body behind it). */
+  .pp-card {
+    &__title {
+      color: var(--pp-text-strong) !important;
+
+      &:hover { color: $color-one; }
+    }
+
+    &__meta,
+    &__type {
+      color: var(--pp-text) !important;
+    }
+
+    &__facts span {
+      color: var(--pp-text) !important;
+    }
+
+    &__price {
+      color: var(--pp-text-strong) !important;
+    }
   }
 
   .listing-card-one,
