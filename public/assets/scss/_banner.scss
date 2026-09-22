@@ -35,18 +35,53 @@
         font-size: 120px;
         line-height: 1em;
         max-width: 92%;
-        /* The existing scrim (see _hero-build.scss) is tuned for the flat
-           background colour behind the boxed stage / video and doesn't
-           reliably protect this text once a busy photo/video sits behind
-           it -- especially on mobile, where the scrim is either off or
-           only fades in near the bottom. The heading is black, so the
-           failure mode is losing it against dark parts of the image
-           (trees, roofs); a light halo gives every letter an edge against
-           dark backgrounds while staying invisible on light ones. */
+        /* Default (SVG / flat pastel path): light halo keeps black type
+           legible on both the section fill and darker illustration edges. */
         text-shadow:
             0 0 1px rgba(255, 255, 255, 0.9),
             0 1px 2px rgba(255, 255, 255, 0.8),
             0 2px 10px rgba(255, 255, 255, 0.6);
+    }
+
+    /* Full-bleed video: bold white type with a strong dark edge so letters
+       hold against bright roofs and dark trees. Explore CTA becomes solid
+       brand orange so it never disappears into the footage. */
+    &.has-hero-video {
+        .hero-heading {
+            color: #fff;
+            font-weight: 700;
+            text-shadow:
+                0 0 2px rgba(0, 0, 0, 0.85),
+                0 1px 3px rgba(0, 0, 0, 0.7),
+                0 2px 14px rgba(0, 0, 0, 0.55),
+                1px 1px 0 rgba(0, 0, 0, 0.35),
+                -1px -1px 0 rgba(0, 0, 0, 0.35);
+        }
+
+        p.color-dark {
+            color: #fff;
+            font-weight: 500;
+            text-shadow:
+                0 0 2px rgba(0, 0, 0, 0.8),
+                0 1px 3px rgba(0, 0, 0, 0.65),
+                0 2px 10px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Solid orange primary CTA — outline black/white was invisible on video */
+        .btn-seven {
+            background: $color-one;
+            border-color: $color-one;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(255, 103, 37, 0.35);
+
+            &:hover,
+            &:focus {
+                background: $color-two;
+                border-color: $color-two;
+                color: #fff;
+            }
+        }
     }
     .illustration {
         bottom: 0;
@@ -177,6 +212,50 @@
     }
 }
 // Hero Banner Three
+
+
+/* Mobile/tablet + full-bleed video: heading is already forced to white in
+   _responsive.scss (<=991px). Subcopy stays black via .color-dark and would
+   fail on dark video frames once the old full-height sky-blue wash is gone —
+   switch it to light type with a restrained dark edge, scoped to video mode. */
+@media (max-width: 991px) {
+    .hero-banner-two.has-hero-video {
+        .hero-heading {
+            font-weight: 700;
+            text-shadow:
+                0 0 2px rgba(0, 0, 0, 0.85),
+                0 1px 3px rgba(0, 0, 0, 0.7),
+                0 2px 14px rgba(0, 0, 0, 0.55),
+                1px 1px 0 rgba(0, 0, 0, 0.35),
+                -1px -1px 0 rgba(0, 0, 0, 0.35);
+        }
+
+        p.color-dark {
+            color: #fff;
+            font-weight: 500;
+            text-shadow:
+                0 0 2px rgba(0, 0, 0, 0.8),
+                0 1px 3px rgba(0, 0, 0, 0.65),
+                0 2px 10px rgba(0, 0, 0, 0.45);
+        }
+
+        .btn-seven {
+            background: $color-one;
+            border-color: $color-one;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(255, 103, 37, 0.35);
+
+            &:hover,
+            &:focus {
+                background: $color-two;
+                border-color: $color-two;
+                color: #fff;
+            }
+        }
+    }
+}
+
 .hero-banner-three {
     border-radius: 40px;
     overflow: hidden;

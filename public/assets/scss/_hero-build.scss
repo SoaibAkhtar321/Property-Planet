@@ -304,15 +304,17 @@ $hb-cycle: 18s;
 
 
 /*-----------------------------------------------------------------------------------
-    Hero composition (Phase 20)
+    Hero composition (Phase 20 + readability pass)
 
-    The hero is now one intentional first-viewport composition rather than a
-    text block with an illustration parked behind it:
+    The hero is one intentional first-viewport composition:
       - the section fills the viewport (bounded, so a short laptop screen
         doesn't cut the CTAs off);
-      - the animated stage is anchored bottom-right and bled to the edge;
-      - a readability scrim sits between the stage and the copy so the
-        headline never has to compete with whatever is moving behind it.
+      - the animated stage is anchored bottom-right and bled to the edge
+        (SVG fallback only);
+      - when the full-bleed video is active, the video stays sharp and
+        unobstructed — readability comes from localized, low-opacity
+        support under the text column plus text treatment, not a broad
+        sky-blue / white wash over the frame.
 
     The old template shapes (shape_01 / shape_02 / the line-bg grid) are
     removed from this hero — see HeroBanner.tsx — because they were part of
@@ -338,11 +340,8 @@ $hb-cycle: 18s;
       z-index: 0;
    }
 
-   /* Scrim: a horizontal fade from the hero background colour so the text
-      column stays readable over the visual (SVG box or full-bleed video)
-      at every width, without dimming the finished property itself. Sits
-      above the video layer (z-index:0 both, but .hero-video-bg is emitted
-      first in the DOM so it paints below) and below the text container. */
+   /* SVG / no-video path only: soft localized fade under the text column.
+      Opacity is intentionally modest so the illustration stays visible. */
    &:after {
       content: '';
       position: absolute;
@@ -351,15 +350,33 @@ $hb-cycle: 18s;
       z-index: 0;
       background: linear-gradient(
          100deg,
-         rgba(215, 247, 255, 0.96) 0%,
-         rgba(215, 247, 255, 0.82) 24%,
-         rgba(215, 247, 255, 0.30) 40%,
-         rgba(215, 247, 255, 0.04) 55%,
-         rgba(215, 247, 255, 0)    68%
+         rgba(215, 247, 255, 0.55) 0%,
+         rgba(215, 247, 255, 0.28) 18%,
+         rgba(215, 247, 255, 0.08) 32%,
+         transparent 48%
       );
    }
 
    .container { position: relative; z-index: 1; }
+}
+
+/* Full-bleed video mode: video is the canvas. Drop the sky-blue section
+   fill and the broad left wash. A thin neutral gradient under the text
+   band only provides edge contrast without covering the frame. */
+.hero-banner-two.has-hero-video {
+   background: transparent;
+
+   &:after {
+      /* Brand-dark (#0F2A37) at low opacity — not a colored panel.
+         Clears by ~mid-width so the video remains the dominant surface. */
+      background: linear-gradient(
+         100deg,
+         rgba(15, 42, 55, 0.48) 0%,
+         rgba(15, 42, 55, 0.22) 22%,
+         rgba(15, 42, 55, 0.08) 38%,
+         transparent 52%
+      );
+   }
 }
 
 /* Below 992px the boxed SVG fallback stays hidden exactly as before (it
@@ -386,30 +403,23 @@ $hb-cycle: 18s;
    }
 }
 
-/* Mobile/tablet, video active: `.has-hero-video` is added in
-   HeroBanner.tsx only when both video env vars are actually set. The
-   video (full-bleed) becomes the section background, hero grows to fill
-   the viewport, and the scrim flips to a top-to-bottom fade since the copy
-   now sits lower in the section over the video rather than beside a boxed
-   illustration. */
+/* Mobile/tablet, video active: full-bleed video, viewport-height section.
+   No full-height sky-blue cover. A short, soft top band only — copy sits
+   in the upper portion; the rest of the frame stays the video. */
 @media (max-width: 991px) {
    .hero-banner-two.has-hero-video {
       min-height: 100svh;
       display: flex;
+      background: transparent;
 
       &:after {
          display: block;
-         // Kept opaque at 0% (not 0) -- the headline sits at the very top
-         // of this section, directly on top of this scrim, and dark text
-         // needs contrast there too, not just lower down.
          background: linear-gradient(
             180deg,
-            rgba(215, 247, 255, 0.55) 0%,
-            rgba(215, 247, 255, 0.45) 20%,
-            rgba(215, 247, 255, 0.55) 40%,
-            rgba(215, 247, 255, 0.85) 65%,
-            rgba(215, 247, 255, 0.95) 85%,
-            rgba(215, 247, 255, 0.97) 100%
+            rgba(15, 42, 55, 0.52) 0%,
+            rgba(15, 42, 55, 0.28) 20%,
+            rgba(15, 42, 55, 0.1) 38%,
+            transparent 55%
          );
       }
    }
