@@ -84,6 +84,24 @@
         background: #fff;
         box-shadow: 0 13px 35px -12px rgb(35 35 35 / 10%);
     }
+    // Menu-overlay header: give the hamburger "Menu" button a solid fill
+    // instead of relying on the border-only .btn-one style. Border-only
+    // orange-on-orange text reads fine against a plain white page, but this
+    // header can also sit transparently over a photo/video hero (see
+    // .menu-overlay above and .hero-video-bg in _hero-build.scss) or over
+    // browsers that don't support the :has() rule two lines up -- in either
+    // case a borderless orange outline can disappear into the background.
+    // A filled button is legible against any background, on every device.
+    &.menu-overlay .pp-header-menu-btn .btn-one {
+        background: $color-one;
+        border-color: $color-one;
+        color: #fff;
+        &:hover, &:focus {
+            background: #000;
+            border-color: #000;
+            color: #fff;
+        }
+    }
     &.menu-style-three{
         position: inherit;
     }

@@ -399,12 +399,16 @@ $hb-cycle: 18s;
 
       &:after {
          display: block;
+         // Kept opaque at 0% (not 0) -- the headline sits at the very top
+         // of this section, directly on top of this scrim, and dark text
+         // needs contrast there too, not just lower down.
          background: linear-gradient(
             180deg,
-            rgba(215, 247, 255, 0)    0%,
-            rgba(215, 247, 255, 0.08) 30%,
-            rgba(215, 247, 255, 0.55) 55%,
-            rgba(215, 247, 255, 0.92) 80%,
+            rgba(215, 247, 255, 0.55) 0%,
+            rgba(215, 247, 255, 0.45) 20%,
+            rgba(215, 247, 255, 0.55) 40%,
+            rgba(215, 247, 255, 0.85) 65%,
+            rgba(215, 247, 255, 0.95) 85%,
             rgba(215, 247, 255, 0.97) 100%
          );
       }

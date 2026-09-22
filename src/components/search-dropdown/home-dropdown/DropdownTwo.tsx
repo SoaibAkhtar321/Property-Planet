@@ -49,7 +49,7 @@ const DropdownTwo = () => {
                                  placeholder="" />
                            </div>
                         </div>
-                        <div className="col-xl-3 col-md-6">
+                        <div className="col-xl-2 col-md-6">
                            <div className="input-box-one border-left">
                               <div className="label">Location</div>
                               <NiceSelect className="nice-select location fw-normal"
@@ -68,7 +68,7 @@ const DropdownTwo = () => {
                                  placeholder="" />
                            </div>
                         </div>
-                        <div className="col-xl-3 col-md-6">
+                        <div className="col-xl-4 col-md-6">
                            <div className="input-box-one border-left">
                               <div className="label">Keyword</div>
                               <input type="text" placeholder="plot, land, villa, apartment" className="type-input" />
@@ -120,7 +120,7 @@ const DropdownTwo = () => {
                                  placeholder="" />
                            </div>
                         </div>
-                        <div className="col-xl-3 col-md-6">
+                        <div className="col-xl-2 col-md-6">
                            <div className="input-box-one border-left">
                               <div className="label">Location</div>
                               <NiceSelect className="nice-select location fw-normal"
@@ -139,7 +139,7 @@ const DropdownTwo = () => {
                                  placeholder="" />
                            </div>
                         </div>
-                        <div className="col-xl-3 col-md-6">
+                        <div className="col-xl-4 col-md-6">
                            <div className="input-box-one border-left">
                               <div className="label">Keyword</div>
                               <input type="text" placeholder="acres, corporate land, corridor" className="type-input" />
