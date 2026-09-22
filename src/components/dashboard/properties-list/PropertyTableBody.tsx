@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { SellerPropertyRow } from "@/lib/properties/queries"
 import { submitPropertyForReview, archivePropertyListing } from "@/lib/properties/actions"
+import { priceUnitSuffix } from "@/lib/properties/priceUnit"
 
 const statusLabel: Record<SellerPropertyRow["status"], string> = {
    draft: "Draft",
@@ -67,7 +68,12 @@ const PropertyTableBody = ({ properties }: { properties: SellerPropertyRow[] }) 
                      <div className="ps-lg-0 md-pt-10">
                         <span className="property-name tran3s color-dark fw-500 fs-20">{item.title}</span>
                         <div className="address">{item.locality}, {item.city}</div>
-                        <strong className="price color-dark">₹{item.price.toLocaleString()}</strong>
+                        <strong className="price color-dark">
+                           ₹{item.price.toLocaleString()}
+                           {priceUnitSuffix(item.price_unit, item.price_unit_label) && (
+                              <sub>{priceUnitSuffix(item.price_unit, item.price_unit_label)}</sub>
+                           )}
+                        </strong>
                      </div>
                   </div>
                </td>

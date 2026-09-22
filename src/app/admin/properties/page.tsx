@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPropertiesForModeration, type PropertyStatus } from "@/lib/admin/properties/queries";
+import { priceUnitSuffix } from "@/lib/properties/priceUnit";
 
 export const dynamic = "force-dynamic";
 
@@ -69,7 +70,12 @@ export default async function AdminPropertiesPage({ searchParams }: { searchPara
                               {p.property_type}
                               <div>{p.project_id ? "Project unit" : "Individual"}</div>
                            </td>
-                           <td>₹{Number(p.price).toLocaleString("en-IN")}</td>
+                           <td>
+                              ₹{Number(p.price).toLocaleString("en-IN")}
+                              {priceUnitSuffix(p.price_unit, p.price_unit_label) && (
+                                 <sub>{priceUnitSuffix(p.price_unit, p.price_unit_label)}</sub>
+                              )}
+                           </td>
                            <td>
                               {p.city}, {p.locality}
                            </td>

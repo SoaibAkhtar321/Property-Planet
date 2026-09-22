@@ -21,6 +21,9 @@ export interface AdminPropertyListRow {
    property_type: string;
    listing_type: string;
    price: number;
+   /** 0033: sqft/sqyd/sqm/acre/total/custom, or null for a pre-migration/unlabeled listing. */
+   price_unit: string | null;
+   price_unit_label: string | null;
    status: PropertyStatus;
    city: string;
    locality: string;
@@ -43,7 +46,7 @@ export async function getPropertiesForModeration(
    const { data, error } = await supabase
       .from("properties")
       .select(
-         "id, title, slug, property_type, listing_type, price, status, city, locality, owner_id, project_id, is_featured, created_at, updated_at"
+         "id, title, slug, property_type, listing_type, price, price_unit, price_unit_label, status, city, locality, owner_id, project_id, is_featured, created_at, updated_at"
       )
       .in("status", statuses)
       .order("created_at", { ascending: false });

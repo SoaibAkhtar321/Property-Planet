@@ -137,7 +137,10 @@ const PropertyPlanetAIWidget = () => {
                                     {p.propertyType && <span className="tag-type">{p.propertyType}</span>}
                                  </div>
                                  <div className="d-flex align-items-center justify-content-between mt-2">
-                                    <strong className="property-planet-ai-card-price">{formatINR(p.price)}</strong>
+                                    <strong className="property-planet-ai-card-price">
+                                       {formatINR(p.price)}
+                                       {p.priceUnit && <sub>{p.priceUnit}</sub>}
+                                    </strong>
                                  </div>
                               </div>
                            ))}

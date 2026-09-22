@@ -20,6 +20,7 @@ import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getPublicSiteReraCertificate } from "@/lib/site/queries";
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/site/contact";
+import { priceUnitSuffix } from "@/lib/properties/priceUnit";
 import {
    generateAIResponse,
    type PropertyPlanetAIResponse,
@@ -62,6 +63,8 @@ interface AIPropertyRow {
    slug: string;
    property_type: string;
    price: number | string;
+   price_unit: string | null;
+   price_unit_label: string | null;
    area: number | string | null;
    area_unit: string | null;
    city: string;
@@ -88,7 +91,7 @@ export async function askPropertyPlanetAI(question: string): Promise<PropertyPla
    const supabase = await createClient();
    const { data, error } = await supabase
       .from("property_public")
-      .select("id, title, slug, property_type, price, area, area_unit, city, locality")
+      .select("id, title, slug, property_type, price, price_unit, price_unit_label, area, area_unit, city, locality")
       .is("project_id", null)
       .eq("listing_type", "sale")
       .order("published_at", { ascending: false })
@@ -112,6 +115,11 @@ export async function askPropertyPlanetAI(question: string): Promise<PropertyPla
          slug: row.slug,
          propertyType: row.property_type,
          price,
+         // Shared formatter/vocabulary, same one every other price-display
+         // surface uses -- undefined (not "") for an unlabeled/total-price
+         // row so the widget's `p.priceUnit &&` check works the same way as
+         // PropertyCard.tsx's.
+         priceUnit: priceUnitSuffix(row.price_unit, row.price_unit_label) || undefined,
          city: row.city,
          locality: row.locality,
          areaText: area !== null && Number.isFinite(area) && row.area_unit ? `${area} ${row.area_unit}` : undefined,

@@ -31,6 +31,15 @@ export interface PropertyPlanetProperty {
    slug: string;
    propertyType: string;
    price: number;
+   /**
+    * Already-formatted suffix from the shared priceUnit vocabulary/formatter
+    * (priceUnitSuffix() in @/lib/properties/priceUnit), e.g. "/ sq. ft." or
+    * "/ CustomLabel". Undefined for a listing with no price_unit set --
+    * `price` alone is the total price, same as before this field existed.
+    * Never invented here: this engine only carries through what the caller
+    * (src/lib/ai/actions.ts) loaded from the actual stored row.
+    */
+   priceUnit?: string;
    city: string;
    locality: string;
    /** e.g. "200 sqyd" — only when the listing actually has both area and unit. */
