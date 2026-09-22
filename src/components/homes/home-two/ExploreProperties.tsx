@@ -44,7 +44,7 @@ const ExploreProperties = async () => {
                   <div className="container">
             <div className="position-relative">
                <div className="title-one mb-25 lg-mb-20 wow fadeInUp">
-                  <h2 className="font-garamond">Explore Properties</h2>
+                  <h2 className="font-garamond fs-lg">Explore Properties</h2>
                   <p className="fs-22 mt-xs">
                      Standalone plots, villas, houses and apartments ready to buy — browse independently of our
                      Featured Opportunities projects.

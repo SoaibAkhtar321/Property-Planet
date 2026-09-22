@@ -19,7 +19,7 @@ const BLockFeatureOne = () => {
       // {/* No top margin here for the same reason as ExploreProperties: the
       //     preceding section already ends in bottom padding, so an added
       //     mt-150 was doubling the gap. */}
-            <div className="block-feature-six pp-band pp-band--sky">
+            <div className="block-feature-six pp-band pp-band--warm">
          <div className="container">
             <div className="position-relative z-1">
                <div className="row">

@@ -67,10 +67,10 @@ const PropertyPlanetMapIntelligence = () => {
    useEffect(() => { setMounted(true) }, []);
 
    return (
-      <div className="property-planet-map-intel position-relative z-1 mt-150 xl-mt-120 md-mt-80">
+      <div className="property-planet-map-intel pp-band pp-band--sky position-relative z-1 mt-150 xl-mt-120 md-mt-80">
          <div className="container">
             <div className="title-one text-center mb-50 lg-mb-30 wow fadeInUp">
-               <h2 className="font-garamond">Property Planet Property Intelligence</h2>
+               <h2 className="font-garamond fs-lg">Property Planet Property Intelligence</h2>
                <p className="fs-22 mt-xs">Tracking the South-East Hyderabad growth corridor — ORR, Srisailam Highway &amp; RRR.</p>
             </div>
 

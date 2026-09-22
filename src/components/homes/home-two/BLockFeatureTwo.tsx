@@ -18,18 +18,18 @@ const { title, desc } = content_data;
 
 const BLockFeatureTwo = () => {
    return (
-      <div className="block-feature-seven position-relative z-1 mt-150 xl-mt-120">
+      <div className="block-feature-seven pp-band pp-band--peach position-relative z-1 mt-150 xl-mt-120">
          <div className="container">
             <div className="position-relative">
                <div className="text-center wow fadeInUp">
                   <div className="title-one mb-30 lg-mb-20">
-                     <h2 className="font-garamond">{title}</h2>
+                     <h2 className="font-garamond fs-lg">{title}</h2>
                      <p className="fs-24 mt-xs">{desc}</p>
                   </div>
                </div>
 
                <div className="wrapper position-relative z-1 mt-45 lg-mt-20 mb-100 lg-mb-50">
-                  <div className="row">
+                  <div className="row gx-xxl-5">
                      {feature_data.filter((items) => items.page === "home_two_feature_2").map((item) => (
                         <div key={item.id} className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay={item}>
                            <div className="card-style-two overflow-hidden position-relative z-1 mt-30">

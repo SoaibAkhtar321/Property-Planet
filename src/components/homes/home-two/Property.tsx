@@ -50,7 +50,7 @@ const Property = async () => {
          <div className="container">
             <div className="position-relative">
                <div className="title-one mb-25 lg-mb-20 wow fadeInUp">
-                  <h2 className="font-garamond">Featured Opportunities</h2>
+                  <h2 className="font-garamond fs-lg">Featured Opportunities</h2>
                   <p className="fs-22 mt-xs">Curated land, plots, villas, apartments and commercial listings across Hyderabad&apos;s growth corridors.</p>
                </div>
 

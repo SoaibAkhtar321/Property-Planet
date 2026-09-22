@@ -40,7 +40,7 @@ const PropertyPlanetHowItWorks = () => {
          <div className="container">
             <div className="pp-how">
                <div className="title-one text-center mb-50 lg-mb-40 wow fadeInUp">
-                  <h2 className="font-garamond">How Property Planet Works</h2>
+                  <h2 className="font-garamond fs-lg">How Property Planet Works</h2>
                   <p className="fs-22 mt-xs">
                      Not just a listing site — a moderated, advisory-backed route from browsing to a
                      real conversation about a real property.

@@ -14,6 +14,19 @@
    margin-top: 50px;
 }
 
+/* Shared card/content-title tier: used by both .pp-card__title (listing
+   cards) and .pp-how__title (How It Works steps) so the two read as the
+   same heading level instead of two independently-hardcoded sizes. */
+$pp-card-title-size: 19px;
+$pp-card-title-weight: 500;
+
+/* Shared card-shell tokens: the .pp-card radius/hover-shadow values,
+   reused (Step 3C) by the other homepage card families below so they read
+   as members of the same visual system without literally becoming
+   .pp-card. */
+$pp-card-radius: 16px;
+$pp-card-shadow: 0 16px 40px rgba(20, 20, 10, 0.08);
+
 /* ============================================================ LISTING CARD === */
 
 .pp-card {
@@ -21,13 +34,13 @@
    flex-direction: column;
    background: #fff;
    border: 1px solid $color-four;
-   border-radius: 16px;
+   border-radius: $pp-card-radius;
    overflow: hidden;
    @include transition(0.3s);
 
    &:hover {
       border-color: rgba(255, 103, 37, 0.4);
-      box-shadow: 0 16px 40px rgba(20, 20, 10, 0.08);
+      box-shadow: $pp-card-shadow;
       .pp-card__img { transform: scale(1.04); }
    }
 
@@ -101,9 +114,9 @@
 
    &__title {
       display: block;
-      font-size: 19px;
+      font-size: $pp-card-title-size;
       line-height: 1.35;
-      font-weight: 500;
+      font-weight: $pp-card-title-weight;
       color: $text-dark;
       /* Two lines max: a long title can't push one card taller than its row. */
       display: -webkit-box;
@@ -462,7 +475,24 @@
    }
 }
 
-/* =============================================== HOW PROPERTY PLANET WORKS === */
+/* ============================================ STEP 3C — CARD VISUAL LANGUAGE ===
+   Location tiles (BLockFeatureOne) and the "How our clients get benefited"
+   trio (BLockFeatureTwo) are full-bleed background-image cards with a dark
+   overlay for legibility -- the imagery itself already reads as the card
+   boundary, so (matching the .pp-card border rule for imagery-led cards)
+   these get no added border, only the shared radius and a restrained hover
+   elevation so all three card families read as one system. Content, icons,
+   images, links and grid/column structure are untouched. */
+.block-feature-six .location-card-two,
+.block-feature-seven .card-style-two {
+   border-radius: $pp-card-radius;
+   @include transition(0.3s);
+
+   &:hover {
+      box-shadow: $pp-card-shadow;
+   }
+}
+
 
 .pp-how {
    background: $color-three;
@@ -498,13 +528,13 @@
       z-index: 1;
       background: #fff;
       border: 1px solid $color-four;
-      border-radius: 16px;
+      border-radius: $pp-card-radius;
       padding: 28px 24px;
       @include transition(0.3s);
 
       &:hover {
          border-color: rgba(255, 103, 37, 0.45);
-         box-shadow: 0 16px 40px rgba(20, 20, 10, 0.06);
+         box-shadow: $pp-card-shadow;
       }
    }
 
@@ -523,7 +553,8 @@
    }
 
    &__title {
-      font-size: 20px;
+      font-size: $pp-card-title-size;
+      font-weight: $pp-card-title-weight;
       margin-bottom: 8px;
    }
 
