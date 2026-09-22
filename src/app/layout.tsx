@@ -98,11 +98,14 @@ export default function RootLayout({
 }: {
    children: React.ReactNode;
 }) {
-   const isDev = process.env.NODE_ENV === "development";
-
    return (
-      <html lang="en" className={ebGaramond.variable} suppressHydrationWarning={isDev}>
+      <html lang="en" className={ebGaramond.variable} suppressHydrationWarning>
          <head>
+            <script
+               dangerouslySetInnerHTML={{
+                  __html: `(function(){try{var k='pp-theme';var t=localStorage.getItem(k)||'system';var d=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);var r=d?'dark':'light';document.documentElement.setAttribute('data-theme',r);document.documentElement.style.colorScheme=r;}catch(e){}})();`,
+               }}
+            />
             {/* For IE */}
             <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
             <GlobalJsonLd />

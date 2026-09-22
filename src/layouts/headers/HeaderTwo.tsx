@@ -10,6 +10,7 @@ import Offcanvas from "./Menu/Offcanvas"
 import HeaderSearchbar from "./Menu/HeaderSearchbar"
 import AnimatedBrandLogo from "@/components/common/AnimatedBrandLogo"
 import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF } from "@/lib/site/contact"
+import ThemeToggle from "@/components/common/ThemeToggle"
 
 // Mobile/tablet "Become a Seller" button (shown below lg only; desktop already
 // has this item in NavMenu). Same session-aware destinations as NavMenu,
@@ -75,6 +76,9 @@ const HeaderTwo = ({ style_1, style_2, staticHeader = false }: any) => {
                                  <HeaderSellerButton />
                               </li>
                               <AuthNav />
+                              <li className="d-flex align-items-center me-2 me-lg-3">
+                                 <ThemeToggle />
+                              </li>
                               <li className="pp-header-menu-btn">
                                  {/* Phase 2: fa-bars-filter (a "filter" glyph, three
                                      unequal-width lines with dots) reads as a filter
@@ -102,6 +106,9 @@ const HeaderTwo = ({ style_1, style_2, staticHeader = false }: any) => {
                                     <a href={CONTACT_PHONE_HREF} className="tran3s">{CONTACT_PHONE_DISPLAY}</a>
                                  </li>
                                  <AuthNav style_2 />
+                                 <li className="d-flex align-items-center me-2">
+                                    <ThemeToggle />
+                                 </li>
                                  <li>
                                     <a onClick={() => setIsSearch(true)} style={{ cursor: "pointer" }} className="search-btn-one rounded-circle tran3s d-flex align-items-center justify-content-center"><i className="bi bi-search"></i></a>
                                  </li>

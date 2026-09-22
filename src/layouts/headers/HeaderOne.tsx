@@ -7,6 +7,7 @@ import AuthNav from "./Menu/AuthNav"
 import BecomeSellerNav from "./Menu/BecomeSellerNav"
 
 import BrandLogo from "@/components/common/BrandLogo";
+import ThemeToggle from "@/components/common/ThemeToggle";
 
 const HeaderOne = ({ style }: any) => {
    const { sticky } = UseSticky();
@@ -25,6 +26,9 @@ const HeaderOne = ({ style }: any) => {
                      <div className="right-widget ms-auto ms-lg-0 me-3 me-lg-0 order-lg-3">
                         <ul className="d-flex align-items-center style-none">
                            <AuthNav />
+                           <li className="d-flex align-items-center me-2">
+                              <ThemeToggle />
+                           </li>
                            <li className="d-none d-md-inline-block ms-3">
                               <BecomeSellerNav className="btn-two" />
                            </li>
