@@ -182,14 +182,14 @@ const HeroBuildAnimation = () => {
                   <path
                      className="hb-plot__line"
                      d="M300 474 L742 474 L806 588 L246 588 Z"
-                     fill="#FF6725"
+                     fill="#1FAA59"
                      fillOpacity="0.05"
-                     stroke="#FF6725"
+                     stroke="#1FAA59"
                      strokeWidth="3"
                      strokeDasharray="14 10"
                      strokeLinejoin="round"
                   />
-                  <g className="hb-plot__stakes" fill="#FF6725">
+                  <g className="hb-plot__stakes" fill="#1FAA59">
                      <rect x="297" y="458" width="4" height="18" rx="2" />
                      <rect x="739" y="458" width="4" height="18" rx="2" />
                      <rect x="243" y="572" width="4" height="18" rx="2" />
@@ -214,7 +214,7 @@ const HeroBuildAnimation = () => {
                      width="28"
                      height="18"
                      rx="3"
-                     fill="#FF6725"
+                     fill="#1FAA59"
                      stroke="none"
                   />
                </g>
@@ -262,17 +262,17 @@ const HeroBuildAnimation = () => {
                   <rect className="hb-open" x="528" y="264" width="60" height="30" rx="4" fill="url(#hbGlass)" />
                   <path className="hb-open" d="M648 322 L692 311 V430 L648 441 Z" fill="url(#hbGlass)" />
                   <rect className="hb-open hb-door" x="562" y="386" width="48" height="92" rx="3" fill="#23505F" />
-                  <circle className="hb-open" cx="602" cy="432" r="3" fill="#FF6725" />
+                  <circle className="hb-open" cx="602" cy="432" r="3" fill="#1FAA59" />
                </g>
 
                {/* Exterior finishing + landscaping + entrance lighting */}
                <g className="hb-finish">
                   <path d="M346 478 H626 V488 H346 Z" fill="#0F2A37" opacity="0.10" />
-                  <rect x="346" y="243" width="280" height="6" rx="2" fill="#FF6725" opacity="0.9" />
+                  <rect x="346" y="243" width="280" height="6" rx="2" fill="#1FAA59" opacity="0.9" />
                   <path d="M546 478 h80 v10 h-92 z" fill="#E7DAD1" />
                   <path d="M534 488 h104 v10 h-116 z" fill="#DCCEC5" />
                   {/* warm light spill from the entrance */}
-                  <path d="M586 478 L640 560 L520 560 Z" fill="#FF6725" opacity="0.10" />
+                  <path d="M586 478 L640 560 L520 560 Z" fill="#1FAA59" opacity="0.10" />
                   {/* landscaping */}
                   <g className="hb-plants">
                      <path d="M300 478 q18 -46 36 0 z" fill="#00B579" opacity="0.85" />

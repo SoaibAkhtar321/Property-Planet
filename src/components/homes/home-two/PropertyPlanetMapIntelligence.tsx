@@ -150,7 +150,7 @@ const PropertyPlanetMapIntelligence = () => {
             .intel-title {
                font-size: 11px;
                letter-spacing: 1px;
-               color: #FF3F25;
+               color: #178C48;
             }
             .intel-stats li {
                display: flex;

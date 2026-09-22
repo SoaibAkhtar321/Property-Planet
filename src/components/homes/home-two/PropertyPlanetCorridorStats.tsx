@@ -40,13 +40,13 @@ const PropertyPlanetCorridorStats = () => {
                padding: 50px 0 60px;
             }
             .corridor-stats-strip :global(span) {
-               color: #FF6725;
+               color: #1FAA59;
             }
             .stat-value {
                font-family: var(--title-font, serif);
                font-size: 34px;
                font-weight: 500;
-               color: #FF6725;
+               color: #1FAA59;
                line-height: 1.2;
             }
             .stat-label {

@@ -38,7 +38,7 @@ const AdminOverviewCharts = ({ properties, leads }: AdminOverviewChartsProps) =>
          {
             label: "Properties",
             data: [properties.published, properties.pending, properties.rejected, properties.draft],
-            backgroundColor: "#FF6725",
+            backgroundColor: "#1FAA59",
             borderRadius: 6,
             maxBarThickness: 48,
          },

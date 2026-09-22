@@ -112,7 +112,7 @@ const FeedbackTwo = () => {
                width: 60px;
                height: 60px;
                border-radius: 50%;
-               background: #FF6725;
+               background: #1FAA59;
                color: #fff;
                font-size: 18px;
                font-weight: 600;

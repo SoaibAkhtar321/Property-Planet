@@ -44,15 +44,15 @@ function StatusPill({ status }: { status: string }) {
    const tone: Record<string, string> = {
       pending: "#FFB020",
       published: "#00B579",
-      rejected: "#FF3F25",
+      rejected: "#178C48",
       draft: "#8A8A8A",
-      new: "#FF6725",
+      new: "#1FAA59",
       contacted: "#2E90FA",
       qualified: "#2E90FA",
       site_visit: "#2E90FA",
       negotiation: "#7A5AF8",
       closed: "#00B579",
-      lost: "#FF3F25",
+      lost: "#178C48",
    };
    const color = tone[status] ?? "#8A8A8A";
    return (

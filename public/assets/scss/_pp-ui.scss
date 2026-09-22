@@ -39,7 +39,7 @@ $pp-card-shadow: 0 16px 40px rgba(20, 20, 10, 0.08);
    @include transition(0.3s);
 
    &:hover {
-      border-color: rgba(255, 103, 37, 0.4);
+      border-color: rgba(31, 170, 89, 0.4);
       box-shadow: $pp-card-shadow;
       .pp-card__img { transform: scale(1.04); }
    }
@@ -439,19 +439,19 @@ $pp-card-shadow: 0 16px 40px rgba(20, 20, 10, 0.08);
 
 .pp-band.pp-band--warm {
    background: linear-gradient(180deg, #FFF8F4 0%, #FFEEE2 100%);
-   &::before { background: radial-gradient(circle, rgba(255, 103, 37, 0.16) 0%, rgba(255, 103, 37, 0) 68%); }
+   &::before { background: radial-gradient(circle, rgba(31, 170, 89, 0.16) 0%, rgba(31, 170, 89, 0) 68%); }
    &::after  { background: radial-gradient(circle, rgba(179, 240, 249, 0.55) 0%, rgba(179, 240, 249, 0) 70%); }
 }
 
 .pp-band.pp-band--sky {
    background: linear-gradient(180deg, #F2FCFF 0%, #D7F7FF 100%);
    &::before { background: radial-gradient(circle, rgba(179, 240, 249, 0.9) 0%, rgba(179, 240, 249, 0) 68%); }
-   &::after  { background: radial-gradient(circle, rgba(255, 103, 37, 0.10) 0%, rgba(255, 103, 37, 0) 70%); }
+   &::after  { background: radial-gradient(circle, rgba(31, 170, 89, 0.10) 0%, rgba(31, 170, 89, 0) 70%); }
 }
 
 .pp-band.pp-band--peach {
    background: linear-gradient(180deg, #FFF1E8 0%, #FFE3D0 100%);
-   &::before { background: radial-gradient(circle, rgba(255, 103, 37, 0.20) 0%, rgba(255, 103, 37, 0) 68%); }
+   &::before { background: radial-gradient(circle, rgba(31, 170, 89, 0.20) 0%, rgba(31, 170, 89, 0) 68%); }
    &::after  { background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 70%); }
 }
 
@@ -517,7 +517,7 @@ $pp-card-shadow: 0 16px 40px rgba(20, 20, 10, 0.08);
       height: 1px;
       background: repeating-linear-gradient(
          to right,
-         rgba(255, 103, 37, 0.5) 0 8px,
+         rgba(31, 170, 89, 0.5) 0 8px,
          transparent 8px 16px
       );
       z-index: 0;
@@ -533,7 +533,7 @@ $pp-card-shadow: 0 16px 40px rgba(20, 20, 10, 0.08);
       @include transition(0.3s);
 
       &:hover {
-         border-color: rgba(255, 103, 37, 0.45);
+         border-color: rgba(31, 170, 89, 0.45);
          box-shadow: $pp-card-shadow;
       }
    }

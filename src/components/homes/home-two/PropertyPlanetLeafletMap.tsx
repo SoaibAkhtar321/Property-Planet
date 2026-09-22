@@ -59,7 +59,7 @@ const PropertyPlanetLeafletMap = ({ center, markers, airport, activeId, onSelect
                pathOptions={{
                   color: "#fff",
                   weight: 2,
-                  fillColor: m.id === activeId ? "#FF3F25" : "#00B579",
+                  fillColor: m.id === activeId ? "#178C48" : "#00B579",
                   fillOpacity: 1,
                }}
                eventHandlers={{ click: () => onSelect(m.id) }}

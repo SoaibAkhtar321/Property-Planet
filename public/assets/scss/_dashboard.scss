@@ -1537,7 +1537,7 @@
         box-shadow: none;
         &:focus {
             border-color: $color-one;
-            box-shadow: 0 0 0 0.2rem rgba(255, 103, 37, 0.15);
+            box-shadow: 0 0 0 0.2rem rgba(31, 170, 89, 0.15);
         }
         &::placeholder {
             color: rgba(0, 0, 0, 0.4);
