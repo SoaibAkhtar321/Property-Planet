@@ -236,6 +236,8 @@ export interface SellerPropertyRow {
    property_type: string;
    listing_type: "sale" | "rent";
    price: number;
+   price_unit: string | null;
+   price_unit_label: string | null;
    city: string;
    locality: string;
    status: "draft" | "pending" | "published" | "rejected" | "sold" | "archived";
@@ -254,7 +256,7 @@ export async function getOwnActivePropertyListings(): Promise<SellerPropertyRow[
 
    const { data, error } = await supabase
       .from("properties")
-      .select("id, title, slug, property_type, listing_type, price, city, locality, status, created_at, updated_at")
+      .select("id, title, slug, property_type, listing_type, price, price_unit, price_unit_label, city, locality, status, created_at, updated_at")
       .eq("owner_id", user.id)
       .neq("status", "archived")
       .order("updated_at", { ascending: false });
@@ -298,7 +300,7 @@ export async function getOwnPropertyById(
 
    const { data, error } = await supabase
       .from("properties")
-      .select("id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, city, locality, status, created_at, updated_at")
+      .select("id, title, slug, property_type, listing_type, price, price_unit, price_unit_label, area, area_unit, bedrooms, bathrooms, description, city, locality, status, created_at, updated_at")
       .eq("id", id)
       .eq("owner_id", user.id)
       .maybeSingle();

@@ -68,7 +68,7 @@ const BlogDetailPage = async ({ params }: { params: { slug: string } }) => {
                { name: post.title, path: `/blog/${post.slug}` },
             ]}
          />
-         <HeaderTwo style_1={false} style_2={false} />
+         <HeaderTwo style_1={false} style_2={false} staticHeader={true} />
          {/* SEO fix (Stage 2 — Visible Breadcrumbs): same items array as
              BreadcrumbJsonLd above. */}
          <BreadcrumbTrail

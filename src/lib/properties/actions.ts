@@ -27,6 +27,7 @@ import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { friendlyError } from "@/lib/errors";
+import { parsePriceUnitFields } from "@/lib/properties/priceUnit";
 
 export interface ActionResult {
    success: boolean;
@@ -137,6 +138,11 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
       return { success: false, error: "Latitude must be between -90 and 90, longitude between -180 and 180." };
    }
 
+   const priceUnitFields = parsePriceUnitFields(formData);
+   if (!priceUnitFields.ok) {
+      return { success: false, error: priceUnitFields.error };
+   }
+
    const { error } = await supabase
       .from("properties")
       .update({
@@ -147,6 +153,8 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
          // crafted request cannot create unsupported rental inventory.
          listing_type: "sale",
          price: numberOrNull(formData.get("price")),
+         price_unit: priceUnitFields.price_unit,
+         price_unit_label: priceUnitFields.price_unit_label,
          area: numberOrNull(formData.get("area")),
          area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",
          bedrooms: numberOrNull(formData.get("bedrooms")),

@@ -1,4 +1,5 @@
 import { Property, PropertyOverviewItem } from "@/components/properties/data/types";
+import { priceUnitSuffix } from "@/lib/properties/priceUnit";
 
 // Row shapes matching what we actually select from Supabase.
 // (property_public is the RLS-safe public view from 0002_properties_and_location.sql —
@@ -12,6 +13,8 @@ export interface PropertyPublicRow {
    listing_type: "sale" | "rent";
    is_featured?: boolean | null;
    price: number | string;
+   price_unit?: string | null;
+   price_unit_label?: string | null;
    area: number | string | null;
    area_unit: string | null;
    bedrooms: number | null;
@@ -100,9 +103,10 @@ export function mapProperty(
       address: `${row.locality}, ${row.city}`,
       locality: row.locality,
       price: Number(row.price),
-      // No per-month price unit: a monthly figure only ever applied to
-      // rental inventory, which is no longer publicly exposed.
-      priceUnit: undefined,
+      // 0033: sqft/sqyd/sqm/acre/total/custom, or undefined for any listing
+      // saved before this migration (renders identically to a plain price,
+      // same as the old rent-leftover default this field used to hold).
+      priceUnit: priceUnitSuffix(row.price_unit, row.price_unit_label) || undefined,
       sqft: row.area ? Number(row.area) : undefined,
       bed: row.bedrooms ?? undefined,
       bath: row.bathrooms ?? undefined,

@@ -18,23 +18,37 @@
 
 $hb-cycle: 18s;
 
-/* Media variant: used when NEXT_PUBLIC_HERO_VIDEO_URL is configured. Same
-   slot and same box as the SVG stage, so swapping in the final cinematic
-   asset is a config change, not a hero rebuild. */
-.hb-stage--video {
-   .hb-video {
+/* Full-bleed hero video background (used when both
+   NEXT_PUBLIC_HERO_VIDEO_DESKTOP_URL and …_MOBILE_URL are configured).
+   Sits behind the whole hero section, not boxed beside the copy -- the SVG
+   stage above keeps its own boxed/bottom-right composition for the
+   fallback path, untouched. */
+.hero-video-bg {
+   position: absolute;
+   inset: 0;
+   z-index: 0;
+   overflow: hidden;
+   line-height: 0;
+   pointer-events: none;
+
+   &__video {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      border-radius: 18px 0 0 0;
+      /* Nudge the crop up slightly: both source clips have their most
+         legible content (the plot loop / the house+crane) in the upper
+         two-thirds of frame, with soft tree-line or foreground concrete
+         padding at the very bottom that's safe to crop off first. */
+      object-position: center 38%;
    }
 }
 
 @media (prefers-reduced-motion: reduce) {
    /* A looping video is exactly the motion this setting asks us to stop.
-      The poster frame carries the same meaning. */
-   .hb-stage--video .hb-video {
+      Reduced-motion visitors get the static SVG house instead (handled in
+      HeroBuildAnimation.tsx), so this rule is a defensive backstop only. */
+   .hero-video-bg__video {
       animation: none;
    }
 }
@@ -315,7 +329,9 @@ $hb-cycle: 18s;
    .hb-stage {
       /* Anchor from the top instead of the bottom, so the house sits in
          the blank band under the header with clear breathing room
-         between them, rather than crowding the header's bottom edge. */
+         between them, rather than crowding the header's bottom edge.
+         (Fallback/no-video path only -- see .hero-video-bg for the video
+         layer, which is full-bleed rather than boxed.) */
       top: clamp(140px, 20vh, 260px);
       bottom: auto;
       right: 0;
@@ -323,8 +339,10 @@ $hb-cycle: 18s;
    }
 
    /* Scrim: a horizontal fade from the hero background colour so the text
-      column stays readable over the animation at every width, without
-      dimming the finished property itself. */
+      column stays readable over the visual (SVG box or full-bleed video)
+      at every width, without dimming the finished property itself. Sits
+      above the video layer (z-index:0 both, but .hero-video-bg is emitted
+      first in the DOM so it paints below) and below the text container. */
    &:after {
       content: '';
       position: absolute;
@@ -335,37 +353,59 @@ $hb-cycle: 18s;
          100deg,
          rgba(215, 247, 255, 0.96) 0%,
          rgba(215, 247, 255, 0.86) 34%,
-         rgba(215, 247, 255, 0.25) 58%,
-         rgba(215, 247, 255, 0) 76%
+         rgba(215, 247, 255, 0.4) 52%,
+         rgba(215, 247, 255, 0.12) 70%,
+         rgba(215, 247, 255, 0.08) 100%
       );
    }
 
    .container { position: relative; z-index: 1; }
 }
 
+/* Below 992px the boxed SVG fallback stays hidden exactly as before (it
+   was designed as a side-of-copy decoration, not something that works
+   stacked under text on a phone) -- the full-bleed video takes over the
+   mobile/tablet visual instead, see the block below. */
+@media (max-width: 991px) {
+   .hero-banner-two .hb-stage {
+      display: none;
+   }
+}
+
+/* Mobile/tablet, no video: default state (no hero video configured, or a
+   build that predates this feature) -- original stacked/document-flow
+   hero, nothing reserves full-viewport height for a visual that isn't
+   there. Unchanged from before this feature. */
 @media (max-width: 991px) {
    .hero-banner-two {
-      /* Mobile/tablet recompose: the stage stops being a background layer
-         and becomes a block under the copy, at its own framing (see the
-         .hb-stage rules above). Stacked, nothing overlaps, no scrim needed
-         and no cropped house. */
       min-height: 0;
       max-height: none;
       display: block;
 
       &:after { display: none; }
-
-      .hb-stage { z-index: 1; }
    }
 }
 
-/* Phone and tablet: below 992px the build animation is a decorative block
-   stacked AFTER the search panel, which is what left a tall empty sky-blue
-   band under the filter. The hero now ends with the filter. Desktop
-   (>=992px), where the animation is a background layer beside the copy, is
-   untouched. */
+/* Mobile/tablet, video active: `.has-hero-video` is added in
+   HeroBanner.tsx only when both video env vars are actually set. The
+   video (full-bleed) becomes the section background, hero grows to fill
+   the viewport, and the scrim flips to a top-to-bottom fade since the copy
+   now sits lower in the section over the video rather than beside a boxed
+   illustration. */
 @media (max-width: 991px) {
-   .hero-banner-two .hb-stage {
-      display: none;
+   .hero-banner-two.has-hero-video {
+      min-height: 100svh;
+      display: flex;
+
+      &:after {
+         display: block;
+         background: linear-gradient(
+            180deg,
+            rgba(215, 247, 255, 0.35) 0%,
+            rgba(215, 247, 255, 0.55) 45%,
+            rgba(215, 247, 255, 0.92) 78%,
+            rgba(215, 247, 255, 0.97) 100%
+         );
+      }
    }
 }

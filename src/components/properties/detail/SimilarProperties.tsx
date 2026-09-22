@@ -43,7 +43,10 @@ const SimilarProperties = ({ items }: { items: Property[] }) => {
                                  </Link>
                                  <div className="address m0 pb-5">{item.address}</div>
                                  <div className="pl-footer m0 d-flex align-items-center justify-content-between">
-                                    <strong className="price fw-500 color-dark">₹{item.price.toLocaleString("en-IN")}</strong>
+                                    <strong className="price fw-500 color-dark">
+                                       ₹{item.price.toLocaleString("en-IN")}
+                                       {item.priceUnit && <sub> {item.priceUnit}</sub>}
+                                    </strong>
                                  </div>
                               </div>
                            </div>

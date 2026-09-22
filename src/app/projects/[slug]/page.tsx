@@ -80,7 +80,7 @@ const ProjectDetailPage = async ({ params }: { params: { slug: string } }) => {
                { name: project.title, path: `/projects/${project.slug}` },
             ]}
          />
-         <HeaderTwo style_1={false} style_2={false} />
+         <HeaderTwo style_1={false} style_2={false} staticHeader={true} />
          {/* SEO fix (Stage 2 — Visible Breadcrumbs): same items array as
              BreadcrumbJsonLd above. */}
          <BreadcrumbTrail

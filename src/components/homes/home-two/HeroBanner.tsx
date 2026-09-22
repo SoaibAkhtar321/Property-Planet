@@ -15,11 +15,22 @@ import titleShape from "@/assets/images/shape/shape_11.svg"
 // remains is one composition: headline, supporting line, primary CTA, the
 // AI CTA, the search panel, and the build animation bled into the
 // bottom-right behind a readability scrim (see _hero-build.scss).
+//
+// Phase 21: when both hero video sources are configured, HeroBuildAnimation
+// renders a full-bleed <video> background instead of the boxed SVG. The
+// mobile/tablet CSS in _hero-build.scss needs to know which mode is active
+// (full-bleed video vs. the original stacked/no-visual layout) purely from
+// markup -- `has-hero-video` is that signal, gated on the exact same env
+// vars HeroBuildAnimation itself checks, so the two never disagree.
+const HAS_HERO_VIDEO = Boolean(
+   process.env.NEXT_PUBLIC_HERO_VIDEO_DESKTOP_URL && process.env.NEXT_PUBLIC_HERO_VIDEO_MOBILE_URL
+);
+
 const HeroBanner = () => {
 
    return (
       <>
-         <div className="hero-banner-two z-1 position-relative">
+         <div className={`hero-banner-two z-1 position-relative${HAS_HERO_VIDEO ? " has-hero-video" : ""}`}>
             <div className="container">
                <div className="position-relative pt-200 md-pt-150 pb-130 xl-pb-100">
                   <div className="row">

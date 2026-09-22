@@ -46,7 +46,7 @@ const PlacePage = async ({ params }: { params: { locality: string } }) => {
 
    return (
       <Wrapper>
-         <HeaderTwo style_1={false} style_2={false} />
+         <HeaderTwo style_1={false} style_2={false} staticHeader={true} />
          <div className="property-listing-six bg-pink-two pt-110 md-pt-80 pb-150 xl-pb-120 mt-150 xl-mt-120">
             <div className="container container-large">
                <div className="row">

@@ -75,6 +75,8 @@ export interface AdminPropertyDetail {
    listing_type: string;
    is_featured: boolean;
    price: number;
+   price_unit: string | null;
+   price_unit_label: string | null;
    area: number | null;
    area_unit: string | null;
    bedrooms: number | null;
@@ -111,7 +113,7 @@ export async function getPropertyForModeration(id: string): Promise<AdminPropert
    const { data: property, error } = await supabase
       .from("properties")
       .select(
-         "id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms, description, status, city, locality, rejection_reason, created_at, updated_at, published_at, project_id, owner_id, is_featured"
+         "id, title, slug, property_type, listing_type, price, price_unit, price_unit_label, area, area_unit, bedrooms, bathrooms, description, status, city, locality, rejection_reason, created_at, updated_at, published_at, project_id, owner_id, is_featured"
       )
       .eq("id", id)
       .maybeSingle();

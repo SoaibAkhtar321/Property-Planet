@@ -5,7 +5,7 @@ import ResetPasswordForm from '@/components/forms/ResetPasswordForm'
 const ResetPassword = () => {
    return (
       <>
-         <HeaderTwo style_1={false} style_2={false} />
+         <HeaderTwo style_1={false} style_2={false} staticHeader={true} />
          <div className="user-data-page pt-100 pb-100">
             <div className="container">
                <div className="user-data-form m-auto" style={{ maxWidth: 480 }}>

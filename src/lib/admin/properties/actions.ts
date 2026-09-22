@@ -36,6 +36,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 import { friendlyError } from "@/lib/errors";
+import { parsePriceUnitFields } from "@/lib/properties/priceUnit";
 
 export interface ActionResult {
    success: boolean;
@@ -250,6 +251,11 @@ export async function updateAdminProperty(id: string, formData: FormData): Promi
       return { success: false, error: "Property type is required." };
    }
 
+   const priceUnitFields = parsePriceUnitFields(formData);
+   if (!priceUnitFields.ok) {
+      return { success: false, error: priceUnitFields.error };
+   }
+
    const { error } = await supabase
       .from("properties")
       .update({
@@ -260,6 +266,8 @@ export async function updateAdminProperty(id: string, formData: FormData): Promi
          // POST cannot reintroduce unsupported rental inventory.
          listing_type: "sale",
          price,
+         price_unit: priceUnitFields.price_unit,
+         price_unit_label: priceUnitFields.price_unit_label,
          area: numberOrNull(formData.get("area")),
          area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",
          bedrooms: numberOrNull(formData.get("bedrooms")),

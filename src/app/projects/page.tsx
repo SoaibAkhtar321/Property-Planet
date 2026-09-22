@@ -41,7 +41,7 @@ const ProjectsPage = async () => {
 
    return (
       <Wrapper>
-         <HeaderTwo style_1={false} style_2={false} />
+         <HeaderTwo style_1={false} style_2={false} staticHeader={true} />
          <ProjectsListing items={projects} />
          <FooterOne style={true} />
       </Wrapper>

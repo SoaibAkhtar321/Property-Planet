@@ -114,7 +114,7 @@ const PropertiesPage = async ({
 
    return (
       <Wrapper>
-         <HeaderTwo style_1={false} style_2={false} />
+         <HeaderTwo style_1={false} style_2={false} staticHeader={true} />
          <PropertiesListing
             items={result.items}
             total={result.total}

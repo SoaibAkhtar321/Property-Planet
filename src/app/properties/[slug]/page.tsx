@@ -77,7 +77,7 @@ const PropertyDetailPage = async ({ params }: { params: { slug: string } }) => {
                { name: property.title, path: `/properties/${property.slug}` },
             ]}
          />
-         <HeaderTwo style_1={false} style_2={false} />
+         <HeaderTwo style_1={false} style_2={false} staticHeader={true} />
          {/* SEO fix (Stage 2 — Visible Breadcrumbs): same items array as
              BreadcrumbJsonLd above, so the visible trail and the
              structured data can never disagree. */}

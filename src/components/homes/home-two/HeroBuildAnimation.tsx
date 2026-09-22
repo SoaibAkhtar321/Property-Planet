@@ -20,50 +20,87 @@ import { useEffect, useState } from "react";
  *    (the stage reserves its own aspect ratio).
  */
 /**
- * Optional cinematic media asset.
+ * Cinematic hero video (full-bleed background layer).
  *
- * If a real rendered/filmed construction sequence is available, set
- * NEXT_PUBLIC_HERO_VIDEO_URL (and optionally NEXT_PUBLIC_HERO_VIDEO_POSTER)
- * and this component plays it instead of drawing the SVG sequence — same
- * slot, same composition, same copy, no hero rebuild required. The SVG
- * remains the poster-less fallback for reduced motion, for browsers that
- * cannot play the file, and for when no asset is configured.
+ * Two art-directed sources, chosen by actual viewport composition rather
+ * than a device/orientation label:
+ *  - NEXT_PUBLIC_HERO_VIDEO_DESKTOP_URL  (16:9 landscape footage)
+ *  - NEXT_PUBLIC_HERO_VIDEO_MOBILE_URL   (9:16 portrait footage)
+ * plus one poster per source (…_DESKTOP_POSTER / …_MOBILE_POSTER).
  *
- * The <video> is muted/playsInline/loop with preload="none" until a poster
- * exists, so it never blocks first paint and never costs mobile data before
- * the user has seen the page.
+ * Selection is aspect-ratio based, not width-bucketed: cover-crop testing
+ * at the real target sizes (360x800 up to 1920x1080, incl. 768x1024 and
+ * 820x1180 portrait tablets, and 1024x768 landscape tablet) showed the
+ * desktop clip loses its readable plot/road shape when force-cropped to a
+ * portrait frame, while the mobile clip still reads cleanly when
+ * force-cropped to a landscape frame. So: viewport AR < 1 -> mobile video,
+ * AR >= 1 -> desktop video. This naturally covers portrait tablets with the
+ * mobile clip and landscape tablets with the desktop clip without treating
+ * "tablet" as its own bucket.
+ *
+ * Exactly one <video> element ever exists in the DOM, and its `src` is only
+ * set after that check runs client-side — so only one file is ever
+ * requested, never both, and the server-rendered / no-JS / reduced-motion
+ * state is the existing SVG sequence (unchanged) acting as a real fallback,
+ * not a video with a slow-loading source.
  */
-const HERO_VIDEO_URL = process.env.NEXT_PUBLIC_HERO_VIDEO_URL;
-const HERO_VIDEO_POSTER = process.env.NEXT_PUBLIC_HERO_VIDEO_POSTER;
+const HERO_VIDEO_DESKTOP_URL = process.env.NEXT_PUBLIC_HERO_VIDEO_DESKTOP_URL;
+const HERO_VIDEO_MOBILE_URL = process.env.NEXT_PUBLIC_HERO_VIDEO_MOBILE_URL;
+const HERO_VIDEO_DESKTOP_POSTER = process.env.NEXT_PUBLIC_HERO_VIDEO_DESKTOP_POSTER;
+const HERO_VIDEO_MOBILE_POSTER = process.env.NEXT_PUBLIC_HERO_VIDEO_MOBILE_POSTER;
+
+type HeroVideoChoice = "desktop" | "mobile" | null;
 
 const HeroBuildAnimation = () => {
    // Reduced motion has to be answered in JS for the media variant: CSS
    // cannot stop a video from autoplaying. When the preference is set, the
    // poster frame is shown and playback is left to the user.
    const [reducedMotion, setReducedMotion] = useState(false);
+   // null until the client has measured the viewport, so the server-
+   // rendered markup never guesses a source (and never ships either video
+   // URL into markup that could be prefetched).
+   const [videoChoice, setVideoChoice] = useState<HeroVideoChoice>(null);
 
    useEffect(() => {
-      const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-      setReducedMotion(query.matches);
-      const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-      query.addEventListener("change", onChange);
-      return () => query.removeEventListener("change", onChange);
+      const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      setReducedMotion(motionQuery.matches);
+      const onMotionChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+      motionQuery.addEventListener("change", onMotionChange);
+
+      // aspect-ratio: 1/1 -> viewport width/height >= 1 (landscape or square)
+      const arQuery = window.matchMedia("(min-aspect-ratio: 1/1)");
+      const applyChoice = (isLandscape: boolean) =>
+         setVideoChoice(isLandscape ? "desktop" : "mobile");
+      applyChoice(arQuery.matches);
+      const onArChange = (e: MediaQueryListEvent) => applyChoice(e.matches);
+      arQuery.addEventListener("change", onArChange);
+
+      return () => {
+         motionQuery.removeEventListener("change", onMotionChange);
+         arQuery.removeEventListener("change", onArChange);
+      };
    }, []);
 
-   if (HERO_VIDEO_URL) {
+   const hasVideoSources = Boolean(HERO_VIDEO_DESKTOP_URL && HERO_VIDEO_MOBILE_URL);
+
+   if (hasVideoSources && videoChoice && !reducedMotion) {
+      const src = videoChoice === "desktop" ? HERO_VIDEO_DESKTOP_URL : HERO_VIDEO_MOBILE_URL;
+      const poster =
+         videoChoice === "desktop" ? HERO_VIDEO_DESKTOP_POSTER : HERO_VIDEO_MOBILE_POSTER;
+
       return (
-         <div className="hb-stage hb-stage--video" aria-hidden="true">
+         <div className="hero-video-bg" aria-hidden="true">
             <video
-               className="hb-video"
-               autoPlay={!reducedMotion}
-               controls={reducedMotion}
+               key={videoChoice}
+               className="hero-video-bg__video"
+               autoPlay
                muted
-               loop={!reducedMotion}
+               loop
                playsInline
-               preload={HERO_VIDEO_POSTER ? "metadata" : "none"}
-               poster={HERO_VIDEO_POSTER}
+               preload="auto"
+               poster={poster}
             >
-               <source src={HERO_VIDEO_URL} />
+               <source src={src} type="video/mp4" />
             </video>
          </div>
       );

@@ -37,14 +37,19 @@ const HeaderSellerButton = () => {
    );
 };
 
-const HeaderTwo = ({ style_1, style_2 }: any) => {
+const HeaderTwo = ({ style_1, style_2, staticHeader = false }: any) => {
    const { sticky } = UseSticky();
    const [offCanvas, setOffCanvas] = useState<boolean>(false);
    const [isSearch, setIsSearch] = useState<boolean>(false);
 
+   // Inner/detail pages (property, project, blog, listing pages) pass
+   // staticHeader so the header sits in normal flow with a solid background
+   // instead of the homepage's absolute/transparent overlay -- see
+   // _header.scss for why. Homepage callers omit the prop and keep the
+   // existing menu-overlay behavior untouched.
    return (
       <>
-         <div className={`theme-main-menu menu-overlay sticky-menu ${style_2 ? "menu-style-four" : style_1 ? "menu-style-three" : "menu-style-two"} ${sticky ? "fixed" : ""}`}>
+         <div className={`theme-main-menu sticky-menu ${staticHeader ? "static-header" : "menu-overlay"} ${style_2 ? "menu-style-four" : style_1 ? "menu-style-three" : "menu-style-two"} ${sticky ? "fixed" : ""}`}>
             <div className={`inner-content ${style_2 ? "gap-two" : "gap-one"}`}>
                <div className="top-header position-relative">
                   <div className="d-flex align-items-center">

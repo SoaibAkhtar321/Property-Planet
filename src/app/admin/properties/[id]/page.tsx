@@ -14,6 +14,7 @@ import {
    type AdminPropertyStatus,
 } from "@/lib/admin/properties/actions";
 import AdminPropertyMediaUpload from "@/components/admin/properties/AdminPropertyMediaUpload";
+import { PRICE_UNIT_OPTIONS } from "@/lib/properties/priceUnit";
 
 // Phase 6: this screen is now the full lifecycle for a property, not just
 // the approve/reject moderation pair. Listing information, location and
@@ -191,6 +192,28 @@ export default async function AdminPropertyDetailPage({
                <div className="col">
                   <label className="form-label">Price *</label>
                   <input name="price" type="number" step="0.01" defaultValue={property.price} className="form-control" required />
+               </div>
+            </div>
+            <div className="row">
+               <div className="col">
+                  <label className="form-label">Price unit</label>
+                  <select name="price_unit" defaultValue={property.price_unit ?? ""} className="form-select">
+                     <option value="">— Unlabeled (total) —</option>
+                     {PRICE_UNIT_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>
+                           {o.text}
+                        </option>
+                     ))}
+                  </select>
+               </div>
+               <div className="col">
+                  <label className="form-label">Custom unit label</label>
+                  <input
+                     name="price_unit_label"
+                     defaultValue={property.price_unit_label ?? ""}
+                     className="form-control"
+                     placeholder="Only used when price unit = Custom"
+                  />
                </div>
             </div>
             <div className="row">

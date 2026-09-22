@@ -66,6 +66,16 @@
     &.menu-style-three{
         position: inherit;
     }
+    // Inner/detail pages (property, project, blog, listing pages): these have
+    // no hero for a transparent header to float over, so the header must sit
+    // in normal document flow with a solid background instead of the
+    // homepage's absolute/transparent "menu-overlay" mode. Kept as an opt-in
+    // class so the homepage hero header (menu-overlay) is untouched.
+    &.static-header {
+        position: relative;
+        background: #fff;
+        box-shadow: 0 13px 35px -12px rgb(35 35 35 / 10%);
+    }
     // Fixed Menu
     &.fixed {
         position: fixed;
