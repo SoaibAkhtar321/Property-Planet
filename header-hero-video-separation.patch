@@ -1,0 +1,32 @@
+diff --git a/public/assets/scss/_header.scss b/public/assets/scss/_header.scss
+index e53f3ea..8c23223 100644
+--- a/public/assets/scss/_header.scss
++++ b/public/assets/scss/_header.scss
+@@ -63,6 +63,27 @@
+         left: 0;
+         background: transparent;
+     }
++    // Header/hero separation fix: on the homepage the header floats over
++    // the hero in .menu-overlay mode (position:absolute, transparent) so
++    // it can sit on top of the hero visual. With the full-bleed hero video
++    // (see .hero-video-bg in _hero-build.scss) that transparency made the
++    // nav bar read as if it were physically part of the video instead of
++    // its own layer above it. Giving the header a solid background here
++    // (same treatment already used by .static-header / .fixed below, so
++    // this isn't a new visual language) makes it a clearly separate bar
++    // the video sits underneath, on both desktop and mobile, without
++    // reserving extra height or changing the header's markup/behavior.
++    //
++    // Scoped with :has() to "menu-overlay header immediately followed by
++    // the hero-banner-two section" -- i.e. the homepage only. Every other
++    // .menu-overlay caller (e.g. About Us, which is followed by a plain
++    // breadcrumb banner, not this hero) and every .static-header page
++    // (all detail pages, already solid/unaffected) keep their exact
++    // existing appearance.
++    &.menu-overlay:has(+ .hero-banner-two) {
++        background: #fff;
++        box-shadow: 0 13px 35px -12px rgb(35 35 35 / 10%);
++    }
+     &.menu-style-three{
+         position: inherit;
+     }
