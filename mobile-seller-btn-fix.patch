@@ -1,0 +1,104 @@
+diff --git a/public/assets/scss/_theme.scss b/public/assets/scss/_theme.scss
+index ff2f4b7..984fcd1 100644
+--- a/public/assets/scss/_theme.scss
++++ b/public/assets/scss/_theme.scss
+@@ -56,7 +56,7 @@
+   --pp-input-bg: #122226;
+   --pp-input-border: rgba(255, 255, 255, 0.16);
+   --pp-scrollbar-track: #0d1a1c;
+-  --pp-scrollbar-thumb: #ff6725;
++  --pp-scrollbar-thumb: #1faa59;
+   --pp-card-bg: #162a30;
+   --pp-card-border: rgba(255, 255, 255, 0.1);
+ }
+@@ -308,12 +308,43 @@ body {
+   .card-style-two,
+   .card-style-three,
+   [class*="listing-card"],
+-  [class*="property-card"] {
++  [class*="property-card"],
++  .pp-card {
+     background-color: var(--pp-card-bg) !important;
+     color: var(--pp-text) !important;
+     border-color: var(--pp-card-border) !important;
+   }
+ 
++  /* .pp-card (PropertyCard.tsx / ProjectCard.tsx) isn't matched by the
++     [class*="listing-card"] / [class*="property-card"] attribute selectors
++     above -- "pp-card" doesn't contain either substring -- so its title/meta
++     text was left on the generic light-mode $text-dark / $text-color values.
++     Those are near-black, and with the card background now dark, that made
++     the title and address unreadable (and, before this rule existed at all,
++     white-on-white: the global `a:not([class*="btn"])...` rule further up
++     already recolors the __title link to var(--pp-text-strong), but nothing
++     ever darkened the still-white card body behind it). */
++  .pp-card {
++    &__title {
++      color: var(--pp-text-strong) !important;
++
++      &:hover { color: $color-one; }
++    }
++
++    &__meta,
++    &__type {
++      color: var(--pp-text) !important;
++    }
++
++    &__facts span {
++      color: var(--pp-text) !important;
++    }
++
++    &__price {
++      color: var(--pp-text-strong) !important;
++    }
++  }
++
+   .listing-card-one,
+   .listing-card-two,
+   .listing-card-three,
+diff --git a/src/layouts/headers/HeaderTwo.tsx b/src/layouts/headers/HeaderTwo.tsx
+index b0c753b..507c5b7 100644
+--- a/src/layouts/headers/HeaderTwo.tsx
++++ b/src/layouts/headers/HeaderTwo.tsx
+@@ -147,14 +147,14 @@ const HeaderTwo = ({ style_1, style_2, staticHeader = false }: any) => {
+                   center just lets the busy footage show through, making
+                   the trigger hard to see. Fill it solid for this one
+                   usage instead of touching the shared .btn-one class. */
+-               background: #ff6725;
+-               border-color: #ff6725;
++               background: #1FAA59;
++               border-color: #1FAA59;
+                color: #fff;
+             }
+             .theme-main-menu .pp-header-menu-btn .btn-one:hover,
+             .theme-main-menu .pp-header-menu-btn .btn-one:focus-visible {
+-               background: #e5561a;
+-               border-color: #e5561a;
++               background: #178C48;
++               border-color: #178C48;
+                color: #fff;
+             }
+             .theme-main-menu .pp-header-seller-btn {
+@@ -162,9 +162,9 @@ const HeaderTwo = ({ style_1, style_2, staticHeader = false }: any) => {
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;
+-               background: #ff6725;
++               background: #1FAA59;
+                color: #fff;
+-               border: 1px solid #ff6725;
++               border: 1px solid #1FAA59;
+                border-radius: 10px;
+                font-size: 13px;
+                font-weight: 500;
+@@ -176,8 +176,8 @@ const HeaderTwo = ({ style_1, style_2, staticHeader = false }: any) => {
+             }
+             .theme-main-menu .pp-header-seller-btn:hover,
+             .theme-main-menu .pp-header-seller-btn:focus-visible {
+-               background: #e5561a;
+-               border-color: #e5561a;
++               background: #178C48;
++               border-color: #178C48;
+                color: #fff;
+             }
+             @media (max-width: 575px) {
