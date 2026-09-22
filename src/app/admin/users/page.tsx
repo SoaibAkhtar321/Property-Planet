@@ -29,7 +29,9 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
             <h3 className="m-0">Users</h3>
          </div>
 
-         <form className="d-flex gap-2 mb-4" method="get">
+         {/* Phase 4F: same unwrapped-flex overflow risk as admin/leads —
+             wraps on narrow screens instead of forcing horizontal scroll. */}
+         <form className="d-flex flex-wrap gap-2 mb-4" method="get">
             <input type="text" name="search" defaultValue={search ?? ""} placeholder="Search name, email, or phone" className="form-control" style={{ maxWidth: 320 }} />
             <button type="submit" className="btn btn-outline-secondary">
                Search

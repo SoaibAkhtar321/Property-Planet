@@ -43,10 +43,17 @@ export const RouteError = ({
       </p>
       {error.digest && <p className="fs-14 text-muted">Reference: {error.digest}</p>}
       <div className="d-flex flex-wrap gap-3 mt-30">
-         <button type="button" className="btn-four" onClick={reset}>
+         {/* Phase 4E: same fix already applied to /properties/error.tsx and
+             /projects/error.tsx — bare `btn-four` is the 50x50px icon-only
+             square used elsewhere in this app, which was squashing "Try
+             again"/"Back to dashboard" instead of showing them as normal
+             buttons. This component is shared by dashboard/admin/blog/root
+             error boundaries, so fixing it here fixes all of them with one
+             class swap and no logic change. */}
+         <button type="button" className="pp-card-btn pp-card-btn--primary" onClick={reset}>
             Try again
          </button>
-         <Link href={homeHref} className="btn-four">
+         <Link href={homeHref} className="pp-card-btn pp-card-btn--ghost">
             {homeLabel}
          </Link>
       </div>

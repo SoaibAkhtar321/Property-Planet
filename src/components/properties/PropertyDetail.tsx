@@ -131,8 +131,13 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
                         <VideoTour property={property} />
                         <FloorPlan property={property} />
                         <NearbyList property={property} />
-                        <SimilarProperties items={similar} />
+                        {/* Phase 4B: Location moved ahead of Similar Properties so a
+                            visitor finishes learning about *this* property (incl.
+                            where it is) before being routed to other listings —
+                            matches the info hierarchy audited in Step 2. No logic
+                            changed, purely accordion order. */}
                         <Location property={property} />
+                        <SimilarProperties items={similar} />
                      </div>
                   </div>
                </div>

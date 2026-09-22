@@ -23,6 +23,12 @@ const NewAdminPropertyForm = ({ error }: { error?: string }) => {
    const [initError, setInitError] = useState<string | null>(null)
    const [submitError, setSubmitError] = useState<string | null>(null)
    const [isSubmitting, setIsSubmitting] = useState(false)
+   // Phase 4G: the submit button used to always read "Save & Publish",
+   // even with the checkbox below unchecked — in which case the listing
+   // is only saved as a draft, not published. Tracking the checkbox here
+   // so the button's own label always matches what submitting will
+   // actually do.
+   const [publishNow, setPublishNow] = useState(false)
    const [, startTransition] = useTransition()
 
    useEffect(() => {
@@ -90,7 +96,14 @@ const NewAdminPropertyForm = ({ error }: { error?: string }) => {
 
                <div className="bg-white card-box border-20 mt-40">
                   <div className="form-check">
-                     <input className="form-check-input" type="checkbox" id="publish_now" name="publish_now" />
+                     <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="publish_now"
+                        name="publish_now"
+                        checked={publishNow}
+                        onChange={(e) => setPublishNow(e.target.checked)}
+                     />
                      <label className="form-check-label" htmlFor="publish_now">
                         Publish immediately (skip draft/review — admin listings can go live directly)
                      </label>
@@ -99,7 +112,7 @@ const NewAdminPropertyForm = ({ error }: { error?: string }) => {
 
                <div className="button-group d-inline-flex align-items-center mt-30">
                   <button type="submit" className="dash-btn-two tran3s me-3" disabled={isSubmitting}>
-                     {isSubmitting ? "Saving…" : "Save & Publish"}
+                     {isSubmitting ? "Saving…" : publishNow ? "Save & Publish" : "Save as Draft"}
                   </button>
                </div>
             </form>

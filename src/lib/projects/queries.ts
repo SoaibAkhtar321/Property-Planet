@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { matchesPlace } from "@/lib/places/matching";
 import { Project, ProjectUnit } from "@/components/projects/data/types";
+import { priceUnitSuffix } from "@/lib/properties/priceUnit";
 import {
    mapProject,
    projectMediaPublicUrl,
@@ -274,7 +275,14 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 //   * no exact coordinate or address can leak through this path.
 // ---------------------------------------------------------------------------
 
-const PROJECT_UNIT_COLUMNS = "id, title, slug, property_type, listing_type, price, area, area_unit, bedrooms, bathrooms";
+// Phase 4D: price_unit/price_unit_label added so a unit priced ₹/sq. ft.
+// (etc.) reads the same way here as it already does on the unit's own
+// /properties/[slug] page (PropertyDetail.tsx / Sidebar.tsx), instead of
+// silently dropping the unit and reading like a flat total price. Reuses
+// the existing columns and the shared priceUnitSuffix() helper — no new
+// storage, no calculation change.
+const PROJECT_UNIT_COLUMNS =
+   "id, title, slug, property_type, listing_type, price, price_unit, price_unit_label, area, area_unit, bedrooms, bathrooms";
 
 const unitTitleCase = (value: string) =>
    value
@@ -306,6 +314,7 @@ export async function getProjectUnits(projectId: string): Promise<ProjectUnit[]>
       title: row.title as string,
       unitType: row.property_type ? unitTitleCase(String(row.property_type)) : undefined,
       price: row.price !== null && row.price !== undefined ? Number(row.price) : undefined,
+      priceUnit: priceUnitSuffix(row.price_unit as string | null, row.price_unit_label as string | null) || undefined,
       listingType: row.listing_type === "rent" ? ("Rent" as const) : ("Sale" as const),
       area: row.area !== null && row.area !== undefined ? Number(row.area) : undefined,
       areaUnit: (row.area_unit as string | null) ?? undefined,

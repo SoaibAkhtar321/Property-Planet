@@ -97,6 +97,7 @@ const AdminPropertyMediaUpload = ({
             multiple
             disabled={isPending}
             onChange={(e) => handleFiles(e.target.files)}
+            aria-label="Upload property photos"
          />
          <div className="text-muted small mt-1">JPG, PNG or WEBP, up to 10MB each.</div>
          {isPending && <div className="text-muted small mt-1">Uploading…</div>}

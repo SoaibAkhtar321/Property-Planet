@@ -47,7 +47,12 @@ export default async function AdminLeadsPage({
             <h3 className="m-0">Leads</h3>
          </div>
 
-         <form className="d-flex gap-2 mb-4" method="get">
+         {/* Phase 4F: 3 selects + a search input + 2 buttons in one
+             unwrapped flex row overflowed horizontally below ~700px —
+             no wrap class was set. Adding flex-wrap lets the controls
+             drop onto multiple lines on mobile instead of forcing
+             horizontal scroll. */}
+         <form className="d-flex flex-wrap gap-2 mb-4" method="get">
             <select name="status" defaultValue={status ?? ""} className="form-select" style={{ maxWidth: 200 }}>
                <option value="">All statuses</option>
                {STATUS_OPTIONS.map((s) => (

@@ -1,7 +1,25 @@
 import Fancybox from "@/components/common/Fancybox";
 
 const MediaGallery = ({ images, title }: { images: string[]; title: string }) => {
-   if (!images || images.length === 0) return null;
+   // Phase 4B: previously this returned null for a listing with no photos
+   // yet, so the page jumped straight from the header into the accordion
+   // with no gallery band at all. PropertyCard already has a "Photos
+   // coming soon" empty state (see pp-card__img--empty) for the same
+   // situation on /properties — this mirrors that instead of leaving a
+   // silent gap.
+   if (!images || images.length === 0) {
+      return (
+         <div className="media-gallery-grid mb-50">
+            <div className="row">
+               <div className="col-12 d-flex">
+                  <div className="media-bg h-100 w-100 d-flex align-items-center justify-content-center text-center fs-16 color-dark" style={{ minHeight: 260, background: "#f5f0eb" }}>
+                     Photos coming soon
+                  </div>
+               </div>
+            </div>
+         </div>
+      );
+   }
 
    const [main, ...rest] = images;
 

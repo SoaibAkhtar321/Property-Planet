@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getPostForAdmin } from "@/lib/admin/blog/queries";
 import { setPostStatus, updatePostBasics, type BlogPostStatus } from "@/lib/admin/blog/actions";
 import FeaturedImageUpload from "@/components/admin/blog/FeaturedImageUpload";
+import PostBasicsForm from "@/components/admin/blog/PostBasicsForm";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +30,7 @@ export default async function EditBlogPostPage({ params }: { params: { id: strin
             <Link href="/admin/blog">&larr; Back to blog</Link>
          </div>
 
-         <div className="d-flex justify-content-between align-items-center mb-4">
+         <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
             <h3 className="m-0">{post.title}</h3>
             <span className="badge bg-secondary text-uppercase">{post.status}</span>
          </div>
@@ -59,7 +60,7 @@ export default async function EditBlogPostPage({ params }: { params: { id: strin
          </div>
 
          <h5 className="mt-5 mb-3">Post information</h5>
-         <form action={updateBasics} className="d-flex flex-column gap-3">
+         <PostBasicsForm action={updateBasics}>
             <div>
                <label className="form-label">Title *</label>
                <input name="title" defaultValue={post.title} className="form-control" required minLength={3} />
@@ -98,12 +99,7 @@ export default async function EditBlogPostPage({ params }: { params: { id: strin
                <label className="form-label">SEO description</label>
                <textarea name="seo_description" defaultValue={post.seo_description ?? ""} className="form-control" rows={2} />
             </div>
-            <div>
-               <button type="submit" className="btn btn-primary">
-                  Save post information
-               </button>
-            </div>
-         </form>
+         </PostBasicsForm>
 
          <FeaturedImageUpload postId={post.id} initialImageUrl={featuredImageUrl} />
 

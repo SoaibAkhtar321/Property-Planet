@@ -30,7 +30,12 @@ export default async function AdminPropertiesPage({ searchParams }: { searchPara
             </Link>
          </div>
 
-         <div className="btn-group mb-4">
+         {/* Phase 4F: Bootstrap's .btn-group doesn't wrap by default — 6
+             status filters overflowed horizontally on mobile. Swapping to
+             a wrapping flex row keeps each link a normal standalone
+             button (loses the joined-group visual, which wasn't load-
+             bearing here) and lets them wrap onto multiple lines instead. */}
+         <div className="d-flex flex-wrap gap-2 mb-4">
             {STATUS_OPTIONS.map((s) => (
                <Link
                   key={s}

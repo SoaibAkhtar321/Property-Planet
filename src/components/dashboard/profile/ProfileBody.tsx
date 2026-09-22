@@ -3,26 +3,35 @@ import { useState, useEffect } from "react";
 import DashboardHeaderTwo from "@/layouts/headers/dashboard/DashboardHeaderTwo";
 import Image from "next/image";
 import UserAvatarSetting from "./UserAvatarSetting";
-import AddressAndLocation from "./AddressAndLocation";
-import Link from "next/link";
-import SocialMediaLink from "./SocialMediaLink";
 import DeleteAccountSection from "./DeleteAccountSection";
 import { createClient } from "@/lib/supabase/client";
 
 import avatar_1 from "@/assets/images/dashboard/avatar_02.jpg";
 
-// lastName has no backing column in `profiles` (see 0001_profiles.sql).
-// Rather than letting the user type into it and lose the input on reload,
-// it's frozen to an empty value with a no-op setter so UserAvatarSetting
-// renders unchanged but the field can't hold state that silently vanishes.
-const noopSetter = () => { };
+// Phase 4I: this page used to also render a "Social Media" card and an
+// "Address & Location" card (with a hardcoded map centered on an unrelated
+// city). Neither had a backing `profiles` column, neither ever saved
+// anything, and the address card showed the same demo map to every user
+// regardless of who they were. Both were unwired template leftovers, not
+// real Property Planet features, so they're not rendered here anymore --
+// see SocialMediaLink.tsx / AddressAndLocation.tsx for the unused
+// originals, left in place but unreferenced. Same reasoning for the old
+// "Upload new photo" / "Delete" buttons below: there was no storage
+// bucket or write path behind them, so they did nothing when clicked.
+// `profiles.avatar_url` (0001_profiles.sql) is real and now actually
+// read, but wiring an upload flow for it is a separate, larger phase
+// (needs a Storage bucket + policy, not a UI-only fix).
 
 const ProfileBody = () => {
    const [name, setName] = useState("");
    const [email, setEmail] = useState("");
    const [firstName, setFirstName] = useState("");
    const [phoneNumber, setPhoneNumber] = useState("");
+   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
    const [loadError, setLoadError] = useState("");
+   const [saveError, setSaveError] = useState("");
+   const [saveSuccess, setSaveSuccess] = useState(false);
+   const [isSaving, setIsSaving] = useState(false);
 
    useEffect(() => {
       const supabase = createClient();
@@ -44,7 +53,7 @@ const ProfileBody = () => {
 
             const { data: profile, error: profileError } = await supabase
                .from("profiles")
-               .select("full_name, phone")
+               .select("full_name, phone, avatar_url")
                .eq("id", user.id)
                .maybeSingle();
 
@@ -57,6 +66,7 @@ const ProfileBody = () => {
             setName(profile?.full_name ?? "");
             setFirstName(profile?.full_name ?? "");
             setPhoneNumber(profile?.phone ?? "");
+            setAvatarUrl(profile?.avatar_url ?? null);
          } catch (error) {
             console.error("Error fetching user data:", error);
             setLoadError("Failed to load your profile. Please try again.");
@@ -67,6 +77,10 @@ const ProfileBody = () => {
    }, []);
 
    const handleSave = async () => {
+      setSaveError("");
+      setSaveSuccess(false);
+      setIsSaving(true);
+
       try {
          const supabase = createClient();
          const { data: userData, error: userError } = await supabase.auth.getUser();
@@ -88,9 +102,12 @@ const ProfileBody = () => {
          }
 
          setName(firstName);
-         alert("Profile updated successfully!");
+         setSaveSuccess(true);
       } catch (error) {
          console.error("Error updating profile:", error);
+         setSaveError("Could not save your changes. Please try again.");
+      } finally {
+         setIsSaving(false);
       }
    };
 
@@ -99,32 +116,47 @@ const ProfileBody = () => {
          <div className="position-relative">
             <DashboardHeaderTwo title="Profile" />
             <h2 className="main-title d-block d-lg-none">Profile</h2>
-            {loadError && <div className="alert-text mb-20">{loadError}</div>}
+            {loadError && (
+               <div className="alert alert-danger mb-20" role="alert">
+                  {loadError}
+               </div>
+            )}
 
             <div className="bg-white card-box border-20">
                <div className="user-avatar-setting d-flex align-items-center mb-30">
-                  <Image src={avatar_1} alt="Profile photo" className="lazy-img user-img" />
-                  <div className="upload-btn position-relative tran3s ms-4 me-3">
-                     Upload new photo
-                     <input type="file" id="uploadImg" name="uploadImg" placeholder="" />
-                  </div>
-                  <button className="delete-btn tran3s">Delete</button>
+                  <Image
+                     src={avatarUrl || avatar_1}
+                     alt="Profile photo"
+                     className="lazy-img user-img"
+                     width={80}
+                     height={80}
+                     unoptimized={Boolean(avatarUrl)}
+                  />
                </div>
 
                <UserAvatarSetting
                   name={name}
                   email={email}
                   firstName={firstName} setFirstName={setFirstName}
-                  lastName={""} setLastName={noopSetter}
                   phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber}
                />
             </div>
-            <SocialMediaLink />
-            <AddressAndLocation />
+
+            {saveError && (
+               <div className="alert alert-danger mt-20 mb-0" role="alert">
+                  {saveError}
+               </div>
+            )}
+            {saveSuccess && !isSaving && (
+               <div className="alert alert-success mt-20 mb-0" role="status">
+                  Profile updated successfully.
+               </div>
+            )}
 
             <div className="button-group d-inline-flex align-items-center mt-30">
-               <button className="dash-btn-two tran3s me-3" onClick={handleSave}>Save</button>
-               <Link href="#" className="dash-cancel-btn tran3s">Cancel</Link>
+               <button className="dash-btn-two tran3s me-3" onClick={handleSave} disabled={isSaving}>
+                  {isSaving ? "Saving..." : "Save"}
+               </button>
             </div>
 
             {/* Phase 3: kept visually separated (its own card, bottom of

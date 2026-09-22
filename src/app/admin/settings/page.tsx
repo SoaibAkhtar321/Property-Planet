@@ -2,6 +2,7 @@ import { getSiteReraCertificate } from "@/lib/admin/settings/queries";
 import { setSiteReraCertificate, updateSiteReraCertificateDetails, removeSiteReraCertificate } from "@/lib/admin/settings/actions";
 import { createClient } from "@/lib/supabase/server";
 import ReraCertificateUpload from "@/components/admin/settings/ReraCertificateUpload";
+import ReraCertificateDetailsForm from "@/components/admin/settings/ReraCertificateDetailsForm";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,7 @@ export default async function AdminSettingsPage() {
             </p>
 
             {certificate?.storage_path && publicUrl ? (
-               <div className="d-flex align-items-center gap-3 mb-3">
+               <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
                   <span className="badge bg-success">Certificate uploaded</span>
                   <a href={publicUrl} target="_blank" rel="noopener noreferrer">
                      View current file
@@ -53,33 +54,11 @@ export default async function AdminSettingsPage() {
 
          <div className="border rounded p-4">
             <h5 className="mb-3">Supporting Text (optional)</h5>
-            <form action={updateSiteReraCertificateDetails}>
-               <div className="mb-3">
-                  <label className="form-label fs-14">Title</label>
-                  <input
-                     type="text"
-                     name="title"
-                     defaultValue={certificate?.title ?? ""}
-                     className="form-control"
-                     placeholder="e.g. RERA Registered"
-                     maxLength={120}
-                  />
-               </div>
-               <div className="mb-3">
-                  <label className="form-label fs-14">Description</label>
-                  <textarea
-                     name="description"
-                     defaultValue={certificate?.description ?? ""}
-                     className="form-control"
-                     rows={3}
-                     placeholder="A short line explaining buyers can view the registration/certificate."
-                     maxLength={280}
-                  />
-               </div>
-               <button type="submit" className="btn btn-dark btn-sm">
-                  Save text
-               </button>
-            </form>
+            <ReraCertificateDetailsForm
+               action={updateSiteReraCertificateDetails}
+               defaultTitle={certificate?.title ?? ""}
+               defaultDescription={certificate?.description ?? ""}
+            />
          </div>
       </div>
    );
