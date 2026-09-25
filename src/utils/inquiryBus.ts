@@ -47,6 +47,9 @@ export interface PendingInquiry {
    message: string;
    preferredDate: string;
    preferredTime: string;
+   /** Whether the required inquiry-consent checkbox was checked before the
+    *  Google redirect. Re-validated server-side regardless. */
+   consentGiven: boolean;
    /** Same-origin path to come back to after authentication. */
    returnTo: string;
    savedAt: number;

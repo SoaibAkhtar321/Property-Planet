@@ -300,6 +300,40 @@ $pp-card-shadow: 0 16px 40px rgba(20, 20, 10, 0.08);
 
 .pp-inquiry-req { color: $color-one; }
 
+.pp-inquiry-consent {
+   display: flex;
+   align-items: flex-start;
+   gap: 10px;
+
+   input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      margin-top: 2px;
+      accent-color: $color-one;
+      cursor: pointer;
+
+      &:focus-visible {
+         outline: 2px solid $color-one;
+         outline-offset: 2px;
+      }
+   }
+
+   label {
+      font-size: 13px;
+      line-height: 1.5;
+      color: $text-color;
+      cursor: pointer;
+
+      a {
+         color: $color-one;
+         text-decoration: underline;
+
+         &:hover { text-decoration: none; }
+      }
+   }
+}
+
 .pp-inquiry-success {
    text-align: center;
 

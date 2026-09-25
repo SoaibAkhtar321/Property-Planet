@@ -48,6 +48,8 @@ export interface InquiryContactInput {
    preferredDate?: string | null;
    /** "HH:MM" (24h) or empty/undefined. NEVER defaulted to now. */
    preferredTime?: string | null;
+   /** Must be `true` — the required inquiry-consent checkbox. Never defaulted. */
+   consentGiven?: boolean;
 }
 
 export interface NormalizedInquiryContact {
@@ -56,6 +58,8 @@ export interface NormalizedInquiryContact {
    message: string | null;
    preferred_date: string | null;
    preferred_time: string | null;
+   /** Always `true` here — normalizeInquiryContact rejects anything else. */
+   consent_given: true;
 }
 
 /** Shared name-shape check, reused by the general contact-form validator below. */
@@ -101,6 +105,14 @@ export function normalizeInquiryContact(input: InquiryContactInput): InquiryInpu
    }
    if (phone.replace(/\D/g, "").length < 7) {
       return { ok: false, error: "Please enter a valid phone number." };
+   }
+
+   // The client checkbox is UX only — this is the copy that decides. A
+   // missing/false value here is rejected the same way as a missing name
+   // or phone, so an inquiry can never be recorded without consent even if
+   // the client-side check is bypassed.
+   if (input.consentGiven !== true) {
+      return { ok: false, error: "Please provide your consent before submitting your inquiry." };
    }
 
    const message = (input.message ?? "").trim();
@@ -152,6 +164,7 @@ export function normalizeInquiryContact(input: InquiryContactInput): InquiryInpu
          message: message ? message : null,
          preferred_date: preferredDate,
          preferred_time: preferredTime,
+         consent_given: true,
       },
    };
 }

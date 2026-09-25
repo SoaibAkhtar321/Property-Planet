@@ -764,6 +764,10 @@ body {
   .pp-inquiry-target {
     color: var(--pp-text) !important;
   }
+
+  .pp-inquiry-consent label {
+    color: var(--pp-text) !important;
+  }
 }
 
 /* ========== Visitor assistance corner card (pp-va-*) ========== */

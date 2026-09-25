@@ -35,6 +35,7 @@
 // locked, and every field has a real <label>.
 
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { createInquiry, createProjectInquiry } from "@/lib/leads/actions";
 import {
@@ -56,6 +57,7 @@ const InquiryDialog = () => {
    const [message, setMessage] = useState("");
    const [preferredDate, setPreferredDate] = useState("");
    const [preferredTime, setPreferredTime] = useState("");
+   const [consentGiven, setConsentGiven] = useState(false);
    const [error, setError] = useState<string | null>(null);
    const [phase, setPhase] = useState<Phase>("form");
    const [alreadyExists, setAlreadyExists] = useState(false);
@@ -63,6 +65,7 @@ const InquiryDialog = () => {
 
    const nameRef = useRef<HTMLInputElement | null>(null);
    const phoneRef = useRef<HTMLInputElement | null>(null);
+   const consentRef = useRef<HTMLInputElement | null>(null);
    const previouslyFocused = useRef<HTMLElement | null>(null);
 
    const reset = useCallback(() => {
@@ -71,6 +74,7 @@ const InquiryDialog = () => {
       setMessage("");
       setPreferredDate("");
       setPreferredTime("");
+      setConsentGiven(false);
       setError(null);
       setPhase("form");
       setAlreadyExists(false);
@@ -84,7 +88,10 @@ const InquiryDialog = () => {
    }, [reset]);
 
    const submit = useCallback(
-      (t: InquiryTarget, values: { name: string; phone: string; message: string; date: string; time: string }) => {
+      (
+         t: InquiryTarget,
+         values: { name: string; phone: string; message: string; date: string; time: string; consent: boolean },
+      ) => {
          setError(null);
          startTransition(async () => {
             const contact = {
@@ -93,6 +100,7 @@ const InquiryDialog = () => {
                message: values.message,
                preferredDate: values.date,
                preferredTime: values.time,
+               consentGiven: values.consent,
             };
 
             const res =
@@ -118,6 +126,7 @@ const InquiryDialog = () => {
                   message: values.message,
                   preferredDate: values.date,
                   preferredTime: values.time,
+                  consentGiven: values.consent,
                   returnTo: `${window.location.pathname}${window.location.search}`,
                   savedAt: Date.now(),
                });
@@ -160,14 +169,16 @@ const InquiryDialog = () => {
       setMessage(pending.message);
       setPreferredDate(pending.preferredDate);
       setPreferredTime(pending.preferredTime);
+      setConsentGiven(pending.consentGiven);
 
-      if (pending.name && pending.phone) {
+      if (pending.name && pending.phone && pending.consentGiven) {
          submit(pending.target, {
             name: pending.name,
             phone: pending.phone,
             message: pending.message,
             date: pending.preferredDate,
             time: pending.preferredTime,
+            consent: pending.consentGiven,
          });
       }
       // Intentionally runs once on mount — this is the post-redirect hand-off.
@@ -209,7 +220,12 @@ const InquiryDialog = () => {
          phoneRef.current?.focus();
          return;
       }
-      submit(target, { name, phone, message, date: preferredDate, time: preferredTime });
+      if (!consentGiven) {
+         setError("Please provide your consent before submitting your inquiry.");
+         consentRef.current?.focus();
+         return;
+      }
+      submit(target, { name, phone, message, date: preferredDate, time: preferredTime, consent: consentGiven });
    };
 
    const busy = isPending || phase === "authenticating";
@@ -356,6 +372,27 @@ const InquiryDialog = () => {
                            disabled={busy}
                         />
                      </div>
+                  </div>
+
+                  <div className="pp-inquiry-consent mb-20">
+                     <input
+                        ref={consentRef}
+                        id="pp-inquiry-consent"
+                        name="consent"
+                        type="checkbox"
+                        checked={consentGiven}
+                        onChange={(e) => {
+                           setConsentGiven(e.target.checked);
+                           if (e.target.checked && error) setError(null);
+                        }}
+                        disabled={busy}
+                        aria-required="true"
+                     />
+                     <label htmlFor="pp-inquiry-consent">
+                        I agree to Property Planet collecting and using the information I
+                        provide to process my inquiry and connect me with the relevant
+                        property representative. <Link href="/privacy-policy" target="_blank">Privacy Policy</Link>
+                     </label>
                   </div>
 
                   {error && (

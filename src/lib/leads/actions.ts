@@ -159,6 +159,11 @@ export async function createInquiry(
       // from the client.
       project_id: property.project_id ?? null,
       message: normalized.value.message,
+      // Required inquiry-consent checkbox — normalizeInquiryContact()
+      // rejects the submission unless this is `true`, so it is never
+      // written as anything else. Timestamped server-side, not client-supplied.
+      consent_given: normalized.value.consent_given,
+      consent_given_at: new Date().toISOString(),
       // status intentionally omitted — column default is 'new'. There is no
       // buyer-facing update path to this row afterward (see file header), so
       // this insert is the only write this function ever performs.
@@ -572,6 +577,9 @@ export async function createProjectInquiry(
       contact_email: buyer.email,
       preferred_date: normalized.value.preferred_date,
       preferred_time: normalized.value.preferred_time,
+      // Required inquiry-consent checkbox — see createInquiry() above.
+      consent_given: normalized.value.consent_given,
+      consent_given_at: new Date().toISOString(),
       // status intentionally omitted — column default is 'new', same as
       // createInquiry(). Buyers have no UPDATE policy on leads at all (see
       // file header), so this insert is the only write this function ever
