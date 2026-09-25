@@ -625,6 +625,7 @@
    .block-feature-two .block-one {min-height: 480px;}
    .location-card-one {height: 350px;}
    .fancy-banner-one .property-item .border-right {border-right: none; border-bottom: 1px solid #d6d6d6;}
+   [data-theme="dark"] .fancy-banner-one .property-item .border-right {border-bottom-color: rgba(255, 255, 255, 0.18);}
    .category-section-one .section-btn {position: static;}
    .listing-card-three .wrapper .property-name,
    .listing-card-three .wrapper .property-info {width: 100%; height: auto !important;}
@@ -647,6 +648,7 @@
    .theme-details-one .media-gallery-grid .media-bg {min-height: 300px;}
    .theme-details-one .media-gallery-grid .media-bg.sm {height: 200px; min-height: auto;}
    .pricing-section-one .pr-column-wrapper {width: 100%; border: 1px solid #000 !important; margin-bottom: 25px; border-radius: 20px;}
+   [data-theme="dark"] .pricing-section-one .pr-column-wrapper {border-color: var(--pp-border-strong) !important;}
    .pricing-section-one .dot-bg-wrapper {background: none; padding: 0;}
    .pricing-section-one .main-bg {border: none;}
    .pricing-section-one .pr-column-wrapper .pr-header {margin-bottom: 40px;}
@@ -785,7 +787,9 @@
    .dashboard-body .dash-card-one:before {display: none;}
    .dashboard-body .dashboard-header .user-data .user-avatar {width: 50px; height: 50px; border-width: 3px;}
    .dashboard-body .message-wrapper .open-email-container {background: #fff9f6; margin: 20px 10px; border-radius: 0 0 10px 10px;}
+   [data-theme="dark"] .dashboard-body .message-wrapper .open-email-container {background: var(--pp-surface);}
    .dashboard-body .message-wrapper .message-sidebar {border-right: none; border-bottom: 1px solid #e3e1e1; max-height: 600px; overflow-y: auto;}
+   [data-theme="dark"] .dashboard-body .message-wrapper .message-sidebar {border-bottom-color: var(--pp-border);}
    .dashboard-body .message-wrapper .message-sidebar .email-list-item {padding-top: 15px; padding-bottom: 15px;}
    .dashboard-body .message-wrapper .message-sidebar .email-list-item .email-short-preview .sender-name,
    .dashboard-body .message-wrapper .message-sidebar .email-list-item .email-short-preview .mail-text {font-size: 14px;}
@@ -798,6 +802,7 @@
    .dash-aside-navbar.show {transform: translateX(0); box-shadow: 15px 0 25px rgba(35,35,35,0.09); opacity: 1; visibility: visible;}
    .dashboard-body {margin: 0; border-radius: 0;}
    .dashboard-body .dashboard-header {left: 0; right: 0; border-bottom: 1px solid #e5e5e5; padding: 12px 15px;}
+   [data-theme="dark"] .dashboard-body .dashboard-header {border-bottom-color: var(--pp-border);}
    .dashboard-body .dashboard-header .search-form {width: auto;}
    .dashboard-body .dashboard-header .job-post-btn {width: 110px; line-height: 40px; font-size: 14px;}
    .compose-mail-offcanvas {left: 15px; width: auto;}
