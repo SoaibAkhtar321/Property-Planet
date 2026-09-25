@@ -765,8 +765,75 @@ body {
     color: var(--pp-text) !important;
   }
 
+  .pp-inquiry-dialog label {
+    color: var(--pp-text-strong) !important;
+  }
+
+  .pp-inquiry-dialog small,
+  .pp-inquiry-dialog .opacity-75 {
+    color: var(--pp-text-muted) !important;
+  }
+
+  .pp-inquiry-dialog input[type="checkbox"] {
+    background: transparent !important;
+    border-color: var(--pp-border-strong) !important;
+    accent-color: $color-one !important;
+  }
+
   .pp-inquiry-consent label {
     color: var(--pp-text) !important;
+  }
+
+  .pp-inquiry-success h4 {
+    color: var(--pp-text-strong) !important;
+  }
+}
+
+/* ========== Listing cards (pp-card-*), used by property + project cards === */
+[data-theme="dark"] {
+  .pp-card {
+    background: var(--pp-card-bg) !important;
+    border-color: var(--pp-card-border) !important;
+
+    &:hover {
+      border-color: rgba(31, 170, 89, 0.5) !important;
+    }
+  }
+
+  .pp-card__media {
+    background: var(--pp-surface-2) !important;
+  }
+
+  .pp-card__img--empty {
+    background: var(--pp-surface-2) !important;
+    color: var(--pp-text-muted) !important;
+  }
+
+  .pp-card__title,
+  .pp-card__type,
+  .pp-card__price {
+    color: var(--pp-text-strong) !important;
+  }
+
+  .pp-card__meta,
+  .pp-card__facts,
+  .pp-card__price sub {
+    color: var(--pp-text) !important;
+  }
+
+  .pp-card-btn--ghost {
+    color: var(--pp-text-strong) !important;
+    border-color: var(--pp-border-strong) !important;
+
+    &:hover {
+      color: $color-one !important;
+      border-color: $color-one !important;
+    }
+  }
+
+  .pp-card-btn--primary:hover {
+    background: var(--pp-surface-2) !important;
+    border-color: var(--pp-surface-2) !important;
   }
 }
 
