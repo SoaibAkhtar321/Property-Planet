@@ -735,6 +735,27 @@ body {
   .dash-aside-navbar a:hover {
     color: $color-one !important;
   }
+
+  // Dashboard header bar: was still using the light-mode hardcoded
+  // cream background (_dashboard.scss), which clashed with the
+  // dark-mode heading/icon colors already forced above.
+  .dashboard-header {
+    background-color: var(--pp-header-bg) !important;
+    border-bottom: 1px solid var(--pp-border);
+    box-shadow: var(--pp-shadow);
+  }
+
+  .dashboard-header h4 {
+    color: var(--pp-header-text) !important;
+  }
+
+  // The notification bell is a static black-stroke SVG (icon_11.svg),
+  // not a font icon, so it needs a filter to stay visible on the
+  // dark header. Scoped to that one icon only, not other header images
+  // (e.g. the profile avatar photo).
+  .dashboard-header .noti-btn img {
+    filter: invert(1) brightness(1.8);
+  }
 }
 
 /* ========== Theme toggle control ========== */
