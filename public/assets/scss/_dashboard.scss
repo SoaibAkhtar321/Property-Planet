@@ -38,6 +38,10 @@
             &.active {
                 background: #000;
                 color: #fff;
+
+                [data-theme="dark"] & {
+                    background: var(--pp-surface-2);
+                }
             }
             img {
                 max-width: 20px;
@@ -179,6 +183,10 @@
         background: $color-one;
         &:hover {
             background: #000;
+
+            [data-theme="dark"] & {
+                background: var(--pp-surface-2);
+            }
         }
     }
     .dash-cancel-btn {
@@ -607,6 +615,11 @@
                 background: #000;
                 border-color: #000;
                 color: #fff;
+
+                [data-theme="dark"] & {
+                    background: var(--pp-surface-2);
+                    border-color: var(--pp-border-strong);
+                }
             }
             input {
                 position: absolute;
@@ -976,6 +989,11 @@
             background: #000;
             color: #fff;
             border-color:  #000;
+
+            [data-theme="dark"] & {
+                background: var(--pp-surface-2);
+                border-color: var(--pp-border-strong);
+            }
         }
     }
 
@@ -1128,6 +1146,10 @@
                     span {
                         opacity: 0;
                     }
+
+                    [data-theme="dark"] & {
+                        background: var(--pp-surface-2);
+                    }
                 }
             }
 
@@ -1142,6 +1164,10 @@
                     border-left: 4px solid #000;
                     .email-short-preview .file {
                         background: #fff;
+                    }
+
+                    [data-theme="dark"] & {
+                        border-left-color: var(--pp-border-strong);
                     }
                 }
                 &.read .email-short-preview:before {
