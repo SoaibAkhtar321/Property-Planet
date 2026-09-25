@@ -44,7 +44,25 @@ const PropertyPlanetAIWidget = () => {
    const [typing, setTyping] = useState(false);
    const bodyRef = useRef<HTMLDivElement>(null);
 
+   // Startup-flash fix: the panel's open/close CSS transition must never run
+   // on the very first paint. If a transition is "live" the instant the
+   // component mounts/hydrates, any first-frame style recompute (SSR markup
+   // painting before hydration finishes, extension/dev-tool reflows, etc.)
+   // can be interpreted by the browser as an opacity/transform *change* and
+   // animated — i.e. exactly the "briefly appears then closes" symptom, even
+   // though `open` was `false` the entire time. We keep transitions disabled
+   // until one frame after mount, then re-enable them so manual open/close
+   // still animates normally.
+   const [readyForTransitions, setReadyForTransitions] = useState(false);
+   useEffect(() => {
+      const raf = requestAnimationFrame(() => setReadyForTransitions(true));
+      return () => cancelAnimationFrame(raf);
+   }, []);
+
    // Let the header CTA / hero link / anything else open this widget.
+   // This is the ONLY way `open` is ever set to true outside a direct click
+   // on the FAB/close button below — there is no mount-time timer, no
+   // default-open state, and no delayed auto-open anywhere in this file.
    useEffect(() => {
       return onPropertyPlanetAIOpen((prefill) => {
          setOpen(true);
@@ -94,7 +112,7 @@ const PropertyPlanetAIWidget = () => {
             <i className={`fa-regular ${open ? "fa-xmark" : "fa-sparkles"}`}></i>
          </button>
 
-         <div className={`property-planet-ai-panel ${open ? "is-open" : ""}`}>
+         <div className={`property-planet-ai-panel ${open ? "is-open" : ""} ${readyForTransitions ? "" : "no-anim"}`}>
             <div className="property-planet-ai-panel-header d-flex align-items-center">
                <span className="property-planet-ai-avatar d-flex align-items-center justify-content-center">
                   <i className="fa-regular fa-sparkles"></i>
@@ -377,6 +395,108 @@ const PropertyPlanetAIWidget = () => {
                   height: calc(100vh - 120px);
                }
                .property-planet-ai-fab { right: 16px; bottom: 16px; }
+            }
+
+            /* Startup-flash fix: no transition on the panel until one frame
+               after mount (see readyForTransitions above). Light mode is
+               unaffected — this only ever removes a transition, never a color. */
+            .property-planet-ai-panel.no-anim {
+               transition: none !important;
+            }
+
+            /* ---- Dark mode ---- */
+            :global([data-theme="dark"]) .property-planet-ai-panel {
+               background: var(--pp-card-bg);
+               border-color: var(--pp-border);
+               box-shadow: var(--pp-shadow);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-panel-header {
+               background: var(--pp-surface);
+               border-bottom-color: var(--pp-border);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-avatar {
+               background: var(--pp-surface-2, var(--pp-input-bg));
+            }
+            :global([data-theme="dark"]) .property-planet-ai-subtitle {
+               color: var(--pp-text-muted);
+               opacity: 1;
+            }
+            :global([data-theme="dark"]) .property-planet-ai-demo-note {
+               background: rgba(31, 170, 89, 0.08);
+               color: var(--pp-text-muted);
+               border-bottom-color: var(--pp-border);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-close {
+               color: var(--pp-text);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-body {
+               background: var(--pp-card-bg);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-row.ai .property-planet-ai-bubble {
+               background: var(--pp-surface-2, var(--pp-input-bg));
+               color: var(--pp-text);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-typing span {
+               background: var(--pp-text-muted);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-chips button {
+               border-color: var(--pp-border);
+               background: var(--pp-input-bg);
+               color: var(--pp-text);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-chips button:hover {
+               background: var(--pp-surface-2, var(--pp-input-bg));
+               border-color: #1FAA59;
+            }
+            :global([data-theme="dark"]) .property-planet-ai-card {
+               border-color: var(--pp-border);
+               background: var(--pp-surface-2, var(--pp-input-bg));
+            }
+            :global([data-theme="dark"]) .property-planet-ai-card-icon {
+               background: rgba(31, 170, 89, 0.14);
+               color: #7fd19a;
+            }
+            :global([data-theme="dark"]) .property-planet-ai-card-title {
+               color: var(--pp-text-strong, var(--pp-text));
+            }
+            :global([data-theme="dark"]) .property-planet-ai-card-meta {
+               color: var(--pp-text-muted);
+               opacity: 1;
+            }
+            :global([data-theme="dark"]) .property-planet-ai-card-tags span {
+               background: var(--pp-input-bg);
+               color: var(--pp-text-muted);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-card-price {
+               color: var(--pp-text-strong, var(--pp-text));
+            }
+            :global([data-theme="dark"]) .property-planet-ai-input {
+               border-top-color: var(--pp-border);
+               background: var(--pp-card-bg);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-input input {
+               color: var(--pp-text);
+            }
+            :global([data-theme="dark"]) .property-planet-ai-input input::placeholder {
+               color: var(--pp-text-muted);
+               opacity: 1;
+            }
+            :global([data-theme="dark"]) .property-planet-ai-footer-note {
+               color: var(--pp-text-muted);
+               opacity: 1;
+            }
+            :global([data-theme="dark"]) .property-planet-ai-body::-webkit-scrollbar {
+               width: 8px;
+            }
+            :global([data-theme="dark"]) .property-planet-ai-body::-webkit-scrollbar-track {
+               background: transparent;
+            }
+            :global([data-theme="dark"]) .property-planet-ai-body::-webkit-scrollbar-thumb {
+               background: var(--pp-border-strong, var(--pp-border));
+               border-radius: 8px;
+            }
+            :global([data-theme="dark"]) .property-planet-ai-body {
+               scrollbar-color: var(--pp-border-strong, var(--pp-border)) transparent;
             }
          `}</style>
       </>

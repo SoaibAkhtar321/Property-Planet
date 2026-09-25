@@ -181,6 +181,31 @@ const PropertyPlanetMapIntelligence = () => {
                   height: 320px;
                }
             }
+
+            /* Dark mode: this panel had no dark styling at all -- a solid
+               white map frame with a translucent white overlay card and
+               near-invisible light borders, sitting on an otherwise dark
+               homepage. */
+            :global([data-theme="dark"]) .map-frame {
+               background: var(--pp-card-bg);
+               border-color: var(--pp-border);
+            }
+            :global([data-theme="dark"]) .map-canvas {
+               background: var(--pp-surface-2, var(--pp-input-bg));
+            }
+            :global([data-theme="dark"]) .map-fallback {
+               color: var(--pp-text-muted);
+            }
+            :global([data-theme="dark"]) .intel-panel {
+               background: rgba(22, 42, 48, 0.92);
+               border-color: var(--pp-border);
+            }
+            :global([data-theme="dark"]) .intel-stats li {
+               border-bottom-color: var(--pp-border);
+            }
+            :global([data-theme="dark"]) .intel-catalyst {
+               color: var(--pp-text-muted);
+            }
          `}</style>
       </div>
    )

@@ -211,6 +211,22 @@ const PropertyStickyCta = ({
                   bottom: calc(84px + env(safe-area-inset-bottom, 0px));
                }
             }
+
+            /* Dark mode: this bar was solid white with a hardcoded black
+               price value, so on a dark page it rendered as an unreadable
+               bright cutout pinned to the bottom of every phone screen. */
+            [data-theme="dark"] .pp-sticky-cta {
+               background: var(--pp-card-bg);
+               border-top-color: var(--pp-border);
+               box-shadow: var(--pp-shadow);
+            }
+            [data-theme="dark"] .pp-sticky-cta__label {
+               color: var(--pp-text-muted);
+               opacity: 1;
+            }
+            [data-theme="dark"] .pp-sticky-cta__value {
+               color: var(--pp-text-strong);
+            }
          `}</style>
       </>
    );

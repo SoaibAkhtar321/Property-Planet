@@ -1,0 +1,435 @@
+diff --git a/public/assets/scss/_theme.scss b/public/assets/scss/_theme.scss
+index 6e393d0..ee0264c 100644
+--- a/public/assets/scss/_theme.scss
++++ b/public/assets/scss/_theme.scss
+@@ -716,6 +716,81 @@ body {
+   }
+ }
+ 
++/* ========== Bootstrap alerts (dashboard) ========== */
++[data-theme="dark"] {
++  .dashboard-body .alert {
++    &.alert-primary {
++      background: var(--pp-surface-2) !important;
++      color: var(--pp-text-strong) !important;
++    }
++    &.alert-success {
++      background: rgba(0, 181, 121, 0.16) !important;
++      color: #4fd39a !important;
++    }
++    &.alert-danger {
++      background: rgba(220, 53, 69, 0.16) !important;
++      color: #ff8a95 !important;
++    }
++    &.alert-warning {
++      background: rgba(255, 193, 7, 0.16) !important;
++      color: #ffd873 !important;
++    }
++  }
++}
++
++/* ========== Universal inquiry dialog (pp-inquiry-*) ========== */
++[data-theme="dark"] {
++  .pp-inquiry-dialog {
++    background: var(--pp-surface) !important;
++    box-shadow: var(--pp-shadow) !important;
++
++    input,
++    textarea {
++      background: var(--pp-input-bg) !important;
++      border-color: var(--pp-input-border) !important;
++      color: var(--pp-text-strong) !important;
++    }
++  }
++
++  .pp-inquiry-close {
++    background: var(--pp-surface-2) !important;
++    color: var(--pp-text-strong) !important;
++
++    &:hover {
++      background: var(--pp-border) !important;
++    }
++  }
++
++  .pp-inquiry-target {
++    color: var(--pp-text) !important;
++  }
++}
++
++/* ========== Visitor assistance corner card (pp-va-*) ========== */
++[data-theme="dark"] {
++  .pp-visitor-assistance .pp-va-card {
++    background: var(--pp-surface) !important;
++    box-shadow: var(--pp-shadow) !important;
++  }
++
++  .pp-visitor-assistance .pp-va-close {
++    color: var(--pp-text-muted) !important;
++  }
++
++  .pp-visitor-assistance .pp-va-subtitle,
++  .pp-visitor-assistance .pp-va-field label {
++    color: var(--pp-text-muted) !important;
++  }
++
++  .pp-visitor-assistance .pp-va-field input,
++  .pp-visitor-assistance .pp-va-field select,
++  .pp-visitor-assistance .pp-va-field textarea {
++    background: var(--pp-input-bg) !important;
++    border-color: var(--pp-input-border) !important;
++    color: var(--pp-text-strong) !important;
++  }
++}
++
+ /* ========== Dashboard / admin shared surfaces ========== */
+ [data-theme="dark"] {
+   .dashboard-body,
+@@ -850,17 +925,17 @@ body {
+ 
+ /* ========== Homepage bands, cards, How-it-works, FAQ, Best-plots ========== */
+ [data-theme="dark"] {
+-  body,
+-  .main-page-wrapper {
+-    background-color: #0d1a1c !important;
+-    color: rgba(232, 238, 240, 0.88) !important;
+-  }
++  /* body/.main-page-wrapper intentionally not repeated here: the generic
++     `body { background-color: var(--pp-bg); color: var(--pp-text); }` rule
++     above already re-resolves under [data-theme="dark"] via the CSS custom
++     properties, so a duplicate was pure redundancy -- and its hardcoded
++     0.88 text alpha silently conflicted with --pp-text's 0.82. */
+ 
+   .pp-band.pp-band,
+   .pp-band.pp-band--warm,
+   .pp-band.pp-band--sky,
+   .pp-band.pp-band--peach {
+-    background: #122226 !important;
++    background: var(--pp-bg-muted) !important;
+     background-image: none !important;
+   }
+ 
+@@ -888,7 +963,7 @@ body {
+   .faq-section-one,
+   .blog-section-one,
+   .agent-section-one {
+-    background-color: #0d1a1c !important;
++    background-color: var(--pp-bg) !important;
+     background-image: none !important;
+   }
+ 
+@@ -904,17 +979,17 @@ body {
+   .title-one p,
+   .color-dark,
+   .text-dark {
+-    color: #f2f6f7 !important;
++    color: var(--pp-text-strong) !important;
+   }
+ 
+   .title-one .upper-title {
+-    color: rgba(232, 238, 240, 0.55) !important;
++    color: var(--pp-text-muted) !important;
+   }
+ 
+   .title-one p,
+   .fs-22,
+   .fs-24 {
+-    color: rgba(232, 238, 240, 0.82) !important;
++    color: var(--pp-text) !important;
+   }
+ 
+   .card,
+@@ -931,9 +1006,9 @@ body {
+   .pp-step-card,
+   [class*="listing-card"],
+   [class*="property-card"] {
+-    background-color: #162a30 !important;
+-    color: rgba(232, 238, 240, 0.88) !important;
+-    border-color: rgba(255, 255, 255, 0.1) !important;
++    background-color: var(--pp-card-bg) !important;
++    color: var(--pp-text) !important;
++    border-color: var(--pp-card-border) !important;
+   }
+ 
+   .listing-card-one .title,
+@@ -951,14 +1026,14 @@ body {
+   [class*="listing-card"] h5,
+   [class*="listing-card"] h6,
+   [class*="listing-card"] span {
+-    color: #f2f6f7 !important;
++    color: var(--pp-text-strong) !important;
+   }
+ 
+   .block-feature-seven .card-style-one,
+   .block-feature-seven .bg-wrapper,
+   .block-feature-seven [class*="card"] {
+-    background-color: #1c333a !important;
+-    color: #f2f6f7 !important;
++    background-color: var(--pp-surface-2) !important;
++    color: var(--pp-text-strong) !important;
+   }
+ 
+   .bg-light,
+@@ -966,18 +1041,18 @@ body {
+   .bg-pink,
+   .bg-pink-two,
+   .bg-pink-three {
+-    background-color: #162a30 !important;
+-    color: rgba(232, 238, 240, 0.88) !important;
++    background-color: var(--pp-card-bg) !important;
++    color: var(--pp-text) !important;
+   }
+ 
+    .theme-main-menu.static-header,
+   .theme-main-menu.fixed,
+   .theme-main-menu.menu-overlay:has(+ .hero-banner-two),
+   .theme-main-menu.menu-overlay.over-hero {
+-    background: #0f2226 !important;
++    background: var(--pp-header-bg) !important;
+   }
+   .theme-main-menu .navbar .navbar-nav .nav-link {
+-    color: #f2f6f7 !important;
++    color: var(--pp-text-strong) !important;
+   }
+ 
+   .listing-header-filter .nice-select,
+@@ -987,22 +1062,22 @@ body {
+   select,
+   .form-control,
+   .nice-select {
+-    background-color: #122226 !important;
+-    color: #f2f6f7 !important;
+-    border-color: rgba(255, 255, 255, 0.2) !important;
++    background-color: var(--pp-input-bg) !important;
++    color: var(--pp-text-strong) !important;
++    border-color: var(--pp-input-border) !important;
+   }
+ 
+   .theme-sidebar-one,
+   .theme-sidebar-two,
+   .theme-details-one,
+   .theme-details-two {
+-    background-color: #162a30 !important;
+-    color: rgba(232, 238, 240, 0.88) !important;
++    background-color: var(--pp-card-bg) !important;
++    color: var(--pp-text) !important;
+   }
+ 
+   .btn-seven {
+-    color: #f2f6f7 !important;
+-    border-color: rgba(255, 255, 255, 0.32) !important;
++    color: var(--pp-text-strong) !important;
++    border-color: var(--pp-border-strong) !important;
+   }
+ 
+   .hero-banner-two.has-hero-video .btn-seven {
+diff --git a/src/components/common/PropertyPlanetAIWidget.tsx b/src/components/common/PropertyPlanetAIWidget.tsx
+index c55fd69..7ea5107 100644
+--- a/src/components/common/PropertyPlanetAIWidget.tsx
++++ b/src/components/common/PropertyPlanetAIWidget.tsx
+@@ -44,7 +44,25 @@ const PropertyPlanetAIWidget = () => {
+    const [typing, setTyping] = useState(false);
+    const bodyRef = useRef<HTMLDivElement>(null);
+ 
++   // Startup-flash fix: the panel's open/close CSS transition must never run
++   // on the very first paint. If a transition is "live" the instant the
++   // component mounts/hydrates, any first-frame style recompute (SSR markup
++   // painting before hydration finishes, extension/dev-tool reflows, etc.)
++   // can be interpreted by the browser as an opacity/transform *change* and
++   // animated — i.e. exactly the "briefly appears then closes" symptom, even
++   // though `open` was `false` the entire time. We keep transitions disabled
++   // until one frame after mount, then re-enable them so manual open/close
++   // still animates normally.
++   const [readyForTransitions, setReadyForTransitions] = useState(false);
++   useEffect(() => {
++      const raf = requestAnimationFrame(() => setReadyForTransitions(true));
++      return () => cancelAnimationFrame(raf);
++   }, []);
++
+    // Let the header CTA / hero link / anything else open this widget.
++   // This is the ONLY way `open` is ever set to true outside a direct click
++   // on the FAB/close button below — there is no mount-time timer, no
++   // default-open state, and no delayed auto-open anywhere in this file.
+    useEffect(() => {
+       return onPropertyPlanetAIOpen((prefill) => {
+          setOpen(true);
+@@ -94,7 +112,7 @@ const PropertyPlanetAIWidget = () => {
+             <i className={`fa-regular ${open ? "fa-xmark" : "fa-sparkles"}`}></i>
+          </button>
+ 
+-         <div className={`property-planet-ai-panel ${open ? "is-open" : ""}`}>
++         <div className={`property-planet-ai-panel ${open ? "is-open" : ""} ${readyForTransitions ? "" : "no-anim"}`}>
+             <div className="property-planet-ai-panel-header d-flex align-items-center">
+                <span className="property-planet-ai-avatar d-flex align-items-center justify-content-center">
+                   <i className="fa-regular fa-sparkles"></i>
+@@ -378,6 +396,108 @@ const PropertyPlanetAIWidget = () => {
+                }
+                .property-planet-ai-fab { right: 16px; bottom: 16px; }
+             }
++
++            /* Startup-flash fix: no transition on the panel until one frame
++               after mount (see readyForTransitions above). Light mode is
++               unaffected — this only ever removes a transition, never a color. */
++            .property-planet-ai-panel.no-anim {
++               transition: none !important;
++            }
++
++            /* ---- Dark mode ---- */
++            :global([data-theme="dark"]) .property-planet-ai-panel {
++               background: var(--pp-card-bg);
++               border-color: var(--pp-border);
++               box-shadow: var(--pp-shadow);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-panel-header {
++               background: var(--pp-surface);
++               border-bottom-color: var(--pp-border);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-avatar {
++               background: var(--pp-surface-2, var(--pp-input-bg));
++            }
++            :global([data-theme="dark"]) .property-planet-ai-subtitle {
++               color: var(--pp-text-muted);
++               opacity: 1;
++            }
++            :global([data-theme="dark"]) .property-planet-ai-demo-note {
++               background: rgba(31, 170, 89, 0.08);
++               color: var(--pp-text-muted);
++               border-bottom-color: var(--pp-border);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-close {
++               color: var(--pp-text);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-body {
++               background: var(--pp-card-bg);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-row.ai .property-planet-ai-bubble {
++               background: var(--pp-surface-2, var(--pp-input-bg));
++               color: var(--pp-text);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-typing span {
++               background: var(--pp-text-muted);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-chips button {
++               border-color: var(--pp-border);
++               background: var(--pp-input-bg);
++               color: var(--pp-text);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-chips button:hover {
++               background: var(--pp-surface-2, var(--pp-input-bg));
++               border-color: #1FAA59;
++            }
++            :global([data-theme="dark"]) .property-planet-ai-card {
++               border-color: var(--pp-border);
++               background: var(--pp-surface-2, var(--pp-input-bg));
++            }
++            :global([data-theme="dark"]) .property-planet-ai-card-icon {
++               background: rgba(31, 170, 89, 0.14);
++               color: #7fd19a;
++            }
++            :global([data-theme="dark"]) .property-planet-ai-card-title {
++               color: var(--pp-text-strong, var(--pp-text));
++            }
++            :global([data-theme="dark"]) .property-planet-ai-card-meta {
++               color: var(--pp-text-muted);
++               opacity: 1;
++            }
++            :global([data-theme="dark"]) .property-planet-ai-card-tags span {
++               background: var(--pp-input-bg);
++               color: var(--pp-text-muted);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-card-price {
++               color: var(--pp-text-strong, var(--pp-text));
++            }
++            :global([data-theme="dark"]) .property-planet-ai-input {
++               border-top-color: var(--pp-border);
++               background: var(--pp-card-bg);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-input input {
++               color: var(--pp-text);
++            }
++            :global([data-theme="dark"]) .property-planet-ai-input input::placeholder {
++               color: var(--pp-text-muted);
++               opacity: 1;
++            }
++            :global([data-theme="dark"]) .property-planet-ai-footer-note {
++               color: var(--pp-text-muted);
++               opacity: 1;
++            }
++            :global([data-theme="dark"]) .property-planet-ai-body::-webkit-scrollbar {
++               width: 8px;
++            }
++            :global([data-theme="dark"]) .property-planet-ai-body::-webkit-scrollbar-track {
++               background: transparent;
++            }
++            :global([data-theme="dark"]) .property-planet-ai-body::-webkit-scrollbar-thumb {
++               background: var(--pp-border-strong, var(--pp-border));
++               border-radius: 8px;
++            }
++            :global([data-theme="dark"]) .property-planet-ai-body {
++               scrollbar-color: var(--pp-border-strong, var(--pp-border)) transparent;
++            }
+          `}</style>
+       </>
+    )
+diff --git a/src/components/homes/home-two/PropertyPlanetMapIntelligence.tsx b/src/components/homes/home-two/PropertyPlanetMapIntelligence.tsx
+index 46c6caf..ec90a34 100644
+--- a/src/components/homes/home-two/PropertyPlanetMapIntelligence.tsx
++++ b/src/components/homes/home-two/PropertyPlanetMapIntelligence.tsx
+@@ -181,6 +181,31 @@ const PropertyPlanetMapIntelligence = () => {
+                   height: 320px;
+                }
+             }
++
++            /* Dark mode: this panel had no dark styling at all -- a solid
++               white map frame with a translucent white overlay card and
++               near-invisible light borders, sitting on an otherwise dark
++               homepage. */
++            :global([data-theme="dark"]) .map-frame {
++               background: var(--pp-card-bg);
++               border-color: var(--pp-border);
++            }
++            :global([data-theme="dark"]) .map-canvas {
++               background: var(--pp-surface-2, var(--pp-input-bg));
++            }
++            :global([data-theme="dark"]) .map-fallback {
++               color: var(--pp-text-muted);
++            }
++            :global([data-theme="dark"]) .intel-panel {
++               background: rgba(22, 42, 48, 0.92);
++               border-color: var(--pp-border);
++            }
++            :global([data-theme="dark"]) .intel-stats li {
++               border-bottom-color: var(--pp-border);
++            }
++            :global([data-theme="dark"]) .intel-catalyst {
++               color: var(--pp-text-muted);
++            }
+          `}</style>
+       </div>
+    )
+diff --git a/src/components/properties/detail/PropertyStickyCta.tsx b/src/components/properties/detail/PropertyStickyCta.tsx
+index f80faca..fcfafae 100644
+--- a/src/components/properties/detail/PropertyStickyCta.tsx
++++ b/src/components/properties/detail/PropertyStickyCta.tsx
+@@ -211,6 +211,22 @@ const PropertyStickyCta = ({
+                   bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+                }
+             }
++
++            /* Dark mode: this bar was solid white with a hardcoded black
++               price value, so on a dark page it rendered as an unreadable
++               bright cutout pinned to the bottom of every phone screen. */
++            [data-theme="dark"] .pp-sticky-cta {
++               background: var(--pp-card-bg);
++               border-top-color: var(--pp-border);
++               box-shadow: var(--pp-shadow);
++            }
++            [data-theme="dark"] .pp-sticky-cta__label {
++               color: var(--pp-text-muted);
++               opacity: 1;
++            }
++            [data-theme="dark"] .pp-sticky-cta__value {
++               color: var(--pp-text-strong);
++            }
+          `}</style>
+       </>
+    );
