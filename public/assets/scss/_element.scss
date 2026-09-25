@@ -56,6 +56,9 @@
             &:hover, &:focus {
                 background: #000;
             }
+            [data-theme="dark"] &:hover, [data-theme="dark"] &:focus {
+                background: var(--pp-surface-2);
+            }
         }
         .search-btn-three {
             font-weight: 500;
@@ -67,6 +70,9 @@
             margin: 0 auto;
             &:hover, &:focus {
                 background: #000;
+            }
+            [data-theme="dark"] &:hover, [data-theme="dark"] &:focus {
+                background: var(--pp-surface-2);
             }
         }
         .search-btn-four {
@@ -86,6 +92,9 @@
             &:hover, &:focus {
                 background: #000;
             }
+            [data-theme="dark"] &:hover, [data-theme="dark"] &:focus {
+                background: var(--pp-surface-2);
+            }
         }
         .search-modal-btn {
             font-size: 14px;
@@ -104,6 +113,10 @@
             &:hover {
                 background: #000;
                 color: #fff;
+            }
+            [data-theme="dark"] &:hover {
+                background: var(--pp-surface-2);
+                color: var(--pp-text-strong);
             }
             &.sm {
                 border: none;
@@ -167,6 +180,10 @@
         &:hover {
             background: #000;
             color: #fff;
+        }
+        [data-theme="dark"] &:hover {
+            background: var(--pp-surface-2);
+            color: var(--pp-text-strong);
         }
         &.sm {
             border: none;
@@ -239,6 +256,10 @@
         &.active {
             background: #000;
             color: #fff;
+        }
+        [data-theme="dark"] &.active {
+            background: var(--pp-surface-2);
+            color: var(--pp-text-strong);
         }
     }
 }
@@ -674,6 +695,9 @@
             &:hover, &:focus {
                 background: #000;
             }
+            [data-theme="dark"] &:hover, [data-theme="dark"] &:focus {
+                background: var(--pp-surface-2);
+            }
         }
         .form-widget {
             a {
@@ -989,6 +1013,10 @@
             background: #000;
             color: #fff;
         }
+        [data-theme="dark"] &:hover {
+            background: var(--pp-surface-2);
+            color: var(--pp-text-strong);
+        }
     }
 }
 // Pagination One
@@ -1011,6 +1039,11 @@
         &.selected a{
             background: #000;
             color: #fff !important;
+        }
+        [data-theme="dark"] &:hover a,
+        [data-theme="dark"] &.selected a{
+            background: var(--pp-surface-2);
+            color: var(--pp-text-strong) !important;
         }
         &:last-child a ,
         &:first-child a {

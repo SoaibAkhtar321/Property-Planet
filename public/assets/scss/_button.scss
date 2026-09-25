@@ -17,6 +17,11 @@
     border-color: #000;
     color: #fff;
   }
+  [data-theme="dark"] &:hover, [data-theme="dark"] &:focus {
+    background: var(--pp-surface-2);
+    border-color: var(--pp-border-strong);
+    color: var(--pp-text-strong);
+  }
 }
 .btn-two {
   display: inline-flex;
@@ -80,6 +85,9 @@
     background: $color-one;
     &:hover, &:focus {
       background: #0C0C0C;
+    }
+    [data-theme="dark"] &:hover, [data-theme="dark"] &:focus {
+      background: var(--pp-surface-2);
     }
   }
 }
