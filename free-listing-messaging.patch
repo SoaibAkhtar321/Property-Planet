@@ -1,0 +1,130 @@
+diff --git a/src/components/common/FreeListingNotice.tsx b/src/components/common/FreeListingNotice.tsx
+new file mode 100644
+index 0000000..1ba3c5a
+--- /dev/null
++++ b/src/components/common/FreeListingNotice.tsx
+@@ -0,0 +1,44 @@
++/**
++ * Seller-facing "free to list" notice. Purely informational -- does not
++ * touch pricing/business logic, just states the existing model in plain
++ * language: listing is free, charges (if any) only apply later on a
++ * successful sale, per business terms. Never shown to buyers.
++ *
++ * variant="card"  -- boxed callout, for form/registration contexts
++ * variant="inline" -- compact badge + line, for CTA sections
++ */
++interface FreeListingNoticeProps {
++   variant?: "card" | "inline";
++   className?: string;
++}
++
++const FreeListingNotice = ({ variant = "card", className = "" }: FreeListingNoticeProps) => {
++   if (variant === "inline") {
++      return (
++         <p className={`fs-16 mt-15 mb-0 ${className}`}>
++            <span className="badge bg-success me-2">Free</span>
++            No upfront listing charges — list your property at no cost. Charges may apply only if
++            your property is successfully sold, as per our business terms.
++         </p>
++      );
++   }
++
++   return (
++      <div
++         className={`mb-30 ${className}`}
++         style={{ border: "1px solid #cdeccd", borderRadius: 16, padding: "18px 22px", background: "#f3fbf3" }}
++      >
++         <h6 className="mb-5">
++            <span className="badge bg-success me-2">Free</span>
++            List Your Property for Free
++         </h6>
++         <p className="fs-15 mb-0 opacity-75">
++            There are no upfront listing charges — creating a listing on Property Planet costs you
++            nothing. Charges may apply later only if your property is successfully sold, according
++            to our business terms.
++         </p>
++      </div>
++   );
++};
++
++export default FreeListingNotice;
+diff --git a/src/components/dashboard/add-property/AddPropertyBody.tsx b/src/components/dashboard/add-property/AddPropertyBody.tsx
+index b92e44f..f21eba6 100644
+--- a/src/components/dashboard/add-property/AddPropertyBody.tsx
++++ b/src/components/dashboard/add-property/AddPropertyBody.tsx
+@@ -6,6 +6,7 @@ import Overview from "./Overview"
+ import ListingDetails from "./ListingDetails"
+ import PropertyLocation from "./PropertyLocation"
+ import PropertyMediaUpload from "./PropertyMediaUpload"
++import FreeListingNotice from "@/components/common/FreeListingNotice"
+ import { initDraftProperty, updatePropertyListing, submitPropertyForReview } from "@/lib/properties/actions"
+ 
+ // One combined screen: fill every field, upload photos, then a single
+@@ -70,6 +71,8 @@ const AddPropertyBody = ({ error }: { error?: string }) => {
+             <DashboardHeaderTwo title="Add New Property" />
+             <h2 className="main-title d-block d-lg-none">Add New Property</h2>
+ 
++            <FreeListingNotice variant="card" />
++
+             {(error || initError || submitError) && (
+                <div className="alert alert-danger mb-30" role="alert">
+                   {submitError ?? initError ?? error}
+diff --git a/src/components/homes/home-two/index.tsx b/src/components/homes/home-two/index.tsx
+index 21dcd65..e503d73 100644
+--- a/src/components/homes/home-two/index.tsx
++++ b/src/components/homes/home-two/index.tsx
+@@ -13,12 +13,14 @@ import FancyBannerTwo from "./FancyBannerTwo"
+ import HeaderTwo from "@/layouts/headers/HeaderTwo"
+ import PropertyPlanetHowItWorks from "./PropertyPlanetHowItWorks"
+ import PropertyPlanetMapIntelligence from "./PropertyPlanetMapIntelligence"
++import SellerFancyBanner from "@/components/inner-pages/about-us/about-us-two/FancyBanner"
+ 
+ const HomeTwo = () => {
+   return (
+     <>
+       <HeaderTwo style_1={false} style_2={false} />
+       <HeroBanner />
++      <SellerFancyBanner />
+       <FeedbackOne />
+       <Property />
+       <ExploreProperties />
+diff --git a/src/components/inner-pages/about-us/about-us-two/FancyBanner.tsx b/src/components/inner-pages/about-us/about-us-two/FancyBanner.tsx
+index d2a04db..de0d38c 100644
+--- a/src/components/inner-pages/about-us/about-us-two/FancyBanner.tsx
++++ b/src/components/inner-pages/about-us/about-us-two/FancyBanner.tsx
+@@ -4,6 +4,7 @@ import Link from "next/link"
+ import fanchyBannerShape_1 from "@/assets/images/shape/shape_51.svg"
+ import fanchyBannerShape_2 from "@/assets/images/media/img_44.png"
+ import fanchyBannerShape_3 from "@/assets/images/shape/shape_50.svg"
++import FreeListingNotice from "@/components/common/FreeListingNotice"
+ 
+ const FancyBanner = () => {
+    return (
+@@ -22,6 +23,7 @@ const FancyBanner = () => {
+                            <Link href="/contact" className="btn-two rounded-0 border-0 mt-10"><span>Contact us</span></Link>
+                            <Image src={fanchyBannerShape_1} alt="" className="lazy-img shapes shape_02 wow fadeInRight" />
+                         </div>
++                        <FreeListingNotice variant="inline" className="pe-xxl-5" />
+                      </div>
+                   </div>
+                   <div className="col-xl-6 col-lg-5 col-md-5 text-center text-md-end">
+diff --git a/src/components/inner-pages/seller-register/index.tsx b/src/components/inner-pages/seller-register/index.tsx
+index 1c8f814..4e8a50e 100644
+--- a/src/components/inner-pages/seller-register/index.tsx
++++ b/src/components/inner-pages/seller-register/index.tsx
+@@ -1,6 +1,7 @@
+ import FooterOne from '@/layouts/footers/FooterOne'
+ import HeaderTwo from '@/layouts/headers/HeaderTwo'
+ import SellerRegisterForm from '@/components/forms/SellerRegisterForm'
++import FreeListingNotice from '@/components/common/FreeListingNotice'
+ import HowLeadsWork from './HowLeadsWork'
+ 
+ const SellerRegister = () => {
+@@ -14,6 +15,7 @@ const SellerRegister = () => {
+                      <h2>Register as a Seller/Agent</h2>
+                      <p className="fs-20 color-dark">List properties and manage leads on Property Planet.</p>
+                   </div>
++                  <FreeListingNotice variant="card" />
+                   <HowLeadsWork />
+                   <div className="form-wrapper m-auto">
+                      <SellerRegisterForm />

@@ -4,6 +4,7 @@ import Link from "next/link"
 import fanchyBannerShape_1 from "@/assets/images/shape/shape_51.svg"
 import fanchyBannerShape_2 from "@/assets/images/media/img_44.png"
 import fanchyBannerShape_3 from "@/assets/images/shape/shape_50.svg"
+import FreeListingNotice from "@/components/common/FreeListingNotice"
 
 const FancyBanner = () => {
    return (
@@ -22,6 +23,7 @@ const FancyBanner = () => {
                            <Link href="/contact" className="btn-two rounded-0 border-0 mt-10"><span>Contact us</span></Link>
                            <Image src={fanchyBannerShape_1} alt="" className="lazy-img shapes shape_02 wow fadeInRight" />
                         </div>
+                        <FreeListingNotice variant="inline" className="pe-xxl-5" />
                      </div>
                   </div>
                   <div className="col-xl-6 col-lg-5 col-md-5 text-center text-md-end">

@@ -1,6 +1,7 @@
 import FooterOne from '@/layouts/footers/FooterOne'
 import HeaderTwo from '@/layouts/headers/HeaderTwo'
 import SellerRegisterForm from '@/components/forms/SellerRegisterForm'
+import FreeListingNotice from '@/components/common/FreeListingNotice'
 import HowLeadsWork from './HowLeadsWork'
 
 const SellerRegister = () => {
@@ -14,6 +15,7 @@ const SellerRegister = () => {
                      <h2>Register as a Seller/Agent</h2>
                      <p className="fs-20 color-dark">List properties and manage leads on Property Planet.</p>
                   </div>
+                  <FreeListingNotice variant="card" />
                   <HowLeadsWork />
                   <div className="form-wrapper m-auto">
                      <SellerRegisterForm />

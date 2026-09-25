@@ -6,6 +6,7 @@ import Overview from "./Overview"
 import ListingDetails from "./ListingDetails"
 import PropertyLocation from "./PropertyLocation"
 import PropertyMediaUpload from "./PropertyMediaUpload"
+import FreeListingNotice from "@/components/common/FreeListingNotice"
 import { initDraftProperty, updatePropertyListing, submitPropertyForReview } from "@/lib/properties/actions"
 
 // One combined screen: fill every field, upload photos, then a single
@@ -69,6 +70,8 @@ const AddPropertyBody = ({ error }: { error?: string }) => {
          <div className="position-relative">
             <DashboardHeaderTwo title="Add New Property" />
             <h2 className="main-title d-block d-lg-none">Add New Property</h2>
+
+            <FreeListingNotice variant="card" />
 
             {(error || initError || submitError) && (
                <div className="alert alert-danger mb-30" role="alert">
