@@ -8,6 +8,10 @@
         background: #000;
         color: #fff;
     }
+    [data-theme="dark"] &:hover {
+        background: var(--pp-surface-2);
+        color: var(--pp-text-strong);
+    }
 }
 /*^^^^^^^^^^^^^^^^^^^^^ sidebar Menu ^^^^^^^^^^^^^^^^^^^^^^^^*/
 .offcanvas-backdrop{
@@ -101,7 +105,7 @@
     // browsers that don't support the :has() rule two lines up -- in either
     // case a borderless orange outline can disappear into the background.
     // A filled button is legible against any background, on every device.
-    &.menu-overlay .pp-header-menu-btn .btn-one {
+       &.menu-overlay .pp-header-menu-btn .btn-one {
         background: $color-one;
         border-color: $color-one;
         color: #fff;
@@ -109,6 +113,11 @@
             background: #000;
             border-color: #000;
             color: #fff;
+        }
+        [data-theme="dark"] &:hover, [data-theme="dark"] &:focus {
+            background: var(--pp-surface-2);
+            border-color: var(--pp-border-strong);
+            color: var(--pp-text-strong);
         }
     }
     &.menu-style-three{

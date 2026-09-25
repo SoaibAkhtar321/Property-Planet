@@ -522,7 +522,7 @@
             background: rgba($color: #000000, $alpha: 0.2);
             z-index: -1;
         }
-        .video-icon {
+                .video-icon {
             width: 140px;
             height: 140px;
             background: $color-one;
@@ -530,6 +530,9 @@
             font-size: 50px;
             &:hover {
                 background: #000;
+            }
+            [data-theme="dark"] &:hover {
+                background: var(--pp-surface-2);
             }
         }
     }
@@ -610,10 +613,18 @@
                         padding-left: 5px;
                         @include transition(0.3s);
                     }
-                    &:hover {
-                        span {
-                            color: $color-one;
+                                       &:hover {
+                        background: #000;
+                        color: #fff;
+                        img.invert {
+                            -webkit-filter: invert(100%); /* Safari/Chrome */
+                            filter: invert(100%);
+                            transform: rotate(360deg);
                         }
+                    }
+                    [data-theme="dark"] &:hover {
+                        background: var(--pp-surface-2);
+                        color: var(--pp-text-strong);
                     }
                 }
                 &:last-child a {
@@ -681,19 +692,18 @@
     }
     &.dark-bg {
         background: #141414;
+            &.grey-bg {
+        background: #F3F3F3;
         .wrapper ul li a {
-            background: transparent;
-            border: 1px solid rgba($color: #fff, $alpha: 0.13);
-            color: #fff;
-            img {
-                -webkit-filter: invert(100%); /* Safari/Chrome */
-                filter: invert(100%);  
-            }
+            background: #fff;
             &:hover {
-                border-color: $color-one;
-                color: $color-one;
+                background: #000;
+            }
+            [data-theme="dark"] &:hover {
+                background: var(--pp-surface-2);
             }
         }
+    }
     }
     &.grey-bg {
         background: #F3F3F3;
