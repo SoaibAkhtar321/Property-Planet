@@ -8,6 +8,9 @@
         background: #000;
         bottom: 0;
         left: 0;
+        [data-theme="dark"] & {
+            background: var(--pp-border-strong);
+        }
     }
     &:after {
         left: auto;
@@ -26,6 +29,9 @@
         padding: 0;
         button {
             background: #282828;
+            [data-theme="dark"] & {
+                background: var(--pp-border-strong);
+            }
         }
     }
 }
@@ -40,6 +46,9 @@
         line-height: 1.555em;
         color: #000;
         margin: 0;
+        [data-theme="dark"] & {
+            color: var(--pp-text-strong);
+        }
     }
 }
 // Feedback Section Two 
@@ -84,6 +93,9 @@
         line-height: 1.1486em;
         margin: 0;
         color: #000;
+        [data-theme="dark"] & {
+            color: var(--pp-text-strong);
+        }
         span {
             font-style: italic;
             color: $color-one;
@@ -219,6 +231,10 @@
     border-radius: 20px;
     position: relative;
     @include transition (0.2s);
+    [data-theme="dark"] & {
+        border-color: var(--pp-card-border);
+        background: var(--pp-card-bg);
+    }
     .avatar {
         width: 60px;
         height: 60px;
@@ -228,6 +244,9 @@
         line-height: 2em;
         color: #000;
         margin: 35px 0 60px;
+        [data-theme="dark"] & {
+            color: var(--pp-text-strong);
+        }
     }
     .rating {
         li {
@@ -244,6 +263,10 @@
 .slick-center .feedback-block-four {
     background: #F5F5F5;
     border-color: #F5F5F5;
+    [data-theme="dark"] & {
+        background: var(--pp-surface-2);
+        border-color: var(--pp-surface-2);
+    }
 }
 // Feedback Section Five
 .feedback-section-five {
@@ -288,10 +311,16 @@
                     height: 10px;
                     border: 1px solid #000;
                     background: transparent;
+                    [data-theme="dark"] & {
+                        border-color: var(--pp-border-strong);
+                    }
                 }
                 &.slick-active {
                     button {
                         background: #000;
+                        [data-theme="dark"] & {
+                            background: var(--pp-border-strong);
+                        }
                     }
                 }
             }
@@ -305,6 +334,9 @@
         padding: 11px 32px 23px;
         bottom: 30px;
         right: 30px;
+        [data-theme="dark"] & {
+            background: var(--pp-surface);
+        }
     }
 }
 .feedback-block-five {
@@ -317,6 +349,11 @@
         color: #000;
         font-style: italic;
         margin-bottom: 40px;
+        [data-theme="dark"] & {
+            border-top-color: var(--pp-border-strong);
+            border-bottom-color: var(--pp-border-strong);
+            color: var(--pp-text-strong);
+        }
         span {
             color: $color-one;
         }
@@ -342,10 +379,16 @@
             width: 10px;
             height: 10px;
             background: rgba($color: #000, $alpha: 0.15);
+            [data-theme="dark"] & {
+                background: var(--pp-border-strong);
+            }
         }
         .slick-active {
             button {
                 background: #000;
+                [data-theme="dark"] & {
+                    background: $color-one;
+                }
             }
         }
     }
@@ -365,6 +408,9 @@
 .feedback-block-six {
     padding: 50px 60px;
     background: #fff;
+    [data-theme="dark"] & {
+        background: var(--pp-card-bg);
+    }
     .rating {
         li {
             font-size: 20px;
@@ -377,6 +423,9 @@
         line-height: 1.718em;
         color: #000;
         margin: 30px 0 50px;
+        [data-theme="dark"] & {
+            color: var(--pp-text-strong);
+        }
     }
     .avatar {
         width: 60px;
@@ -388,6 +437,9 @@
     .content-wrapper {
         padding: 30px 45px 30px 90px;
         border-left: 1px solid #000;
+        [data-theme="dark"] & {
+            border-left-color: var(--pp-border-strong);
+        }
         &:before, &:after {
             content: '';
             position: absolute;
@@ -426,10 +478,16 @@
                     height: 10px;
                     border: 1px solid #000;
                     background: transparent;
+                    [data-theme="dark"] & {
+                        border-color: var(--pp-border-strong);
+                    }
                 }
                 &.slick-active {
                     button {
                         background: #000;
+                        [data-theme="dark"] & {
+                            background: var(--pp-border-strong);
+                        }
                     }
                 }
             }

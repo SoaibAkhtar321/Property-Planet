@@ -37,14 +37,24 @@
         border-radius: 20px;
         background: #fff;
         overflow: hidden;
+        [data-theme="dark"] & {
+            border-color: var(--pp-border-strong);
+            background: var(--pp-card-bg);
+        }
     }
     .pr-column-wrapper {
         width: 24%;
         border-left: 1px solid #000;
+        [data-theme="dark"] & {
+            border-left-color: var(--pp-border);
+        }
         .pr-header {
             border-bottom: 1px solid #000;
             padding: 30px 15px 15px;
             height: 230px;
+            [data-theme="dark"] & {
+                border-bottom-color: var(--pp-border);
+            }
             .plan {
                 font-size: 13px;
                 letter-spacing: 1px;
@@ -54,12 +64,20 @@
                 border: 1px solid #000;
                 border-radius: 18px;
                 display: inline-block;
+                [data-theme="dark"] & {
+                    background: var(--pp-surface-2);
+                    border-color: var(--pp-border-strong);
+                    color: var(--pp-text-strong);
+                }
             }
             .price {
                 font-size: 52px;
                 color: #000;
                 display: block;
                 margin: 20px 0 8px;
+                [data-theme="dark"] & {
+                    color: var(--pp-text-strong);
+                }
             }
         }
         ul {
@@ -78,6 +96,10 @@
                     margin: 0 auto;
                     background: #fff;
                     border: 1px solid transparent;
+                    [data-theme="dark"] & {
+                        color: var(--pp-text-strong);
+                        background: var(--pp-surface-2);
+                    }
                     &.available {
                         color: $color-one;
                     }
@@ -93,11 +115,20 @@
         .pr-footer {
             border-top: 1px solid #000;
             padding: 40px 15px 50px; 
+            [data-theme="dark"] & {
+                border-top-color: var(--pp-border);
+            }
         }
         &.active {
             background: #FFF8F4;
+            [data-theme="dark"] & {
+                background: var(--pp-surface-2);
+            }
             .icon {
                 border-color: #000;
+                [data-theme="dark"] & {
+                    border-color: var(--pp-border-strong);
+                }
                 &.available {
                     border-color: $color-one;
                 }
@@ -105,6 +136,9 @@
             .btn-twelve {
                 background: #000;
                 color: #fff;
+                [data-theme="dark"] & {
+                    background: $color-one;
+                }
             }
         }
     }
@@ -116,11 +150,18 @@
         bottom: 140px;
         border-top: 1px solid #000;
         border-bottom: 1px solid #000;
+        [data-theme="dark"] & {
+            border-top-color: var(--pp-border-strong);
+            border-bottom-color: var(--pp-border-strong);
+        }
         li {
             font-size: 17px;
             font-weight: 500;
             padding: 29px 10px 25px 35px;
             color: #000;
+            [data-theme="dark"] & {
+                color: var(--pp-text-strong);
+            }
         }
     }
 }
@@ -129,21 +170,36 @@
     .pr-column-wrapper {
         border: 1px solid #000;
         padding: 0 25px 45px;
+        [data-theme="dark"] & {
+            border-color: var(--pp-border-strong);
+        }
         .pr-header {
             border-bottom: 1px solid #000;
             padding: 30px 0;
+            [data-theme="dark"] & {
+                border-bottom-color: var(--pp-border);
+            }
             .plan {
                 font-size: 24px;
                 letter-spacing: 1px;
+                [data-theme="dark"] & {
+                    color: var(--pp-text-strong);
+                }
             }
             .price {
                 font-size: 72px;
                 color: #000;
                 display: block;
                 margin: 20px 0 8px;
+                [data-theme="dark"] & {
+                    color: var(--pp-text-strong);
+                }
             }
             p {
                 color: rgba($color: #000000, $alpha: 0.5);
+                [data-theme="dark"] & {
+                    color: var(--pp-text-muted);
+                }
             }
         }
         ul li {
@@ -152,6 +208,9 @@
             margin-bottom: 24px;
             text-align: left;
             color: #000;
+            [data-theme="dark"] & {
+                color: var(--pp-text-strong);
+            }
             &:before {
                 content: '\f00c';
                 font-family:$font-awesome;
@@ -162,6 +221,9 @@
             }
             &.disable {
                 color: #B9B9B9;
+                [data-theme="dark"] & {
+                    color: var(--pp-text-muted);
+                }
                 &:before {
                     content: '\f00d';
                 }
@@ -170,10 +232,18 @@
         &.active {
             background: #F3F3F3;
             border-color: #F3F3F3;
+            [data-theme="dark"] & {
+                background: var(--pp-surface-2);
+                border-color: var(--pp-surface-2);
+            }
             .btn-twelve {
                 background: #000;
                 border-color: #000;
                 color: #fff;
+                [data-theme="dark"] & {
+                    background: $color-one;
+                    border-color: $color-one;
+                }
                 &:hover {
                     background: $color-one;
                     border-color: $color-one;

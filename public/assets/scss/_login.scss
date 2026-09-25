@@ -21,6 +21,9 @@
     max-width: 720px;
     border-radius: 20px !important;
     padding: 50px 15px 40px;
+    [data-theme="dark"] & {
+        background: var(--pp-surface);
+    }
     h2 {
         font-size: 42px;
         margin-bottom: 10px;
@@ -43,6 +46,11 @@
                 padding: 0 52px 0 20px;
                 color: #000;
                 background: rgba($color: #000, $alpha: 0.04);
+                [data-theme="dark"] & {
+                    border-color: var(--pp-input-border);
+                    color: var(--pp-text-strong);
+                    background: var(--pp-input-bg);
+                }
             }
             label {
                 font-size: 16px;
@@ -50,6 +58,9 @@
                 color: rgba(0, 0, 0, 0.5);
                 display: block;
                 margin-bottom: 6px;
+                [data-theme="dark"] & {
+                    color: var(--pp-text-muted);
+                }
             }
             .placeholder_icon {
                 position: absolute;
@@ -62,6 +73,9 @@
                 z-index: 1;
                 color: rgba(0,0,0,0.45);
                 font-size: 17px;
+                [data-theme="dark"] & {
+                    color: var(--pp-text-muted);
+                }
             }
             .placeholder_icon img {
                 position: relative;
@@ -87,6 +101,9 @@
                 transform: rotate(45deg);
                 z-index: 5;
                 transition: all 0.2s ease-in-out;
+                [data-theme="dark"] & {
+                    background: var(--pp-text-strong);
+                }
             }
             .placeholder_icon span.eye-slash:before {opacity: 0;}
         }
@@ -99,10 +116,16 @@
         cursor: pointer;
         padding-left: 22px;
         transition: all 0.1s ease-in-out;
+        [data-theme="dark"] & {
+            color: var(--pp-text-strong);
+        }
     }
     .agreement-checkbox label a {
         color: #000;
         text-decoration: underline;
+        [data-theme="dark"] & {
+            color: var(--pp-text-strong);
+        }
     }
     .agreement-checkbox input[type="checkbox"] {display: none;}
     .agreement-checkbox label:before {
@@ -118,6 +141,9 @@
         left:0;
         top:4px;
         transition: all 0.1s ease-in-out;
+        [data-theme="dark"] & {
+            border-color: var(--pp-border-strong);
+        }
     }
     .agreement-checkbox input[type="checkbox"]:checked + label:before {
         content: "\f00c";
@@ -125,11 +151,18 @@
         background: #000;
         color: #fff;
         border-color:  #000;
+        [data-theme="dark"] & {
+            background: $color-one;
+            border-color: $color-one;
+        }
     }
     .agreement-checkbox a {
         position: relative;
         font-size: 14px;
         color: rgba($color: #000000, $alpha: 0.5);
+        [data-theme="dark"] & {
+            color: var(--pp-text-muted);
+        }
     }
     .agreement-checkbox a:hover {
         text-decoration: underline; 
@@ -139,6 +172,9 @@
         height: 1px;
         width: 100%;
         background: rgba($color: #000000, $alpha: 0.2);
+        [data-theme="dark"] & {
+            background: var(--pp-border);
+        }
     }
     .social-use-btn {
         font-size: 16px;
@@ -146,8 +182,15 @@
         height: 55px;
         border: 1px solid #E5E5E5;
         border-radius: 7px;
+        [data-theme="dark"] & {
+            color: var(--pp-text-strong);
+            border-color: var(--pp-input-border);
+        }
         &:hover {
             background: rgba($color: #000000, $alpha: 0.06);
+            [data-theme="dark"] & {
+                background: var(--pp-surface-2);
+            }
         }
         img {
             width: 20px;
@@ -164,6 +207,9 @@
         background: #FFF8F4;
         border-radius: 40px;
         border: 1px solid $color-one;
+        [data-theme="dark"] & {
+            background: var(--pp-surface-2);
+        }
         .nav-item {
             width: 50%;
             .nav-link {
@@ -174,9 +220,15 @@
                 color: #000;
                 margin: 0;
                 padding: 13px 5px;
+                [data-theme="dark"] & {
+                    color: var(--pp-text-strong);
+                }
                 &.active {
                     color: $color-one;
                     background: #fff;
+                    [data-theme="dark"] & {
+                        background: var(--pp-surface);
+                    }
                 }
             }
             &:first-child {

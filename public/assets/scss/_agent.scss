@@ -8,6 +8,9 @@
         background: #000;
         bottom: 0;
         left: 0;
+        [data-theme="dark"] & {
+            background: var(--pp-border-strong);
+        }
     }
     &:after {
         left: auto;
@@ -38,6 +41,9 @@
         padding: 0;
         button {
             background: #282828;
+            [data-theme="dark"] & {
+                background: var(--pp-border-strong);
+            }
         }
     }
 }
