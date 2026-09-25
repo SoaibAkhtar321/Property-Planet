@@ -43,6 +43,17 @@ import { useEffect, useState } from "react";
  * requested, never both, and the server-rendered / no-JS / reduced-motion
  * state is the existing SVG sequence (unchanged) acting as a real fallback,
  * not a video with a slow-loading source.
+ *
+ * Resolving order (fixes the old-hero flash): `hasVideoSources` is derived
+ * from build-time-inlined env vars, so server and client agree on it from
+ * the very first paint -- no waiting on JS for that part. The *aspect-ratio*
+ * pick (desktop vs. mobile) and the reduced-motion check DO need the
+ * client, though, so while those are still resolving we show a poster-only
+ * placeholder (desktop/mobile poster picked by a plain CSS media query, no
+ * JS needed) instead of the animated SVG house. That SVG is reserved for
+ * the one case it actually belongs to: no video configured at all. This
+ * keeps the animation from ever being the thing that flashes in front of
+ * an about-to-appear video.
  */
 const HERO_VIDEO_DESKTOP_URL = process.env.NEXT_PUBLIC_HERO_VIDEO_DESKTOP_URL;
 const HERO_VIDEO_MOBILE_URL = process.env.NEXT_PUBLIC_HERO_VIDEO_MOBILE_URL;
@@ -60,6 +71,11 @@ const HeroBuildAnimation = () => {
    // rendered markup never guesses a source (and never ships either video
    // URL into markup that could be prefetched).
    const [videoChoice, setVideoChoice] = useState<HeroVideoChoice>(null);
+   // Flips true once the effect below has resolved both the reduced-motion
+   // preference and the viewport aspect ratio. Gates which "resolved" state
+   // (video vs. animated SVG) we're allowed to show -- see hasVideoSources
+   // branch below for what renders before that.
+   const [resolved, setResolved] = useState(false);
 
    useEffect(() => {
       const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -75,6 +91,8 @@ const HeroBuildAnimation = () => {
       const onArChange = (e: MediaQueryListEvent) => applyChoice(e.matches);
       arQuery.addEventListener("change", onArChange);
 
+      setResolved(true);
+
       return () => {
          motionQuery.removeEventListener("change", onMotionChange);
          arQuery.removeEventListener("change", onArChange);
@@ -83,25 +101,52 @@ const HeroBuildAnimation = () => {
 
    const hasVideoSources = Boolean(HERO_VIDEO_DESKTOP_URL && HERO_VIDEO_MOBILE_URL);
 
-   if (hasVideoSources && videoChoice && !reducedMotion) {
-      const src = videoChoice === "desktop" ? HERO_VIDEO_DESKTOP_URL : HERO_VIDEO_MOBILE_URL;
-      const poster =
-         videoChoice === "desktop" ? HERO_VIDEO_DESKTOP_POSTER : HERO_VIDEO_MOBILE_POSTER;
+   if (hasVideoSources) {
+      if (resolved && videoChoice && !reducedMotion) {
+         const src = videoChoice === "desktop" ? HERO_VIDEO_DESKTOP_URL : HERO_VIDEO_MOBILE_URL;
+         const poster =
+            videoChoice === "desktop" ? HERO_VIDEO_DESKTOP_POSTER : HERO_VIDEO_MOBILE_POSTER;
 
+         return (
+            <div className="hero-video-bg" aria-hidden="true">
+               <video
+                  key={videoChoice}
+                  className="hero-video-bg__video"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  poster={poster}
+               >
+                  <source src={src} type="video/mp4" />
+               </video>
+            </div>
+         );
+      }
+
+      // Covers two cases: (a) still resolving on the client -- viewport
+      // aspect ratio and reduced-motion aren't known yet, so we can't pick
+      // desktop vs. mobile video, and (b) resolved as reduced-motion, which
+      // this hero treats the same way -- a static frame, not the animated
+      // SVG build sequence. Either way this is a plain CSS-media-query
+      // swap between the two existing poster images, so it's correct on
+      // the very first paint with zero JS and zero extra network request
+      // (browsers only fetch the poster that's actually displayed).
       return (
-         <div className="hero-video-bg" aria-hidden="true">
-            <video
-               key={videoChoice}
-               className="hero-video-bg__video"
-               autoPlay
-               muted
-               loop
-               playsInline
-               preload="auto"
-               poster={poster}
-            >
-               <source src={src} type="video/mp4" />
-            </video>
+         <div className="hero-video-bg hero-video-bg--poster" aria-hidden="true">
+            {HERO_VIDEO_DESKTOP_POSTER && (
+               <div
+                  className="hero-video-bg__poster hero-video-bg__poster--desktop"
+                  style={{ backgroundImage: `url(${HERO_VIDEO_DESKTOP_POSTER})` }}
+               />
+            )}
+            {HERO_VIDEO_MOBILE_POSTER && (
+               <div
+                  className="hero-video-bg__poster hero-video-bg__poster--mobile"
+                  style={{ backgroundImage: `url(${HERO_VIDEO_MOBILE_POSTER})` }}
+               />
+            )}
          </div>
       );
    }

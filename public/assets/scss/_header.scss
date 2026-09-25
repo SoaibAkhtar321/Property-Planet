@@ -74,13 +74,22 @@
     // the video sits underneath, on both desktop and mobile, without
     // reserving extra height or changing the header's markup/behavior.
     //
-    // Scoped with :has() to "menu-overlay header immediately followed by
-    // the hero-banner-two section" -- i.e. the homepage only. Every other
-    // .menu-overlay caller (e.g. About Us, which is followed by a plain
-    // breadcrumb banner, not this hero) and every .static-header page
-    // (all detail pages, already solid/unaffected) keep their exact
-    // existing appearance.
-    &.menu-overlay:has(+ .hero-banner-two) {
+    // Scoped to "menu-overlay header on a page with a hero" -- i.e. the
+    // homepage only. Every other .menu-overlay caller (e.g. About Us,
+    // which is followed by a plain breadcrumb banner, not this hero) and
+    // every .static-header page (all detail pages, already solid/
+    // unaffected) keep their exact existing appearance.
+    //
+    // Two ways to match, deliberately: the :has() sibling selector is the
+    // "it just works from the DOM" case, but a page that actually has a
+    // hero (HomeTwo) also passes an explicit `overHero` prop to
+    // HeaderTwo, which adds the plain `.over-hero` class below -- that one
+    // doesn't depend on `:has()` support or on the hero staying the exact
+    // next sibling, so it's the reliable path; `:has()` is kept as a
+    // harmless backup for any other page that ends up in this situation
+    // without wiring the prop through.
+    &.menu-overlay:has(+ .hero-banner-two),
+    &.menu-overlay.over-hero {
         background: #fff;
         box-shadow: 0 13px 35px -12px rgb(35 35 35 / 10%);
     }
@@ -313,6 +322,7 @@
         padding: 0 18px;
     }
 }
+// Dropdown (mega)
 .navbar [class*="mega-dropdown"] .dropdown-menu {
     padding: 0 0 15px; 
     margin: 0; 

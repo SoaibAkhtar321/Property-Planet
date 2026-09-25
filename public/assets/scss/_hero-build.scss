@@ -44,6 +44,32 @@ $hb-cycle: 18s;
    }
 }
 
+/* Poster-only placeholder shown before the client has resolved which video
+   to play (or when reduced-motion is on). Same two sources as the video
+   branch, picked with a plain CSS media query so there's no flash and no
+   dependency on JS having run yet. Mirrors the JS aspect-ratio check in
+   HeroBuildAnimation.tsx (viewport AR >= 1 -> desktop). */
+.hero-video-bg--poster {
+   .hero-video-bg__poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center 38%;
+      display: none;
+   }
+
+   .hero-video-bg__poster--desktop { display: block; }
+}
+
+@media (max-aspect-ratio: 1/1) {
+   .hero-video-bg--poster {
+      .hero-video-bg__poster--desktop { display: none; }
+      .hero-video-bg__poster--mobile { display: block; }
+   }
+}
+
 @media (prefers-reduced-motion: reduce) {
    /* A looping video is exactly the motion this setting asks us to stop.
       Reduced-motion visitors get the static SVG house instead (handled in

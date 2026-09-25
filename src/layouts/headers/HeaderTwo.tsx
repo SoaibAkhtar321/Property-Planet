@@ -38,7 +38,7 @@ const HeaderSellerButton = () => {
    );
 };
 
-const HeaderTwo = ({ style_1, style_2, staticHeader = false }: any) => {
+const HeaderTwo = ({ style_1, style_2, staticHeader = false, overHero = false }: any) => {
    const { sticky } = UseSticky();
    const [offCanvas, setOffCanvas] = useState<boolean>(false);
    const [isSearch, setIsSearch] = useState<boolean>(false);
@@ -48,9 +48,17 @@ const HeaderTwo = ({ style_1, style_2, staticHeader = false }: any) => {
    // instead of the homepage's absolute/transparent overlay -- see
    // _header.scss for why. Homepage callers omit the prop and keep the
    // existing menu-overlay behavior untouched.
+   //
+   // overHero: the homepage passes this explicitly (see HomeTwo/index.tsx)
+   // so the "give the header a solid background over the hero" rule no
+   // longer depends solely on the CSS `:has(+ .hero-banner-two)` sibling
+   // selector -- that rule stays in the stylesheet as a harmless backup,
+   // but the actual page that has a hero now says so directly via a plain
+   // class, which every browser applies unconditionally and doesn't
+   // depend on this exact DOM adjacency ever holding.
    return (
       <>
-         <div className={`theme-main-menu sticky-menu ${staticHeader ? "static-header" : "menu-overlay"} ${style_2 ? "menu-style-four" : style_1 ? "menu-style-three" : "menu-style-two"} ${sticky ? "fixed" : ""}`}>
+         <div className={`theme-main-menu sticky-menu ${staticHeader ? "static-header" : "menu-overlay"}${overHero ? " over-hero" : ""} ${style_2 ? "menu-style-four" : style_1 ? "menu-style-three" : "menu-style-two"} ${sticky ? "fixed" : ""}`}>
             <div className={`inner-content ${style_2 ? "gap-two" : "gap-one"}`}>
                <div className="top-header position-relative">
                   <div className="d-flex align-items-center">

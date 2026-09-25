@@ -161,7 +161,12 @@ body {
 .theme-main-menu {
   color: var(--pp-header-text);
 
-  &.menu-overlay:has(+ .hero-banner-two) {
+  // See _header.scss for why both selectors are listed: `:has()` is the
+  // DOM-driven match, `.over-hero` is the explicit one HomeTwo passes in
+  // via HeaderTwo's `overHero` prop and is the one that's actually
+  // reliable.
+  &.menu-overlay:has(+ .hero-banner-two),
+  &.menu-overlay.over-hero {
     background: var(--pp-header-bg);
   }
 
@@ -944,12 +949,12 @@ body {
     color: rgba(232, 238, 240, 0.88) !important;
   }
 
-  .theme-main-menu.static-header,
+   .theme-main-menu.static-header,
   .theme-main-menu.fixed,
-  .theme-main-menu.menu-overlay:has(+ .hero-banner-two) {
+  .theme-main-menu.menu-overlay:has(+ .hero-banner-two),
+  .theme-main-menu.menu-overlay.over-hero {
     background: #0f2226 !important;
   }
-
   .theme-main-menu .navbar .navbar-nav .nav-link {
     color: #f2f6f7 !important;
   }
