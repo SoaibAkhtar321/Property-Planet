@@ -63,9 +63,11 @@ comment on column properties.price_unit_label is
 
 -- property_public (0002, last redefined in 0020): same definition, plus
 -- price_unit/price_unit_label so the public detail/card/similar-properties
--- surfaces can render the unit. create or replace view cannot add a column
--- without restating the whole view, so it's repeated in full here, exactly
--- as in 0020, with only the two new columns added.
+-- surfaces can render the unit. create or replace view can only append
+-- columns, never insert/reorder them, so the two new columns are added at
+-- the end (after is_featured), same as every previous redefinition of this
+-- view (project_id in 0017, is_featured in 0020) appended rather than
+-- inserted its new column(s).
 create or replace view property_public
   with (security_invoker = true) as
   select
@@ -75,8 +77,6 @@ create or replace view property_public
     p.property_type,
     p.listing_type,
     p.price,
-    p.price_unit,
-    p.price_unit_label,
     p.area,
     p.area_unit,
     p.bedrooms,
@@ -90,7 +90,9 @@ create or replace view property_public
     pl.approx_lat,
     pl.approx_lng,
     p.project_id,
-    p.is_featured
+    p.is_featured,
+    p.price_unit,
+    p.price_unit_label
   from properties p
   left join property_location pl on pl.property_id = p.id
   where p.status = 'published';
