@@ -17,7 +17,7 @@ const STEPS: string[] = [
 
 const HowLeadsWork = () => {
    return (
-      <div className="mb-40" style={{ border: "1px solid #e6e6e6", borderRadius: 16, padding: "24px 26px", background: "#fafafa" }}>
+      <div className="mb-40" style={{ border: "1px solid var(--pp-border)", borderRadius: 16, padding: "24px 26px", background: "var(--pp-surface-2)" }}>
          <h5 className="mb-15">How leads work on Property Planet</h5>
          <p className="fs-16 mb-15">
             Property Planet manages the initial lead coordination. Buyer contact details are handled by the

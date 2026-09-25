@@ -26,7 +26,7 @@ const FreeListingNotice = ({ variant = "card", className = "" }: FreeListingNoti
    return (
       <div
          className={`mb-30 ${className}`}
-         style={{ border: "1px solid #cdeccd", borderRadius: 16, padding: "18px 22px", background: "#f3fbf3" }}
+         style={{ border: "1px solid light-dark(#cdeccd, rgba(46, 204, 113, 0.35))", borderRadius: 16, padding: "18px 22px", background: "light-dark(#f3fbf3, var(--pp-surface-2))" }}
       >
          <h6 className="mb-5">
             <span className="badge bg-success me-2">Free</span>

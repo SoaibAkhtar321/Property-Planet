@@ -90,8 +90,8 @@ const DeleteAccountSection = () => {
    const isDeleting = status === "deleting";
 
    return (
-      <div className="bg-white card-box border-20 mt-30" style={{ border: "1px solid #f3c6c6" }}>
-         <h4 className="dash-title-three" style={{ color: "#c0392b" }}>Delete Account</h4>
+      <div className="bg-white card-box border-20 mt-30" style={{ border: "1px solid light-dark(#f3c6c6, rgba(224, 92, 92, 0.4))" }}>
+         <h4 className="dash-title-three" style={{ color: "light-dark(#c0392b, #ff6b6b)" }}>Delete Account</h4>
          <p className="mb-20">
             Permanently delete your Property Planet account. This cannot be undone from the app.
             Deleting your account may affect your profile information, saved/favourite properties,
@@ -121,7 +121,7 @@ const DeleteAccountSection = () => {
                <div className="modal-dialog modal-dialog-centered">
                   <div className="modal-content p-20">
                      <div className="modal-header border-0">
-                        <h5 className="modal-title" id="deleteAccountModalTitle" style={{ color: "#c0392b" }}>
+                        <h5 className="modal-title" id="deleteAccountModalTitle" style={{ color: "light-dark(#c0392b, #ff6b6b)" }}>
                            Permanently delete your account?
                         </h5>
                         {!isDeleting && (

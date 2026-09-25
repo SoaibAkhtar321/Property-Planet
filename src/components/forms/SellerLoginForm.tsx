@@ -145,7 +145,7 @@ const SellerLoginForm = () => {
 
             {needsConfirmation && (
                <div className="col-12 mb-20">
-                  <p className="fs-16" style={{ color: "#b45309" }}>
+                  <p className="fs-16" style={{ color: "light-dark(#b45309, #f0b35c)" }}>
                      Your email isn&apos;t confirmed yet. Check your inbox for the confirmation link, or
                   </p>
                   <button type="button" onClick={handleResend} disabled={resending} className="btn-two w-100 text-uppercase d-block mt-10">

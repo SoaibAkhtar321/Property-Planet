@@ -75,7 +75,7 @@ const PropertyDetail = ({ property, similar }: { property: Property; similar: Pr
                      </div>
                   </div>
                   {property.isDemo && (
-                     <div className="fs-14 mt-15" style={{ color: "#8a6d00" }}>
+                     <div className="fs-14 mt-15" style={{ color: "light-dark(#8a6d00, #e8c34d)" }}>
                         This is demo data for layout purposes only — not a confirmed Property Planet listing.
                      </div>
                   )}

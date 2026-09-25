@@ -44,7 +44,7 @@ const BreadcrumbTrail = ({ items }: { items: BreadcrumbItem[] }) => {
                   <li
                      key={item.path}
                      className="d-flex align-items-center"
-                     style={{ color: isLast ? "#000" : "rgba(49, 49, 49, 0.6)" }}
+                     style={{ color: isLast ? "var(--pp-text-strong)" : "var(--pp-text-muted)" }}
                   >
                      {isLast ? (
                         <span aria-current="page">{item.name}</span>

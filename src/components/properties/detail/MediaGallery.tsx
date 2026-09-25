@@ -12,7 +12,7 @@ const MediaGallery = ({ images, title }: { images: string[]; title: string }) =>
          <div className="media-gallery-grid mb-50">
             <div className="row">
                <div className="col-12 d-flex">
-                  <div className="media-bg h-100 w-100 d-flex align-items-center justify-content-center text-center fs-16 color-dark" style={{ minHeight: 260, background: "#f5f0eb" }}>
+                  <div className="media-bg h-100 w-100 d-flex align-items-center justify-content-center text-center fs-16 color-dark" style={{ minHeight: 260, background: "var(--pp-surface-2)" }}>
                      Photos coming soon
                   </div>
                </div>
