@@ -90,8 +90,17 @@
             }
             .email {
                 color: #fff;
-                font-size: 36px;
+                // Was 36px -- fine for a short address, but with the real
+                // account email (riadelightpvtltd@gmail.com, 27 chars) it
+                // ran past the card's own width instead of wrapping inside
+                // it. Sized down and given a wrap fallback so any future
+                // address stays inside the card regardless of length.
+                font-size: 20px;
                 letter-spacing: 0;
+                word-break: break-word;
+                overflow-wrap: anywhere;
+                display: inline-block;
+                max-width: 100%;
                 &:hover {
                     color: $color-one;
                 }
