@@ -77,11 +77,18 @@ const FooterOne = ({ style }: any) => {
          <div className="bottom-footer position-relative z-1">
             <div className="container">
                <div className="text-center py-2">
-   <p className="mb-1">
-      Powered by ...
-   </p>
-   <a href="tel:8957833269" className="fs-14 opacity-75">Contact us at 8957833269</a>
-</div>
+                  <p className="mb-0">
+                     Powered by{" "}
+                     <a
+                        href="https://spesio-technologies.vercel.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                     >
+                        Spesio Technologies
+                     </a>
+                  </p>
+                  <a href="tel:8957833269" className="fs-14 opacity-75">Contact us at 8957833269</a>
+               </div>
             </div>
          </div>
       </div>
