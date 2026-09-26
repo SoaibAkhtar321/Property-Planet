@@ -13,7 +13,10 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+
+import OpenEye from "@/assets/images/icon/icon_68.svg";
 
 interface FormData {
    password: string;
@@ -34,6 +37,10 @@ const ResetPasswordForm = () => {
    const router = useRouter();
    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: yupResolver(schema) });
    const [loading, setLoading] = useState(false);
+   // Two independent toggles -- revealing the new password shouldn't
+   // force-reveal the confirmation field too, and vice versa.
+   const [isPasswordVisible, setPasswordVisibility] = useState(false);
+   const [isConfirmVisible, setConfirmVisibility] = useState(false);
 
    const onSubmit = async (data: FormData) => {
       setLoading(true);
@@ -59,14 +66,62 @@ const ResetPasswordForm = () => {
             <div className="col-12">
                <div className="input-group-meta position-relative mb-25">
                   <label>New Password*</label>
-                  <input type="password" {...register("password")} placeholder="Enter new password" />
+                  <input
+                     type={isPasswordVisible ? "text" : "password"}
+                     {...register("password")}
+                     placeholder="Enter new password"
+                     className="pass_log_id"
+                  />
+                  <span className="placeholder_icon">
+                     <span className={`passVicon ${isPasswordVisible ? "eye-slash" : ""}`}>
+                        <Image
+                           onClick={() => setPasswordVisibility((v) => !v)}
+                           onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                 e.preventDefault();
+                                 setPasswordVisibility((v) => !v);
+                              }
+                           }}
+                           role="button"
+                           tabIndex={0}
+                           aria-pressed={isPasswordVisible}
+                           src={OpenEye}
+                           alt="Show password"
+                           style={{ cursor: "pointer" }}
+                        />
+                     </span>
+                  </span>
                   <p className="form_error">{errors.password?.message}</p>
                </div>
             </div>
             <div className="col-12">
                <div className="input-group-meta position-relative mb-25">
                   <label>Confirm Password*</label>
-                  <input type="password" {...register("confirmPassword")} placeholder="Confirm new password" />
+                  <input
+                     type={isConfirmVisible ? "text" : "password"}
+                     {...register("confirmPassword")}
+                     placeholder="Confirm new password"
+                     className="pass_log_id"
+                  />
+                  <span className="placeholder_icon">
+                     <span className={`passVicon ${isConfirmVisible ? "eye-slash" : ""}`}>
+                        <Image
+                           onClick={() => setConfirmVisibility((v) => !v)}
+                           onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                 e.preventDefault();
+                                 setConfirmVisibility((v) => !v);
+                              }
+                           }}
+                           role="button"
+                           tabIndex={0}
+                           aria-pressed={isConfirmVisible}
+                           src={OpenEye}
+                           alt="Show password"
+                           style={{ cursor: "pointer" }}
+                        />
+                     </span>
+                  </span>
                   <p className="form_error">{errors.confirmPassword?.message}</p>
                </div>
             </div>

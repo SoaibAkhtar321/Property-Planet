@@ -82,6 +82,13 @@
                 top:50%;
                 margin: 0 auto;
                 transform: translateY(-50%);
+                /* The eye icon (icon_68.svg) is a static SVG with
+                   fill="black" baked in, so on a dark input it was
+                   effectively invisible -- same fix already used for the
+                   dashboard notification bell icon. */
+                [data-theme="dark"] & {
+                    filter: invert(1) brightness(1.8);
+                }
             }
             .placeholder_icon span {
                 width: 100%;

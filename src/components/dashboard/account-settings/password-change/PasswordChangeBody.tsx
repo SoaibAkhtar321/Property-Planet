@@ -1,8 +1,11 @@
 "use client"
 import { useState } from "react";
+import Image from "next/image";
 import DashboardHeaderTwo from "@/layouts/headers/dashboard/DashboardHeaderTwo"
 import { createClient } from "@/lib/supabase/client";
 import type { UserRole } from "@/lib/auth/session";
+
+import OpenEye from "@/assets/images/icon/icon_68.svg";
 
 // Phase 4I: this form used to be entirely unwired -- `onSubmit`
 // preventDefault'd and threw the values away, and "Save & Updated" was a
@@ -22,6 +25,11 @@ const PasswordChangeBody = ({ role }: { role: UserRole }) => {
    const [error, setError] = useState("");
    const [success, setSuccess] = useState(false);
    const [isSaving, setIsSaving] = useState(false);
+   // Three independent toggles -- revealing one of old/new/confirm
+   // shouldn't force-reveal the other two.
+   const [showOld, setShowOld] = useState(false);
+   const [showNew, setShowNew] = useState(false);
+   const [showConfirm, setShowConfirm] = useState(false);
 
    // Buyers sign in via Google OAuth only (see DeleteAccountSection.tsx's
    // comment) and have no password on the account, so this form can never
@@ -110,39 +118,99 @@ const PasswordChangeBody = ({ role }: { role: UserRole }) => {
                         <div className="dash-input-wrapper mb-20">
                            <label htmlFor="oldPassword">Old Password*</label>
                            <input
-                              type="password"
+                              type={showOld ? "text" : "password"}
                               id="oldPassword"
                               placeholder="Type current password"
                               value={oldPassword}
                               onChange={(e) => setOldPassword(e.target.value)}
                               autoComplete="current-password"
+                              className="pass_log_id"
                            />
+                           <span className="placeholder_icon">
+                              <span className={`passVicon ${showOld ? "eye-slash" : ""}`}>
+                                 <Image
+                                    onClick={() => setShowOld((v) => !v)}
+                                    onKeyDown={(e) => {
+                                       if (e.key === "Enter" || e.key === " ") {
+                                          e.preventDefault();
+                                          setShowOld((v) => !v);
+                                       }
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-pressed={showOld}
+                                    src={OpenEye}
+                                    alt="Show password"
+                                    style={{ cursor: "pointer" }}
+                                 />
+                              </span>
+                           </span>
                         </div>
                      </div>
                      <div className="col-12">
                         <div className="dash-input-wrapper mb-20">
                            <label htmlFor="newPassword">New Password*</label>
                            <input
-                              type="password"
+                              type={showNew ? "text" : "password"}
                               id="newPassword"
                               placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
                               value={newPassword}
                               onChange={(e) => setNewPassword(e.target.value)}
                               autoComplete="new-password"
+                              className="pass_log_id"
                            />
+                           <span className="placeholder_icon">
+                              <span className={`passVicon ${showNew ? "eye-slash" : ""}`}>
+                                 <Image
+                                    onClick={() => setShowNew((v) => !v)}
+                                    onKeyDown={(e) => {
+                                       if (e.key === "Enter" || e.key === " ") {
+                                          e.preventDefault();
+                                          setShowNew((v) => !v);
+                                       }
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-pressed={showNew}
+                                    src={OpenEye}
+                                    alt="Show password"
+                                    style={{ cursor: "pointer" }}
+                                 />
+                              </span>
+                           </span>
                         </div>
                      </div>
                      <div className="col-12">
                         <div className="dash-input-wrapper mb-20">
                            <label htmlFor="confirmPassword">Confirm Password*</label>
                            <input
-                              type="password"
+                              type={showConfirm ? "text" : "password"}
                               id="confirmPassword"
                               placeholder="Confirm your new password"
                               value={confirmPassword}
                               onChange={(e) => setConfirmPassword(e.target.value)}
                               autoComplete="new-password"
+                              className="pass_log_id"
                            />
+                           <span className="placeholder_icon">
+                              <span className={`passVicon ${showConfirm ? "eye-slash" : ""}`}>
+                                 <Image
+                                    onClick={() => setShowConfirm((v) => !v)}
+                                    onKeyDown={(e) => {
+                                       if (e.key === "Enter" || e.key === " ") {
+                                          e.preventDefault();
+                                          setShowConfirm((v) => !v);
+                                       }
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-pressed={showConfirm}
+                                    src={OpenEye}
+                                    alt="Show password"
+                                    style={{ cursor: "pointer" }}
+                                 />
+                              </span>
+                           </span>
                         </div>
                      </div>
                   </div>

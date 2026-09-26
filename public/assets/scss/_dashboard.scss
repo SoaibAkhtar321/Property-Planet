@@ -643,17 +643,30 @@
 
     // Input Style
     .dash-input-wrapper {
+        // Needed so a .placeholder_icon (password-visibility eye) inside
+        // one of these wrappers positions against the wrapper itself,
+        // not the nearest other positioned ancestor.
+        position: relative;
+
         label {
             display: block;
             font-size: 15px;
             font-weight: 500;
-            color: #000;
+            /* Was a flat #000 that never changed with the theme -- because
+               .dashboard.scss is imported after theme.scss, this beat the
+               dark-mode `label { color: inherit }` rule on source order
+               even though selector specificity was equal, so dashboard
+               field labels (e.g. Change Password) stayed black-on-dark
+               and were effectively unreadable. light-dark() reads the
+               color-scheme the theme toggle already sets, so it resolves
+               correctly regardless of import order. */
+            color: light-dark(#000, var(--pp-text-strong));
             margin-bottom: 10px;
         }
         .alert-text {
             font-size: 14px;
             letter-spacing: -0.14px;
-            color: rgba($color: #000, $alpha: 0.5);
+            color: light-dark(rgba(0, 0, 0, 0.5), var(--pp-text-muted));
         }
         input {
             width: 100%;
@@ -663,6 +676,61 @@
             border-radius: 8px;
             padding: 0 20px;
             font-size: 16px;
+
+            &.pass_log_id {
+                padding-right: 52px;
+            }
+        }
+        // Password-visibility eye icon, matching the same
+        // .placeholder_icon/.passVicon markup used on the seller
+        // login/register forms (_login.scss) so all password fields in
+        // the app behave identically.
+        .placeholder_icon {
+            position: absolute;
+            height: 55px;
+            top: 34px;
+            right: 0;
+            bottom: 0;
+            width: 50px;
+            text-align: center;
+            z-index: 1;
+            color: light-dark(rgba(0, 0, 0, 0.45), var(--pp-text-muted));
+            font-size: 17px;
+
+            img {
+                position: relative;
+                top: 50%;
+                margin: 0 auto;
+                transform: translateY(-50%);
+                [data-theme="dark"] & {
+                    filter: invert(1) brightness(1.8);
+                }
+            }
+
+            span {
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+                display: block;
+                position: relative;
+
+                &:before {
+                    content: '';
+                    width: 2px;
+                    height: 26px;
+                    background: light-dark(#000, var(--pp-text-strong));
+                    position: absolute;
+                    top: 15px;
+                    left: 24px;
+                    transform: rotate(45deg);
+                    z-index: 5;
+                    transition: all 0.2s ease-in-out;
+                }
+
+                &.eye-slash:before {
+                    opacity: 0;
+                }
+            }
         }
         textarea {
             border: 1px solid #E5E5E5;
