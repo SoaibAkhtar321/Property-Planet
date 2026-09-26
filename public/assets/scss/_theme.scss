@@ -916,6 +916,14 @@ body {
     color: var(--pp-text) !important;
   }
 
+  // .nav-title ("PROFILE" / "LISTING" section labels) is a <div>, not an
+  // <a> or <span>, so the rule above never touched it -- it kept the
+  // light-mode near-black rgba(#000,0.3) color from _dashboard.scss,
+  // which is effectively invisible against the dark sidebar background.
+  .dash-aside-navbar .nav-title {
+    color: var(--pp-text-muted) !important;
+  }
+
   .dash-aside-navbar .active,
   .dash-aside-navbar a:hover {
     color: $color-one !important;
