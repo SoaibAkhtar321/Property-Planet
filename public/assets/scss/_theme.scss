@@ -95,9 +95,9 @@ body {
     color: inherit;
   }
 
-  .color-dark,
-  .text-dark,
-  .text-black {
+  .color-dark:not(.badge),
+  .text-dark:not(.badge),
+  .text-black:not(.badge) {
     color: var(--pp-text-strong) !important;
   }
 
@@ -134,8 +134,8 @@ body {
     color: var(--pp-text-strong) !important;
   }
 
-  .bg-light,
-  .bg-white {
+  .bg-light:not(.badge),
+  .bg-white:not(.badge) {
     background-color: var(--pp-bg-muted) !important;
     color: var(--pp-text);
   }
@@ -1047,9 +1047,12 @@ body {
   h1, h2, h3, h4, h5, h6,
   .title-one h2,
   .title-one h3,
-  .title-one p,
-  .color-dark,
-  .text-dark {
+  .title-one p {
+    color: var(--pp-text-strong) !important;
+  }
+
+  .color-dark:not(.badge),
+  .text-dark:not(.badge) {
     color: var(--pp-text-strong) !important;
   }
 

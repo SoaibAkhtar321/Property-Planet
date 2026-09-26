@@ -1,0 +1,131 @@
+diff --git a/public/assets/scss/_dashboard.scss b/public/assets/scss/_dashboard.scss
+index 004b00d..ee87c01 100644
+--- a/public/assets/scss/_dashboard.scss
++++ b/public/assets/scss/_dashboard.scss
+@@ -1640,15 +1640,37 @@
+         &[readonly] {
+             background-color: $color-three;
+             opacity: 0.8;
++
++            [data-theme="dark"] & {
++                background-color: var(--pp-surface-2);
++                color: var(--pp-text-muted);
++            }
+         }
+     }
+ 
++    // Phase 6: this table was styled with a hardcoded white card look
++    // (background: #fff, near-black text/border colors below) with no
++    // regard for theme. Because it's more specific than the generic
++    // `[data-theme="dark"] .table` rule in _theme.scss (and isn't marked
++    // !important), the light-mode declarations always won — every admin
++    // table (Leads, Projects, Properties) rendered as a bright white card
++    // sitting on the dark page, with its header row and body text staying
++    // dark-on-white regardless of theme. Re-declaring the same properties
++    // under `[data-theme="dark"] &` raises specificity just enough to win
++    // back the cascade for dark mode, without touching light mode at all.
+     .table {
+         border-radius: 15px;
+         overflow: hidden;
+         box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.05);
+         background: #fff;
+         margin-bottom: 0;
++
++        [data-theme="dark"] & {
++            background: var(--pp-card-bg);
++            box-shadow: none;
++            color: var(--pp-text);
++        }
++
+         > thead {
+             th {
+                 background: $color-three;
+@@ -1657,6 +1679,11 @@
+                 border-bottom: none;
+                 vertical-align: middle;
+                 white-space: nowrap;
++
++                [data-theme="dark"] & {
++                    background: var(--pp-surface-2);
++                    color: var(--pp-text-strong);
++                }
+             }
+         }
+         > tbody {
+@@ -1664,10 +1691,32 @@
+                 vertical-align: middle;
+                 color: $text-color;
+                 border-color: rgba(0, 0, 0, 0.06);
++
++                [data-theme="dark"] & {
++                    color: var(--pp-text);
++                    border-color: var(--pp-border);
++                }
+             }
+             tr:last-child td {
+                 border-bottom: none;
+             }
++
++            [data-theme="dark"] & tr:hover {
++                background-color: var(--pp-surface-2);
++            }
++        }
++    }
++
++    // Phase 6: plain Bootstrap `.border.rounded` boxes are used throughout
++    // Admin (lead detail sub-panels, property/project edit sections,
++    // settings) as ad-hoc content panels. They only ever got a border
++    // color for dark mode (see _theme.scss), never a background, so the
++    // "card" was see-through and blended into the page — a border floating
++    // on the same dark background, not a distinguishable surface.
++    .border {
++        [data-theme="dark"] & {
++            background-color: var(--pp-card-bg);
++            border-color: var(--pp-card-border) !important;
+         }
+     }
+ 
+diff --git a/public/assets/scss/_theme.scss b/public/assets/scss/_theme.scss
+index f4b5c71..d37ee86 100644
+--- a/public/assets/scss/_theme.scss
++++ b/public/assets/scss/_theme.scss
+@@ -95,9 +95,9 @@ body {
+     color: inherit;
+   }
+ 
+-  .color-dark,
+-  .text-dark,
+-  .text-black {
++  .color-dark:not(.badge),
++  .text-dark:not(.badge),
++  .text-black:not(.badge) {
+     color: var(--pp-text-strong) !important;
+   }
+ 
+@@ -134,8 +134,8 @@ body {
+     color: var(--pp-text-strong) !important;
+   }
+ 
+-  .bg-light,
+-  .bg-white {
++  .bg-light:not(.badge),
++  .bg-white:not(.badge) {
+     background-color: var(--pp-bg-muted) !important;
+     color: var(--pp-text);
+   }
+@@ -1047,9 +1047,12 @@ body {
+   h1, h2, h3, h4, h5, h6,
+   .title-one h2,
+   .title-one h3,
+-  .title-one p,
+-  .color-dark,
+-  .text-dark {
++  .title-one p {
++    color: var(--pp-text-strong) !important;
++  }
++
++  .color-dark:not(.badge),
++  .text-dark:not(.badge) {
+     color: var(--pp-text-strong) !important;
+   }
+ 
