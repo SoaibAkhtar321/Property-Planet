@@ -395,6 +395,13 @@
             
         }
         .dash-mobile-nav-toggler:focus {box-shadow: none;}
+        // Phase 13 accessibility: same missing-focus-indicator gap as
+        // .navbar-toggler in _header.scss — restore a visible ring for
+        // keyboard users without bringing back the mouse-click halo.
+        .dash-mobile-nav-toggler:focus-visible {
+            outline: 2px solid $color-one;
+            outline-offset: 2px;
+        }
         .dash-mobile-nav-toggler::before,
         .dash-mobile-nav-toggler::after {
             content: '';

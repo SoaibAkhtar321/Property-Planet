@@ -22,6 +22,12 @@
 }
 .offcanvas.sidebar-nav {
     width: 450px;
+    // Phase 13: a fixed 450px offcanvas is wider than most phones (390px
+    // iPhone, 360px Android, etc.), so the sidebar drawer itself ran off
+    // the right edge of the screen instead of stopping at the viewport
+    // edge. Cap it to the viewport on narrower screens; desktop/tablet
+    // keep the original 450px.
+    max-width: 100vw;
     border: none;
     padding: 30px 30px 20px;
     max-height: 100%;
@@ -163,6 +169,16 @@
         background: $color-one
     }
     .navbar-toggler:focus {box-shadow: none;}
+    // Phase 13 accessibility: box-shadow:none above kills Bootstrap's
+    // default focus ring with nothing standing in for it, so a keyboard
+    // user tabbing to the mobile menu button gets no visible focus state
+    // at all. Restore one via :focus-visible (mouse clicks stay clean),
+    // matching the outline treatment already used for .pp-btn in
+    // _pp-ui.scss.
+    .navbar-toggler:focus-visible {
+        outline: 2px solid $color-one;
+        outline-offset: 2px;
+    }
     .navbar-toggler::before,
     .navbar-toggler::after {
         content: '';

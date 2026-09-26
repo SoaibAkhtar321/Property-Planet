@@ -182,24 +182,31 @@ export default async function AdminLeadDetailPage({
          {lead.site_visits.length > 0 && (
             <div className="mt-4">
                <h6 className="text-muted">Site visits</h6>
-               <table className="table table-sm">
-                  <thead>
-                     <tr>
-                        <th>Scheduled</th>
-                        <th>Status</th>
-                        <th>Notes</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     {lead.site_visits.map((v) => (
-                        <tr key={v.id}>
-                           <td>{v.scheduled_at ? new Date(v.scheduled_at).toLocaleString() : "—"}</td>
-                           <td>{v.status}</td>
-                           <td>{v.notes ?? "—"}</td>
+               {/* Phase 13: every other admin table wraps in table-responsive
+                  (admin/leads, admin/users, admin/properties, admin/projects,
+                  admin/blog, admin/audit-log) — this one didn't, so long
+                  notes text pushed the table past the viewport on mobile
+                  with no way to scroll to the clipped columns. */}
+               <div className="table-responsive">
+                  <table className="table table-sm">
+                     <thead>
+                        <tr>
+                           <th>Scheduled</th>
+                           <th>Status</th>
+                           <th>Notes</th>
                         </tr>
-                     ))}
-                  </tbody>
-               </table>
+                     </thead>
+                     <tbody>
+                        {lead.site_visits.map((v) => (
+                           <tr key={v.id}>
+                              <td>{v.scheduled_at ? new Date(v.scheduled_at).toLocaleString() : "—"}</td>
+                              <td>{v.status}</td>
+                              <td>{v.notes ?? "—"}</td>
+                           </tr>
+                        ))}
+                     </tbody>
+                  </table>
+               </div>
             </div>
          )}
       </div>
