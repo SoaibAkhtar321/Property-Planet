@@ -464,11 +464,19 @@
             font-size: 42px;
             letter-spacing: -0.42px;
             color: #000;
+
+            [data-theme="dark"] & {
+                color: var(--pp-text-strong);
+            }
         }
         span {
             font-size: 17px;
             letter-spacing: -0.17px;
             color: rgba($color: #0000, $alpha: 0.5);
+
+            [data-theme="dark"] & {
+                color: var(--pp-text-muted);
+            }
         }
     }
     .user-activity-chart {
@@ -918,6 +926,11 @@
             border: none;
             color: rgba($color: #000000, $alpha: 0.6);
             border-bottom: 1px solid rgba($color: #000, $alpha: 0.1);
+
+            [data-theme="dark"] & {
+                color: var(--pp-text);
+                border-bottom-color: var(--pp-border);
+            }
             &:nth-child(1) {padding-left: 0;}
             &:hover {
                 .property-name {
@@ -932,6 +945,10 @@
                 font-size: 15px;
                 margin: 10px 0;
                 color: rgba($color: #000000, $alpha: 0.5);
+
+                [data-theme="dark"] & {
+                    color: var(--pp-text-muted);
+                }
             }
             .price {
                 font-size: 18px;
@@ -990,6 +1007,11 @@
             border: none;
             color: rgba($color: #000000, $alpha: 0.6);
             border-bottom: 1px solid rgba($color: #000, $alpha: 0.1);
+
+            [data-theme="dark"] & {
+                color: var(--pp-text);
+                border-bottom-color: var(--pp-border);
+            }
             .property-name {
                 font-size: 18px;
                 letter-spacing: -0.18px;
@@ -1002,6 +1024,10 @@
                     font-size: 19px;
                     color: #000;
                     margin-left: 22px;
+
+                    [data-theme="dark"] & {
+                        color: var(--pp-text);
+                    }
                     @include transition(0.2s);
                     &:hover {
                         color: $color-two;
@@ -1613,6 +1639,34 @@
         }
     }
 
+    // Phase 25: bare Bootstrap `.btn-outline-secondary` (used for Unpublish,
+    // Filter, Clear, View listing, Manage project, etc. across admin +
+    // dashboard) had no theme-aware color at all, so it fell back to
+    // Bootstrap's default #6c757d-on-#6c757d gray outline — readable on a
+    // white card, low-contrast on the dark surfaces those buttons actually
+    // sit on.
+    .btn-outline-secondary {
+        border-radius: 10px;
+        &:hover,
+        &:focus,
+        &:active {
+            box-shadow: none !important;
+        }
+
+        [data-theme="dark"] & {
+            color: var(--pp-text-strong);
+            border-color: var(--pp-border-strong);
+
+            &:hover,
+            &:focus,
+            &:active {
+                background: var(--pp-surface-2) !important;
+                color: var(--pp-text-strong) !important;
+                border-color: var(--pp-border-strong) !important;
+            }
+        }
+    }
+
     .btn-success {
         background: $color-six;
         border-color: $color-six;
@@ -1724,6 +1778,7 @@
         [data-theme="dark"] & {
             background-color: var(--pp-card-bg);
             border-color: var(--pp-card-border) !important;
+            color: var(--pp-text) !important;
         }
     }
 
