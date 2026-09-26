@@ -619,6 +619,27 @@
  
  /*Grid sm Start*/
  @media (max-width: 767px) {
+   // Property Planet "We're here to help you find properties" section:
+   // the three feature cards (Verified Listings / Direct Enquiries / Quick
+   // Process) stacked vertically and ate up a lot of mobile screen space.
+   // Turn the row into a horizontally swipeable strip instead.
+   .feature-scroll-row {
+      flex-wrap: nowrap !important;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 10px;
+      margin-left: 0;
+      margin-right: 0;
+   }
+   .feature-scroll-row .feature-scroll-item {
+      flex: 0 0 80%;
+      max-width: 80%;
+      padding-left: 8px;
+      padding-right: 8px;
+   }
+   .feature-scroll-row .card-style-four {
+      margin-top: 20px;
+   }
    .feedback-block-one blockquote {margin: 20px 0 30px;}
    .block-feature-two .block-one .card-box {top:auto; bottom: 0; min-width: 60%;}
    .block-feature-two .block-two {border-radius: 30px; margin-top: 40px;}

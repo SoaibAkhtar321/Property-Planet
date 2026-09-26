@@ -73,6 +73,24 @@ const FooterOne = ({ style }: any) => {
             </div>
             {style && <Image src={footerShape_2} alt="" className="lazy-img shapes shape_02" />}
          </div>
+
+         <div className="bottom-footer position-relative z-1">
+            <div className="container">
+               <div className="text-center py-3">
+                  <p className="mb-5">
+                     Powered by{" "}
+                     <a
+                        href="https://spesio-technologies.vercel.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                     >
+                        Specio Technology
+                     </a>
+                  </p>
+                  <a href="tel:8957833269" className="fs-14 opacity-75">8957833269</a>
+               </div>
+            </div>
+         </div>
       </div>
    )
 }

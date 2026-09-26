@@ -8,16 +8,16 @@ const CardStyleOne = ({ style }: any) => {
          <div className="col-lg-3">
             <div className="card-style-three mt-40 wow fadeInUp">
                <div className="bg-wrapper text-center">
-                  <h3>0<Count number={7} />+</h3>
+                  <h3>1<Count number={4} />+</h3>
                   <p>Years Experience <br />with proud.</p>
                </div>
             </div>
          </div>
 
          <div className="col-lg-9">
-            <div className="row gx-xl-5">
+            <div className="row gx-xl-5 feature-scroll-row">
                {feature_data.filter((items) => items.page === "home_two_feature_3").map((item) => (
-                  <div key={item.id} className="col-md-4">
+                  <div key={item.id} className="col-md-4 feature-scroll-item">
                      <div className="card-style-four mt-40 wow fadeInUp">
                         <div className={`icon rounded-circle d-flex align-items-center justify-content-center position-relative ${style ? "style-two" : ""}`}>
                            <Image src={item.icon ? item.icon : ""} alt="" className="lazy-img" />
