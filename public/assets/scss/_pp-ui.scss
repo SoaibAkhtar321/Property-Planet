@@ -98,10 +98,20 @@ $pp-card-shadow: 0 16px 40px rgba(20, 20, 10, 0.08);
       }
    }
 
-   /* The existing FavouriteButton renders itself top-right inside the media
-      box; keep it clear of the tag. */
+   /* The FavouriteButton (heart icon) had no position rule scoped to the
+      card shell -- only z-index below -- so it rendered in normal document
+      flow as its own row above the image, pushing the actual photo down
+      inside the fixed aspect-ratio media box (the overflow got clipped at
+      the bottom instead). Absolute-positioning it top-right, the same way
+      .pp-card__tag already floats over the image, removes it from flow so
+      the image fills the media box from the very top. */
    .fav-btn,
-   [class*="fav"] { z-index: 3; }
+   [class*="fav"] {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 3;
+   }
 
    &__body {
       display: flex;

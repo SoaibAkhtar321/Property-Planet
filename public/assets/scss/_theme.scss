@@ -567,6 +567,16 @@ body {
     border-color: var(--pp-border) !important;
   }
 
+  // .accordion-style-one (the outer wrapper around the homepage hero's
+  // "Advance Search" accordion) is hardcoded background:#fff in
+  // _element.scss and was never touched by the rule above, which only
+  // recolors .accordion-item/.accordion-button/.accordion-body -- so the
+  // wrapper's own 10px 35px padding showed up as a white frame around the
+  // now-dark accordion box.
+  .accordion-style-one {
+    background-color: var(--pp-surface) !important;
+  }
+
   .accordion-button:not(.collapsed) {
     background-color: var(--pp-surface-2) !important;
     color: var(--pp-text-strong) !important;
