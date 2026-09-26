@@ -1,0 +1,506 @@
+diff --git a/public/assets/scss/_dashboard.scss b/public/assets/scss/_dashboard.scss
+index 10c5ec7..76d557f 100644
+--- a/public/assets/scss/_dashboard.scss
++++ b/public/assets/scss/_dashboard.scss
+@@ -442,6 +442,21 @@
+     .dash-card-one {
+         padding: 35px 30px 15px;
+         z-index: 1;
++        // Phase: seller Dashboard cards used to sit inside a shared
++        // `.bg-white` wrapper with the same `.bg-white` on each card, so
++        // there was no visual boundary between one stat card and the
++        // next — just one flat rectangle (worse in dark mode, where both
++        // resolved to the same --pp-bg-muted). The wrapper is gone now;
++        // each card gets its own shadow/border so it reads as a distinct
++        // card, matching the admin overview's StatCard treatment.
++        box-shadow: 0 6px 20px rgba(20, 20, 10, 0.06);
++        border: 1px solid rgba(0, 0, 0, 0.05);
++
++        [data-theme="dark"] & {
++            background: var(--pp-card-bg) !important;
++            border-color: var(--pp-card-border);
++            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
++        }
+         &:before {
+             content: '';
+             position: absolute;
+@@ -1709,16 +1724,9 @@
+         }
+     }
+ 
+-    // Phase 6: this table was styled with a hardcoded white card look
+-    // (background: #fff, near-black text/border colors below) with no
+-    // regard for theme. Because it's more specific than the generic
+-    // `[data-theme="dark"] .table` rule in _theme.scss (and isn't marked
+-    // !important), the light-mode declarations always won — every admin
+-    // table (Leads, Projects, Properties) rendered as a bright white card
+-    // sitting on the dark page, with its header row and body text staying
+-    // dark-on-white regardless of theme. Re-declaring the same properties
+-    // under `[data-theme="dark"] &` raises specificity just enough to win
+-    // back the cascade for dark mode, without touching light mode at all.
++    // Phase 6 (and Phase 7 hardening below): this table was styled with a
++    // hardcoded white card look (background: #fff, near-black text/border
++    // colors below) with no regard for theme.
+     .table {
+         border-radius: 15px;
+         overflow: hidden;
+@@ -1768,6 +1776,55 @@
+         }
+     }
+ 
++    // Phase 7: the block above still lost in practice, because Bootstrap
++    // itself paints every cell's background per-cell via
++    // `.table > :not(caption) > * > *` reading its own `--bs-table-bg`
++    // custom property (defaults to white), and that selector is MORE
++    // specific than `.dashboard-body .table > tbody td` above (it uses
++    // `:not(caption)` + two universal combinators, which out-specifies a
++    // plain descendant chain). Whatever we set on `.table` or `td` directly
++    // never actually reaches the painted cell. This block targets
++    // Bootstrap's exact selector, one level more specific again, with
++    // !important and hard-coded hex colors (no CSS variables at all, so
++    // there's no variable-resolution chain left to go wrong), so there is
++    // nothing left upstream that can still win.
++    [data-theme="dark"] & .table,
++    [data-theme="dark"] &.table {
++        > :not(caption) > * {
++            background-color: #16232a !important;
++            border-bottom-color: #2c3e46 !important;
++
++            > * {
++                background-color: #16232a !important;
++                color: #f2f6f7 !important;
++                border-bottom-color: #2c3e46 !important;
++                box-shadow: none !important;
++            }
++        }
++
++        > thead > tr > th {
++            background-color: #1c333a !important;
++            color: #ffffff !important;
++        }
++
++        > tbody > tr:hover > td {
++            background-color: #1f3038 !important;
++        }
++
++        > tbody > tr:nth-of-type(odd) > td {
++            background-color: #182a31 !important;
++        }
++
++        a:not([class*="btn"]) {
++            color: #ffffff !important;
++            text-decoration: underline;
++
++            &:hover {
++                color: $color-one !important;
++            }
++        }
++    }
++
+     // Phase 6: plain Bootstrap `.border.rounded` boxes are used throughout
+     // Admin (lead detail sub-panels, property/project edit sections,
+     // settings) as ad-hoc content panels. They only ever got a border
+diff --git a/public/assets/scss/_theme.scss b/public/assets/scss/_theme.scss
+index 57b3a0d..163a278 100644
+--- a/public/assets/scss/_theme.scss
++++ b/public/assets/scss/_theme.scss
+@@ -708,9 +708,31 @@ body {
+ }
+ 
+ /* ========== Tables ========== */
++// Phase: dark-mode table fix. The `color` overrides below were already
++// correct, but Bootstrap paints each cell's background from its own
++// `--bs-table-bg` custom property (defaults to `--bs-body-bg`, i.e.
++// white) — that var was never remapped for `[data-theme="dark"]`, so
++// every table cell kept a white background while the text color above
++// was switched to `--pp-text` (near-white). Result: near-white text on
++// a white cell background — unreadable, even though each rule "looked"
++// right on its own. Resetting the Bootstrap table bg/border/hover/
++// striped custom properties here (they inherit down to every cell,
++// since Bootstrap applies `background-color: var(--bs-table-bg)` per
++// cell) makes the cells transparent so the already-dark `.dashboard-body`
++// surface shows through instead.
+ [data-theme="dark"] {
+   table,
+   .table {
++    --bs-table-bg: transparent;
++    --bs-table-color: var(--pp-text);
++    --bs-table-striped-bg: var(--pp-surface-2);
++    --bs-table-striped-color: var(--pp-text);
++    --bs-table-hover-bg: var(--pp-surface-2);
++    --bs-table-hover-color: var(--pp-text-strong);
++    --bs-table-active-bg: var(--pp-surface-2);
++    --bs-table-active-color: var(--pp-text-strong);
++    --bs-table-border-color: var(--pp-border);
++    background-color: transparent;
+     color: var(--pp-text);
+ 
+     th {
+@@ -722,6 +744,14 @@ body {
+       border-color: var(--pp-border) !important;
+       color: var(--pp-text);
+     }
++
++    a:not([class*="btn"]) {
++      color: var(--pp-text-strong);
++
++      &:hover {
++        color: $color-one;
++      }
++    }
+   }
+ }
+ 
+diff --git a/src/app/admin/properties/[id]/page.tsx b/src/app/admin/properties/[id]/page.tsx
+index 9e7bfee..3994b5d 100644
+--- a/src/app/admin/properties/[id]/page.tsx
++++ b/src/app/admin/properties/[id]/page.tsx
+@@ -340,37 +340,39 @@ export default async function AdminPropertyDetailPage({
+ 
+          <h5 className="mb-3">Media</h5>
+          <div className="border rounded p-3 mb-4">
+-            {property.media.length > 0 ? (
++            {property.media.filter((m) => m.media_type !== "document").length > 0 ? (
+                <div className="d-flex flex-wrap gap-3 mb-3">
+-                  {property.media.map((m) => {
+-                     const removeMedia = async () => {
+-                        "use server";
+-                        await deleteAdminPropertyMedia(id, m.id);
+-                     };
+-                     return (
+-                        <div key={m.id} style={{ width: 160 }}>
+-                           <div style={{ width: 160, height: 120, position: "relative" }} className="border rounded overflow-hidden">
+-                              {m.media_type === "image" ? (
+-                                 <Image src={m.publicUrl} alt={property.title} fill style={{ objectFit: "cover" }} unoptimized />
+-                              ) : (
+-                                 <a
+-                                    href={m.publicUrl}
+-                                    target="_blank"
+-                                    rel="noreferrer"
+-                                    className="d-flex align-items-center justify-content-center h-100 text-decoration-none"
+-                                 >
+-                                    {m.media_type}
+-                                 </a>
+-                              )}
++                  {property.media
++                     .filter((m) => m.media_type !== "document")
++                     .map((m) => {
++                        const removeMedia = async () => {
++                           "use server";
++                           await deleteAdminPropertyMedia(id, m.id);
++                        };
++                        return (
++                           <div key={m.id} style={{ width: 160 }}>
++                              <div style={{ width: 160, height: 120, position: "relative" }} className="border rounded overflow-hidden">
++                                 {m.media_type === "image" ? (
++                                    <Image src={m.publicUrl} alt={property.title} fill style={{ objectFit: "cover" }} unoptimized />
++                                 ) : (
++                                    <a
++                                       href={m.publicUrl}
++                                       target="_blank"
++                                       rel="noreferrer"
++                                       className="d-flex align-items-center justify-content-center h-100 text-decoration-none"
++                                    >
++                                       {m.media_type}
++                                    </a>
++                                 )}
++                              </div>
++                              <form action={removeMedia} className="mt-1">
++                                 <button type="submit" className="btn btn-sm btn-outline-danger w-100">
++                                    Remove
++                                 </button>
++                              </form>
+                            </div>
+-                           <form action={removeMedia} className="mt-1">
+-                              <button type="submit" className="btn btn-sm btn-outline-danger w-100">
+-                                 Remove
+-                              </button>
+-                           </form>
+-                        </div>
+-                     );
+-                  })}
++                        );
++                     })}
+                </div>
+             ) : (
+                <p className="text-muted small">No media yet.</p>
+@@ -379,6 +381,46 @@ export default async function AdminPropertyDetailPage({
+             <AdminPropertyMediaUpload propertyId={id} nextSortOrder={property.media.length} addMediaAction={addMedia} />
+          </div>
+ 
++         {/* Documents the seller attached for moderation only (ownership
++             proof, tax receipts, etc. — uploaded from the "Verification
++             Documents" section of the seller's Add Property form). Kept
++             separate from the photo/video grid above: these aren't part of
++             the public listing, and a PDF/JPEG scan doesn't render usefully
++             as an image tile anyway. */}
++         <h5 className="mb-3">Verification documents</h5>
++         <div className="border rounded p-3 mb-4">
++            {property.media.filter((m) => m.media_type === "document").length > 0 ? (
++               <div className="d-flex flex-column gap-2">
++                  {property.media
++                     .filter((m) => m.media_type === "document")
++                     .map((m) => {
++                        const removeDoc = async () => {
++                           "use server";
++                           await deleteAdminPropertyMedia(id, m.id);
++                        };
++                        const fileName = m.storage_path.split("/").pop()?.replace(/^[^-]*-/, "") ?? m.storage_path;
++                        return (
++                           <div key={m.id} className="d-flex align-items-center justify-content-between border rounded px-3 py-2">
++                              <a href={m.publicUrl} target="_blank" rel="noreferrer" className="text-truncate" style={{ maxWidth: 400 }}>
++                                 <i className="bi bi-file-earmark-text me-2" aria-hidden="true"></i>
++                                 {fileName}
++                              </a>
++                              <form action={removeDoc}>
++                                 <button type="submit" className="btn btn-sm btn-outline-danger">
++                                    Remove
++                                 </button>
++                              </form>
++                           </div>
++                        );
++                     })}
++               </div>
++            ) : (
++               <p className="text-muted small mb-0">
++                  No verification documents uploaded by the seller yet.
++               </p>
++            )}
++         </div>
++
+          <div className="mt-4 border rounded p-3">
+             <h6 className="text-muted">Reject listing</h6>
+             <form action={reject} className="d-flex gap-2">
+diff --git a/src/components/dashboard/add-property/PropertyMediaUpload.tsx b/src/components/dashboard/add-property/PropertyMediaUpload.tsx
+index 3ae1179..505ac81 100644
+--- a/src/components/dashboard/add-property/PropertyMediaUpload.tsx
++++ b/src/components/dashboard/add-property/PropertyMediaUpload.tsx
+@@ -22,17 +22,25 @@ import { friendlyError } from "@/lib/errors";
+ 
+ const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
+ const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50MB — a short walkthrough clip
++const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024; // 10MB
+ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+ const ACCEPTED_VIDEO_TYPES = ["video/mp4", "video/webm"];
++const ACCEPTED_DOCUMENT_TYPES = ["application/pdf", "image/jpeg", "image/png"];
+ const ACCEPTED_TYPES = [...ACCEPTED_IMAGE_TYPES, ...ACCEPTED_VIDEO_TYPES];
+ 
+ const isVideo = (type: string) => ACCEPTED_VIDEO_TYPES.includes(type);
+ 
++const documentFileName = (storagePath: string) => storagePath.split("/").pop() ?? storagePath;
++
+ const PropertyMediaUpload = ({ propertyId, initialMedia }: { propertyId: string; initialMedia: OwnPropertyMediaRow[] }) => {
+-   const [media, setMedia] = useState(initialMedia);
++   const [media, setMedia] = useState(initialMedia.filter((m) => m.media_type !== "document"));
++   const [documents, setDocuments] = useState(initialMedia.filter((m) => m.media_type === "document"));
+    const [error, setError] = useState<string | null>(null);
++   const [docError, setDocError] = useState<string | null>(null);
+    const [isPending, startTransition] = useTransition();
++   const [isDocPending, startDocTransition] = useTransition();
+    const inputRef = useRef<HTMLInputElement>(null);
++   const docInputRef = useRef<HTMLInputElement>(null);
+ 
+    const handleFiles = useCallback(
+       (files: FileList | null) => {
+@@ -116,6 +124,84 @@ const PropertyMediaUpload = ({ propertyId, initialMedia }: { propertyId: string;
+       });
+    }, []);
+ 
++   // Verification documents — same upload mechanics as photos/video above
++   // (direct-to-storage, then a property_media row with
++   // media_type: "document"), kept as its own handler/state pair so a
++   // failed or in-progress document upload never blocks or gets mixed up
++   // with the photo/video list. These aren't shown on the public listing;
++   // they exist purely for the admin moderation review (see
++   // /admin/properties/[id] "Verification documents").
++   const handleDocumentFiles = useCallback(
++      (files: FileList | null) => {
++         if (!files || files.length === 0) return;
++         setDocError(null);
++
++         startDocTransition(async () => {
++            const supabase = createClient();
++            let sortOrder = documents.length;
++
++            for (const file of Array.from(files)) {
++               if (!ACCEPTED_DOCUMENT_TYPES.includes(file.type)) {
++                  setDocError(`${file.name}: only PDF, JPG or PNG files are supported for documents.`);
++                  continue;
++               }
++               if (file.size > MAX_DOCUMENT_BYTES) {
++                  setDocError(`${file.name}: file is larger than ${Math.round(MAX_DOCUMENT_BYTES / (1024 * 1024))}MB.`);
++                  continue;
++               }
++
++               const ext = file.name.split(".").pop() ?? "pdf";
++               const path = `${propertyId}/documents/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
++
++               const { error: uploadError } = await supabase.storage.from("property-media").upload(path, file);
++               if (uploadError) {
++                  setDocError(`${file.name}: ${friendlyError(uploadError, "upload failed. Please try again.", "media.doc.upload")}`);
++                  continue;
++               }
++
++               const { data: row, error: insertError } = await supabase
++                  .from("property_media")
++                  .insert({ property_id: propertyId, storage_path: path, media_type: "document", sort_order: sortOrder })
++                  .select("id, storage_path, media_type, sort_order")
++                  .single();
++
++               if (insertError || !row) {
++                  setDocError(`${file.name}: uploaded but couldn't be saved. ${friendlyError(insertError, "Please try again.", "media.doc.insert")}`);
++                  continue;
++               }
++
++               sortOrder += 1;
++               const publicUrl = supabase.storage.from("property-media").getPublicUrl(path).data.publicUrl;
++               setDocuments((prev) => [...prev, { ...row, publicUrl }]);
++            }
++         });
++
++         if (docInputRef.current) docInputRef.current.value = "";
++      },
++      [propertyId, documents.length]
++   );
++
++   const handleRemoveDocument = useCallback((item: OwnPropertyMediaRow) => {
++      setDocError(null);
++      startDocTransition(async () => {
++         const supabase = createClient();
++
++         const { error: deleteError } = await supabase.storage.from("property-media").remove([item.storage_path]);
++         if (deleteError) {
++            setDocError(friendlyError(deleteError, "Could not remove the file. Please try again.", "media.doc.delete"));
++            return;
++         }
++
++         const { error: rowError } = await supabase.from("property_media").delete().eq("id", item.id);
++         if (rowError) {
++            setDocError(friendlyError(rowError, "Could not remove the file. Please try again.", "media.doc.row"));
++            return;
++         }
++
++         setDocuments((prev) => prev.filter((m) => m.id !== item.id));
++      });
++   }, []);
++
+    return (
+       <div className="bg-white card-box border-20 mt-40">
+          <h4 className="dash-title-three">Photo &amp; Video Attachment</h4>
+@@ -180,6 +266,58 @@ const PropertyMediaUpload = ({ propertyId, initialMedia }: { propertyId: string;
+             />
+          </div>
+          <small>Photos: .jpg, .png, .webp up to 10MB each · Video: .mp4, .webm up to 50MB</small>
++
++         <hr className="my-30" />
++
++         <h4 className="dash-title-three">Verification Documents (optional)</h4>
++         <p className="fs-14 opacity-65 mb-20">
++            Upload ownership proof, tax receipts, or other documents that help our team verify this listing.
++            These are private — only shown to Property Planet admins during review, never on the public listing.
++         </p>
++
++         {docError && (
++            <div className="alert alert-danger mb-20" role="alert">
++               {docError}
++            </div>
++         )}
++
++         {documents.length > 0 && (
++            <div className="d-flex flex-column gap-2 mb-20" role="list" aria-label="Uploaded verification documents">
++               {documents.map((item) => (
++                  <div key={item.id} className="d-flex align-items-center justify-content-between border rounded px-3 py-2" role="listitem">
++                     <a href={item.publicUrl} target="_blank" rel="noreferrer" className="text-truncate" style={{ maxWidth: 320 }}>
++                        <i className="bi bi-file-earmark-text me-2" aria-hidden="true"></i>
++                        {documentFileName(item.storage_path).replace(/^[^-]*-/, "")}
++                     </a>
++                     <button
++                        type="button"
++                        className="btn btn-sm btn-outline-danger"
++                        disabled={isDocPending}
++                        onClick={() => handleRemoveDocument(item)}
++                     >
++                        Remove
++                     </button>
++                  </div>
++               ))}
++            </div>
++         )}
++
++         <div className="dash-btn-one d-inline-block position-relative me-3">
++            <i className="bi bi-plus" aria-hidden="true"></i>
++            {isDocPending ? "Uploading..." : "Upload Document"}
++            <input
++               ref={docInputRef}
++               type="file"
++               id="uploadPropertyDocuments"
++               name="uploadPropertyDocuments"
++               aria-label="Upload verification documents"
++               accept={ACCEPTED_DOCUMENT_TYPES.join(",")}
++               multiple
++               disabled={isDocPending}
++               onChange={(e) => handleDocumentFiles(e.target.files)}
++            />
++         </div>
++         <small>PDF, JPG or PNG, up to 10MB each</small>
+       </div>
+    )
+ }
+diff --git a/src/components/dashboard/index/DashboardBody.tsx b/src/components/dashboard/index/DashboardBody.tsx
+index e10fe40..4ce9ec2 100644
+--- a/src/components/dashboard/index/DashboardBody.tsx
++++ b/src/components/dashboard/index/DashboardBody.tsx
+@@ -25,22 +25,20 @@ const DashboardBody = ({ stats }: DashboardBodyProps) => {
+             <DashboardHeaderTwo title="Dashboard" />
+ 
+             <h2 className="main-title d-block d-lg-none">Dashboard</h2>
+-            <div className="bg-white border-20">
+-               <div className="row">
+-                  {stats.map((item, index) => (
+-                     <div key={item.id} className="col-lg-3 col-6">
+-                        <div className={`dash-card-one bg-white border-30 position-relative mb-15 ${index === 0 ? "skew-none" : ""}`}>
+-                           <div className="d-sm-flex align-items-center justify-content-between">
+-                              <div className="icon rounded-circle d-flex align-items-center justify-content-center order-sm-1"><Image src={card_icons[index % card_icons.length]} alt="" className="lazy-img" /></div>
+-                              <div className="order-sm-0">
+-                                 <span>{item.title}</span>
+-                                 <div className="value fw-500">{item.value}</div>
+-                              </div>
++            <div className="row">
++               {stats.map((item, index) => (
++                  <div key={item.id} className="col-lg-3 col-6">
++                     <div className={`dash-card-one bg-white border-30 position-relative mb-15 ${index === 0 ? "skew-none" : ""}`}>
++                        <div className="d-sm-flex align-items-center justify-content-between">
++                           <div className="icon rounded-circle d-flex align-items-center justify-content-center order-sm-1"><Image src={card_icons[index % card_icons.length]} alt="" className="lazy-img" /></div>
++                           <div className="order-sm-0">
++                              <span>{item.title}</span>
++                              <div className="value fw-500">{item.value}</div>
+                            </div>
+                         </div>
+                      </div>
+-                  ))}
+-               </div>
++                  </div>
++               ))}
+             </div>
+          </div>
+       </div>
+diff --git a/src/components/dashboard/properties-list/PropertyTableBody.tsx b/src/components/dashboard/properties-list/PropertyTableBody.tsx
+index 12e48ba..b0c2e74 100644
+--- a/src/components/dashboard/properties-list/PropertyTableBody.tsx
++++ b/src/components/dashboard/properties-list/PropertyTableBody.tsx
+@@ -65,10 +65,12 @@ const PropertyTableBody = ({ properties }: { properties: SellerPropertyRow[] })
+             <tr key={item.id}>
+                <td>
+                   <div className="d-lg-flex align-items-center position-relative">
+-                     <div className="ps-lg-0 md-pt-10">
++                     <div className="ps-lg-0 py-2">
+                         <span className="property-name tran3s color-dark fw-500 fs-20">{item.title}</span>
+-                        <div className="address">{item.locality}, {item.city}</div>
+-                        <strong className="price color-dark">
++                        {(item.locality || item.city) && (
++                           <div className="address">{[item.locality, item.city].filter(Boolean).join(", ")}</div>
++                        )}
++                        <strong className="price color-dark d-block mt-1">
+                            ₹{item.price.toLocaleString()}
+                            {priceUnitSuffix(item.price_unit, item.price_unit_label) && (
+                               <sub>{priceUnitSuffix(item.price_unit, item.price_unit_label)}</sub>

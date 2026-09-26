@@ -442,6 +442,21 @@
     .dash-card-one {
         padding: 35px 30px 15px;
         z-index: 1;
+        // Phase: seller Dashboard cards used to sit inside a shared
+        // `.bg-white` wrapper with the same `.bg-white` on each card, so
+        // there was no visual boundary between one stat card and the
+        // next — just one flat rectangle (worse in dark mode, where both
+        // resolved to the same --pp-bg-muted). The wrapper is gone now;
+        // each card gets its own shadow/border so it reads as a distinct
+        // card, matching the admin overview's StatCard treatment.
+        box-shadow: 0 6px 20px rgba(20, 20, 10, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+
+        [data-theme="dark"] & {
+            background: var(--pp-card-bg) !important;
+            border-color: var(--pp-card-border);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
         &:before {
             content: '';
             position: absolute;
@@ -1770,36 +1785,39 @@
     // plain descendant chain). Whatever we set on `.table` or `td` directly
     // never actually reaches the painted cell. This block targets
     // Bootstrap's exact selector, one level more specific again, with
-    // !important, so there is nothing left upstream that can still win.
+    // !important and hard-coded hex colors (no CSS variables at all, so
+    // there's no variable-resolution chain left to go wrong), so there is
+    // nothing left upstream that can still win.
     [data-theme="dark"] & .table,
     [data-theme="dark"] &.table {
         > :not(caption) > * {
-            background-color: transparent !important;
-            border-bottom-color: var(--pp-border) !important;
+            background-color: #16232a !important;
+            border-bottom-color: #2c3e46 !important;
 
             > * {
-                background-color: transparent !important;
-                color: var(--pp-text) !important;
-                border-bottom-color: var(--pp-border) !important;
+                background-color: #16232a !important;
+                color: #f2f6f7 !important;
+                border-bottom-color: #2c3e46 !important;
                 box-shadow: none !important;
             }
         }
 
         > thead > tr > th {
-            background-color: var(--pp-surface-2) !important;
-            color: var(--pp-text-strong) !important;
+            background-color: #1c333a !important;
+            color: #ffffff !important;
         }
 
         > tbody > tr:hover > td {
-            background-color: var(--pp-surface-2) !important;
+            background-color: #1f3038 !important;
         }
 
         > tbody > tr:nth-of-type(odd) > td {
-            background-color: rgba(255, 255, 255, 0.02) !important;
+            background-color: #182a31 !important;
         }
 
         a:not([class*="btn"]) {
-            color: var(--pp-text-strong) !important;
+            color: #ffffff !important;
+            text-decoration: underline;
 
             &:hover {
                 color: $color-one !important;

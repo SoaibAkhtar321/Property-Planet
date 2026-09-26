@@ -65,10 +65,12 @@ const PropertyTableBody = ({ properties }: { properties: SellerPropertyRow[] }) 
             <tr key={item.id}>
                <td>
                   <div className="d-lg-flex align-items-center position-relative">
-                     <div className="ps-lg-0 md-pt-10">
+                     <div className="ps-lg-0 py-2">
                         <span className="property-name tran3s color-dark fw-500 fs-20">{item.title}</span>
-                        <div className="address">{item.locality}, {item.city}</div>
-                        <strong className="price color-dark">
+                        {(item.locality || item.city) && (
+                           <div className="address">{[item.locality, item.city].filter(Boolean).join(", ")}</div>
+                        )}
+                        <strong className="price color-dark d-block mt-1">
                            ₹{item.price.toLocaleString()}
                            {priceUnitSuffix(item.price_unit, item.price_unit_label) && (
                               <sub>{priceUnitSuffix(item.price_unit, item.price_unit_label)}</sub>

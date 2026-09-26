@@ -340,43 +340,85 @@ export default async function AdminPropertyDetailPage({
 
          <h5 className="mb-3">Media</h5>
          <div className="border rounded p-3 mb-4">
-            {property.media.length > 0 ? (
+            {property.media.filter((m) => m.media_type !== "document").length > 0 ? (
                <div className="d-flex flex-wrap gap-3 mb-3">
-                  {property.media.map((m) => {
-                     const removeMedia = async () => {
-                        "use server";
-                        await deleteAdminPropertyMedia(id, m.id);
-                     };
-                     return (
-                        <div key={m.id} style={{ width: 160 }}>
-                           <div style={{ width: 160, height: 120, position: "relative" }} className="border rounded overflow-hidden">
-                              {m.media_type === "image" ? (
-                                 <Image src={m.publicUrl} alt={property.title} fill style={{ objectFit: "cover" }} unoptimized />
-                              ) : (
-                                 <a
-                                    href={m.publicUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="d-flex align-items-center justify-content-center h-100 text-decoration-none"
-                                 >
-                                    {m.media_type}
-                                 </a>
-                              )}
+                  {property.media
+                     .filter((m) => m.media_type !== "document")
+                     .map((m) => {
+                        const removeMedia = async () => {
+                           "use server";
+                           await deleteAdminPropertyMedia(id, m.id);
+                        };
+                        return (
+                           <div key={m.id} style={{ width: 160 }}>
+                              <div style={{ width: 160, height: 120, position: "relative" }} className="border rounded overflow-hidden">
+                                 {m.media_type === "image" ? (
+                                    <Image src={m.publicUrl} alt={property.title} fill style={{ objectFit: "cover" }} unoptimized />
+                                 ) : (
+                                    <a
+                                       href={m.publicUrl}
+                                       target="_blank"
+                                       rel="noreferrer"
+                                       className="d-flex align-items-center justify-content-center h-100 text-decoration-none"
+                                    >
+                                       {m.media_type}
+                                    </a>
+                                 )}
+                              </div>
+                              <form action={removeMedia} className="mt-1">
+                                 <button type="submit" className="btn btn-sm btn-outline-danger w-100">
+                                    Remove
+                                 </button>
+                              </form>
                            </div>
-                           <form action={removeMedia} className="mt-1">
-                              <button type="submit" className="btn btn-sm btn-outline-danger w-100">
-                                 Remove
-                              </button>
-                           </form>
-                        </div>
-                     );
-                  })}
+                        );
+                     })}
                </div>
             ) : (
                <p className="text-muted small">No media yet.</p>
             )}
 
             <AdminPropertyMediaUpload propertyId={id} nextSortOrder={property.media.length} addMediaAction={addMedia} />
+         </div>
+
+         {/* Documents the seller attached for moderation only (ownership
+             proof, tax receipts, etc. — uploaded from the "Verification
+             Documents" section of the seller's Add Property form). Kept
+             separate from the photo/video grid above: these aren't part of
+             the public listing, and a PDF/JPEG scan doesn't render usefully
+             as an image tile anyway. */}
+         <h5 className="mb-3">Verification documents</h5>
+         <div className="border rounded p-3 mb-4">
+            {property.media.filter((m) => m.media_type === "document").length > 0 ? (
+               <div className="d-flex flex-column gap-2">
+                  {property.media
+                     .filter((m) => m.media_type === "document")
+                     .map((m) => {
+                        const removeDoc = async () => {
+                           "use server";
+                           await deleteAdminPropertyMedia(id, m.id);
+                        };
+                        const fileName = m.storage_path.split("/").pop()?.replace(/^[^-]*-/, "") ?? m.storage_path;
+                        return (
+                           <div key={m.id} className="d-flex align-items-center justify-content-between border rounded px-3 py-2">
+                              <a href={m.publicUrl} target="_blank" rel="noreferrer" className="text-truncate" style={{ maxWidth: 400 }}>
+                                 <i className="bi bi-file-earmark-text me-2" aria-hidden="true"></i>
+                                 {fileName}
+                              </a>
+                              <form action={removeDoc}>
+                                 <button type="submit" className="btn btn-sm btn-outline-danger">
+                                    Remove
+                                 </button>
+                              </form>
+                           </div>
+                        );
+                     })}
+               </div>
+            ) : (
+               <p className="text-muted small mb-0">
+                  No verification documents uploaded by the seller yet.
+               </p>
+            )}
          </div>
 
          <div className="mt-4 border rounded p-3">
