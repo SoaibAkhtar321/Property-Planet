@@ -708,9 +708,31 @@ body {
 }
 
 /* ========== Tables ========== */
+// Phase: dark-mode table fix. The `color` overrides below were already
+// correct, but Bootstrap paints each cell's background from its own
+// `--bs-table-bg` custom property (defaults to `--bs-body-bg`, i.e.
+// white) — that var was never remapped for `[data-theme="dark"]`, so
+// every table cell kept a white background while the text color above
+// was switched to `--pp-text` (near-white). Result: near-white text on
+// a white cell background — unreadable, even though each rule "looked"
+// right on its own. Resetting the Bootstrap table bg/border/hover/
+// striped custom properties here (they inherit down to every cell,
+// since Bootstrap applies `background-color: var(--bs-table-bg)` per
+// cell) makes the cells transparent so the already-dark `.dashboard-body`
+// surface shows through instead.
 [data-theme="dark"] {
   table,
   .table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--pp-text);
+    --bs-table-striped-bg: var(--pp-surface-2);
+    --bs-table-striped-color: var(--pp-text);
+    --bs-table-hover-bg: var(--pp-surface-2);
+    --bs-table-hover-color: var(--pp-text-strong);
+    --bs-table-active-bg: var(--pp-surface-2);
+    --bs-table-active-color: var(--pp-text-strong);
+    --bs-table-border-color: var(--pp-border);
+    background-color: transparent;
     color: var(--pp-text);
 
     th {
@@ -721,6 +743,14 @@ body {
     td {
       border-color: var(--pp-border) !important;
       color: var(--pp-text);
+    }
+
+    a:not([class*="btn"]) {
+      color: var(--pp-text-strong);
+
+      &:hover {
+        color: $color-one;
+      }
     }
   }
 }

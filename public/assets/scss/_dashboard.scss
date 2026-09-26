@@ -1709,16 +1709,9 @@
         }
     }
 
-    // Phase 6: this table was styled with a hardcoded white card look
-    // (background: #fff, near-black text/border colors below) with no
-    // regard for theme. Because it's more specific than the generic
-    // `[data-theme="dark"] .table` rule in _theme.scss (and isn't marked
-    // !important), the light-mode declarations always won — every admin
-    // table (Leads, Projects, Properties) rendered as a bright white card
-    // sitting on the dark page, with its header row and body text staying
-    // dark-on-white regardless of theme. Re-declaring the same properties
-    // under `[data-theme="dark"] &` raises specificity just enough to win
-    // back the cascade for dark mode, without touching light mode at all.
+    // Phase 6 (and Phase 7 hardening below): this table was styled with a
+    // hardcoded white card look (background: #fff, near-black text/border
+    // colors below) with no regard for theme.
     .table {
         border-radius: 15px;
         overflow: hidden;
@@ -1764,6 +1757,52 @@
 
             [data-theme="dark"] & tr:hover {
                 background-color: var(--pp-surface-2);
+            }
+        }
+    }
+
+    // Phase 7: the block above still lost in practice, because Bootstrap
+    // itself paints every cell's background per-cell via
+    // `.table > :not(caption) > * > *` reading its own `--bs-table-bg`
+    // custom property (defaults to white), and that selector is MORE
+    // specific than `.dashboard-body .table > tbody td` above (it uses
+    // `:not(caption)` + two universal combinators, which out-specifies a
+    // plain descendant chain). Whatever we set on `.table` or `td` directly
+    // never actually reaches the painted cell. This block targets
+    // Bootstrap's exact selector, one level more specific again, with
+    // !important, so there is nothing left upstream that can still win.
+    [data-theme="dark"] & .table,
+    [data-theme="dark"] &.table {
+        > :not(caption) > * {
+            background-color: transparent !important;
+            border-bottom-color: var(--pp-border) !important;
+
+            > * {
+                background-color: transparent !important;
+                color: var(--pp-text) !important;
+                border-bottom-color: var(--pp-border) !important;
+                box-shadow: none !important;
+            }
+        }
+
+        > thead > tr > th {
+            background-color: var(--pp-surface-2) !important;
+            color: var(--pp-text-strong) !important;
+        }
+
+        > tbody > tr:hover > td {
+            background-color: var(--pp-surface-2) !important;
+        }
+
+        > tbody > tr:nth-of-type(odd) > td {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+        }
+
+        a:not([class*="btn"]) {
+            color: var(--pp-text-strong) !important;
+
+            &:hover {
+                color: $color-one !important;
             }
         }
     }
