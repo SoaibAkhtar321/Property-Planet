@@ -1,6 +1,6 @@
 --- a/README.md
 +++ b/README.md
-@@ -1,254 +1,70 @@
+@@ -1,254 +1,72 @@
 -# Hozn - Real Estate 🏡🚀
 +# Property Planet 🏡
  
@@ -33,9 +33,8 @@
  
  ## 🌟 Overview
 -**Hozn - Real Estate** is a **Full-Stack** real estate website built with **React, Next.js, TypeScript**, and a **Node.js (Express) backend**. The platform allows users to browse, list, and manage properties seamlessly.
-+**Property Planet** is a real estate platform for buying, selling and discovering plotted developments and projects across South Hyderabad. Listings and projects go through admin review before they go live, and enquiries are routed directly between buyers, sellers and the Property Planet team — no platform middlemen, and **no payments are collected on the platform itself.**
- 
- ## 🎯 Features
+-
+-## 🎯 Features
 -- 🔥 **Modern UI/UX** with smooth animations
 -- 🏠 **Property listing & management**
 -- 🏠 **BUY & Sell Property listing **
@@ -55,12 +54,15 @@
 -## 📸 Screenshots
 -### 🏠 Home Page
 -![Home](https://github.com/AHMAD-JX/Hozn-RealEstate-Fullstack/blob/eedce2626f82448aa5611f945dbc5778ddcef4eb/public/assets/images/assets/1.png)
--
++**Property Planet** is a real estate platform for buying, selling and discovering plotted developments and projects across South Hyderabad. Listings and projects go through admin review before they go live, and enquiries are routed directly between buyers, sellers and the Property Planet team — no platform middlemen, and **no payments are collected on the platform itself.**
+ 
 -### 🏡 Property Listing
 -![Properties](https://github.com/AHMAD-JX/Hozn-RealEstate-Fullstack/blob/eedce2626f82448aa5611f945dbc5778ddcef4eb/public/assets/images/assets/2.png)
--
++🔗 **Live:** [propertyplanet.vercel.app](https://propertyplanet.vercel.app/)
+ 
 -### 🛠️ Dashboard
 -![Dashboard](https://github.com/AHMAD-JX/Hozn-RealEstate-Fullstack/blob/eedce2626f82448aa5611f945dbc5778ddcef4eb/public/assets/images/assets/3.png)
++## 🎯 Features
 +- 🔍 **Verified listings & projects** — every listing is reviewed by the admin team before it goes live
 +- 🏠 **Property & project browsing** with location, budget, size and type filters
 +- ✉️ **Direct enquiries** sent straight from a listing or project page
@@ -138,7 +140,26 @@
 -│
 -└── README.md
 -
--```
++Property-Planet/
++├── public/                  # Static assets, compiled scss entry points
++├── src/
++│   ├── app/                 # Next.js App Router pages (home, properties,
++│   │                          projects, dashboard, admin, seller, auth, ...)
++│   ├── components/          # UI components grouped by page/section
++│   ├── data/                # Static/content data used across pages
++│   ├── hooks/
++│   ├── layouts/             # Header/footer layout variants
++│   ├── lib/                 # Supabase clients, shared config
++│   ├── modals/
++│   ├── redux/
++│   ├── styles/
++│   ├── types/
++│   └── utils/
++├── supabase/                # Supabase migrations/config
++├── .env.example
++├── next.config.js
++└── package.json
+ ```
 -## ⚙️ Installation & Setup
 -
 -### 1️⃣ Install Node.js and npm
@@ -270,27 +291,8 @@
 -.then(res => res.json())
 -.then(data => console.log(data))
 -.catch(err => console.error(err));
-+Property-Planet/
-+├── public/                  # Static assets, compiled scss entry points
-+├── src/
-+│   ├── app/                 # Next.js App Router pages (home, properties,
-+│   │                          projects, dashboard, admin, seller, auth, ...)
-+│   ├── components/          # UI components grouped by page/section
-+│   ├── data/                # Static/content data used across pages
-+│   ├── hooks/
-+│   ├── layouts/             # Header/footer layout variants
-+│   ├── lib/                 # Supabase clients, shared config
-+│   ├── modals/
-+│   ├── redux/
-+│   ├── styles/
-+│   ├── types/
-+│   └── utils/
-+├── supabase/                # Supabase migrations/config
-+├── .env.example
-+├── next.config.js
-+└── package.json
- ```
- 
+-```
+-
 ----
 -
 -## ✨ Contributing
@@ -302,7 +304,7 @@
 -🚀 **HOZN - Real Estate** | Built with ❤️ by [AHMAD-JX](https://github.com/AHMAD-JX)
 -
 -
--
+ 
 +## 📌 Notes
 +Property Planet is a technology and facilitation platform. Buyers should independently verify original title documents and legal status before any transaction. All payments are made directly between buyer and seller — the platform does not process or hold payments.
  

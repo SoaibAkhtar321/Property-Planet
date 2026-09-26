@@ -14,6 +14,7 @@
 ![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chart.js&logoColor=white)
 
 ## 🌟 Overview
+🔗 **Live:** [propertyplanet.vercel.app](https://propertyplanet.vercel.app/)
 **Property Planet** is a real estate platform for buying, selling and discovering plotted developments and projects across South Hyderabad. Listings and projects go through admin review before they go live, and enquiries are routed directly between buyers, sellers and the Property Planet team — no platform middlemen, and **no payments are collected on the platform itself.**
 
 ## 🎯 Features
