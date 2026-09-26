@@ -1,14 +1,25 @@
 "use client"
 // src/components/forms/ResetPasswordForm.tsx
 //
-// Landed on after clicking the link from ForgotPasswordForm's email.
-// createBrowserClient() has detectSessionInUrl on by default, so it
-// exchanges the recovery code in the URL for a temporary session as soon
-// as this page loads -- we just need to call updateUser() with the new
-// password while that session is active.
+// Landed on after /auth/callback has already exchanged the recovery code
+// from ForgotPasswordForm's email for a session (see that route for why:
+// this page used to rely on createBrowserClient's detectSessionInUrl to
+// exchange a PKCE `?code=` link itself, which never actually happened,
+// hence the "Supabase auth session expired" bug). By the time this
+// component mounts, the recovery session should already exist as a
+// cookie -- but it still verifies that before showing the form, rather
+// than trusting the URL blindly, since:
+//   - the link may have been opened a second time (recovery codes are
+//     single-use) or after it expired,
+//   - a PASSWORD_RECOVERY auth event can also arrive slightly after mount,
+//     so a brief "verifying" state avoids a false-negative flash.
+// Three states: "verifying" (checking for a session) -> "ready" (session
+// confirmed, show the form) or "invalid" (no session -- link expired,
+// already used, or this page was opened directly).
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -33,6 +44,8 @@ const schema = yup
    })
    .required();
 
+type VerifyState = "verifying" | "ready" | "invalid";
+
 const ResetPasswordForm = () => {
    const router = useRouter();
    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: yupResolver(schema) });
@@ -41,6 +54,45 @@ const ResetPasswordForm = () => {
    // force-reveal the confirmation field too, and vice versa.
    const [isPasswordVisible, setPasswordVisibility] = useState(false);
    const [isConfirmVisible, setConfirmVisibility] = useState(false);
+   const [verifyState, setVerifyState] = useState<VerifyState>("verifying");
+
+   useEffect(() => {
+      const supabase = createClient();
+      let settled = false;
+
+      const markReady = () => {
+         if (!settled) {
+            settled = true;
+            setVerifyState("ready");
+         }
+      };
+
+      // Primary check: /auth/callback already exchanged the code, so a
+      // session should already be readable from cookies.
+      supabase.auth.getUser().then(({ data, error }) => {
+         if (!error && data.user) {
+            markReady();
+         } else if (!settled) {
+            setVerifyState("invalid");
+         }
+      });
+
+      // Defense-in-depth: if this page is ever reached with the recovery
+      // code still unexchanged (e.g. an old email link, or a future
+      // change to the redirect target), the browser client's own
+      // detectSessionInUrl will fire a PASSWORD_RECOVERY event once it
+      // finishes -- catch that too rather than only checking once at
+      // mount.
+      const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+         if (event === "PASSWORD_RECOVERY" && session) {
+            markReady();
+         }
+      });
+
+      return () => {
+         listener.subscription.unsubscribe();
+      };
+   }, []);
 
    const onSubmit = async (data: FormData) => {
       setLoading(true);
@@ -48,6 +100,12 @@ const ResetPasswordForm = () => {
          const supabase = createClient();
          const { error } = await supabase.auth.updateUser({ password: data.password });
          if (error) {
+            // A session that looked valid a moment ago can still be
+            // rejected here (revoked, or the recovery token's short TTL
+            // ran out between verification and submit) -- fall back to
+            // the same "invalid" state rather than leaving a broken form
+            // on screen.
+            setVerifyState("invalid");
             toast.error(error.message || "Couldn't update your password. The reset link may have expired.");
             return;
          }
@@ -59,6 +117,28 @@ const ResetPasswordForm = () => {
          setLoading(false);
       }
    };
+
+   if (verifyState === "verifying") {
+      return (
+         <div className="text-center reset-verifying" role="status">
+            <p className="fs-16 color-dark mb-0">Verifying your reset link…</p>
+         </div>
+      );
+   }
+
+   if (verifyState === "invalid") {
+      return (
+         <div className="text-center">
+            <h4>This link is invalid or has expired</h4>
+            <p className="fs-16 color-dark mt-15">
+               Password reset links can only be used once and expire after a short time. Please request a new one.
+            </p>
+            <p className="fs-16 color-dark mt-20">
+               <Link href="/auth/forgot-password">Request a new reset link</Link>
+            </p>
+         </div>
+      );
+   }
 
    return (
       <form onSubmit={handleSubmit(onSubmit)}>

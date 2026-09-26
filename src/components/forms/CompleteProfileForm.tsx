@@ -16,19 +16,20 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 
 import { completeBuyerProfile } from "@/lib/profile/actions";
+import { isValidIndianMobile } from "@/lib/validation/phone";
 
 interface FormData {
    phone: string;
 }
-
-const PHONE_PATTERN = /^\+?[0-9]{7,15}$/;
 
 const schema = yup
    .object({
       phone: yup
          .string()
          .required("Phone number is required")
-         .matches(PHONE_PATTERN, "Enter a valid phone number"),
+         .test("is-indian-mobile", "Enter a valid 10-digit Indian mobile number", (value) =>
+            isValidIndianMobile(value)
+         ),
    })
    .required();
 

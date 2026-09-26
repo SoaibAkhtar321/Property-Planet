@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { createGeneralInquiry } from '@/lib/leads/actions';
+import { isValidIndianMobile } from '@/lib/validation/phone';
 
 interface FormData {
    user_name: string;
@@ -26,7 +27,13 @@ const schema = yup
    .object({
       user_name: yup.string().required().label("Name"),
       user_email: yup.string().required().email().label("Email"),
-      user_phone: yup.string().required().min(7).label("Phone number"),
+      user_phone: yup
+         .string()
+         .required()
+         .test("is-indian-mobile", "Enter a valid 10-digit Indian mobile number", (value) =>
+            isValidIndianMobile(value)
+         )
+         .label("Phone number"),
       message: yup.string().required().label("Message"),
    })
    .required();

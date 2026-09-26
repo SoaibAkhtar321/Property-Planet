@@ -1,6 +1,7 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,9 +18,20 @@ const ForgotPasswordForm = () => {
    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: yupResolver(schema) });
    const [sent, setSent] = useState(false);
    const [loading, setLoading] = useState(false);
+   const searchParams = useSearchParams();
+   // Phase 4: /auth/callback sends a stale/expired/invalid recovery link
+   // back here (instead of failing silently on the reset-password page)
+   // with this query param carrying a human-readable reason.
+   const [resetError, setResetError] = useState<string | null>(null);
+
+   useEffect(() => {
+      const message = searchParams.get("reset_error");
+      if (message) setResetError(message);
+   }, [searchParams]);
 
    const onSubmit = async (data: FormData) => {
       setLoading(true);
+      setResetError(null);
       try {
          const supabase = createClient();
          // Supabase always returns success here regardless of whether the
@@ -27,7 +39,11 @@ const ForgotPasswordForm = () => {
          // registered) -- so we always show the same "check your email"
          // state rather than branching on the result.
          await supabase.auth.resetPasswordForEmail(data.email, {
-            redirectTo: `${window.location.origin}/auth/reset-password`,
+            // Routed through /auth/callback (same code-exchange route the
+            // Google OAuth sign-in already uses) rather than straight to
+            // /auth/reset-password, so the recovery code in the link is
+            // actually exchanged for a session before that page renders.
+            redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent("/auth/reset-password")}`,
          });
          setSent(true);
       } catch {
@@ -54,6 +70,13 @@ const ForgotPasswordForm = () => {
    return (
       <form onSubmit={handleSubmit(onSubmit)}>
          <div className="row">
+            {resetError && (
+               <div className="col-12">
+                  <div className="reset-link-alert mb-25" role="alert">
+                     Your password reset link {resetError.toLowerCase().includes("expired") ? "has expired" : "is invalid or has already been used"}. Please request a new one below.
+                  </div>
+               </div>
+            )}
             <div className="col-12">
                <div className="input-group-meta position-relative mb-25">
                   <label>Email*</label>

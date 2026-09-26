@@ -15,21 +15,18 @@
 // re-checks role itself, the same fail-closed shape those helpers use.
 
 import { createClient } from "@/lib/supabase/server";
+import { normalizeIndianMobileOrNull } from "@/lib/validation/phone";
 
 export interface CompleteProfileResult {
    success: boolean;
    error?: string;
 }
 
-// Same basic sanity check as SellerRegisterForm.tsx -- optional +country
-// code, 7-15 digits. No SMS/OTP verification (out of scope).
-const PHONE_PATTERN = /^\+?[0-9]{7,15}$/;
-
 export async function completeBuyerProfile(phone: string): Promise<CompleteProfileResult> {
-   const trimmed = phone?.trim();
+   const normalizedPhone = normalizeIndianMobileOrNull(phone);
 
-   if (!trimmed || !PHONE_PATTERN.test(trimmed)) {
-      return { success: false, error: "Enter a valid phone number." };
+   if (!normalizedPhone) {
+      return { success: false, error: "Enter a valid 10-digit Indian mobile number." };
    }
 
    const supabase = await createClient();
@@ -61,7 +58,7 @@ export async function completeBuyerProfile(phone: string): Promise<CompleteProfi
 
    const { error: updateError } = await supabase
       .from("profiles")
-      .update({ phone: trimmed })
+      .update({ phone: normalizedPhone })
       .eq("id", user.id);
 
    if (updateError) {

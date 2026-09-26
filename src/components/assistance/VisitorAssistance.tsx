@@ -34,6 +34,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { submitVisitorAssistance, getVisitorAssistancePrefill } from "@/lib/leads/assistanceActions";
+import { isValidIndianMobile } from "@/lib/validation/phone";
 import {
    VISITOR_REQUIREMENT_TYPES,
    VISITOR_REQUIREMENT_TYPE_LABELS,
@@ -208,6 +209,12 @@ const VisitorAssistance = () => {
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       setError(null);
+
+      if (!isValidIndianMobile(phone)) {
+         setError("Please enter a valid 10-digit Indian mobile number.");
+         return;
+      }
+
       setSubmitting(true);
 
       const propertySlug = pathname.startsWith("/properties/") && pathname !== "/properties"

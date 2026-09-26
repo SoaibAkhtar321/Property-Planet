@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import FooterOne from '@/layouts/footers/FooterOne'
 import HeaderTwo from '@/layouts/headers/HeaderTwo'
 import ForgotPasswordForm from '@/components/forms/ForgotPasswordForm'
@@ -13,7 +14,11 @@ const ForgotPassword = () => {
                      <h2>Reset your password</h2>
                   </div>
                   <div className="form-wrapper m-auto">
-                     <ForgotPasswordForm />
+                     {/* ForgotPasswordForm reads ?reset_error= via useSearchParams,
+                         which requires a Suspense boundary in the app router. */}
+                     <Suspense fallback={null}>
+                        <ForgotPasswordForm />
+                     </Suspense>
                   </div>
                </div>
             </div>

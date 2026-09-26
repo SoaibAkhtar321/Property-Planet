@@ -38,6 +38,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { createInquiry, createProjectInquiry } from "@/lib/leads/actions";
+import { isValidIndianMobile } from "@/lib/validation/phone";
 import {
    clearPendingInquiry,
    consumePendingInquiry,
@@ -217,6 +218,11 @@ const InquiryDialog = () => {
       }
       if (!phone.trim()) {
          setError("Phone number is required.");
+         phoneRef.current?.focus();
+         return;
+      }
+      if (!isValidIndianMobile(phone)) {
+         setError("Please enter a valid 10-digit Indian mobile number.");
          phoneRef.current?.focus();
          return;
       }

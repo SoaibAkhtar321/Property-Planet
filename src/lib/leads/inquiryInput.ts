@@ -29,11 +29,10 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAuthContext } from "@/lib/auth/session";
+import { normalizeIndianMobileOrNull } from "@/lib/validation/phone";
 
 export const MAX_INQUIRY_MESSAGE_LENGTH = 1000;
 
-/** Digits, spaces, +, -, (, ) — 6 to 20 chars, at least 7 actual digits. */
-const PHONE_SHAPE = /^[0-9+\-\s()]{6,20}$/;
 const DATE_SHAPE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_SHAPE = /^\d{2}:\d{2}$/;
 const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,11 +99,9 @@ export function normalizeInquiryContact(input: InquiryContactInput): InquiryInpu
    if (!phone) {
       return { ok: false, error: "Phone number is required." };
    }
-   if (!PHONE_SHAPE.test(phone)) {
-      return { ok: false, error: "Please enter a valid phone number." };
-   }
-   if (phone.replace(/\D/g, "").length < 7) {
-      return { ok: false, error: "Please enter a valid phone number." };
+   const normalizedPhone = normalizeIndianMobileOrNull(phone);
+   if (!normalizedPhone) {
+      return { ok: false, error: "Please enter a valid 10-digit Indian mobile number." };
    }
 
    // The client checkbox is UX only — this is the copy that decides. A
@@ -160,7 +157,7 @@ export function normalizeInquiryContact(input: InquiryContactInput): InquiryInpu
       ok: true,
       value: {
          contact_name: nameResult.value,
-         contact_phone: phone,
+         contact_phone: normalizedPhone,
          message: message ? message : null,
          preferred_date: preferredDate,
          preferred_time: preferredTime,
@@ -215,11 +212,9 @@ export function normalizeGeneralContact(input: GeneralContactInput): GeneralCont
    if (!phone) {
       return { ok: false, error: "Phone number is required." };
    }
-   if (!PHONE_SHAPE.test(phone)) {
-      return { ok: false, error: "Please enter a valid phone number." };
-   }
-   if (phone.replace(/\D/g, "").length < 7) {
-      return { ok: false, error: "Please enter a valid phone number." };
+   const normalizedPhone = normalizeIndianMobileOrNull(phone);
+   if (!normalizedPhone) {
+      return { ok: false, error: "Please enter a valid 10-digit Indian mobile number." };
    }
 
    const message = (input.message ?? "").trim();
@@ -232,7 +227,7 @@ export function normalizeGeneralContact(input: GeneralContactInput): GeneralCont
       value: {
          contact_name: nameResult.value,
          contact_email: email,
-         contact_phone: phone,
+         contact_phone: normalizedPhone,
          message: message ? message : null,
       },
    };

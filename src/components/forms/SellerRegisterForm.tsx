@@ -29,6 +29,7 @@ import Image from "next/image";
 
 import OpenEye from "@/assets/images/icon/icon_68.svg";
 import { createClient } from "@/lib/supabase/client";
+import { isValidIndianMobile, normalizeIndianMobile } from "@/lib/validation/phone";
 
 interface FormData {
   name: string;
@@ -38,11 +39,6 @@ interface FormData {
   termsAccepted: boolean;
 }
 
-// Basic sanity check only -- accepts optional +country code and 7-15
-// digits, no SMS/OTP verification (explicitly out of scope for this
-// change; see the migration this form pairs with).
-const PHONE_PATTERN = /^\+?[0-9]{7,15}$/;
-
 const schema = yup
   .object({
     name: yup.string().required("Name is required"),
@@ -50,7 +46,9 @@ const schema = yup
     phone: yup
       .string()
       .required("Phone number is required")
-      .matches(PHONE_PATTERN, "Enter a valid phone number"),
+      .test("is-indian-mobile", "Enter a valid 10-digit Indian mobile number", (value) =>
+         isValidIndianMobile(value)
+      ),
     password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
     termsAccepted: yup
       .boolean()
@@ -83,7 +81,7 @@ const SellerRegisterForm = () => {
         options: {
           data: {
             full_name: data.name,
-            phone: data.phone,
+            phone: normalizeIndianMobile(data.phone),
             role: "seller",
           },
         },

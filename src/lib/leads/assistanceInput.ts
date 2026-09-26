@@ -13,8 +13,8 @@
 
 import { validateContactName, MAX_CONTACT_NAME_LENGTH } from "@/lib/leads/inquiryInput";
 import { isVisitorRequirementType, type VisitorRequirementType } from "@/lib/leads/assistanceOptions";
+import { normalizeIndianMobileOrNull } from "@/lib/validation/phone";
 
-const PHONE_SHAPE = /^[0-9+\-\s()]{6,20}$/;
 const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const MAX_ASSISTANCE_LOCATION_LENGTH = 120;
@@ -62,8 +62,9 @@ export function normalizeVisitorAssistance(input: VisitorAssistanceInput): Visit
    if (!phone) {
       return { ok: false, error: "Phone number is required." };
    }
-   if (!PHONE_SHAPE.test(phone) || phone.replace(/\D/g, "").length < 7) {
-      return { ok: false, error: "Please enter a valid phone number." };
+   const normalizedPhone = normalizeIndianMobileOrNull(phone);
+   if (!normalizedPhone) {
+      return { ok: false, error: "Please enter a valid 10-digit Indian mobile number." };
    }
 
    if (!isVisitorRequirementType(input.requirementType)) {
@@ -100,7 +101,7 @@ export function normalizeVisitorAssistance(input: VisitorAssistanceInput): Visit
       ok: true,
       value: {
          name: nameResult.value,
-         phone,
+         phone: normalizedPhone,
          requirementType: input.requirementType,
          email: email ? email : null,
          location: location ? location : null,

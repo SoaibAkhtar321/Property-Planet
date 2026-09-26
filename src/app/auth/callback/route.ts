@@ -32,11 +32,30 @@ export async function GET(request: NextRequest) {
    const nextParam = searchParams.get("next");
    const errorDescription = searchParams.get("error_description");
 
+   // Phase 4: the password-recovery link (ForgotPasswordForm) is routed
+   // through this same callback with ?next=/auth/reset-password, so it can
+   // reuse this route's exchangeCodeForSession() instead of relying on
+   // detectSessionInUrl on the reset-password page itself (that mismatch --
+   // a PKCE `?code=` link with no explicit exchange -- was the actual cause
+   // of the "Supabase auth session expired" bug). A recovery link that is
+   // expired or already used must not bounce to the homepage like an OAuth
+   // failure does; it needs to send the person back to request a fresh one,
+   // with a message, on /auth/forgot-password.
+   const isRecovery = nextParam === "/auth/reset-password";
+
    if (errorDescription) {
+      if (isRecovery) {
+         return NextResponse.redirect(
+            `${origin}/auth/forgot-password?reset_error=${encodeURIComponent(errorDescription)}`
+         );
+      }
       return NextResponse.redirect(`${origin}/?auth_error=${encodeURIComponent(errorDescription)}`);
    }
 
    if (!code) {
+      if (isRecovery) {
+         return NextResponse.redirect(`${origin}/auth/forgot-password?reset_error=Invalid or missing reset link.`);
+      }
       return NextResponse.redirect(`${origin}/`);
    }
 
@@ -44,7 +63,20 @@ export async function GET(request: NextRequest) {
    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
    if (error) {
+      if (isRecovery) {
+         return NextResponse.redirect(
+            `${origin}/auth/forgot-password?reset_error=${encodeURIComponent(error.message)}`
+         );
+      }
       return NextResponse.redirect(`${origin}/?auth_error=${encodeURIComponent(error.message)}`);
+   }
+
+   if (isRecovery) {
+      // Session cookie is now set (createClient() above wrote it via the
+      // response cookie jar) -- the reset-password page's own server/client
+      // Supabase reads will see it as an active session, no further
+      // exchange needed there.
+      return NextResponse.redirect(`${origin}/auth/reset-password`);
    }
 
    const {
