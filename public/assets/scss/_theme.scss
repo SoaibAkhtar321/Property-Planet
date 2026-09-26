@@ -106,6 +106,15 @@ body {
     color: var(--pp-text-muted) !important;
   }
 
+  // Phase 16: Bootstrap's default .text-danger (#dc3545) is ~3.3:1 against
+  // --pp-surface, under the 4.5:1 AA threshold for the small (fs-14) alert
+  // text it's used on (CancelSiteVisitButton). Brighten it to the same
+  // danger red already used for dark-mode error/destructive text elsewhere
+  // (.form_error, DeleteAccountSection) so it reads clearly here too.
+  .text-danger {
+    color: #ff6b6b !important;
+  }
+
   a:not([class*="btn"]):not(.nav-link):not(.pp-call-link):not(.dropdown-item) {
     color: var(--pp-text-strong);
 

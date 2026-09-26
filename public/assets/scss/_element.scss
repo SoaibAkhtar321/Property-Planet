@@ -1186,7 +1186,13 @@
 }
 
 .form_error{
-    color: red;
+    /* Phase 16: plain red on the dark surface (--pp-surface: #162a30)
+       comes out to ~3.7:1 contrast, under the 4.5:1 AA threshold for
+       body text — form validation errors were genuinely hard to read
+       in dark mode. Reusing the same light/dark danger pair already
+       used for the destructive "Delete Account" text in
+       DeleteAccountSection.tsx instead of inventing a new color. */
+    color: light-dark(#c0392b, #ff6b6b);
     margin-bottom: 0;
     margin-top: 15px;
 }

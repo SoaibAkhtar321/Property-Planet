@@ -147,6 +147,11 @@ const PropertyStickyCta = ({
          </div>
 
          <style jsx global>{`
+            /* Phase 14: was hardcoded #fff/#f5ede8/#000, so this sticky
+               bar stayed a bright light-mode bar over a dark-mode page.
+               Switched to the same --pp-* surface/border/text tokens the
+               inquiry dialog and cards already use, so it now follows the
+               page theme like everything else on the detail page. */
             .pp-sticky-cta {
                position: fixed;
                left: 0;
@@ -158,8 +163,8 @@ const PropertyStickyCta = ({
                justify-content: space-between;
                gap: 12px;
                padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
-               background: #fff;
-               border-top: 1px solid #f5ede8;
+               background: var(--pp-surface);
+               border-top: 1px solid var(--pp-border);
                box-shadow: 0 -8px 24px rgba(20, 20, 10, 0.08);
                transition: transform 0.25s ease;
             }
@@ -182,7 +187,7 @@ const PropertyStickyCta = ({
             .pp-sticky-cta__value {
                font-size: 15px;
                font-weight: 500;
-               color: #000;
+               color: var(--pp-text-strong);
                overflow: hidden;
                text-overflow: ellipsis;
                white-space: nowrap;
