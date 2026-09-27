@@ -5,16 +5,15 @@
 // Phase 3: replaces the static "Enquire Now" link in Sidebar.tsx, and now
 // also hosts the site-visit request step for a buyer's own lead.
 //
-// Role branching here is UI presentation only, same disclaimer as
-// useSupabaseUser() itself — the real authorization gate is
-// requireRole(["buyer"]) inside createInquiry()/createSiteVisit() on the
-// server. This component's job is just to show the right thing:
+// Role is UI presentation only, same disclaimer as useSupabaseUser()
+// itself — the real authorization gate is requireRole(["buyer"]) inside
+// createInquiry()/createSiteVisit() on the server. This component's job is
+// just to show the right thing:
 //   loading        -> render nothing (avoid a flash of the wrong state)
-//   logged out     -> existing #loginModal trigger, same pattern used in
-//                      the headers (data-bs-toggle/data-bs-target)
-//   buyer          -> inquiry form, or (once a lead exists) the site-visit
-//                      request section
-//   seller / admin -> nothing (no buyer inquiry/site-visit UI for non-buyers)
+//   any account,
+//   or logged out  -> Send Inquiry button (opens the universal dialog)
+//   buyer with an
+//   existing lead  -> site-visit request section instead
 //
 // lead_id is never accepted as a prop or from anywhere client-controlled —
 // it is only ever the value returned by getMyLeadForProperty(), which is
@@ -210,11 +209,6 @@ const InquiryForm = ({
    }, [loading, user, role, propertyId]);
 
    if (loading) {
-      return null;
-   }
-
-   // Sellers and admins get no buyer enquiry UI, same as before.
-   if (role && role !== "buyer") {
       return null;
    }
 

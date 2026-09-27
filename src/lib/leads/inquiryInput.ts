@@ -238,21 +238,17 @@ export type InquiryBuyerResult =
    | { ok: false; error: string; needsAuth?: boolean };
 
 /**
- * Resolves the authenticated buyer for an inquiry without redirecting.
- * Role comes from `profiles` via getAuthContext() — never from the client.
+ * Resolves the authenticated account sending an inquiry, without
+ * redirecting. Identity comes from `profiles` via getAuthContext() — never
+ * from the client. Any signed-in account (buyer, seller, admin) may send an
+ * inquiry; only "not signed in at all" is rejected here. See
+ * 0035_leads_insert_any_authenticated_role.sql for the matching RLS policy.
  */
 export async function resolveInquiryBuyer(): Promise<InquiryBuyerResult> {
    const ctx = await getAuthContext();
 
    if (!ctx) {
       return { ok: false, needsAuth: true, error: "Please sign in to send an inquiry." };
-   }
-
-   if (ctx.role !== "buyer") {
-      return {
-         ok: false,
-         error: "Inquiries can only be sent from a buyer account. You're signed in as a " + ctx.role + ".",
-      };
    }
 
    return { ok: true, userId: ctx.userId, email: ctx.email };
