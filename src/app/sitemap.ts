@@ -49,6 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
    const propertyEntries: MetadataRoute.Sitemap = properties.map((property) => ({
       url: `${SITE_URL}/properties/${property.slug}`,
+      ...(property.publishedAt ? { lastModified: new Date(property.publishedAt) } : {}),
    }));
 
    const projectEntries: MetadataRoute.Sitemap = projects.map((project) => ({

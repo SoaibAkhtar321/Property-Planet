@@ -124,6 +124,11 @@ export function mapProperty(
       nearby: undefined,
       floorPlanImages: floorPlanImages.length > 0 ? floorPlanImages : undefined,
       videoUrl,
+      // SEO fix: was fetched (row.published_at, selected in
+      // PROPERTY_PUBLIC_COLUMNS) but never mapped onto Property, so
+      // sitemap.ts had no date to put in lastModified for property pages —
+      // unlike projects and blog posts, which already carry this through.
+      publishedAt: row.published_at ?? undefined,
       // No property_location row yet (0019) => no map to embed, rather than
       // a broken q=null,null URL.
       // t=k defaults the embed to Google's satellite layer (imagery only,

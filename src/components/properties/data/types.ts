@@ -58,6 +58,8 @@ export interface Property {
    videoUrl?: string;
    mapEmbedUrl?: string;
    featured?: boolean;
+   /** ISO timestamp the listing was published. Used for sitemap lastModified. */
+   publishedAt?: string;
    /**
     * Marks records that exist only to demonstrate the template/layout and are
     * NOT real Property Planet inventory. Always surface this in the UI so
