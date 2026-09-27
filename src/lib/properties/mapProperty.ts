@@ -126,15 +126,17 @@ export function mapProperty(
       videoUrl,
       // No property_location row yet (0019) => no map to embed, rather than
       // a broken q=null,null URL.
-      // t=p defaults the embed to Google's terrain layer. This is the
+      // t=k defaults the embed to Google's satellite layer (imagery only,
+      // no roads/terrain shading) so the actual land/plot/water is visible
+      // at a glance, rather than the roadmap or terrain sketch. This is the
       // legacy maps.google.com/maps?...&output=embed form (not the
       // Maps Embed API), so it already ships with Google's own zoom
       // controls and a map-type switcher (roadmap/satellite/terrain) in
-      // the iframe chrome — buyers can zoom and change layers themselves;
-      // t=p just picks which layer they see first.
+      // the iframe chrome — buyers can still switch layers themselves;
+      // t=k just picks which layer they see first.
       mapEmbedUrl:
          row.approx_lat != null && row.approx_lng != null
-            ? `https://maps.google.com/maps?q=${row.approx_lat},${row.approx_lng}&z=15&t=p&output=embed`
+            ? `https://maps.google.com/maps?q=${row.approx_lat},${row.approx_lng}&z=15&t=k&output=embed`
             : undefined,
    };
 }

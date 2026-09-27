@@ -57,7 +57,7 @@ const ExactLocationSection = ({ leadId }: { leadId: string }) => {
             {typeof result.exactLat === "number" && typeof result.exactLng === "number" && (
                <div className="gmap_canvas" style={{ height: 300 }}>
                   <iframe
-                     src={`https://maps.google.com/maps?q=${result.exactLat},${result.exactLng}&z=17&output=embed`}
+                     src={`https://maps.google.com/maps?q=${result.exactLat},${result.exactLng}&z=17&t=k&output=embed`}
                      width="100%"
                      height="300"
                      style={{ border: 0 }}

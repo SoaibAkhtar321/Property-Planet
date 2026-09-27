@@ -193,6 +193,15 @@ const PropertyStickyCta = ({
                white-space: nowrap;
             }
             .pp-sticky-cta__btn {
+               /* .btn-four (public/assets/scss/_button.scss) is a fixed
+                  50x50px icon-only button by design. Reusing it here for
+                  a text label without resetting width/height meant "Send
+                  Inquiry" was squeezed into that 50px box and clipped down
+                  to a few visible letters on phones -- this undoes the
+                  fixed square sizing so the button grows to fit its text
+                  instead. */
+               width: auto;
+               height: auto;
                flex-shrink: 0;
                justify-content: center;
                white-space: nowrap;

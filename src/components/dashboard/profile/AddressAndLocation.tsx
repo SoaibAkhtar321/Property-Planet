@@ -100,7 +100,7 @@ const AddressAndLocation = () => {
                </div>
                <div className="map-frame mt-30">
                   <div className="gmap_canvas h-100 w-100">
-                     <iframe className="gmap_iframe h-100 w-100" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Future City Hyderabad&amp;t=&amp;z=11&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+                     <iframe className="gmap_iframe h-100 w-100" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Future City Hyderabad&amp;t=k&amp;z=11&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
                   </div>
                </div>
             </div>
