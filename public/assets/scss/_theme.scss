@@ -788,53 +788,67 @@ body {
 }
 
 /* ========== Universal inquiry dialog (pp-inquiry-*) ========== */
-[data-theme="dark"] {
+/* html[data-theme="dark"] instead of plain [data-theme="dark"]: adds a
+   type selector so this out-specifies any [data-theme="dark"] .foo rule
+   elsewhere, and every value here is a literal hex/opaque color (not a
+   css var) so it can't be starved by a variable resolving unexpectedly.
+   opacity: 1 !important is forced everywhere text shows up, in case
+   anything else is dimming the whole element rather than just its color. */
+html[data-theme="dark"] {
   .pp-inquiry-dialog {
-    background: var(--pp-surface) !important;
-    box-shadow: var(--pp-shadow) !important;
+    background-color: #22404a !important;
+    opacity: 1 !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
 
     input,
     textarea {
-      background: var(--pp-input-bg) !important;
-      border-color: var(--pp-input-border) !important;
-      color: var(--pp-text-strong) !important;
+      background-color: #122226 !important;
+      border-color: rgba(255, 255, 255, 0.16) !important;
+      color: #f2f6f7 !important;
+      opacity: 1 !important;
     }
   }
 
+  .pp-inquiry-dialog h4,
+  .pp-inquiry-dialog #pp-inquiry-title,
+  .pp-inquiry-dialog label {
+    color: #f2f6f7 !important;
+    opacity: 1 !important;
+  }
+
   .pp-inquiry-close {
-    background: var(--pp-surface-2) !important;
-    color: var(--pp-text-strong) !important;
+    background-color: #1c333a !important;
+    color: #f2f6f7 !important;
 
     &:hover {
-      background: var(--pp-border) !important;
+      background-color: rgba(255, 255, 255, 0.14) !important;
     }
   }
 
   .pp-inquiry-target {
-    color: var(--pp-text) !important;
-  }
-
-  .pp-inquiry-dialog label {
-    color: var(--pp-text-strong) !important;
+    color: rgba(232, 238, 240, 0.82) !important;
   }
 
   .pp-inquiry-dialog small,
   .pp-inquiry-dialog .opacity-75 {
-    color: var(--pp-text-muted) !important;
+    color: rgba(232, 238, 240, 0.7) !important;
+    opacity: 1 !important;
   }
 
   .pp-inquiry-dialog input[type="checkbox"] {
-    background: transparent !important;
-    border-color: var(--pp-border-strong) !important;
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.32) !important;
     accent-color: $color-one !important;
   }
 
   .pp-inquiry-consent label {
-    color: var(--pp-text) !important;
+    color: rgba(232, 238, 240, 0.82) !important;
+    opacity: 1 !important;
   }
 
   .pp-inquiry-success h4 {
-    color: var(--pp-text-strong) !important;
+    color: #f2f6f7 !important;
   }
 }
 
