@@ -1,601 +1,711 @@
 ﻿/*-----------------------------------------------------------------------------------
-    Theme tokens â€” light / dark
+    Theme tokens — light / dark
 
     Preference is stored as localStorage "pp-theme": light | dark | system.
     The resolved surface is on <html data-theme="light|dark">, set by an
     inline head script (no FOUC) and by ThemeToggle.tsx.
 
     Brand orange ($color-one / $color-two) stays constant in both themes.
-
-    Dark mode uses broad, high-specificity overrides so existing hardcoded
-    #000 / $text-dark rules in component SCSS still read correctly without
-    rewriting every partial.
 -----------------------------------------------------------------------------------*/
 
 :root,
 [data-theme="light"] {
-   color-scheme: light;
-   --pp-bg: #ffffff;
-   --pp-bg-muted: #f8f8f8;
-   --pp-bg-soft: #fff8f4;
-   --pp-surface: #ffffff;
-   --pp-surface-2: #f5ede8;
-   --pp-text: rgba(0, 0, 0, 0.7);
-   --pp-text-strong: #000000;
-   --pp-text-muted: rgba(0, 0, 0, 0.45);
-   --pp-text-inverse: #ffffff;
-   --pp-border: rgba(0, 0, 0, 0.1);
-   --pp-border-strong: #000000;
-   --pp-header-bg: #ffffff;
-   --pp-header-text: #000000;
-   --pp-footer-bg: #0f2a37;
-   --pp-footer-text: rgba(255, 255, 255, 0.78);
-   --pp-shadow: 0 10px 30px rgba(15, 42, 55, 0.08);
-   --pp-input-bg: #ffffff;
-   --pp-input-border: #eeecec;
-   --pp-scrollbar-track: #ffffff;
-   --pp-scrollbar-thumb: #000000;
-   --pp-card-bg: #ffffff;
-   --pp-card-border: #f3f3f3;
+  color-scheme: light;
+  --pp-bg: #ffffff;
+  --pp-bg-muted: #f8f8f8;
+  --pp-bg-soft: #fff8f4;
+  --pp-surface: #ffffff;
+  --pp-surface-2: #f5ede8;
+  --pp-text: rgba(0, 0, 0, 0.7);
+  --pp-text-strong: #000000;
+  --pp-text-muted: rgba(0, 0, 0, 0.45);
+  --pp-text-inverse: #ffffff;
+  --pp-border: rgba(0, 0, 0, 0.1);
+  --pp-border-strong: #000000;
+  --pp-header-bg: #ffffff;
+  --pp-header-text: #000000;
+  --pp-footer-bg: #0f2a37;
+  --pp-footer-text: rgba(255, 255, 255, 0.78);
+  --pp-shadow: 0 10px 30px rgba(15, 42, 55, 0.08);
+  --pp-input-bg: #ffffff;
+  --pp-input-border: #eeecec;
+  --pp-scrollbar-track: #ffffff;
+  --pp-scrollbar-thumb: #000000;
+  --pp-card-bg: #ffffff;
+  --pp-card-border: #f3f3f3;
 }
 
 [data-theme="dark"] {
-   color-scheme: dark;
-   --pp-bg: #0d1a1c;
-   --pp-bg-muted: #122226;
-   --pp-bg-soft: #162a30;
-   --pp-surface: #162a30;
-   --pp-surface-2: #1c333a;
-   --pp-text: rgba(232, 238, 240, 0.82);
-   --pp-text-strong: #f2f6f7;
-   --pp-text-muted: rgba(232, 238, 240, 0.55);
-   --pp-text-inverse: #0d1a1c;
-   --pp-border: rgba(255, 255, 255, 0.14);
-   --pp-border-strong: rgba(255, 255, 255, 0.32);
-   --pp-header-bg: #0f2226;
-   --pp-header-text: #f2f6f7;
-   --pp-footer-bg: #0a1416;
-   --pp-footer-text: rgba(232, 238, 240, 0.75);
-   --pp-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
-   --pp-input-bg: #122226;
-   --pp-input-border: rgba(255, 255, 255, 0.16);
-   --pp-scrollbar-track: #0d1a1c;
-   --pp-scrollbar-thumb: #ff6725;
-   --pp-card-bg: #162a30;
-   --pp-card-border: rgba(255, 255, 255, 0.1);
+  color-scheme: dark;
+  --pp-bg: #0d1a1c;
+  --pp-bg-muted: #122226;
+  --pp-bg-soft: #162a30;
+  --pp-surface: #162a30;
+  --pp-surface-2: #1c333a;
+  --pp-text: rgba(232, 238, 240, 0.82);
+  --pp-text-strong: #f2f6f7;
+  --pp-text-muted: rgba(232, 238, 240, 0.55);
+  --pp-text-inverse: #0d1a1c;
+  --pp-border: rgba(255, 255, 255, 0.14);
+  --pp-border-strong: rgba(255, 255, 255, 0.32);
+  --pp-header-bg: #0f2226;
+  --pp-header-text: #f2f6f7;
+  --pp-footer-bg: #0a1416;
+  --pp-footer-text: rgba(232, 238, 240, 0.75);
+  --pp-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --pp-input-bg: #122226;
+  --pp-input-border: rgba(255, 255, 255, 0.16);
+  --pp-scrollbar-track: #0d1a1c;
+  --pp-scrollbar-thumb: #1faa59;
+  --pp-card-bg: #162a30;
+  --pp-card-border: rgba(255, 255, 255, 0.1);
 }
 
 /* ========== Global surfaces ========== */
 body {
-   background-color: var(--pp-bg);
-   color: var(--pp-text);
+  background-color: var(--pp-bg);
+  color: var(--pp-text);
 }
 
 .main-page-wrapper {
-   background-color: var(--pp-bg);
-   color: var(--pp-text);
+  background-color: var(--pp-bg);
+  color: var(--pp-text);
 }
 
 ::-webkit-scrollbar-track {
-   background: var(--pp-scrollbar-track);
+  background: var(--pp-scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-   background: var(--pp-scrollbar-thumb);
+  background: var(--pp-scrollbar-thumb);
 }
 
 .ctn-preloader {
-   background: var(--pp-bg);
+  background: var(--pp-bg);
 }
 
 /* ========== Dark mode: typography & utilities ========== */
 [data-theme="dark"] {
-   h1, h2, h3, h4, h5, h6,
-   .h1, .h2, .h3, .h4, .h5, .h6 {
-      color: var(--pp-text-strong) !important;
-   }
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--pp-text-strong) !important;
+  }
 
-   p, li, span, label, td, th, dt, dd {
-      color: inherit;
-   }
+  p, li, span, label, td, th, dt, dd {
+    color: inherit;
+  }
 
-   .color-dark,
-   .text-dark,
-   .text-black {
-      color: var(--pp-text-strong) !important;
-   }
+  .color-dark:not(.badge),
+  .text-dark:not(.badge),
+  .text-black:not(.badge) {
+    color: var(--pp-text-strong) !important;
+  }
 
-   .text-muted,
-   .color-light {
+  .text-muted,
+  .color-light {
+    color: var(--pp-text-muted) !important;
+  }
+
+  // Phase 16: Bootstrap's default .text-danger (#dc3545) is ~3.3:1 against
+  // --pp-surface, under the 4.5:1 AA threshold for the small (fs-14) alert
+  // text it's used on (CancelSiteVisitButton). Brighten it to the same
+  // danger red already used for dark-mode error/destructive text elsewhere
+  // (.form_error, DeleteAccountSection) so it reads clearly here too.
+  .text-danger {
+    color: #ff6b6b !important;
+  }
+
+  a:not([class*="btn"]):not(.nav-link):not(.pp-call-link):not(.dropdown-item) {
+    color: var(--pp-text-strong);
+
+    &:hover {
+      color: $color-one;
+    }
+  }
+
+  .title-one {
+    .upper-title {
       color: var(--pp-text-muted) !important;
-   }
+    }
 
-   a:not([class*="btn"]):not(.nav-link):not(.pp-call-link):not(.dropdown-item) {
-      color: var(--pp-text-strong);
-
-      &:hover {
-         color: $color-one;
-      }
-   }
-
-   /* Section titles */
-   .title-one {
-      .upper-title {
-         color: var(--pp-text-muted) !important;
-      }
-
-      h2, h3, h4 {
-         color: var(--pp-text-strong) !important;
-      }
-
-      p {
-         color: var(--pp-text) !important;
-      }
-   }
-
-   .sub-title-one,
-   .section-heading,
-   .block-title {
+    h2, h3, h4 {
       color: var(--pp-text-strong) !important;
-   }
+    }
 
-   /* Background utility remaps */
-   .bg-light,
-   .bg-white {
-      background-color: var(--pp-bg-muted) !important;
-      color: var(--pp-text);
-   }
+    p {
+      color: var(--pp-text) !important;
+    }
+  }
 
-   .bg-pink,
-   .bg-pink-two,
-   .bg-pink-three {
-      background-color: var(--pp-bg-soft) !important;
-      color: var(--pp-text);
-   }
+  .sub-title-one,
+  .section-heading,
+  .block-title {
+    color: var(--pp-text-strong) !important;
+  }
 
-   .border,
-   .border-top,
-   .border-bottom,
-   .border-start,
-   .border-end,
-   .border-0 {
-      border-color: var(--pp-border) !important;
-   }
+  .bg-light:not(.badge),
+  .bg-white:not(.badge) {
+    background-color: var(--pp-bg-muted) !important;
+    color: var(--pp-text);
+  }
+
+  .bg-pink,
+  .bg-pink-two,
+  .bg-pink-three {
+    background-color: var(--pp-bg-soft) !important;
+    color: var(--pp-text);
+  }
+
+  .border,
+  .border-top,
+  .border-bottom,
+  .border-start,
+  .border-end,
+  .border-0 {
+    border-color: var(--pp-border) !important;
+  }
 }
 
-/* ========== Header ========== */
+/* ========== Header & Logo Image Swap ========== */
 .theme-main-menu {
-   color: var(--pp-header-text);
+  color: var(--pp-header-text);
 
-   &.menu-overlay:has(+ .hero-banner-two) {
-      background: var(--pp-header-bg);
-   }
+  // See _header.scss for why both selectors are listed: `:has()` is the
+  // DOM-driven match, `.over-hero` is the explicit one HomeTwo passes in
+  // via HeaderTwo's `overHero` prop and is the one that's actually
+  // reliable.
+  &.menu-overlay:has(+ .hero-banner-two),
+  &.menu-overlay.over-hero {
+    background: var(--pp-header-bg);
+  }
 
-   &.static-header,
-   &.fixed {
-      background: var(--pp-header-bg) !important;
-   }
+  &.static-header,
+  &.fixed {
+    background: var(--pp-header-bg) !important;
+  }
 
-   .pp-call-link {
-      color: var(--pp-header-text);
+  .pp-call-link {
+    color: var(--pp-header-text);
 
-      &:hover {
-         color: $color-one;
-      }
-   }
+    &:hover {
+      color: $color-one;
+    }
+  }
+}
+
+/* Logo Image Swap Logic */
+.logo-dark {
+  display: none !important;
+}
+.logo-light {
+  display: block !important;
+}
+
+[data-theme="dark"] .logo-light {
+  display: none !important;
+}
+[data-theme="dark"] .logo-dark {
+  display: block !important;
 }
 
 [data-theme="dark"] {
-   .theme-main-menu {
-      .navbar .navbar-nav .nav-link {
-         color: var(--pp-header-text);
+  .theme-main-menu {
+    .navbar .navbar-nav .nav-link {
+      color: var(--pp-header-text);
 
-         &:hover,
-         &.active {
-            color: $color-one;
-         }
+      &:hover,
+      &.active {
+        color: $color-one;
       }
+    }
 
-      .pp-header-seller-btn {
-         color: var(--pp-header-text);
-         border-color: var(--pp-border-strong);
-      }
-   }
+    .pp-header-seller-btn {
+      color: var(--pp-header-text);
+      border-color: var(--pp-border-strong);
+    }
+  }
 
-   .theme-main-menu.menu-overlay .pp-header-menu-btn .btn-one {
-      background: $color-one;
-      border-color: $color-one;
-      color: #fff;
+  .theme-main-menu.menu-overlay .pp-header-menu-btn .btn-one,
+  .theme-main-menu .pp-header-menu-btn .btn-one,
+  .theme-main-menu .btn-one,
+  .navbar .btn-one,
+  .pp-header-menu-btn a,
+  .pp-header-menu-btn button {
+    background: #1FAA59 !important;
+    border-color: #1FAA59 !important;
+    color: #ffffff !important;
 
-      &:hover {
-         background: $color-two;
-         border-color: $color-two;
-         color: #fff;
-      }
-   }
+    i,
+    span,
+    svg {
+      color: #ffffff !important;
+      fill: #ffffff !important;
+    }
 
-   /* Offcanvas / mobile menu */
-   .offcanvas,
-   .offcanvas.sidebar-nav {
-      background-color: var(--pp-surface) !important;
-      color: var(--pp-text);
+    &:hover {
+      background: #e55a1f !important;
+      border-color: #e55a1f !important;
+      color: #ffffff !important;
+    }
+  }
 
-      .btn-close {
-         filter: invert(1);
-      }
+  .offcanvas,
+  .offcanvas.sidebar-nav {
+    background-color: var(--pp-surface) !important;
+    color: var(--pp-text);
 
-      a {
-         color: var(--pp-text-strong);
-      }
-   }
+    .btn-close {
+      filter: invert(1);
+    }
+
+    a {
+      color: var(--pp-text-strong);
+    }
+  }
+
+  /* Fallback: Keep SVG/text logos full color if images aren't used */
+  .theme-main-menu .logo img:not(.logo-dark):not(.logo-light),
+  .theme-main-menu .navbar-brand img,
+  .logo img:not(.logo-dark):not(.logo-light),
+  .footer-logo img {
+    filter: none !important;
+    opacity: 1 !important;
+  }
+
+  .theme-main-menu .logo,
+  .theme-main-menu .navbar-brand,
+  .logo,
+  .navbar-brand {
+    color: #ffffff !important;
+  }
+
+  .theme-main-menu .logo span,
+  .theme-main-menu .navbar-brand span,
+  .logo span,
+  .logo small,
+  .logo p,
+  .logo .tagline,
+  .navbar-brand span,
+  .navbar-brand small {
+    color: #ffffff !important;
+    opacity: 1 !important;
+  }
+
+  .theme-main-menu .logo svg text,
+  .navbar-brand svg text,
+  .logo svg text {
+    fill: #ffffff !important;
+  }
 }
 
 /* ========== Cards, listing, property tiles ========== */
 [data-theme="dark"] {
-   .card,
-   .bg-wrapper,
-   .property-info,
-   .listing-card-one,
-   .listing-card-two,
-   .listing-card-three,
-   .listing-card-four,
-   .listing-card-five,
-   .listing-card-six,
-   .listing-card-seven,
-   .listing-card-eight,
-   .agent-card,
-   .blog-meta-one,
-   .blog-meta-two,
-   .feedback-block-one,
-   .feedback-block-two,
-   .feedback-block-three,
-   .pricing-card,
-   .card-style-one,
-   .card-style-two,
-   .card-style-three {
-      background-color: var(--pp-card-bg) !important;
+  .card,
+  .bg-wrapper,
+  .property-info,
+  .listing-card-one,
+  .listing-card-two,
+  .listing-card-three,
+  .listing-card-four,
+  .listing-card-five,
+  .listing-card-six,
+  .listing-card-seven,
+  .listing-card-eight,
+  .agent-card,
+  .blog-meta-one,
+  .blog-meta-two,
+  .feedback-block-one,
+  .feedback-block-two,
+  .feedback-block-three,
+  .pricing-card,
+  .card-style-one,
+  .card-style-two,
+  .card-style-three,
+  [class*="listing-card"],
+  [class*="property-card"],
+  .pp-card {
+    background-color: var(--pp-card-bg) !important;
+    color: var(--pp-text) !important;
+    border-color: var(--pp-card-border) !important;
+  }
+
+  /* .pp-card (PropertyCard.tsx / ProjectCard.tsx) isn't matched by the
+     [class*="listing-card"] / [class*="property-card"] attribute selectors
+     above -- "pp-card" doesn't contain either substring -- so its title/meta
+     text was left on the generic light-mode $text-dark / $text-color values.
+     Those are near-black, and with the card background now dark, that made
+     the title and address unreadable (and, before this rule existed at all,
+     white-on-white: the global `a:not([class*="btn"])...` rule further up
+     already recolors the __title link to var(--pp-text-strong), but nothing
+     ever darkened the still-white card body behind it). */
+  .pp-card {
+    &__title {
+      color: var(--pp-text-strong) !important;
+
+      &:hover { color: $color-one; }
+    }
+
+    &__meta,
+    &__type {
       color: var(--pp-text) !important;
-      border-color: var(--pp-card-border) !important;
-   }
+    }
 
-   .listing-card-one,
-   .listing-card-two,
-   .listing-card-three,
-   .listing-card-four,
-   .listing-card-five,
-   .listing-card-six,
-   .listing-card-seven {
-      .title,
-      .price,
-      .address,
-      a,
-      span,
-      p,
-      h5, h6 {
-         color: var(--pp-text-strong) !important;
-      }
+    &__facts span {
+      color: var(--pp-text) !important;
+    }
 
-      .address,
-      .feature,
-      li {
-         color: var(--pp-text) !important;
-      }
-   }
+    &__price {
+      color: var(--pp-text-strong) !important;
+    }
+  }
 
-   .listing-card-one.border-layout {
-      border-color: var(--pp-card-border) !important;
-   }
+  .listing-card-one,
+  .listing-card-two,
+  .listing-card-three,
+  .listing-card-four,
+  .listing-card-five,
+  .listing-card-six,
+  .listing-card-seven,
+  [class*="listing-card"] {
+    .title,
+    .price,
+    .address,
+    a,
+    span,
+    p,
+    h5, h6 {
+      color: var(--pp-text-strong) !important;
+  }
+
+    .address,
+    .feature,
+    li {
+      color: var(--pp-text) !important;
+    }
+  }
+
+  .listing-card-one.border-layout {
+    border-color: var(--pp-card-border) !important;
+  }
 }
 
 /* ========== Filters & search panels ========== */
 [data-theme="dark"] {
-   .listing-header-filter {
-      color: var(--pp-text-strong);
+  .listing-header-filter {
+    color: var(--pp-text-strong);
 
-      .nice-select {
-         background: var(--pp-input-bg) !important;
-         border-color: var(--pp-border-strong) !important;
-         color: var(--pp-text-strong) !important;
+    .nice-select {
+      background: var(--pp-input-bg) !important;
+      border-color: var(--pp-border-strong) !important;
+      color: var(--pp-text-strong) !important;
 
-         .current {
+      .current {
+        color: var(--pp-text-strong);
+      }
+
+      .list {
+        background: var(--pp-surface);
+        border-color: var(--pp-border);
+
+        .option {
+          color: var(--pp-text);
+
+          &.selected,
+          &:hover {
+            background: var(--pp-surface-2);
             color: var(--pp-text-strong);
-         }
-
-         .list {
-            background: var(--pp-surface);
-            border-color: var(--pp-border);
-
-            .option {
-               color: var(--pp-text);
-
-               &.selected,
-               &:hover {
-                  background: var(--pp-surface-2);
-                  color: var(--pp-text-strong);
-               }
-            }
-         }
+          }
+        }
       }
+    }
 
-      .layout-change {
-         border-color: var(--pp-border-strong) !important;
-         color: var(--pp-text-strong) !important;
-         background: var(--pp-surface);
+    .layout-change {
+      border-color: var(--pp-border-strong) !important;
+      color: var(--pp-text-strong) !important;
+      background: var(--pp-surface);
 
-         &:hover,
-         &:focus {
-            background: $color-one !important;
-            border-color: $color-one !important;
-            color: #fff !important;
-         }
+      &:hover,
+      &:focus {
+        background: $color-one !important;
+        border-color: $color-one !important;
+        color: #fff !important;
       }
-   }
+    }
+  }
 
-   .filter-nav-one {
-      .isotop-menu-wrapper,
-      button,
-      li,
-      a {
-         color: var(--pp-text-strong) !important;
-         border-color: var(--pp-border) !important;
-      }
-
-      .is-checked,
-      .active,
-      button.active {
-         color: $color-one !important;
-         border-color: $color-one !important;
-      }
-   }
-
-   .advance-search-panel,
-   .search-wrapper-one,
-   .search-wrapper-two,
-   .search-wrapper-three,
-   .input-box-one,
-   .property-filter,
-   .filter-input {
-      background-color: var(--pp-surface) !important;
-      color: var(--pp-text) !important;
+  .filter-nav-one {
+    .isotop-menu-wrapper,
+    button,
+    li,
+    a {
+      color: var(--pp-text-strong) !important;
       border-color: var(--pp-border) !important;
+    }
 
-      .label,
-      label,
-      span,
-      p {
-         color: var(--pp-text-muted) !important;
-      }
+    .is-checked,
+    .active,
+    button.active {
+      color: $color-one !important;
+      border-color: $color-one !important;
+    }
+  }
 
-      input,
-      select,
-      .nice-select,
-      .form-control {
-         background-color: var(--pp-input-bg) !important;
-         color: var(--pp-text-strong) !important;
-         border-color: var(--pp-input-border) !important;
-      }
-   }
+  .advance-search-panel,
+  .search-wrapper-one,
+  .search-wrapper-two,
+  .search-wrapper-three,
+  .input-box-one,
+  .property-filter,
+  .filter-input {
+    background-color: var(--pp-surface) !important;
+    color: var(--pp-text) !important;
+    border-color: var(--pp-border) !important;
 
-   .listing-type-filter {
-      background-color: var(--pp-surface) !important;
-      color: var(--pp-text);
-   }
+    .label,
+    label,
+    span,
+    p {
+      color: var(--pp-text-muted) !important;
+    }
+
+    input,
+    select,
+    .nice-select,
+    .form-control {
+      background-color: var(--pp-input-bg) !important;
+      color: var(--pp-text-strong) !important;
+      border-color: var(--pp-input-border) !important;
+    }
+  }
+
+  .listing-type-filter {
+    background-color: var(--pp-surface) !important;
+    color: var(--pp-text);
+  }
 }
 
 /* ========== Project pages ========== */
 [data-theme="dark"] {
-   .project-block-one,
-   .project-block-two,
-   .project-block-three,
-   .project-details,
-   .project-info,
-   .project-section,
-   .project-listing {
+  .project-block-one,
+  .project-block-two,
+  .project-block-three,
+  .project-details,
+  .project-info,
+  .project-section,
+  .project-listing {
+    color: var(--pp-text);
+
+    h1, h2, h3, h4, h5, h6,
+    .title,
+    .project-title {
+      color: var(--pp-text-strong) !important;
+    }
+
+    p, li, span, td, th {
       color: var(--pp-text);
+    }
 
-      h1, h2, h3, h4, h5, h6,
-      .title,
-      .project-title {
-         color: var(--pp-text-strong) !important;
+    a:not([class*="btn"]) {
+      color: var(--pp-text-strong);
+
+      &:hover {
+        color: $color-one;
       }
+    }
+  }
 
-      p, li, span, td, th {
-         color: var(--pp-text);
-      }
+  .project-details-one,
+  .project-details-two,
+  .project-details-three {
+    color: var(--pp-text);
 
-      a:not([class*="btn"]) {
-         color: var(--pp-text-strong);
-
-         &:hover {
-            color: $color-one;
-         }
-      }
-   }
-
-   /* Common project SCSS hardcodes #000 on tabs / meta */
-   .project-details-one,
-   .project-details-two,
-   .project-details-three {
-      color: var(--pp-text);
-
-      h1, h2, h3, h4, h5, h6 {
-         color: var(--pp-text-strong) !important;
-      }
-   }
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--pp-text-strong) !important;
+    }
+  }
 }
 
 /* ========== Property detail / sidebar ========== */
 [data-theme="dark"] {
-   .theme-details-one,
-   .theme-details-two,
-   .property-details,
-   .property-feature-list {
-      color: var(--pp-text);
+  .theme-details-one,
+  .theme-details-two,
+  .property-details,
+  .property-feature-list {
+    color: var(--pp-text);
 
-      h1, h2, h3, h4, h5, h6,
-      .property-title,
-      .price {
-         color: var(--pp-text-strong) !important;
-      }
-   }
-
-   .theme-sidebar-one,
-   .theme-sidebar-two {
-      background-color: var(--pp-surface) !important;
-      color: var(--pp-text) !important;
-      border-color: var(--pp-border) !important;
-
-      h5, h6, .title, label, span, p, a {
-         color: var(--pp-text-strong) !important;
-      }
-
-      input, textarea, select, .form-control, .nice-select {
-         background-color: var(--pp-input-bg) !important;
-         color: var(--pp-text-strong) !important;
-         border-color: var(--pp-input-border) !important;
-      }
-   }
-
-   .feature-list-one,
-   .feature-list-two,
-   .accordion-item,
-   .accordion-button,
-   .accordion-body {
-      background-color: var(--pp-surface) !important;
+    h1, h2, h3, h4, h5, h6,
+    .property-title,
+    .price {
       color: var(--pp-text-strong) !important;
-      border-color: var(--pp-border) !important;
-   }
+    }
+  }
 
-   .accordion-button:not(.collapsed) {
-      background-color: var(--pp-surface-2) !important;
+  .theme-sidebar-one,
+  .theme-sidebar-two {
+    background-color: var(--pp-surface) !important;
+    color: var(--pp-text) !important;
+    border-color: var(--pp-border) !important;
+
+    h5, h6, .title, label, span, p, a {
       color: var(--pp-text-strong) !important;
-   }
+    }
+
+    input, textarea, select, .form-control, .nice-select {
+      background-color: var(--pp-input-bg) !important;
+      color: var(--pp-text-strong) !important;
+      border-color: var(--pp-input-border) !important;
+    }
+  }
+
+  .feature-list-one,
+  .feature-list-two,
+  .accordion-item,
+  .accordion-button,
+  .accordion-body {
+    background-color: var(--pp-surface) !important;
+    color: var(--pp-text-strong) !important;
+    border-color: var(--pp-border) !important;
+  }
+
+  // .accordion-style-one (the outer wrapper around the homepage hero's
+  // "Advance Search" accordion) is hardcoded background:#fff in
+  // _element.scss and was never touched by the rule above, which only
+  // recolors .accordion-item/.accordion-button/.accordion-body -- so the
+  // wrapper's own 10px 35px padding showed up as a white frame around the
+  // now-dark accordion box.
+  .accordion-style-one {
+    background-color: var(--pp-surface) !important;
+  }
+
+  .accordion-button:not(.collapsed) {
+    background-color: var(--pp-surface-2) !important;
+    color: var(--pp-text-strong) !important;
+  }
 }
 
 /* ========== Forms / inputs / selects ========== */
 [data-theme="dark"] {
-   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-   textarea,
-   select,
-   .form-control,
-   .form-select,
-   .nice-select {
-      background-color: var(--pp-input-bg) !important;
-      color: var(--pp-text-strong) !important;
-      border-color: var(--pp-input-border) !important;
-   }
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  select,
+  .form-control,
+  .form-select,
+  .nice-select {
+    background-color: var(--pp-input-bg) !important;
+    color: var(--pp-text-strong) !important;
+    border-color: var(--pp-input-border) !important;
+  }
 
-   .nice-select .list {
-      background: var(--pp-surface) !important;
-      border-color: var(--pp-border) !important;
+  .nice-select .list {
+    background: var(--pp-surface) !important;
+    border-color: var(--pp-border) !important;
 
-      .option {
-         color: var(--pp-text) !important;
+    .option {
+      color: var(--pp-text) !important;
 
-         &.selected,
-         &:hover,
-         &.focus {
-            background: var(--pp-surface-2) !important;
-            color: var(--pp-text-strong) !important;
-         }
+      &.selected,
+      &:hover,
+      &.focus {
+        background: var(--pp-surface-2) !important;
+        color: var(--pp-text-strong) !important;
       }
-   }
+    }
+  }
 
-   input::placeholder,
-   textarea::placeholder {
-      color: var(--pp-text-muted) !important;
-   }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--pp-text-muted) !important;
+  }
 }
 
 /* ========== Modals / dropdowns ========== */
 [data-theme="dark"] {
-   .modal-content,
-   .dropdown-menu {
-      background-color: var(--pp-surface) !important;
-      color: var(--pp-text) !important;
-      border-color: var(--pp-border) !important;
-   }
+  .modal-content,
+  .dropdown-menu {
+    background-color: var(--pp-surface) !important;
+    color: var(--pp-text) !important;
+    border-color: var(--pp-border) !important;
+  }
 
-   .dropdown-item {
-      color: var(--pp-text) !important;
+  .dropdown-item {
+    color: var(--pp-text) !important;
 
-      &:hover,
-      &:focus,
-      &.active {
-         background-color: var(--pp-surface-2) !important;
-         color: var(--pp-text-strong) !important;
-      }
-   }
+    &:hover,
+    &:focus,
+    &.active {
+      background-color: var(--pp-surface-2) !important;
+      color: var(--pp-text-strong) !important;
+    }
+  }
 
-   .modal-header,
-   .modal-footer {
-      border-color: var(--pp-border) !important;
-   }
+  .modal-header,
+  .modal-footer {
+    border-color: var(--pp-border) !important;
+  }
 
-   .btn-close {
-      filter: invert(1) grayscale(1);
-   }
+  .btn-close {
+    filter: invert(1) grayscale(1);
+  }
 }
 
-/* ========== Buttons that were black outlines ========== */
+/* ========== Buttons ========== */
 [data-theme="dark"] {
-   .btn-seven {
-      color: var(--pp-text-strong) !important;
-      border-color: var(--pp-border-strong) !important;
-      background: transparent;
+  .btn-seven {
+    color: var(--pp-text-strong) !important;
+    border-color: var(--pp-border-strong) !important;
+    background: transparent;
 
-      &:hover,
-      &:focus {
-         background: $color-two !important;
-         border-color: $color-two !important;
-         color: #fff !important;
-      }
-   }
-
-   /* Hero video CTA stays solid orange (higher specificity from banner) */
-   .hero-banner-two.has-hero-video .btn-seven {
-      background: $color-one !important;
-      border-color: $color-one !important;
+    &:hover,
+    &:focus {
+      background: $color-two !important;
+      border-color: $color-two !important;
       color: #fff !important;
-   }
+    }
+  }
 
-   .btn-one {
-      color: $color-one !important;
-      border-color: $color-one !important;
+  .hero-banner-two.has-hero-video .btn-seven {
+    background: $color-one !important;
+    border-color: $color-one !important;
+    color: #fff !important;
+  }
 
-      &:hover {
-         background: #000;
-         color: #fff !important;
-      }
-   }
+  .btn-one {
+    color: $color-one !important;
+    border-color: $color-one !important;
 
-   .btn-three {
-      color: var(--pp-text-strong) !important;
-   }
+    &:hover {
+      background: #000;
+      color: #fff !important;
+    }
+  }
+
+  .btn-three {
+    color: var(--pp-text-strong) !important;
+  }
 }
 
 /* ========== Breadcrumb / inner banners ========== */
 [data-theme="dark"] {
-   .inner-banner-one,
-   .inner-banner-two,
-   .breadcrumb-one,
-   .breadcrumb-two {
-      color: var(--pp-text);
+  .inner-banner-one,
+  .inner-banner-two,
+  .breadcrumb-one,
+  .breadcrumb-two {
+    color: var(--pp-text);
 
-      h1, h2, h3 {
-         color: var(--pp-text-strong) !important;
-      }
+    h1, h2, h3 {
+      color: var(--pp-text-strong) !important;
+    }
 
-      .breadcrumb,
-      .breadcrumb-item,
-      a {
-         color: var(--pp-text) !important;
-      }
+    .breadcrumb,
+    .breadcrumb-item,
+    a {
+      color: var(--pp-text) !important;
+    }
 
-      .breadcrumb-item.active {
-         color: var(--pp-text-strong) !important;
-      }
-   }
+    .breadcrumb-item.active {
+      color: var(--pp-text-strong) !important;
+    }
+  }
 }
 
 /* ========== Footer ========== */
@@ -603,156 +713,374 @@ body {
 .footer-two,
 .footer-three,
 .footer-four {
-   background-color: var(--pp-footer-bg);
-   color: var(--pp-footer-text);
+  background-color: var(--pp-footer-bg);
+  color: var(--pp-footer-text);
 }
 
 /* ========== Tables ========== */
+// Phase: dark-mode table fix. The `color` overrides below were already
+// correct, but Bootstrap paints each cell's background from its own
+// `--bs-table-bg` custom property (defaults to `--bs-body-bg`, i.e.
+// white) — that var was never remapped for `[data-theme="dark"]`, so
+// every table cell kept a white background while the text color above
+// was switched to `--pp-text` (near-white). Result: near-white text on
+// a white cell background — unreadable, even though each rule "looked"
+// right on its own. Resetting the Bootstrap table bg/border/hover/
+// striped custom properties here (they inherit down to every cell,
+// since Bootstrap applies `background-color: var(--bs-table-bg)` per
+// cell) makes the cells transparent so the already-dark `.dashboard-body`
+// surface shows through instead.
 [data-theme="dark"] {
-   table,
-   .table {
+  table,
+  .table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--pp-text);
+    --bs-table-striped-bg: var(--pp-surface-2);
+    --bs-table-striped-color: var(--pp-text);
+    --bs-table-hover-bg: var(--pp-surface-2);
+    --bs-table-hover-color: var(--pp-text-strong);
+    --bs-table-active-bg: var(--pp-surface-2);
+    --bs-table-active-color: var(--pp-text-strong);
+    --bs-table-border-color: var(--pp-border);
+    background-color: transparent;
+    color: var(--pp-text);
+
+    th {
+      color: var(--pp-text-strong) !important;
+      border-color: var(--pp-border) !important;
+    }
+
+    td {
+      border-color: var(--pp-border) !important;
       color: var(--pp-text);
+    }
 
-      th {
-         color: var(--pp-text-strong) !important;
-         border-color: var(--pp-border) !important;
-      }
+    a:not([class*="btn"]) {
+      color: var(--pp-text-strong);
 
-      td {
-         border-color: var(--pp-border) !important;
-         color: var(--pp-text);
+      &:hover {
+        color: $color-one;
       }
-   }
+    }
+  }
+}
+
+/* ========== Bootstrap alerts (dashboard) ========== */
+[data-theme="dark"] {
+  .dashboard-body .alert {
+    &.alert-primary {
+      background: var(--pp-surface-2) !important;
+      color: var(--pp-text-strong) !important;
+    }
+    &.alert-success {
+      background: rgba(0, 181, 121, 0.16) !important;
+      color: #4fd39a !important;
+    }
+    &.alert-danger {
+      background: rgba(220, 53, 69, 0.16) !important;
+      color: #ff8a95 !important;
+    }
+    &.alert-warning {
+      background: rgba(255, 193, 7, 0.16) !important;
+      color: #ffd873 !important;
+    }
+  }
+}
+
+/* ========== Universal inquiry dialog (pp-inquiry-*) ========== */
+/* html[data-theme="dark"] instead of plain [data-theme="dark"]: adds a
+   type selector so this out-specifies any [data-theme="dark"] .foo rule
+   elsewhere, and every value here is a literal hex/opaque color (not a
+   css var) so it can't be starved by a variable resolving unexpectedly.
+   opacity: 1 !important is forced everywhere text shows up, in case
+   anything else is dimming the whole element rather than just its color. */
+html[data-theme="dark"] {
+  .pp-inquiry-dialog {
+    background-color: #22404a !important;
+    opacity: 1 !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
+
+    input,
+    textarea {
+      background-color: #122226 !important;
+      border-color: rgba(255, 255, 255, 0.16) !important;
+      color: #f2f6f7 !important;
+      opacity: 1 !important;
+    }
+  }
+
+  .pp-inquiry-dialog h4,
+  .pp-inquiry-dialog #pp-inquiry-title,
+  .pp-inquiry-dialog label {
+    color: #f2f6f7 !important;
+    opacity: 1 !important;
+  }
+
+  .pp-inquiry-close {
+    background-color: #1c333a !important;
+    color: #f2f6f7 !important;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.14) !important;
+    }
+  }
+
+  .pp-inquiry-target {
+    color: rgba(232, 238, 240, 0.82) !important;
+  }
+
+  .pp-inquiry-dialog small,
+  .pp-inquiry-dialog .opacity-75 {
+    color: rgba(232, 238, 240, 0.7) !important;
+    opacity: 1 !important;
+  }
+
+  .pp-inquiry-dialog input[type="checkbox"] {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.32) !important;
+    accent-color: $color-one !important;
+  }
+
+  .pp-inquiry-consent label {
+    color: rgba(232, 238, 240, 0.82) !important;
+    opacity: 1 !important;
+  }
+
+  .pp-inquiry-success h4 {
+    color: #f2f6f7 !important;
+  }
+}
+
+/* ========== Listing cards (pp-card-*), used by property + project cards === */
+[data-theme="dark"] {
+  .pp-card {
+    background: var(--pp-card-bg) !important;
+    border-color: var(--pp-card-border) !important;
+
+    &:hover {
+      border-color: rgba(31, 170, 89, 0.5) !important;
+    }
+  }
+
+  .pp-card__media {
+    background: var(--pp-surface-2) !important;
+  }
+
+  .pp-card__img--empty {
+    background: var(--pp-surface-2) !important;
+    color: var(--pp-text-muted) !important;
+  }
+
+  .pp-card__title,
+  .pp-card__type,
+  .pp-card__price {
+    color: var(--pp-text-strong) !important;
+  }
+
+  .pp-card__meta,
+  .pp-card__facts,
+  .pp-card__price sub {
+    color: var(--pp-text) !important;
+  }
+
+  .pp-card-btn--ghost {
+    color: var(--pp-text-strong) !important;
+    border-color: var(--pp-border-strong) !important;
+
+    &:hover {
+      color: $color-one !important;
+      border-color: $color-one !important;
+    }
+  }
+
+  .pp-card-btn--primary:hover {
+    background: var(--pp-surface-2) !important;
+    border-color: var(--pp-surface-2) !important;
+  }
+}
+
+/* ========== Visitor assistance corner card (pp-va-*) ========== */
+[data-theme="dark"] {
+  .pp-visitor-assistance .pp-va-card {
+    background: var(--pp-surface) !important;
+    box-shadow: var(--pp-shadow) !important;
+  }
+
+  .pp-visitor-assistance .pp-va-close {
+    color: var(--pp-text-muted) !important;
+  }
+
+  .pp-visitor-assistance .pp-va-subtitle,
+  .pp-visitor-assistance .pp-va-field label {
+    color: var(--pp-text-muted) !important;
+  }
+
+  .pp-visitor-assistance .pp-va-field input,
+  .pp-visitor-assistance .pp-va-field select,
+  .pp-visitor-assistance .pp-va-field textarea {
+    background: var(--pp-input-bg) !important;
+    border-color: var(--pp-input-border) !important;
+    color: var(--pp-text-strong) !important;
+  }
 }
 
 /* ========== Dashboard / admin shared surfaces ========== */
 [data-theme="dark"] {
-   .dashboard-body,
-   .dash-aside-navbar,
-   .bg-white.card,
-   .user-data-form {
-      background-color: var(--pp-surface) !important;
-      color: var(--pp-text) !important;
-   }
+  .dashboard-body,
+  .dash-aside-navbar,
+  .bg-white.card,
+  .user-data-form {
+    background-color: var(--pp-surface) !important;
+    color: var(--pp-text) !important;
+  }
 
-   .dash-aside-navbar a,
-   .dash-aside-navbar span {
-      color: var(--pp-text) !important;
-   }
+  .dash-aside-navbar a,
+  .dash-aside-navbar span {
+    color: var(--pp-text) !important;
+  }
 
-   .dash-aside-navbar .active,
-   .dash-aside-navbar a:hover {
-      color: $color-one !important;
-   }
+  // .nav-title ("PROFILE" / "LISTING" section labels) is a <div>, not an
+  // <a> or <span>, so the rule above never touched it -- it kept the
+  // light-mode near-black rgba(#000,0.3) color from _dashboard.scss,
+  // which is effectively invisible against the dark sidebar background.
+  .dash-aside-navbar .nav-title {
+    color: var(--pp-text-muted) !important;
+  }
+
+  .dash-aside-navbar .active,
+  .dash-aside-navbar a:hover {
+    color: $color-one !important;
+  }
+
+  // Dashboard header bar: was still using the light-mode hardcoded
+  // cream background (_dashboard.scss), which clashed with the
+  // dark-mode heading/icon colors already forced above.
+  .dashboard-header {
+    background-color: var(--pp-header-bg) !important;
+    border-bottom: 1px solid var(--pp-border);
+    box-shadow: var(--pp-shadow);
+  }
+
+  .dashboard-header h4 {
+    color: var(--pp-header-text) !important;
+  }
+
+  // The notification bell is a static black-stroke SVG (icon_11.svg),
+  // not a font icon, so it needs a filter to stay visible on the
+  // dark header. Scoped to that one icon only, not other header images
+  // (e.g. the profile avatar photo).
+  .dashboard-header .noti-btn img {
+    filter: invert(1) brightness(1.8);
+  }
 }
 
 /* ========== Theme toggle control ========== */
 .pp-theme-toggle {
-   position: relative;
-   display: inline-flex;
-   align-items: center;
-   gap: 0;
-   margin-right: 12px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  margin-right: 12px;
 
-   &__btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1px solid var(--pp-border);
-      background: var(--pp-surface);
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--pp-border);
+    background: var(--pp-surface);
+    color: var(--pp-text-strong);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+    i {
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+
+    &:hover,
+    &:focus-visible {
+      border-color: $color-one;
+      color: $color-one;
+      outline: none;
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 140px;
+    padding: 6px;
+    border-radius: 12px;
+    background: var(--pp-surface);
+    border: 1px solid var(--pp-border);
+    box-shadow: var(--pp-shadow);
+    z-index: 1100;
+    list-style: none;
+    margin: 0;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--pp-text);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+
+    i {
+      font-size: 0.95rem;
+      width: 1.1em;
+      text-align: center;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: var(--pp-surface-2);
       color: var(--pp-text-strong);
-      cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      outline: none;
+    }
 
-      i {
-         font-size: 1.05rem;
-         line-height: 1;
-      }
-
-      &:hover,
-      &:focus-visible {
-         border-color: $color-one;
-         color: $color-one;
-         outline: none;
-      }
-   }
-
-   &__menu {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      min-width: 140px;
-      padding: 6px;
-      border-radius: 12px;
-      background: var(--pp-surface);
-      border: 1px solid var(--pp-border);
-      box-shadow: var(--pp-shadow);
-      z-index: 1100;
-      list-style: none;
-      margin: 0;
-   }
-
-   &__option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: var(--pp-text);
-      font-size: 14px;
-      font-weight: 500;
-      padding: 8px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: left;
-
-      i {
-         font-size: 0.95rem;
-         width: 1.1em;
-         text-align: center;
-      }
-
-      &:hover,
-      &:focus-visible {
-         background: var(--pp-surface-2);
-         color: var(--pp-text-strong);
-         outline: none;
-      }
-
-      &.is-active {
-         color: $color-one;
-         background: rgba(255, 103, 37, 0.12);
-      }
-   }
+    &.is-active {
+      color: $color-one;
+      background: rgba(31, 170, 89, 0.12);
+    }
+  }
 }
 
 [data-theme="dark"] .pp-theme-toggle__btn {
-   background: var(--pp-surface-2);
-   border-color: var(--pp-border);
-   color: var(--pp-text-strong);
+  background: var(--pp-surface-2);
+  border-color: var(--pp-border);
+  color: var(--pp-text-strong);
 }
 
-/* ===== FIX v2: dark surfaces for homepage bands + readable text ===== */
+/* ========== Homepage bands, cards, How-it-works, FAQ, Best-plots ========== */
 [data-theme="dark"] {
-  /* Page */
-  body,
-  .main-page-wrapper {
-    background-color: #0d1a1c !important;
-    color: rgba(232, 238, 240, 0.88) !important;
-  }
+  /* body/.main-page-wrapper intentionally not repeated here: the generic
+     `body { background-color: var(--pp-bg); color: var(--pp-text); }` rule
+     above already re-resolves under [data-theme="dark"] via the CSS custom
+     properties, so a duplicate was pure redundancy -- and its hardcoded
+     0.88 text alpha silently conflicted with --pp-text's 0.82. */
 
-  /* Homepage colour bands — these were still pastel (text looked invisible) */
   .pp-band.pp-band,
   .pp-band.pp-band--warm,
   .pp-band.pp-band--sky,
   .pp-band.pp-band--peach {
-    background: #122226 !important;
+    background: var(--pp-bg-muted) !important;
     background-image: none !important;
   }
+
   .pp-band.pp-band::before,
   .pp-band.pp-band::after,
   .pp-band.pp-band--warm::before,
@@ -764,7 +1092,6 @@ body {
     opacity: 0.15 !important;
   }
 
-  /* Other common light sections */
   .property-listing-one,
   .property-listing-two,
   .property-listing-three,
@@ -775,44 +1102,41 @@ body {
   .feedback-section-one,
   .feedback-section-two,
   .feedback-section-three,
-  .fancy-banner-four,
-  .fancy-banner-five,
   .faq-section-one,
   .blog-section-one,
   .agent-section-one {
-    background-color: #0d1a1c !important;
+    background-color: var(--pp-bg) !important;
     background-image: none !important;
   }
 
-  /* Kill light shape overlays on listing sections */
   .property-listing-two::before,
   .property-listing-four .shape_01,
   .property-listing-four .shape_02 {
     opacity: 0.08 !important;
   }
 
-  /* Typography */
   h1, h2, h3, h4, h5, h6,
   .title-one h2,
   .title-one h3,
-  .title-one p,
-  .color-dark,
-  .text-dark {
-    color: #f2f6f7 !important;
+  .title-one p {
+    color: var(--pp-text-strong) !important;
   }
+
+  .color-dark:not(.badge),
+  .text-dark:not(.badge) {
+    color: var(--pp-text-strong) !important;
+  }
+
   .title-one .upper-title {
-    color: rgba(232, 238, 240, 0.55) !important;
+    color: var(--pp-text-muted) !important;
   }
-  p, li, span, label {
-    color: inherit;
-  }
+
   .title-one p,
   .fs-22,
   .fs-24 {
-    color: rgba(232, 238, 240, 0.82) !important;
+    color: var(--pp-text) !important;
   }
 
-  /* Cards / steps / tiles */
   .card,
   .bg-wrapper,
   .listing-card-one,
@@ -824,10 +1148,12 @@ body {
   .listing-card-seven,
   .card-style-one,
   .how-it-works-card,
-  .pp-step-card {
-    background-color: #162a30 !important;
-    color: rgba(232, 238, 240, 0.88) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+  .pp-step-card,
+  [class*="listing-card"],
+  [class*="property-card"] {
+    background-color: var(--pp-card-bg) !important;
+    color: var(--pp-text) !important;
+    border-color: var(--pp-card-border) !important;
   }
 
   .listing-card-one .title,
@@ -838,39 +1164,42 @@ body {
   .listing-card-two a,
   .listing-card-three .title,
   .listing-card-three .price,
-  .listing-card-three a {
-    color: #f2f6f7 !important;
+  .listing-card-three a,
+  [class*="listing-card"] .title,
+  [class*="listing-card"] .price,
+  [class*="listing-card"] a,
+  [class*="listing-card"] h5,
+  [class*="listing-card"] h6,
+  [class*="listing-card"] span {
+    color: var(--pp-text-strong) !important;
   }
 
-  /* How-it-works style step boxes (light peach cards in screenshots) */
   .block-feature-seven .card-style-one,
   .block-feature-seven .bg-wrapper,
   .block-feature-seven [class*="card"] {
-    background-color: #1c333a !important;
-    color: #f2f6f7 !important;
+    background-color: var(--pp-surface-2) !important;
+    color: var(--pp-text-strong) !important;
   }
 
-  /* Utility backgrounds that stayed light */
   .bg-light,
   .bg-white,
   .bg-pink,
   .bg-pink-two,
   .bg-pink-three {
-    background-color: #162a30 !important;
-    color: rgba(232, 238, 240, 0.88) !important;
+    background-color: var(--pp-card-bg) !important;
+    color: var(--pp-text) !important;
   }
 
-  /* Header */
-  .theme-main-menu.static-header,
+   .theme-main-menu.static-header,
   .theme-main-menu.fixed,
-  .theme-main-menu.menu-overlay:has(+ .hero-banner-two) {
-    background: #0f2226 !important;
+  .theme-main-menu.menu-overlay:has(+ .hero-banner-two),
+  .theme-main-menu.menu-overlay.over-hero {
+    background: var(--pp-header-bg) !important;
   }
   .theme-main-menu .navbar .navbar-nav .nav-link {
-    color: #f2f6f7 !important;
+    color: var(--pp-text-strong) !important;
   }
 
-  /* Filters */
   .listing-header-filter .nice-select,
   .listing-header-filter .layout-change,
   input:not([type="checkbox"]):not([type="radio"]),
@@ -878,27 +1207,321 @@ body {
   select,
   .form-control,
   .nice-select {
-    background-color: #122226 !important;
-    color: #f2f6f7 !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
+    background-color: var(--pp-input-bg) !important;
+    color: var(--pp-text-strong) !important;
+    border-color: var(--pp-input-border) !important;
   }
 
-  /* Sidebars / details */
   .theme-sidebar-one,
   .theme-sidebar-two,
   .theme-details-one,
   .theme-details-two {
-    background-color: #162a30 !important;
-    color: rgba(232, 238, 240, 0.88) !important;
+    background-color: var(--pp-card-bg) !important;
+    color: var(--pp-text) !important;
   }
 
   .btn-seven {
-    color: #f2f6f7 !important;
-    border-color: rgba(255, 255, 255, 0.32) !important;
+    color: var(--pp-text-strong) !important;
+    border-color: var(--pp-border-strong) !important;
   }
+
   .hero-banner-two.has-hero-video .btn-seven {
-    background: #FF6725 !important;
-    border-color: #FF6725 !important;
+    background: #1FAA59 !important;
+    border-color: #1FAA59 !important;
     color: #fff !important;
+  }
+}
+
+/* ========== How Property Planet Works ========== */
+[data-theme="dark"] {
+  .property-planet-how-it-works.pp-band,
+  .property-planet-how-it-works.pp-band--peach {
+    background: #122226 !important;
+    background-image: none !important;
+  }
+
+  .pp-how {
+    background: #162a30 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: none !important;
+  }
+
+  .pp-how .title-one h2,
+  .pp-how .title-one p {
+    color: #f2f6f7 !important;
+  }
+
+  .pp-how .title-one p {
+    color: rgba(232, 238, 240, 0.75) !important;
+  }
+
+  .pp-how__step {
+    background: #1c333a !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(232, 238, 240, 0.9) !important;
+  }
+
+  .pp-how__step:hover {
+    border-color: rgba(31, 170, 89, 0.45) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  .pp-how__title {
+    color: #f2f6f7 !important;
+  }
+
+  .pp-how__desc {
+    color: rgba(232, 238, 240, 0.72) !important;
+  }
+
+  .pp-how__num {
+    background: #1FAA59 !important;
+    color: #fff !important;
+  }
+}
+
+/* ========== FAQ ========== */
+[data-theme="dark"] {
+  .faq-section-one {
+    background-color: #0d1a1c !important;
+  }
+
+  .accordion-style-two,
+  .accordion-style-two .accordion,
+  .accordion-style-two .accordion-item {
+    background: #162a30 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f2f6f7 !important;
+  }
+
+  .accordion-style-two .accordion-item {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    margin-bottom: 10px;
+    border-radius: 12px !important;
+    overflow: hidden;
+  }
+
+  .accordion-style-two .accordion-button {
+    background: #162a30 !important;
+    color: #f2f6f7 !important;
+    box-shadow: none !important;
+  }
+
+  .accordion-style-two .accordion-button:not(.collapsed) {
+    background: #1c333a !important;
+    color: #f2f6f7 !important;
+  }
+
+  .accordion-style-two .accordion-button::after {
+    filter: invert(1);
+  }
+
+  .accordion-style-two .accordion-body {
+    background: #162a30 !important;
+    color: rgba(232, 238, 240, 0.82) !important;
+  }
+
+  .accordion-style-two .accordion-body p {
+    color: rgba(232, 238, 240, 0.82) !important;
+  }
+
+  .faq-section-one h2,
+  .faq-section-one h3,
+  .faq-section-one p {
+    color: #f2f6f7 !important;
+  }
+
+  .faq-section-one .btn-five {
+    background: #1FAA59 !important;
+    border-color: #1FAA59 !important;
+    color: #fff !important;
+  }
+}
+
+/* ========== Advance Search / Best-plots accordion (removes white frame) ========== */
+[data-theme="dark"] {
+  .fancy-banner-five .bg-wrapper,
+  .fancy-banner-five .card,
+  .fancy-banner-five [class*="accordion"],
+  [class*="advance-search"],
+  [class*="advance-search"] .bg-wrapper,
+  [class*="advance-search"] .card {
+    background: #162a30 !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .fancy-banner-five .accordion-item,
+  [class*="advance-search"] .accordion-item {
+    background: #162a30 !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0 !important;
+  }
+
+  .fancy-banner-five .accordion-item:last-child,
+  [class*="advance-search"] .accordion-item:last-child {
+    border-bottom: none !important;
+  }
+
+  .fancy-banner-five .accordion-button,
+  [class*="advance-search"] .accordion-button {
+    background: #162a30 !important;
+    color: #f2f6f7 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .fancy-banner-five .accordion-button:not(.collapsed),
+  [class*="advance-search"] .accordion-button:not(.collapsed) {
+    background: #1c333a !important;
+    color: #f2f6f7 !important;
+  }
+
+  .fancy-banner-five .accordion-button::after,
+  [class*="advance-search"] .accordion-button::after {
+    filter: invert(1) brightness(1.2);
+  }
+
+  .fancy-banner-five .accordion-body,
+  [class*="advance-search"] .accordion-body {
+    background: #162a30 !important;
+    color: rgba(232, 238, 240, 0.85) !important;
+  }
+}
+
+/* ========== Map / Property Intelligence ========== */
+[data-theme="dark"] {
+  .property-intelligence,
+  [class*="property-intelligence"],
+  [class*="map-wrapper"],
+  [class*="map-container"] {
+    background: #162a30 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* ========== Testimonials ========== */
+[data-theme="dark"] {
+  .feedback-section-one,
+  .feedback-section-two,
+  .feedback-section-three,
+  [class*="feedback-section"],
+  [class*="testimonial"] {
+    background-color: inherit !important;
+  }
+
+  .feedback-block-one,
+  .feedback-block-two,
+  .feedback-block-three,
+  [class*="feedback-block"],
+  [class*="testimonial"] .card,
+  [class*="testimonial"] .bg-wrapper {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .feedback-block-one p,
+  .feedback-block-two p,
+  .feedback-block-three p,
+  [class*="feedback-block"] p,
+  [class*="testimonial"] p {
+    color: #f2f6f7 !important;
+  }
+
+  .feedback-block-one .text-orange,
+  .feedback-block-two .text-orange,
+  [class*="feedback-block"] span[style*="color"],
+  [class*="testimonial"] .highlight {
+    color: #1FAA59 !important;
+  }
+}
+
+/* ========== “Any Inquiry?” section ========== */
+[data-theme="dark"] {
+  .fancy-banner-one,
+  .fancy-banner-two,
+  .fancy-banner-three,
+  .fancy-banner-four,
+  .fancy-banner-five,
+  .fancy-banner-six,
+  .contact-banner,
+  .inquiry-banner,
+  .cta-banner,
+  [class*="fancy-banner"],
+  [class*="contact-banner"],
+  [class*="inquiry"] {
+    background-color: transparent !important;
+  }
+
+  /* Soft dark overlay so white text stays readable over the image */
+  .fancy-banner-one::before,
+  .fancy-banner-two::before,
+  .fancy-banner-three::before,
+  .fancy-banner-four::before,
+  .fancy-banner-five::before,
+  .fancy-banner-six::before,
+  .contact-banner::before,
+  .inquiry-banner::before,
+  .cta-banner::before,
+  [class*="fancy-banner"]::before,
+  [class*="contact-banner"]::before,
+  [class*="inquiry"]::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: rgba(13, 26, 28, 0.55) !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .fancy-banner-one .container,
+  .fancy-banner-two .container,
+  .fancy-banner-three .container,
+  .fancy-banner-four .container,
+  .fancy-banner-five .container,
+  .fancy-banner-six .container,
+  .contact-banner .container,
+  .inquiry-banner .container,
+  .cta-banner .container,
+  [class*="fancy-banner"] .container,
+  [class*="contact-banner"] .container,
+  [class*="inquiry"] .container {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .fancy-banner-one h2,
+  .fancy-banner-two h2,
+  .fancy-banner-three h2,
+  .fancy-banner-four h2,
+  .fancy-banner-five h2,
+  .fancy-banner-six h2,
+  .contact-banner h2,
+  .inquiry-banner h2,
+  .cta-banner h2,
+  [class*="fancy-banner"] h2,
+  [class*="contact-banner"] h2,
+  [class*="inquiry"] h2 {
+    color: #ffffff !important;
+  }
+
+  .fancy-banner-one .btn-one,
+  .fancy-banner-two .btn-one,
+  .fancy-banner-three .btn-one,
+  .fancy-banner-four .btn-one,
+  .fancy-banner-five .btn-one,
+  .fancy-banner-six .btn-one,
+  .contact-banner .btn-one,
+  .inquiry-banner .btn-one,
+  .cta-banner .btn-one,
+  [class*="fancy-banner"] .btn-one,
+  [class*="contact-banner"] .btn-one,
+  [class*="inquiry"] .btn-one {
+    background: #1FAA59 !important;
+    border-color: #1FAA59 !important;
+    color: #ffffff !important;
   }
 }

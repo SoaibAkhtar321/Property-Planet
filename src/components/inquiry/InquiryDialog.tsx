@@ -426,6 +426,72 @@ const InquiryDialog = () => {
                </form>
             )}
          </div>
+
+         {/* Dark-mode contrast, injected directly with this component.
+            _theme.scss already carries a dark override for .pp-inquiry-*
+            (see the "Universal inquiry dialog" block there), but reports
+            kept coming back that the form was still unreadable in dark
+            mode — title, "Name" / "Phone number" labels, and the target
+            subtitle rendering as dark text on a dark panel. Rather than
+            chase the SCSS cascade further, this block is injected as a
+            global stylesheet scoped to this component's own render, the
+            same pattern already used in PropertyStickyCta.tsx and
+            PropertyPlanetAIWidget.tsx for exactly this class of bug — so
+            it ships with the component instead of depending on the
+            global bundle's load order. It also covers two elements the
+            _theme.scss pass missed: the .pp-inquiry-target subtitle
+            <span>, and #pp-inquiry-phone-help. */}
+         <style jsx global>{`
+            html[data-theme="dark"] .pp-inquiry-dialog {
+               background-color: #22404a !important;
+               border-color: rgba(255, 255, 255, 0.4) !important;
+            }
+            html[data-theme="dark"] .pp-inquiry-dialog h4,
+            html[data-theme="dark"] .pp-inquiry-dialog #pp-inquiry-title,
+            html[data-theme="dark"] .pp-inquiry-dialog label {
+               color: #f2f6f7 !important;
+               opacity: 1 !important;
+            }
+            html[data-theme="dark"] .pp-inquiry-dialog input,
+            html[data-theme="dark"] .pp-inquiry-dialog textarea {
+               background-color: #122226 !important;
+               border-color: rgba(255, 255, 255, 0.16) !important;
+               color: #f2f6f7 !important;
+               opacity: 1 !important;
+            }
+            html[data-theme="dark"] .pp-inquiry-dialog input::placeholder,
+            html[data-theme="dark"] .pp-inquiry-dialog textarea::placeholder {
+               color: rgba(232, 238, 240, 0.55) !important;
+               opacity: 1 !important;
+            }
+            html[data-theme="dark"] .pp-inquiry-target {
+               color: rgba(232, 238, 240, 0.82) !important;
+            }
+            html[data-theme="dark"] .pp-inquiry-target span {
+               color: rgba(232, 238, 240, 0.62) !important;
+            }
+            html[data-theme="dark"] #pp-inquiry-phone-help {
+               color: rgba(232, 238, 240, 0.6) !important;
+               opacity: 1 !important;
+            }
+            html[data-theme="dark"] .pp-inquiry-dialog small,
+            html[data-theme="dark"] .pp-inquiry-dialog .opacity-75 {
+               color: rgba(232, 238, 240, 0.7) !important;
+               opacity: 1 !important;
+            }
+            html[data-theme="dark"] .pp-inquiry-consent label {
+               color: rgba(232, 238, 240, 0.82) !important;
+               opacity: 1 !important;
+            }
+            html[data-theme="dark"] .pp-inquiry-close {
+               background-color: #1c333a !important;
+               color: #f2f6f7 !important;
+            }
+            html[data-theme="dark"] .pp-inquiry-dialog input[type="checkbox"] {
+               background-color: transparent !important;
+               border-color: rgba(255, 255, 255, 0.32) !important;
+            }
+         `}</style>
       </div>
    );
 };

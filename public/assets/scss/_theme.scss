@@ -828,6 +828,15 @@ html[data-theme="dark"] {
 
   .pp-inquiry-target {
     color: rgba(232, 238, 240, 0.82) !important;
+
+    span {
+      color: rgba(232, 238, 240, 0.62) !important;
+    }
+  }
+
+  #pp-inquiry-phone-help {
+    color: rgba(232, 238, 240, 0.6) !important;
+    opacity: 1 !important;
   }
 
   .pp-inquiry-dialog small,
