@@ -306,16 +306,12 @@ $pp-card-shadow: 0 16px 40px rgba(20, 20, 10, 0.08);
    }
 }
 
-/* The dialog's own surface-2 tone sits too close to the page/overlay
-   behind it in dark mode, so the whole card barely separates from its
-   background. Give it a visibly distinct, slightly lighter surface and a
-   stronger border/shadow so it reads clearly instead of nearly
-   disappearing. */
-[data-theme="dark"] .pp-inquiry-dialog {
-   background: #22404a;
-   border-color: rgba(255, 255, 255, 0.4);
-   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
-}
+/* The dark-mode background/border/shadow override for .pp-inquiry-dialog
+   lives in _theme.scss (as !important, alongside the rest of the
+   .pp-inquiry-* dark overrides) — it used to also be declared here
+   without !important, which meant _theme.scss's earlier, unrelated
+   !important rule silently won and this fix never actually rendered.
+   Keeping it in exactly one place, as !important, avoids that fight. */
 
 .pp-inquiry-close {
    position: absolute;
