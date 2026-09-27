@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------
 // Property Planet logo. Used by src/components/common/BrandLogo.tsx and
-// AnimatedBrandLogo.tsx. Raster artwork sized by HEIGHT (width follows the
-// image's own aspect ratio, so it can never be stretched).
+// AnimatedBrandLogo.tsx. Vector SVG artwork sized by HEIGHT (width follows
+// the image's own aspect ratio, so it can never be stretched).
 // -----------------------------------------------------------------------
 @keyframes brandLogoIn {
   0%   { opacity: 0; transform: translateY(4px) scale(0.97); }
@@ -27,6 +27,10 @@
 
   .brand-logo__icon { display: none; }
 
+  // Default: show light logo; hide dark
+  .brand-logo__full--dark { display: none; }
+  .brand-logo__full--light { display: block; }
+
   &.brand-logo--header { --brand-logo-h: 72px; }
   &.brand-logo--footer { --brand-logo-h: 72px; }
   &.brand-logo--menu   { --brand-logo-h: 56px; }
@@ -35,6 +39,27 @@
     .brand-logo__full,
     .brand-logo__icon { animation: brandLogoIn 0.7s ease-out both; }
   }
+
+  // Forced variants (footer with fixed dark-bg, etc.)
+  &.brand-logo--force-light {
+    .brand-logo__full--light { display: block; }
+    .brand-logo__full--dark  { display: none; }
+  }
+  &.brand-logo--force-dark {
+    .brand-logo__full--light { display: none; }
+    .brand-logo__full--dark  { display: block; }
+  }
+}
+
+// Theme-aware instances follow data-theme on <html>
+html[data-theme="dark"] .brand-logo.brand-logo--theme {
+  .brand-logo__full--light { display: none; }
+  .brand-logo__full--dark  { display: block; }
+}
+html[data-theme="light"] .brand-logo.brand-logo--theme,
+html:not([data-theme]) .brand-logo.brand-logo--theme {
+  .brand-logo__full--light { display: block; }
+  .brand-logo__full--dark  { display: none; }
 }
 
 // Header: the nav + right-hand widgets need ~1090px, so the full wordmark only
@@ -56,19 +81,20 @@
 }
 @media (max-width: 575px) {
   .brand-logo.brand-logo--header.brand-logo--icon-mobile { --brand-logo-h: 40px; }
+  .brand-logo.brand-logo--footer { --brand-logo-h: 52px; }
+  .brand-logo.brand-logo--menu   { --brand-logo-h: 44px; }
 }
 @media (min-width: 992px) and (max-width: 1359px) {
   .brand-logo.brand-logo--icon-mobile {
     --brand-logo-h: 44px;
-    .brand-logo__full { display: none; }
+    .brand-logo__full { display: none !important; }
     .brand-logo__icon { display: block; }
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .brand-logo.brand-logo--animate .brand-logo__full,
-  .brand-logo.brand-logo--animate .brand-logo__icon { animation: none; }
+  .brand-logo.brand-logo--animate .brand-logo__icon {
+    animation: none;
+  }
 }
-
-// Never let flex squeeze the header logo (it is sized by height).
-.theme-main-menu .logo { flex-shrink: 0; }

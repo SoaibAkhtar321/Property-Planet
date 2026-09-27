@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 130" fill="none" role="img" aria-label="Property Planet">
+  <defs>
+    <linearGradient id="gm" x1="18" y1="8" x2="95" y2="105" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4ADE80"/>
+      <stop offset="0.45" stop-color="#22C55E"/>
+      <stop offset="1" stop-color="#15803D"/>
+    </linearGradient>
+    <linearGradient id="om" x1="0" y1="55" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7DD3FC"/>
+      <stop offset="0.5" stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#0369A1"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(0,5) scale(0.95)">
+    <path d="M24 20c0-8.284 6.716-15 15-15h32c17.673 0 32 14.327 32 32v4c0 11.598-6.268 22.28-16.45 28L98 92c1.8 2.8.2 6.6-3.2 6.6H82.2c-1.7 0-3.3-.8-4.3-2.2L64 70H39v26c0 2.76-2.24 5-5 5h-5c-2.76 0-5-2.24-5-5V20z" fill="url(#gm)"/>
+    <path d="M42 34 L70 55 V82 H58 V68 H50 V82 H38 V55 Z" fill="#fff"/>
+    <path d="M8 74 C 30 32 90 24 118 52" stroke="url(#om)" stroke-width="7.5" stroke-linecap="round" fill="none"/>
+    <path d="M12 80 C 32 42 86 34 112 58" stroke="url(#om)" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.45"/>
+  </g>
+  <text x="145" y="54" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="38" font-weight="800" letter-spacing="-0.8">
+    <tspan fill="#0F172A">PROPER</tspan><tspan fill="#22C55E">ty</tspan>
+  </text>
+  <text x="145" y="96" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="38" font-weight="800" letter-spacing="-0.8">
+    <tspan fill="#0EA5E9">PLAN</tspan><tspan fill="#22C55E">et</tspan>
+  </text>
+  <text x="145" y="118" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" letter-spacing="2.4" fill="#64748B">
+    FIND · EXPLORE · INVEST
+  </text>
+</svg>
