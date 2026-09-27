@@ -828,15 +828,6 @@ html[data-theme="dark"] {
 
   .pp-inquiry-target {
     color: rgba(232, 238, 240, 0.82) !important;
-
-    span {
-      color: rgba(232, 238, 240, 0.62) !important;
-    }
-  }
-
-  #pp-inquiry-phone-help {
-    color: rgba(232, 238, 240, 0.6) !important;
-    opacity: 1 !important;
   }
 
   .pp-inquiry-dialog small,
@@ -1448,7 +1439,17 @@ html[data-theme="dark"] {
   }
 }
 
-/* ========== “Any Inquiry?” section ========== */
+/* ========== "Any Inquiry?" section ========== */
+/* [class*="inquiry"] below was written for this homepage CTA banner only,
+   but as a bare substring match it also caught .pp-inquiry-overlay and
+   .pp-inquiry-dialog (the global "Send Inquiry" popup) purely because
+   both happen to contain the word "inquiry". Its !important
+   background-color: transparent wiped the popup overlay's dark backdrop
+   tint (rgba(5,10,11,0.72) from _pp-ui.scss, which isn't !important) to
+   fully transparent, which is why the whole dialog looked washed out /
+   see-through in dark mode even though the dialog panel and text colors
+   themselves were correct. :not([class*="pp-inquiry"]) scopes this back
+   to just this banner's own classes. */
 [data-theme="dark"] {
   .fancy-banner-one,
   .fancy-banner-two,
@@ -1461,7 +1462,7 @@ html[data-theme="dark"] {
   .cta-banner,
   [class*="fancy-banner"],
   [class*="contact-banner"],
-  [class*="inquiry"] {
+  [class*="inquiry"]:not([class*="pp-inquiry"]) {
     background-color: transparent !important;
   }
 
@@ -1477,7 +1478,7 @@ html[data-theme="dark"] {
   .cta-banner::before,
   [class*="fancy-banner"]::before,
   [class*="contact-banner"]::before,
-  [class*="inquiry"]::before {
+  [class*="inquiry"]:not([class*="pp-inquiry"])::before {
     content: "" !important;
     position: absolute !important;
     inset: 0 !important;
@@ -1497,7 +1498,7 @@ html[data-theme="dark"] {
   .cta-banner .container,
   [class*="fancy-banner"] .container,
   [class*="contact-banner"] .container,
-  [class*="inquiry"] .container {
+  [class*="inquiry"]:not([class*="pp-inquiry"]) .container {
     position: relative !important;
     z-index: 1 !important;
   }
@@ -1513,7 +1514,7 @@ html[data-theme="dark"] {
   .cta-banner h2,
   [class*="fancy-banner"] h2,
   [class*="contact-banner"] h2,
-  [class*="inquiry"] h2 {
+  [class*="inquiry"]:not([class*="pp-inquiry"]) h2 {
     color: #ffffff !important;
   }
 
@@ -1528,7 +1529,7 @@ html[data-theme="dark"] {
   .cta-banner .btn-one,
   [class*="fancy-banner"] .btn-one,
   [class*="contact-banner"] .btn-one,
-  [class*="inquiry"] .btn-one {
+  [class*="inquiry"]:not([class*="pp-inquiry"]) .btn-one {
     background: #1FAA59 !important;
     border-color: #1FAA59 !important;
     color: #ffffff !important;
