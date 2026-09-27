@@ -27,9 +27,9 @@ const MediaGallery = ({ images, title }: { images: string[]; title: string }) =>
       <div className="media-gallery-grid mb-50">
          <div className="row">
             <div className="col-md-7 d-flex">
-               <div className="position-relative h-100 w-100 sm-pb-20">
+               <div className="position-relative w-100 sm-pb-20">
                   <a
-                     className="media-bg h-100"
+                     className="media-bg lg w-100"
                      style={{ backgroundImage: `url(${main})` }}
                      role="img"
                      aria-label={`${title} — main photo`}

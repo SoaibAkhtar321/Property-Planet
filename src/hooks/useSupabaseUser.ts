@@ -43,22 +43,48 @@ export function useSupabaseUser(): SupabaseUserState {
             return;
          }
 
-         const { data: profile } = await supabase
-            .from("profiles")
-            .select("role, full_name")
-            .eq("id", user.id)
-            .maybeSingle();
+         try {
+            const { data: profile } = await supabase
+               .from("profiles")
+               .select("role, full_name")
+               .eq("id", user.id)
+               .maybeSingle();
 
-         if (!isMounted) return;
-         setState({
-            user,
-            role: (profile?.role as UserRole) ?? null,
-            fullName: profile?.full_name ?? null,
-            loading: false,
-         });
+            if (!isMounted) return;
+            setState({
+               user,
+               role: (profile?.role as UserRole) ?? null,
+               fullName: profile?.full_name ?? null,
+               loading: false,
+            });
+         } catch {
+            // Profile fetch failed (network hiccup, etc.) — still resolve
+            // loading so UI gated on `loading` (e.g. the inquiry button)
+            // doesn't stay hidden forever. Treat as a signed-in user with
+            // an unknown role rather than silently hanging.
+            if (isMounted) setState({ user, role: null, fullName: null, loading: false });
+         }
       };
 
-      supabase.auth.getUser().then(({ data }) => loadProfile(data.user));
+      supabase.auth
+         .getUser()
+         .then(({ data }) => loadProfile(data.user))
+         .catch(() => {
+            // getUser() itself failed — resolve as logged-out rather than
+            // leaving `loading: true` forever, which was silently hiding
+            // the "Send Inquiry" button (and everything else gated on
+            // this hook) with no visible error.
+            if (isMounted) setState({ user: null, role: null, fullName: null, loading: false });
+         });
+
+      // Belt-and-braces: if the request above hangs (flaky network) rather
+      // than resolving or rejecting, don't leave the UI stuck on `loading`
+      // indefinitely.
+      const timeout = window.setTimeout(() => {
+         if (isMounted) {
+            setState((prev) => (prev.loading ? { ...prev, loading: false } : prev));
+         }
+      }, 6000);
 
       const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
          loadProfile(session?.user ?? null);
@@ -66,6 +92,7 @@ export function useSupabaseUser(): SupabaseUserState {
 
       return () => {
          isMounted = false;
+         window.clearTimeout(timeout);
          subscription.subscription.unsubscribe();
       };
    }, []);
