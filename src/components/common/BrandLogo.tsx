@@ -7,8 +7,8 @@ interface BrandLogoProps {
   className?: string;
   mobileIcon?: boolean;
   size?: string;
-  animate?: boolean; // Added to fix the AnimatedBrandLogo TS error
-  priority?: boolean; // Added to fix the AnimatedBrandLogo TS error
+  animate?: boolean;
+  priority?: boolean;
 }
 
 const BrandLogo: React.FC<BrandLogoProps> = ({ 
@@ -16,8 +16,8 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
   className = '', 
   mobileIcon = false,
   size = '',
-  animate,
-  priority
+  animate = false,
+  priority = true
 }) => {
   const forceLight = variant === 'light';
   const forceDark = variant === 'dark';
@@ -32,7 +32,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
           width={210}
           height={60}
           className={`logo-main ${forceLight ? '' : 'theme-light-only'} ${animate ? 'animate-logo' : ''}`}
-          priority={priority || true}
+          priority={priority}
         />
       )}
 
@@ -43,7 +43,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
           width={210}
           height={60}
           className={`logo-main ${forceDark ? '' : 'theme-dark-only'} ${animate ? 'animate-logo' : ''}`}
-          priority={priority || true}
+          priority={priority}
         />
       )}
 
@@ -54,7 +54,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
           width={50}
           height={50}
           className="logo-mark"
-          priority={priority || true}
+          priority={priority}
         />
       )}
     </Link>

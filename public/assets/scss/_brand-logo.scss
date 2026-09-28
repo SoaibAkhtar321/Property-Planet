@@ -98,3 +98,27 @@ html:not([data-theme]) .brand-logo.brand-logo--theme {
     animation: none;
   }
 }
+html[data-theme="light"] .theme-dark-only,
+html:not([data-theme="dark"]) .theme-dark-only {
+    display: none !important;
+}
+
+html[data-theme="dark"] .theme-light-only {
+    display: none !important;
+}
+
+.logo-mark {
+    display: none !important;
+}
+
+.brand-logo-wrapper.has-mobile-icon {
+    @media (max-width: 1359px) {
+        .theme-light-only, 
+        .theme-dark-only {
+            display: none !important;
+        }
+        .logo-mark {
+            display: block !important;
+        }
+    }
+}
