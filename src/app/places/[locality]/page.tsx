@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Wrapper from "@/layouts/Wrapper";
 import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import FooterOne from "@/layouts/footers/FooterOne";
+import Error from "@/components/inner-pages/error";
 import PropertyCard from "@/components/properties/PropertyCard";
 import ProjectCard from "@/components/projects/ProjectCard";
 import { getPropertiesForPlace } from "@/lib/properties/queries";
@@ -53,6 +54,20 @@ const PlacePage = async ({ params }: { params: { locality: string } }) => {
    const { properties, projects } = await getPlaceListings(place);
    const hasListings = properties.length > 0 || projects.length > 0;
 
+   // Same illustrated page as the 404, with place-specific text instead of
+   // "Page not found" (HTTP 200 + noindex, see generateMetadata).
+   if (!hasListings) {
+      return (
+         <Wrapper>
+            <Error
+               lead="Sorry!"
+               heading={`No properties available in ${place} right now`}
+               message="Properties here may already be sold, or new listings haven't been added yet. Check back soon, or explore other places."
+            />
+         </Wrapper>
+      );
+   }
+
    return (
       <Wrapper>
          <HeaderTwo style_1={false} style_2={false} staticHeader={true} />
@@ -60,20 +75,6 @@ const PlacePage = async ({ params }: { params: { locality: string } }) => {
             <div className="container container-large">
                <div className="row">
                   <div className="col-xl-9">
-                     {!hasListings ? (
-                        <div className="text-center py-5" style={{ minHeight: "40vh" }}>
-                           <h1 className="font-garamond">No properties available in {place} right now</h1>
-                           <p className="fs-18 mt-10 mb-40">
-                              Properties here may already be sold, or new listings haven&apos;t been added yet. Check
-                              back soon, or explore other places.
-                           </p>
-                           <div className="d-flex flex-wrap justify-content-center gap-3">
-                              <Link href="/properties" className="pp-card-btn pp-card-btn--primary">Browse all properties</Link>
-                              <Link href="/projects" className="pp-card-btn pp-card-btn--ghost">See featured opportunities</Link>
-                           </div>
-                        </div>
-                     ) : (
-                     <>
                      <div className="mb-40 lg-mb-30">
                         {/* SEO fix (Section 17 — Heading Structure): this was an <h2>,
                             leaving the page with no <h1> at all. */}
@@ -105,8 +106,6 @@ const PlacePage = async ({ params }: { params: { locality: string } }) => {
                               ))}
                            </div>
                         </div>
-                     )}
-                     </>
                      )}
                   </div>
                </div>
