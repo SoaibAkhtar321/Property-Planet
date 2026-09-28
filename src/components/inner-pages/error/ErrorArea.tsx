@@ -19,7 +19,17 @@ const ErrorArea = () => {
                      </p>
                      <div className="d-flex flex-wrap justify-content-center gap-3">
                         <Link href="/" className="btn-five sm fw-normal text-uppercase">Back to home</Link>
-                        <Link href="/properties" className="btn-four sm fw-normal text-uppercase">Browse properties</Link>
+                        {/* Was `btn-four`, which is the 50x50px icon-only square: the label
+                             overflowed it and rendered as white text on a tiny black box.
+                             `btn-two` is the full-size green button (same radius/height as
+                             btn-five), so the label has room and is clearly visible. */}
+                        <Link
+                           href="/properties"
+                           className="btn-two fw-normal text-uppercase"
+                           style={{ fontSize: 14, padding: "0 30px", lineHeight: "55px", minWidth: 150 }}
+                        >
+                           Browse properties
+                        </Link>
                      </div>
                   </div>
                </div>

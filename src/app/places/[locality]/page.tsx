@@ -1,3 +1,4 @@
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Wrapper from "@/layouts/Wrapper";
@@ -11,6 +12,12 @@ import { getProjectsForPlace } from "@/lib/projects/queries";
 // Always fetch fresh, same reasoning as /properties and /projects: this
 // reads live published inventory through Supabase, not build-time data.
 export const dynamic = "force-dynamic";
+
+// Shared by generateMetadata and the page so each request queries once.
+const getPlaceListings = cache(async (place: string) => {
+   const [properties, projects] = await Promise.all([getPropertiesForPlace(place), getProjectsForPlace(place)]);
+   return { properties, projects };
+});
 
 // SEO fix: `locality` is free-text (see sitemap.ts's own comment on why
 // there's no canonical locality table), so this route previously
@@ -26,11 +33,16 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: { locality: string } }) {
    const place = decodeURIComponent(params.locality).trim();
    if (!place) {
-      return { title: "Not Found | Property Planet" };
+      return { title: "Not Found | Property Planet", robots: { index: false, follow: true } };
    }
+   const { properties, projects } = await getPlaceListings(place);
+   const isEmpty = properties.length === 0 && projects.length === 0;
    return {
       title: `Properties in ${place}, Hyderabad | Property Planet`,
       description: `Browse published properties and projects in ${place}, Hyderabad with Property Planet.`,
+      // Empty places now render a friendly "no listings" page (HTTP 200) instead
+      // of a 404, so keep them out of the index to avoid empty near-duplicates.
+      ...(isEmpty ? { robots: { index: false, follow: true } } : {}),
    };
 }
 
@@ -38,11 +50,8 @@ const PlacePage = async ({ params }: { params: { locality: string } }) => {
    const place = decodeURIComponent(params.locality).trim();
    if (!place) notFound();
 
-   const [properties, projects] = await Promise.all([getPropertiesForPlace(place), getProjectsForPlace(place)]);
-
-   if (properties.length === 0 && projects.length === 0) {
-      notFound();
-   }
+   const { properties, projects } = await getPlaceListings(place);
+   const hasListings = properties.length > 0 || projects.length > 0;
 
    return (
       <Wrapper>
@@ -51,6 +60,20 @@ const PlacePage = async ({ params }: { params: { locality: string } }) => {
             <div className="container container-large">
                <div className="row">
                   <div className="col-xl-9">
+                     {!hasListings ? (
+                        <div className="text-center py-5" style={{ minHeight: "40vh" }}>
+                           <h1 className="font-garamond">No properties available in {place} right now</h1>
+                           <p className="fs-18 mt-10 mb-40">
+                              Properties here may already be sold, or new listings haven&apos;t been added yet. Check
+                              back soon, or explore other places.
+                           </p>
+                           <div className="d-flex flex-wrap justify-content-center gap-3">
+                              <Link href="/properties" className="pp-card-btn pp-card-btn--primary">Browse all properties</Link>
+                              <Link href="/projects" className="pp-card-btn pp-card-btn--ghost">See featured opportunities</Link>
+                           </div>
+                        </div>
+                     ) : (
+                     <>
                      <div className="mb-40 lg-mb-30">
                         {/* SEO fix (Section 17 — Heading Structure): this was an <h2>,
                             leaving the page with no <h1> at all. */}
@@ -82,6 +105,8 @@ const PlacePage = async ({ params }: { params: { locality: string } }) => {
                               ))}
                            </div>
                         </div>
+                     )}
+                     </>
                      )}
                   </div>
                </div>
