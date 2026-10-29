@@ -41,7 +41,7 @@ const ebGaramond = EB_Garamond({
 const SITE_URL = "https://propertyplanet.in";
 // Permanent Property Planet symbol (icon only, no wordmark) -- also the
 // favicon PNG and the header icon on small screens.
-const ICON_URL = "/assets/images/logo/property-planet-mark.svg";
+const ICON_URL = "/assets/images/logo/property-planet-mark-v2.svg";
 const ICON_PNG_URL = "/assets/images/logo/property-planet-icon.png";
 const SITE_DESCRIPTION =
    "Property Planet is Hyderabad's AI-powered land and property advisory platform, connecting landowners, developers and buyers across Future City and the southern growth corridors.";

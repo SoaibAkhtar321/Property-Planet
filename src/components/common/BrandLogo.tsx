@@ -27,7 +27,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
       
       {!forceDark && (
         <Image
-          src="/assets/images/logo/property-planet-logo-light.svg"
+          src="/assets/images/logo/property-planet-logo-light-v2.svg"
           alt="PROPERty PLANet"
           width={210}
           height={60}
@@ -38,7 +38,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
 
       {!forceLight && (
         <Image
-          src="/assets/images/logo/property-planet-logo-dark.svg"
+          src="/assets/images/logo/property-planet-logo-dark-v2.svg"
           alt="PROPERty PLANet"
           width={210}
           height={60}
@@ -49,7 +49,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
 
       {mobileIcon && (
         <Image
-          src="/assets/images/logo/property-planet-mark.svg"
+          src="/assets/images/logo/property-planet-mark-v2.svg"
           alt="PROPERty PLANet Icon"
           width={50}
           height={50}
