@@ -26,7 +26,8 @@ const MEDIA_SECTIONS: { type: AdminProjectMediaRow["media_type"]; label: string;
 
 export const dynamic = "force-dynamic";
 
-export default async function EditProjectPage({ params }: { params: { id: string } }) {
+export default async function EditProjectPage(props: { params: Promise<{ id: string }> }) {
+   const params = await props.params;
    const result = await getProjectForAdmin(params.id);
    if (!result) notFound();
    const { project, location } = result;
@@ -79,7 +80,7 @@ export default async function EditProjectPage({ params }: { params: { id: string
          </div>
 
          <h5 className="mt-5 mb-3">Project information</h5>
-         <form action={updateBasics} className="d-flex flex-column gap-3">
+         <form action={async (formData: FormData) => { "use server"; await updateBasics(formData); }} className="d-flex flex-column gap-3">
             <div>
                <label className="form-label">Title *</label>
                <input name="title" defaultValue={project.title} className="form-control" required minLength={3} />
@@ -158,7 +159,7 @@ export default async function EditProjectPage({ params }: { params: { id: string
          </form>
 
          <h5 className="mt-5 mb-3">Location</h5>
-         <form action={updateLocation} className="d-flex flex-column gap-3">
+         <form action={async (formData: FormData) => { "use server"; await updateLocation(formData); }} className="d-flex flex-column gap-3">
             <div>
                <label className="form-label">City</label>
                <input name="city" defaultValue={location?.city ?? ""} className="form-control" />
@@ -203,7 +204,7 @@ export default async function EditProjectPage({ params }: { params: { id: string
                      await deleteProjectPricingRow(project.id, row.id);
                   };
                   return (
-                     <form key={row.id} action={updateRow} className="border rounded p-3 d-flex flex-column gap-2">
+                     <form key={row.id} action={async (formData: FormData) => { "use server"; await updateRow(formData); }} className="border rounded p-3 d-flex flex-column gap-2">
                         <div className="row">
                            <div className="col">
                               <label className="form-label">Label *</label>
@@ -267,7 +268,7 @@ export default async function EditProjectPage({ params }: { params: { id: string
             </div>
          )}
 
-         <form action={addPricingRow} className="border rounded p-3 d-flex flex-column gap-2">
+         <form action={async (formData: FormData) => { "use server"; await addPricingRow(formData); }} className="border rounded p-3 d-flex flex-column gap-2">
             <h6 className="m-0">Add a pricing row</h6>
             <div className="row">
                <div className="col">
@@ -327,7 +328,7 @@ export default async function EditProjectPage({ params }: { params: { id: string
                               await deleteProjectMediaRow(project.id, row.id);
                            };
                            return (
-                              <form key={row.id} action={updateRow} className="border rounded p-2 d-flex flex-column gap-2">
+                              <form key={row.id} action={async (formData: FormData) => { "use server"; await updateRow(formData); }} className="border rounded p-2 d-flex flex-column gap-2">
                                  <div className="small text-muted text-truncate">{row.storage_path}</div>
                                  <div className="row g-2">
                                     <div className="col">

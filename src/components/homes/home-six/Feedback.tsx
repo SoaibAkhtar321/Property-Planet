@@ -9,7 +9,7 @@ import feedbackImg_3 from "@/assets/images/media/img_03.jpg";
 
 interface DataType {
    id: number;
-   blockquote: JSX.Element;
+   blockquote: React.JSX.Element;
    name: string;
    country: string;
    img: StaticImageData;

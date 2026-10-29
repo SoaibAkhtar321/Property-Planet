@@ -11,7 +11,8 @@ import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+   const params = await props.params;
    const property = await getPropertyBySlug(params.slug);
 
    if (!property) {
@@ -54,7 +55,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
    };
 }
 
-const PropertyDetailPage = async ({ params }: { params: { slug: string } }) => {
+const PropertyDetailPage = async (props: { params: Promise<{ slug: string }> }) => {
+   const params = await props.params;
    const property = await getPropertyBySlug(params.slug);
 
    if (!property) {

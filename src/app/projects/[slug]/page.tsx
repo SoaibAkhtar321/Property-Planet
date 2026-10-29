@@ -14,7 +14,8 @@ import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 // rather than serve a stale cached page.
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+   const params = await props.params;
    const project = await getProjectBySlug(params.slug);
    if (!project) {
       return { title: "Project Not Found | Property Planet" };
@@ -49,7 +50,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
    };
 }
 
-const ProjectDetailPage = async ({ params }: { params: { slug: string } }) => {
+const ProjectDetailPage = async (props: { params: Promise<{ slug: string }> }) => {
+   const params = await props.params;
    const project = await getProjectBySlug(params.slug);
 
    // getProjectBySlug reads from project_public, which already filters to

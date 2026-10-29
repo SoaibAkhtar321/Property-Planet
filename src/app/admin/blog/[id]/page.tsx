@@ -8,7 +8,8 @@ import PostBasicsForm from "@/components/admin/blog/PostBasicsForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditBlogPostPage({ params }: { params: { id: string } }) {
+export default async function EditBlogPostPage(props: { params: Promise<{ id: string }> }) {
+   const params = await props.params;
    const post = await getPostForAdmin(params.id);
    if (!post) notFound();
 

@@ -14,7 +14,7 @@ import feedbackShape_3 from "@/assets/images/shape/shape_27.svg"
 // data, not something presented as a bought/verified review.
 interface DataType {
    id: number;
-   desc: JSX.Element;
+   desc: React.JSX.Element;
    title: string;
    country: string;
    initials: string;

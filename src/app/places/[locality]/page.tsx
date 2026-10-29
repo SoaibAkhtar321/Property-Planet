@@ -31,7 +31,8 @@ const getPlaceListings = cache(async (place: string) => {
 // "Needs a Business Decision"), so it also isn't in sitemap.ts and has
 // no metadataBase-quality title/description of its own beyond this
 // generateMetadata -- both intentionally deferred until that's decided.
-export async function generateMetadata({ params }: { params: { locality: string } }) {
+export async function generateMetadata(props: { params: Promise<{ locality: string }> }) {
+   const params = await props.params;
    const place = decodeURIComponent(params.locality).trim();
    if (!place) {
       return { title: "Not Found | Property Planet", robots: { index: false, follow: true } };
@@ -47,7 +48,8 @@ export async function generateMetadata({ params }: { params: { locality: string 
    };
 }
 
-const PlacePage = async ({ params }: { params: { locality: string } }) => {
+const PlacePage = async (props: { params: Promise<{ locality: string }> }) => {
+   const params = await props.params;
    const place = decodeURIComponent(params.locality).trim();
    if (!place) notFound();
 

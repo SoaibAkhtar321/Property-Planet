@@ -14,7 +14,8 @@ import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 // invalid slug must 404 rather than serve a stale cached page.
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+   const params = await props.params;
    const post = await getPostBySlug(params.slug);
    if (!post) {
       return { title: "Article Not Found | Property Planet" };
@@ -45,7 +46,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
    };
 }
 
-const BlogDetailPage = async ({ params }: { params: { slug: string } }) => {
+const BlogDetailPage = async (props: { params: Promise<{ slug: string }> }) => {
+   const params = await props.params;
    const post = await getPostBySlug(params.slug);
 
    // getPostBySlug reads from blog_public, which already filters to

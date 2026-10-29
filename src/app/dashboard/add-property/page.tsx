@@ -6,7 +6,8 @@ export const metadata = {
    title: "Property Planet — Dashboard Add Property",
 };
 
-const index = async ({ searchParams }: { searchParams: { error?: string } }) => {
+const index = async (props: { searchParams: Promise<{ error?: string }> }) => {
+   const searchParams = await props.searchParams;
    await requireRole(["seller"]);
    const { error } = searchParams;
 

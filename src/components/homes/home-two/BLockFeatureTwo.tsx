@@ -1,3 +1,4 @@
+import type React from "react";
 import feature_data from "@/data/home-data/FeatureData";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,7 +7,7 @@ import BLockFeatureThree from "./BLockFeatureThree";
 import featureShape from "@/assets/images/shape/shape_21.svg";
 
 interface ContentType {
-   title: JSX.Element;
+   title: React.JSX.Element;
    desc: string;
 }
 

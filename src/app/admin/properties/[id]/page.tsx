@@ -168,7 +168,7 @@ export default async function AdminPropertyDetailPage({
          )}
 
          <h5 className="mt-4 mb-3">Listing information</h5>
-         <form action={saveListing} className="border rounded p-3 d-flex flex-column gap-3 mb-4">
+         <form action={async (formData: FormData) => { "use server"; await saveListing(formData); }} className="border rounded p-3 d-flex flex-column gap-3 mb-4">
             <div>
                <label className="form-label">Title *</label>
                <input name="title" defaultValue={property.title} className="form-control" required minLength={3} />
@@ -284,7 +284,7 @@ export default async function AdminPropertyDetailPage({
          </div>
 
          <h5 className="mb-3">Location</h5>
-         <form action={saveLocation} className="border rounded p-3 d-flex flex-column gap-3 mb-4">
+         <form action={async (formData: FormData) => { "use server"; await saveLocation(formData); }} className="border rounded p-3 d-flex flex-column gap-3 mb-4">
             <p className="text-muted small m-0">
                Exact address and coordinates are admin-only and are never returned by any public query. The public map
                marker is derived from them server-side with a randomised 150–500m offset.
