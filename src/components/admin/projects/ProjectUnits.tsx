@@ -46,7 +46,7 @@ const UnitRow = ({ projectId, unit }: { projectId: string; unit: AdminUnitRow })
    };
 
    return (
-      <form action={saveUnit} className="border rounded p-3 d-flex flex-column gap-2">
+      <form action={async (formData: FormData) => { "use server"; await saveUnit(formData); }} className="border rounded p-3 d-flex flex-column gap-2">
          <div className="d-flex justify-content-between align-items-center">
             <div className="fw-bold">{unit.title}</div>
             <span className="badge bg-secondary text-uppercase">{STATUS_LABELS[unit.status] ?? unit.status}</span>
@@ -164,7 +164,7 @@ export default async function ProjectUnits({ projectId }: { projectId: string })
             <p className="text-muted small mb-4">No units yet.</p>
          )}
 
-         <form action={addUnit} className="border rounded p-3 d-flex flex-column gap-2 mb-4">
+         <form action={async (formData: FormData) => { "use server"; await addUnit(formData); }} className="border rounded p-3 d-flex flex-column gap-2 mb-4">
             <h6 className="m-0">Add a unit</h6>
             <div className="row">
                <div className="col">
@@ -257,7 +257,7 @@ export default async function ProjectUnits({ projectId }: { projectId: string })
             </div>
          </form>
 
-         <form action={attach} className="border rounded p-3 d-flex flex-column gap-2">
+         <form action={async (formData: FormData) => { "use server"; await attach(formData); }} className="border rounded p-3 d-flex flex-column gap-2">
             <h6 className="m-0">Attach an existing property</h6>
             <p className="text-muted small m-0">
                Only properties that are not already part of a project are listed. Attaching does not change who owns the

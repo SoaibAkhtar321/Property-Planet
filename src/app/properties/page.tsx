@@ -56,25 +56,26 @@ const numberOrUndefined = (value: string) => {
    return Number.isFinite(n) && n >= 0 ? n : undefined;
 };
 
-const PropertiesPage = async ({
-   searchParams,
-}: {
-   searchParams: {
-      q?: string;
-      propertyType?: string;
-      city?: string;
-      locality?: string;
-      /** Legacy alias for `locality`, kept so existing links and bookmarks
-       * from the homepage locality cards keep working. */
-      location?: string;
-      minPrice?: string;
-      maxPrice?: string;
-      minArea?: string;
-      maxArea?: string;
-      sort?: string;
-      page?: string;
-   };
-}) => {
+const PropertiesPage = async (
+   props: {
+      searchParams: Promise<{
+         q?: string;
+         propertyType?: string;
+         city?: string;
+         locality?: string;
+         /** Legacy alias for `locality`, kept so existing links and bookmarks
+          * from the homepage locality cards keep working. */
+         location?: string;
+         minPrice?: string;
+         maxPrice?: string;
+         minArea?: string;
+         maxArea?: string;
+         sort?: string;
+         page?: string;
+      }>;
+   }
+) => {
+   const searchParams = await props.searchParams;
    // Phase 8: the locality cards link to ?locality=<value>; ?location= was
    // the previous parameter name and is still accepted here so older links
    // resolve to the same filtered listing rather than silently showing

@@ -20,6 +20,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin/auth";
 
 export type UserRole = "buyer" | "seller" | "admin";
 
@@ -34,6 +35,10 @@ export interface AdminUserRow {
 
 /** All users (any role), newest first, for the /admin/users list. Caller must already be behind requireAdmin(). */
 export async function getAllUsersForAdmin(): Promise<AdminUserRow[]> {
+   // Security audit 2026-10: this function uses the service-role key, so it
+   // checks for itself instead of relying on every caller to have done so.
+   await requireAdmin();
+
    const supabase = await createClient();
 
    const { data, error } = await supabase

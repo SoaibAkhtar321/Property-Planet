@@ -144,6 +144,9 @@ const PropertyFilters = ({
                <button type="submit" className="pp-card-btn pp-card-btn--primary w-100 justify-content-center mb-15">
                   Apply Filters
                </button>
+               {/* Deliberately a full page load, not <Link>: it guarantees every
+                   uncontrolled filter input above is cleared along with the URL. */}
+               {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                <a href="/properties" className="pp-card-btn pp-card-btn--ghost w-100 justify-content-center">
                   Reset Filters
                </a>

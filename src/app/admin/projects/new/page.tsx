@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createProject } from "@/lib/admin/projects/actions";
 
-export default async function NewProjectPage({ searchParams }: { searchParams: { error?: string } }) {
+export default async function NewProjectPage(props: { searchParams: Promise<{ error?: string }> }) {
+   const searchParams = await props.searchParams;
    const error = searchParams?.error;
 
    return (

@@ -10,6 +10,8 @@
 // beyond the project's own public `location` string is added, matching
 // this project's own no-exact-address rule in ProjectDetail.tsx.
 
+import { serializeJsonLd } from "@/lib/site/jsonLd";
+
 const SITE_URL = "https://propertyplanet.in";
 
 export type ProjectJsonLdPricingInput = {
@@ -74,7 +76,7 @@ export default function ProjectJsonLd({ project }: { project: ProjectJsonLdInput
       <script
          type="application/ld+json"
          // eslint-disable-next-line react/no-danger
-         dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+         dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
       />
    );
 }
