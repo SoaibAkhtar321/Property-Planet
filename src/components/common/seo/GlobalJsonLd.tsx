@@ -9,6 +9,7 @@
 // lists an account Property Planet doesn't actually hold.
 
 import { CONTACT_EMAIL, CONTACT_PHONE, SOCIAL_LINKS } from "@/lib/site/contact";
+import { serializeJsonLd } from "@/lib/site/jsonLd";
 
 const SITE_URL = "https://propertyplanet.in";
 
@@ -43,12 +44,12 @@ export default function GlobalJsonLd() {
          <script
             type="application/ld+json"
             // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
+            dangerouslySetInnerHTML={{ __html: serializeJsonLd(organization) }}
          />
          <script
             type="application/ld+json"
             // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
+            dangerouslySetInnerHTML={{ __html: serializeJsonLd(website) }}
          />
       </>
    );

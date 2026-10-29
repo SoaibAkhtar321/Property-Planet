@@ -27,13 +27,22 @@ insert into auth.users (id, email) values
 update profiles set role = 'seller', full_name = 'Seller C', phone = '+913333333333' where id = '00000000-0000-0000-0000-0000000000e1';
 update profiles set role = 'buyer',  full_name = 'Visitor A', phone = '+914444444444' where id = '00000000-0000-0000-0000-0000000000e2';
 
-insert into properties (id, owner_id, title, slug, property_type, listing_type, status, city, locality)
+-- 0026 forbids publishing on creation, so: insert as draft, record the
+-- location, then publish (the same order the real admin flow uses).
+insert into properties (id, owner_id, title, slug, property_type, listing_type, price, status, city, locality)
 values ('00000000-0000-0000-0000-0000000000f1', '00000000-0000-0000-0000-0000000000e1',
-        'Test Villa', 'test-villa-va', 'villa', 'sale', 'published', 'Hyderabad', 'Gachibowli');
+        'Test Villa', 'test-villa-va', 'villa', 'sale', 5000000, 'draft', 'Hyderabad', 'Gachibowli');
+insert into property_location (property_id, city, locality, exact_lat, exact_lng, exact_address)
+values ('00000000-0000-0000-0000-0000000000f1', 'Hyderabad', 'Gachibowli', 17.44, 78.35, 'Test address');
+insert into auth.users (id, email) values ('00000000-0000-0000-0000-0000000000e9', 'adminVA@example.com');
+update profiles set role = 'admin' where id = '00000000-0000-0000-0000-0000000000e9';
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000e9', true);
+update properties set status = 'published' where id = '00000000-0000-0000-0000-0000000000f1';
+select set_config('request.jwt.claim.sub', '', true);
 
-insert into properties (id, owner_id, title, slug, property_type, listing_type, status, city, locality)
+insert into properties (id, owner_id, title, slug, property_type, listing_type, price, status, city, locality)
 values ('00000000-0000-0000-0000-0000000000f2', '00000000-0000-0000-0000-0000000000e1',
-        'Draft Plot', 'draft-plot-va', 'plot', 'sale', 'draft', 'Hyderabad', 'Kondapur');
+        'Draft Plot', 'draft-plot-va', 'plot', 'sale', 3000000, 'draft', 'Hyderabad', 'Kondapur');
 
 -- =============================================================== 1. anonymous submit
 set role anon;

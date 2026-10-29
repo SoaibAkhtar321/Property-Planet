@@ -3,6 +3,8 @@
 // data model has no author field, so `author` is omitted rather than
 // guessed), no fabricated ratings/reviews.
 
+import { serializeJsonLd } from "@/lib/site/jsonLd";
+
 const SITE_URL = "https://propertyplanet.in";
 
 export type ArticleJsonLdPost = {
@@ -34,7 +36,7 @@ export default function ArticleJsonLd({ post }: { post: ArticleJsonLdPost }) {
       <script
          type="application/ld+json"
          // eslint-disable-next-line react/no-danger
-         dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+         dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
       />
    );
 }

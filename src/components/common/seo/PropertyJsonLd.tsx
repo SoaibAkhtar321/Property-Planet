@@ -7,6 +7,8 @@
 // address-only (no exact address / no contact) rule in
 // properties/[slug]/page.tsx.
 
+import { serializeJsonLd } from "@/lib/site/jsonLd";
+
 const SITE_URL = "https://propertyplanet.in";
 
 export type PropertyJsonLdInput = {
@@ -85,7 +87,7 @@ export default function PropertyJsonLd({ property }: { property: PropertyJsonLdI
    // standard safe way to embed arbitrary JSON inside a <script> tag --
    // valid JSON, and \u003c is never a literal "<" for the HTML parser to
    // act on.
-   const json = JSON.stringify(data).replace(/</g, "\\u003c");
+   const json = serializeJsonLd(data);
 
    return (
       <script

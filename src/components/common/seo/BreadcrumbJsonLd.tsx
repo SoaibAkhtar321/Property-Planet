@@ -2,6 +2,8 @@
 // the visible breadcrumb component (BreadcrumbOne/Two/Three etc.) for a
 // given page — every URL here must be a real, reachable page.
 
+import { serializeJsonLd } from "@/lib/site/jsonLd";
+
 const SITE_URL = "https://propertyplanet.in";
 
 export type BreadcrumbItem = { name: string; path: string };
@@ -22,7 +24,7 @@ export default function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] })
       <script
          type="application/ld+json"
          // eslint-disable-next-line react/no-danger
-         dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+         dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
       />
    );
 }
