@@ -43,6 +43,7 @@ const setting = {
    dots: true,
    arrows: false,
    centerPadding: '0px',
+   
    slidesToShow: 1,
    slidesToScroll: 1,
    fade: true,
