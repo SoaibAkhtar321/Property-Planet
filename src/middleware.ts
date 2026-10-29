@@ -34,7 +34,7 @@ import { createMiddlewareClient } from "@/lib/supabase/middleware";
 // (and any other non-seller role) are redirected to their own dashboard
 // home rather than blocked outright — they *are* legitimately logged in,
 // just not authorized for this particular page.
-const SELLER_ONLY_DASHBOARD_PATHS = ["/dashboard/add-property", "/dashboard/properties-list"];
+const SELLER_ONLY_DASHBOARD_PATHS = ["/dashboard/add-property", "/dashboard/properties-list", "/dashboard/insights"];
 
 export async function middleware(request: NextRequest) {
    const { pathname } = request.nextUrl;

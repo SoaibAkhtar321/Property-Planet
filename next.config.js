@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Don't advertise the framework/version in every response.
+  poweredByHeader: false,
   images: {
     // SEO/perf fix: this was `unoptimized: true`, which disables Next's
     // entire image pipeline (resizing, WebP/AVIF conversion, responsive
@@ -56,6 +58,13 @@ const nextConfig = {
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
         ],
       },
+      // Private areas: robots.txt asks crawlers not to visit, and the pages
+      // carry a noindex meta tag; this header also covers non-HTML
+      // responses and any URL a crawler reaches through an outside link.
+      ...["/admin/:path*", "/dashboard/:path*", "/auth/:path*"].map((source) => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      })),
     ];
   },
   async redirects() {

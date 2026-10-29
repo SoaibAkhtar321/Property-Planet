@@ -392,9 +392,17 @@ export interface PropertySearchParams {
    maxPrice?: number;
    minArea?: number;
    maxArea?: number;
+   /** AI search: BHK extracted from the query ("3 bhk" -> 3). */
+   minBedrooms?: number;
    sort?: PropertySort;
    page?: number;
    pageSize?: number;
+   /**
+    * AI search: limit results to these ids. When `rankByIds` is set and no
+    * explicit sort was chosen, results keep this order (best match first).
+    */
+   restrictToIds?: string[];
+   rankByIds?: boolean;
 }
 
 export interface PropertySearchResult {
@@ -432,6 +440,12 @@ export async function searchPublishedProperties(params: PropertySearchParams = {
       // Rental removal (Phase 20): public search is sale-only. See SALE_ONLY.
       .eq("listing_type", SALE_ONLY);
 
+   if (params.restrictToIds) {
+      // An empty id list means "nothing matched by meaning".
+      if (params.restrictToIds.length === 0) return { items: [], total: 0, page, pageSize, totalPages: 1 };
+      query = query.in("id", params.restrictToIds.slice(0, 200));
+   }
+
    const keyword = params.q ? sanitizeKeyword(params.q) : "";
    if (keyword) {
       query = query.or(
@@ -440,6 +454,9 @@ export async function searchPublishedProperties(params: PropertySearchParams = {
    }
 
    if (params.propertyType) query = query.ilike("property_type", params.propertyType);
+   if (params.minBedrooms && Number.isInteger(params.minBedrooms) && params.minBedrooms > 0) {
+      query = query.gte("bedrooms", params.minBedrooms);
+   }
    // params.listingType is no longer honoured: the public listing is
    // sale-only and the filter UI that used to set it has been removed. A
    // stale bookmarked ?listingType=rent URL therefore returns the normal
@@ -472,6 +489,29 @@ export async function searchPublishedProperties(params: PropertySearchParams = {
    }
    // Deterministic tie-break so a row can't appear on two pages.
    query = query.order("id", { ascending: true });
+
+   // Relevance order: fetch the (≤200) matching ids, order them by the
+   // caller's ranking in memory, then page. Explicit sorts still win.
+   if (params.restrictToIds && params.rankByIds && (!params.sort || params.sort === "newest")) {
+      const { data: all, error: rankError } = await query.limit(200);
+      if (rankError) {
+         console.error("Failed to search properties:", rankError.message);
+         return { items: [], total: 0, page, pageSize, totalPages: 0 };
+      }
+      const rank = new Map(params.restrictToIds.map((id, i) => [id, i]));
+      const ordered = ((all ?? []) as PropertyPublicRow[]).sort(
+         (a, b) => (rank.get(a.id) ?? Infinity) - (rank.get(b.id) ?? Infinity),
+      );
+      const start = (page - 1) * pageSize;
+      const items = await attachMedia(supabase, ordered.slice(start, start + pageSize));
+      return {
+         items,
+         total: ordered.length,
+         page,
+         pageSize,
+         totalPages: Math.max(1, Math.ceil(ordered.length / pageSize)),
+      };
+   }
 
    const from = (page - 1) * pageSize;
    const { data, error, count } = await query.range(from, from + pageSize - 1);

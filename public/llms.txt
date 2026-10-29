@@ -21,6 +21,21 @@ moderated — nothing here is auto-generated inventory.
 - [Contact](https://propertyplanet.in/contact)
 - [FAQ](https://propertyplanet.in/faq)
 
+## Searching listings
+
+- `/properties?q=<plain language>` accepts natural-language searches and
+  turns them into filters, e.g.
+  https://propertyplanet.in/properties?q=plot%20in%20Shadnagar%20under%2050%20lakh
+  — property type, locality/city, budget ("under 50 lakh", "40-60 lakh",
+  "above 1 crore") and BHK are understood; results are ranked by relevance.
+- Structured filters also work directly: `propertyType`, `city`,
+  `locality`, `minPrice`, `maxPrice` (rupees), `minArea`, `maxArea`,
+  `sort` (`newest`, `price_asc`, `price_desc`, `area_desc`).
+- `/places/{locality}` lists everything published in one locality
+  (e.g. https://propertyplanet.in/places/Shadnagar); every locality with
+  listings is in the sitemap.
+- Prices are in Indian rupees (1 lakh = 100,000; 1 crore = 10,000,000).
+
 ## Notes for automated systems
 
 - Individual property and project pages (`/properties/{slug}`,

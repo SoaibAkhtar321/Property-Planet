@@ -37,6 +37,17 @@ export default function GlobalJsonLd() {
       "@type": "WebSite",
       name: "Property Planet",
       url: SITE_URL,
+      // Tells search engines and AI assistants how to run a search here.
+      // /properties accepts plain-language queries ("plot in Shadnagar
+      // under 50 lakh"), interpreted by the AI search layer.
+      potentialAction: {
+         "@type": "SearchAction",
+         target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${SITE_URL}/properties?q={search_term_string}`,
+         },
+         "query-input": "required name=search_term_string",
+      },
    };
 
    return (

@@ -46,13 +46,14 @@ const PropertyFilters = ({
             <form method="get" action="/properties">
                <div className="mb-30">
                   <label className="fs-16 fw-500 mb-10 d-block" htmlFor="filter-q">
-                     Keyword
+                     Search
                   </label>
                   <input
                      type="text"
                      id="filter-q" name="q"
                      defaultValue={filters.q}
-                     placeholder="Title, description or area"
+                     placeholder="e.g. plot in Shadnagar under 50 lakh"
+                     maxLength={200}
                      className="w-100"
                   />
                </div>

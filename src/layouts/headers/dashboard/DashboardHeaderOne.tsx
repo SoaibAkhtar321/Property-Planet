@@ -109,6 +109,10 @@ const DashboardHeaderOne = ({ isActive, setIsActive }: any) => {
                            <Image src={pathname === '/dashboard/add-property' ? dashboardIconActive_7 : dashboardIcon_7} alt="" />
                            <span>Add New Property</span>
                         </Link></li>
+                        <li className="plr"><Link href="/dashboard/insights" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/insights' ? 'active' : ''}`}>
+                           <Image src={pathname === '/dashboard/insights' ? dashboardIconActive_1 : dashboardIcon_1} alt="" />
+                           <span>Insights</span>
+                        </Link></li>
                      </>
                   )}
                   <li className="plr"><Link href="/dashboard/favourites" className={`d-flex w-100 align-items-center ${pathname === '/dashboard/favourites' ? 'active' : ''}`}>

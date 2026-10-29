@@ -24,6 +24,7 @@
 //     those are admin-only / not implemented, by design.
 
 import { revalidatePath } from "next/cache";
+import { scheduleEmbeddingSync } from "@/lib/ai/embeddings";
 import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { friendlyError } from "@/lib/errors";
@@ -205,6 +206,9 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
       return { success: false, error: friendlyError(locationError, "Could not save the location. Please try again.", "properties.location") };
    }
 
+   // A seller editing an already-published listing changes what search
+   // should match; drafts are skipped inside the sync itself.
+   scheduleEmbeddingSync(id);
    revalidatePath("/dashboard/properties-list");
    return { success: true };
 }

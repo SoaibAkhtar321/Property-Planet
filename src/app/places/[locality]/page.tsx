@@ -45,6 +45,12 @@ export async function generateMetadata(props: { params: Promise<{ locality: stri
       // Empty places now render a friendly "no listings" page (HTTP 200) instead
       // of a 404, so keep them out of the index to avoid empty near-duplicates.
       ...(isEmpty ? { robots: { index: false, follow: true } } : {}),
+      // Matching is case/typo tolerant, so /places/shadnagar and
+      // /places/Shadnagar render the same page: point both at one URL
+      // spelled the way the listings spell the locality (as in sitemap.xml).
+      alternates: {
+         canonical: `https://propertyplanet.in/places/${encodeURIComponent(properties[0]?.locality || place)}`,
+      },
    };
 }
 

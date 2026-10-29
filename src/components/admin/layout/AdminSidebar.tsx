@@ -37,6 +37,7 @@ interface AdminSidebarProps {
 
 const NAV_ITEMS = [
    { href: "/admin", label: "Overview", icon: iconOverview, iconActive: iconOverviewActive, exact: true },
+   { href: "/admin/insights", label: "AI Insights", icon: iconAuditLog, iconActive: iconAuditLogActive, exact: false },
    { href: "/admin/leads", label: "Leads", icon: iconLeads, iconActive: iconLeadsActive, exact: false },
    { href: "/admin/properties", label: "Properties", icon: iconProperties, iconActive: iconPropertiesActive, exact: false },
    { href: "/admin/users", label: "Users", icon: iconUsers, iconActive: iconUsersActive, exact: false },

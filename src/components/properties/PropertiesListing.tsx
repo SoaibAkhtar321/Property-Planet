@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Property } from "./data/types";
 import PropertyCard from "./PropertyCard";
 import PropertyFilters, { PropertyFilterState } from "./PropertyFilters";
+import type { AiSearchInfo } from "@/lib/ai/search";
 
 export interface PropertiesListingProps {
    items: Property[];
@@ -26,10 +27,14 @@ export interface PropertiesListingProps {
       cities: string[];
       localities: string[];
    };
+   /** Present when the AI search layer handled a free-text query. */
+   aiInfo?: AiSearchInfo;
+   /** The visitor switched the AI layer off (?ai=0). */
+   aiOff?: boolean;
 }
 
 /** Rebuilds the current query string with one value replaced — used for the pagination links. */
-const buildHref = (filters: PropertyFilterState, page: number) => {
+const buildHref = (filters: PropertyFilterState, page: number, aiOff = false) => {
    const params = new URLSearchParams();
    const entries: [string, string][] = [
       ["q", filters.q],
@@ -45,6 +50,7 @@ const buildHref = (filters: PropertyFilterState, page: number) => {
    for (const [key, value] of entries) {
       if (value) params.set(key, value);
    }
+   if (aiOff) params.set("ai", "0");
    if (page > 1) params.set("page", String(page));
    const qs = params.toString();
    return qs ? `/properties?${qs}` : "/properties";
@@ -62,7 +68,7 @@ const hasActiveFilters = (filters: PropertyFilterState) =>
          filters.maxArea
    );
 
-const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: PropertiesListingProps) => {
+const PropertiesListing = ({ items, total, page, totalPages, filters, facets, aiInfo, aiOff = false }: PropertiesListingProps) => {
    const rangeStart = total === 0 ? 0 : (page - 1) * 9 + 1;
    const rangeEnd = Math.min(page * 9, total);
 
@@ -93,6 +99,32 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
                         </p>
                      </div>
 
+
+                     {aiInfo && aiInfo.chips.length > 0 && (
+                        <div className="pp-ai-search-banner bg-white border-20 mb-30" role="status" style={{ padding: "16px 20px" }}>
+                           <div className="d-flex flex-wrap align-items-center gap-2">
+                              <span className="fw-500 color-dark">
+                                 <i className="fa-light fa-sparkles me-2" aria-hidden="true"></i>
+                                 {aiInfo.aiPowered ? "AI search understood:" : "Search understood:"}
+                              </span>
+                              {aiInfo.chips.map((chip) => (
+                                 <span key={chip} className="d-inline-block fs-14" style={{ background: "rgba(0,0,0,0.05)", borderRadius: 20, padding: "4px 12px" }}>
+                                    {chip}
+                                 </span>
+                              ))}
+                           </div>
+                           <div className="fs-14 mt-10" style={{ opacity: 0.7 }}>
+                              {aiInfo.relaxed
+                                 ? "Nothing matched that exact budget or size, so these are the closest matches. "
+                                 : aiInfo.mode === "semantic"
+                                   ? "Results are ranked by how well they match what you described. "
+                                   : null}
+                              <Link href={`${buildHref(filters, 1, true)}`} className="text-decoration-underline">
+                                 Search the exact words instead
+                              </Link>
+                           </div>
+                        </div>
+                     )}
                      <div className="listing-header-filter d-sm-flex justify-content-between align-items-center mb-40 lg-mb-30">
                         <div>
                            {total > 0 ? (
@@ -153,14 +185,14 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
                                button) instead of inventing a new pagination
                                style. */}
                            {page > 1 && (
-                              <Link href={buildHref(filters, page - 1)} className="pp-card-btn pp-card-btn--ghost">
+                              <Link href={buildHref(filters, page - 1, aiOff)} className="pp-card-btn pp-card-btn--ghost">
                                  &larr; Prev
                               </Link>
                            )}
                            {pageWindow.map((p) => (
                               <Link
                                  key={p}
-                                 href={buildHref(filters, p)}
+                                 href={buildHref(filters, p, aiOff)}
                                  className={`pp-card-btn ${p === page ? "pp-card-btn--primary" : "pp-card-btn--ghost"}`}
                                  aria-current={p === page ? "page" : undefined}
                                  aria-label={`Page ${p}`}
@@ -169,7 +201,7 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets }: 
                               </Link>
                            ))}
                            {page < totalPages && (
-                              <Link href={buildHref(filters, page + 1)} className="pp-card-btn pp-card-btn--ghost">
+                              <Link href={buildHref(filters, page + 1, aiOff)} className="pp-card-btn pp-card-btn--ghost">
                                  Next &rarr;
                               </Link>
                            )}

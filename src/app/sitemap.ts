@@ -8,12 +8,9 @@
 // invented -- a property/project/post with no published_at simply omits
 // lastModified rather than getting a fabricated one.
 //
-// /places/[locality] is intentionally NOT included here: locality is a
-// free-text column (see src/lib/places/matching.ts's own comment on why
-// there's no canonical place table), so there's no safe, non-invented
-// list of valid locality slugs to enumerate without querying and
-// deduplicating free text at build time -- left as a follow-up rather
-// than guessed at in this pass.
+// /places/[locality]: included for each locality that has at least one
+// published individual listing, spelled as the listings spell it (the
+// same spelling each place page declares as its canonical URL).
 
 import type { MetadataRoute } from "next";
 import { getPublishedProperties } from "@/lib/properties/queries";
@@ -57,10 +54,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...(project.publishedAt ? { lastModified: new Date(project.publishedAt) } : {}),
    }));
 
+   // Place pages for every locality that has at least one published
+   // individual listing (empty places are noindex, so they stay out).
+   // Spelled exactly as the listings spell them, matching the canonical
+   // URL each place page declares.
+   const localities = new Map<string, string>();
+   for (const property of properties) {
+      const loc = property.locality?.trim();
+      if (loc && !localities.has(loc.toLowerCase())) localities.set(loc.toLowerCase(), loc);
+   }
+   const placeEntries: MetadataRoute.Sitemap = [...localities.values()].map((loc) => ({
+      url: `${SITE_URL}/places/${encodeURIComponent(loc)}`,
+   }));
+
    const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
       url: `${SITE_URL}/blog/${post.slug}`,
       ...(post.publishedAt ? { lastModified: new Date(post.publishedAt) } : {}),
    }));
 
-   return [...staticEntries, ...propertyEntries, ...projectEntries, ...postEntries];
+   return [...staticEntries, ...propertyEntries, ...projectEntries, ...placeEntries, ...postEntries];
 }

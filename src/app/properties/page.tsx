@@ -10,6 +10,7 @@ import {
    type PropertySort,
 } from "@/lib/properties/queries";
 import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
+import { aiSearchProperties, logPlainSearch, type AiSearchInfo } from "@/lib/ai/search";
 
 // Always fetch fresh — published inventory changes independently of any
 // build, and this route reads through Supabase (RLS-scoped to published
@@ -72,6 +73,8 @@ const PropertiesPage = async (
          maxArea?: string;
          sort?: string;
          page?: string;
+         /** "0" switches the AI layer off for this search (exact keyword match). */
+         ai?: string;
       }>;
    }
 ) => {
@@ -97,21 +100,35 @@ const PropertiesPage = async (
    const requestedPage = Number(first(searchParams.page));
    const page = Number.isFinite(requestedPage) && requestedPage > 0 ? Math.floor(requestedPage) : 1;
 
-   const [result, facets] = await Promise.all([
-      searchPublishedProperties({
-         q: filters.q,
-         propertyType: filters.propertyType,
-         city: filters.city,
-         locality: filters.locality,
-         minPrice: numberOrUndefined(filters.minPrice),
-         maxPrice: numberOrUndefined(filters.maxPrice),
-         minArea: numberOrUndefined(filters.minArea),
-         maxArea: numberOrUndefined(filters.maxArea),
-         sort: filters.sort as PropertySort,
-         page,
-      }),
-      getPropertyFacets(),
-   ]);
+   const searchParamsForQuery = {
+      q: filters.q,
+      propertyType: filters.propertyType,
+      city: filters.city,
+      locality: filters.locality,
+      minPrice: numberOrUndefined(filters.minPrice),
+      maxPrice: numberOrUndefined(filters.maxPrice),
+      minArea: numberOrUndefined(filters.minArea),
+      maxArea: numberOrUndefined(filters.maxArea),
+      sort: filters.sort as PropertySort,
+      page,
+   };
+
+   const facets = await getPropertyFacets();
+
+   // AI search layer: a free-text query is interpreted into filters and
+   // ranked by meaning (src/lib/ai/search.ts). ?ai=0 opts out to the plain
+   // keyword search; both paths are logged for demand insights.
+   const aiOff = first(searchParams.ai) === "0";
+   let result;
+   let aiInfo: AiSearchInfo | undefined;
+   if (filters.q.trim() && !aiOff) {
+      const ai = await aiSearchProperties(searchParamsForQuery, filters.q, facets);
+      result = ai.result;
+      aiInfo = ai.info;
+   } else {
+      result = await searchPublishedProperties(searchParamsForQuery);
+      if (filters.q.trim()) logPlainSearch(filters.q, result.total);
+   }
 
    return (
       <Wrapper>
@@ -123,6 +140,8 @@ const PropertiesPage = async (
             totalPages={result.totalPages}
             filters={filters}
             facets={facets}
+            aiInfo={aiInfo}
+            aiOff={aiOff}
          />
          <FooterOne style={true} />
       </Wrapper>

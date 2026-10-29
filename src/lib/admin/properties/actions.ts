@@ -33,6 +33,7 @@
 // (0002) is a BEFORE UPDATE trigger and never fires on INSERT.
 
 import { revalidatePath } from "next/cache";
+import { scheduleEmbeddingSync } from "@/lib/ai/embeddings";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 import { friendlyError } from "@/lib/errors";
@@ -44,6 +45,8 @@ export interface ActionResult {
 }
 
 function revalidatePropertyPaths(id: string) {
+   // AI search: re-embed the listing in the background (src/lib/ai/embeddings.ts).
+   scheduleEmbeddingSync(id);
    revalidatePath("/admin/properties");
    revalidatePath(`/admin/properties/${id}`);
    revalidatePath("/admin");
