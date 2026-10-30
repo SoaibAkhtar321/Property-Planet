@@ -12,6 +12,7 @@ import featureShape_3 from "@/assets/images/shape/shape_37.svg"
 // to the real destination that matches what each button says instead.
 const ctaHrefForBtn = (btn?: string): string => {
    if (btn === "Sell Property") return "/seller/register";
+   if (btn === "View Projects") return "/projects";
    return "/properties";
 }
 
@@ -21,7 +22,7 @@ const BLockFeatureTwo = () => {
          <div className="bg-pink-two position-relative z-1 pt-140 xl-pt-100 lg-pt-80 pb-150 xl-pb-120 lg-pb-100">
             <div className="container">
                <div className="title-one text-center mb-70 xl-mb-40 lg-mb-20">
-                  <h2 className="font-garamond star-shape"><span className="star-shape"><Image src={titleShape} alt="" className="lazy-img" /></span> Buy, Rent & Sell</h2>
+                  <h2 className="font-garamond star-shape"><span className="star-shape"><Image src={titleShape} alt="" className="lazy-img" /></span> Buy, Explore & Sell</h2>
                   {/* Phase 4K: removed "Over 745K listings of apartments,
                       lots, plots - available today" -- fabricated template
                       placeholder inventory figure with no basis in real

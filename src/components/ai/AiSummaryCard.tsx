@@ -16,7 +16,7 @@ interface Props {
 }
 
 const formatWhen = (iso: string) =>
-   new Date(iso).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+   new Date(iso).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
 
 export default function AiSummaryCard({ scope, summary, createdAt, aiEnabled }: Props) {
    const router = useRouter();

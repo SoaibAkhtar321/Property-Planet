@@ -108,6 +108,9 @@ export function mapProperty(
       // same as the old rent-leftover default this field used to hold).
       priceUnit: priceUnitSuffix(row.price_unit, row.price_unit_label) || undefined,
       sqft: row.area ? Number(row.area) : undefined,
+      // The listing's real unit: plots are usually in sq yd and land in acres;
+      // these used to be displayed as "sqft" everywhere.
+      areaUnit: row.area_unit?.trim() || "sqft",
       bed: row.bedrooms ?? undefined,
       bath: row.bathrooms ?? undefined,
       images,

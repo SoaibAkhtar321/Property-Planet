@@ -37,16 +37,16 @@ function SectionTitle({ icon, children }: { icon: any; children: React.ReactNode
 }
 
 function formatDate(iso: string) {
-   return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+   return new Date(iso).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" });
 }
 
 function StatusPill({ status }: { status: string }) {
    const tone: Record<string, string> = {
-      pending: "#FFB020",
+      pending: "#B45309",
       published: "#00B579",
       rejected: "#178C48",
       draft: "#8A8A8A",
-      new: "#1FAA59",
+      new: "#15803D",
       contacted: "#2E90FA",
       qualified: "#2E90FA",
       site_visit: "#2E90FA",

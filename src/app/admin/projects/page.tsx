@@ -68,7 +68,7 @@ export default async function AdminProjectsPage() {
                         <td>{p.is_featured ? "Yes" : "—"}</td>
                         <td>{p.is_new_arrival ? "Yes" : "—"}</td>
                         <td>{p.display_priority}</td>
-                        <td className="text-muted small">{new Date(p.updated_at).toLocaleDateString()}</td>
+                        <td className="text-muted small">{new Date(p.updated_at).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })}</td>
                         <td className="d-flex gap-2">
                            {p.status !== "published" && <StatusForm id={p.id} status="published" label="Publish" variant="btn-success" />}
                            {p.status === "published" && <StatusForm id={p.id} status="draft" label="Unpublish" variant="btn-outline-secondary" />}

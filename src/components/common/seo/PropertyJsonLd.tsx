@@ -25,6 +25,7 @@ export type PropertyJsonLdInput = {
     */
    priceUnit?: string;
    sqft?: number;
+   areaUnit?: string;
    images: string[];
 };
 
@@ -79,7 +80,12 @@ export default function PropertyJsonLd({ property }: { property: PropertyJsonLdI
    };
 
    if (property.images[0]) data.image = property.images;
-   if (property.sqft) data.floorSize = { "@type": "QuantitativeValue", value: property.sqft, unitCode: "FTK" };
+   // UN/CEFACT codes; an unrecognised unit is left out rather than mislabelled.
+   const unit = (property.areaUnit ?? "sqft").toLowerCase().replace(/[^a-z]/g, "");
+   const unitCode =
+      ({ sqft: "FTK", sqfeet: "FTK", squarefeet: "FTK", sqyd: "YDK", sqyard: "YDK", sqyards: "YDK", squareyards: "YDK", gaj: "YDK",
+         sqm: "MTK", sqmt: "MTK", squaremeters: "MTK", acre: "ACR", acres: "ACR", hectare: "HAR", hectares: "HAR" } as Record<string, string>)[unit];
+   if (property.sqft && unitCode) data.floorSize = { "@type": "QuantitativeValue", value: property.sqft, unitCode };
 
    // JSON.stringify does not escape "</", so a custom price-unit label (or
    // any other free-text field) containing "</script>" could break out of

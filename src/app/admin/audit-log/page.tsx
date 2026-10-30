@@ -60,7 +60,7 @@ export default async function AdminAuditLogPage({
                   <tbody>
                      {rows.map((row) => (
                         <tr key={row.id}>
-                           <td>{new Date(row.createdAt).toLocaleString()}</td>
+                           <td>{new Date(row.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" })}</td>
                            <td>{row.actorName ?? "(unknown)"}</td>
                            <td>{ACTION_LABELS[row.action] ?? row.action}</td>
                            <td>

@@ -106,7 +106,7 @@ export default async function AdminLeadsPage({
                   <tbody>
                      {leads.map((lead) => (
                         <tr key={lead.id}>
-                           <td className="text-muted small">{new Date(lead.created_at).toLocaleString()}</td>
+                           <td className="text-muted small">{new Date(lead.created_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" })}</td>
                            <td>
                               <div>{lead.buyer_name ?? "—"}</div>
                               <div className="text-muted small">{lead.buyer_phone ?? "no phone on file"}</div>

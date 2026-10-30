@@ -94,11 +94,11 @@ export default async function AdminPropertyDetailPage({
                   </span>
                   <span className="text-muted small">
                      {property.published_at
-                        ? `Published ${new Date(property.published_at).toLocaleDateString()}`
+                        ? `Published ${new Date(property.published_at).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })}`
                         : "Never published"}
                   </span>
                   <span className="text-muted small">
-                     Updated {new Date(property.updated_at).toLocaleDateString()}
+                     Updated {new Date(property.updated_at).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })}
                   </span>
                </div>
             </div>

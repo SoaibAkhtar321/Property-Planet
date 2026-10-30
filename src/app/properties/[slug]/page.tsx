@@ -28,7 +28,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
    const description =
       property.overview ??
       `${property.propertyType} for ${property.listingType.toLowerCase()} in ${property.address}${
-         property.sqft ? `, ${property.sqft} sqft` : ""
+         property.sqft ? `, ${property.sqft} ${property.areaUnit ?? "sqft"}` : ""
       }.`;
 
    return {

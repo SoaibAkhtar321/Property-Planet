@@ -5,7 +5,7 @@ import titleShape from "@/assets/images/shape/title_shape_01.svg"
 import { getPublishedPosts } from "@/lib/blog/queries"
 
 const formatDate = (iso: string | null) =>
-   iso ? new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : null;
+   iso ? new Date(iso).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" }) : null;
 
 const Blog = async ({ style }: any) => {
    const posts = (await getPublishedPosts()).slice(0, 2);

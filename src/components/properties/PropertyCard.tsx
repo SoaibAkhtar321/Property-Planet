@@ -31,7 +31,7 @@ const PropertyCard = ({
    columnClassName?: string;
 }) => {
    const facts = [
-      item.sqft ? `${item.sqft} sqft` : null,
+      item.sqft ? `${item.sqft} ${item.areaUnit ?? "sqft"}` : null,
       typeof item.bed === "number" ? `${item.bed} bed` : null,
       typeof item.bath === "number" ? `${item.bath} bath` : null,
    ].filter(Boolean) as string[];

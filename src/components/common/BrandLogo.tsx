@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 
 interface BrandLogoProps {
@@ -23,7 +22,10 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
   const forceDark = variant === 'dark';
 
   return (
-    <Link href="/" className={`brand-logo-wrapper ${mobileIcon ? 'has-mobile-icon' : ''} ${size ? `size-${size}` : ''} ${className}`}>
+    // A <span>, not a <Link>: every caller already wraps the logo in its own
+    // link (some to /admin or /dashboard). A link inside a link is invalid
+    // HTML and caused a hydration error on every page.
+    <span className={`brand-logo-wrapper ${mobileIcon ? 'has-mobile-icon' : ''} ${size ? `size-${size}` : ''} ${className}`}>
       
       {!forceDark && (
         <Image
@@ -57,7 +59,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
           priority={priority}
         />
       )}
-    </Link>
+    </span>
   );
 };
 

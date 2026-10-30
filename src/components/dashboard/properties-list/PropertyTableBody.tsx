@@ -71,7 +71,7 @@ const PropertyTableBody = ({ properties }: { properties: SellerPropertyRow[] }) 
                            <div className="address">{[item.locality, item.city].filter(Boolean).join(", ")}</div>
                         )}
                         <strong className="price color-dark d-block mt-1">
-                           ₹{item.price.toLocaleString()}
+                           ₹{Number(item.price).toLocaleString("en-IN")}
                            {priceUnitSuffix(item.price_unit, item.price_unit_label) && (
                               <sub>{priceUnitSuffix(item.price_unit, item.price_unit_label)}</sub>
                            )}
@@ -79,7 +79,7 @@ const PropertyTableBody = ({ properties }: { properties: SellerPropertyRow[] }) 
                      </div>
                   </div>
                </td>
-               <td>{new Date(item.created_at).toLocaleDateString()}</td>
+               <td>{new Date(item.created_at).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })}</td>
                <td>{item.listing_type === "sale" ? "Sale" : "Rent"}</td>
                <td>
                   <div className={`property-status ${statusClass[item.status] ?? ""}`}>{statusLabel[item.status]}</div>

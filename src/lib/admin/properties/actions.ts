@@ -65,6 +65,35 @@ const textOrNull = (value: FormDataEntryValue | null) => {
 };
 
 /**
+ * Business-rule fix: the Add Property screen creates its placeholder draft
+ * on mount (so photos can upload before the first save). Every visit used
+ * to insert ANOTHER "Untitled listing" with price 0, so sellers/admins
+ * accumulated junk drafts just by opening the page. Reuse the caller's
+ * newest untouched placeholder (never edited, no photos) instead.
+ */
+async function findReusablePlaceholder(
+   supabase: Awaited<ReturnType<typeof createClient>>,
+   ownerId: string,
+): Promise<string | null> {
+   const { data } = await supabase
+      .from("properties")
+      .select("id")
+      .eq("owner_id", ownerId)
+      .eq("status", "draft")
+      .eq("title", "Untitled listing")
+      .eq("price", 0)
+      .eq("city", "")
+      .eq("locality", "")
+      .is("project_id", null)
+      .order("created_at", { ascending: false })
+      .limit(1);
+   const id = data?.[0]?.id as string | undefined;
+   if (!id) return null;
+   const { count } = await supabase.from("property_media").select("id", { count: "exact", head: true }).eq("property_id", id);
+   return (count ?? 0) === 0 ? id : null;
+}
+
+/**
  * Creates an empty placeholder listing as admin, mirroring
  * initDraftProperty() in src/lib/properties/actions.ts — same reasoning:
  * photo storage paths are `{property_id}/...`, so the Add Listing screen
@@ -75,6 +104,9 @@ const textOrNull = (value: FormDataEntryValue | null) => {
 export async function initDraftAdminProperty(): Promise<{ id: string } | { error: string }> {
    const session = await requireAdmin();
    const supabase = await createClient();
+
+   const reusable = await findReusablePlaceholder(supabase, session.userId);
+   if (reusable) return { id: reusable };
 
    const slug = `draft-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 

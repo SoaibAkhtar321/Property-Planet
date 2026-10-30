@@ -65,7 +65,7 @@ export default async function AdminBlogPage() {
                         <td>
                            <span className={`badge ${statusBadgeClass[p.status] ?? "bg-secondary"}`}>{p.status}</span>
                         </td>
-                        <td className="text-muted small">{new Date(p.updated_at).toLocaleDateString()}</td>
+                        <td className="text-muted small">{new Date(p.updated_at).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })}</td>
                         <td className="d-flex gap-2">
                            {p.status !== "published" && <StatusForm id={p.id} status="published" label="Publish" variant="btn-success" />}
                            {p.status === "published" && (

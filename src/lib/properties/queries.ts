@@ -266,7 +266,11 @@ export async function getOwnActivePropertyListings(): Promise<SellerPropertyRow[
       return [];
    }
 
-   return (data ?? []) as SellerPropertyRow[];
+   // Hide untouched "Untitled listing" placeholders created by merely
+   // opening Add Property (see findReusablePlaceholder in actions.ts).
+   return ((data ?? []) as SellerPropertyRow[]).filter(
+      (row) => !(row.status === "draft" && row.title === "Untitled listing" && Number(row.price) === 0 && !row.city && !row.locality),
+   );
 }
 
 export interface OwnPropertyLocation {

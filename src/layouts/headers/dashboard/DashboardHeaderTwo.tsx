@@ -8,7 +8,6 @@ import DashboardHeaderOne from "./DashboardHeaderOne";
 import { createClient } from "@/lib/supabase/client";
 
 import dashboardIcon_2 from "@/assets/images/dashboard/icon/icon_11.svg";
-import dashboardAvatar from "@/assets/images/dashboard/avatar_01.jpg";
 
 const DashboardHeaderTwo = ({title}:any) => {
 
@@ -79,7 +78,11 @@ const DashboardHeaderTwo = ({title}:any) => {
                )}
                <div className="user-data position-relative">
                   <button className="user-avatar online position-relative rounded-circle dropdown-toggle" type="button" id="profile-dropdown" aria-label="Account menu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                     <Image src={dashboardAvatar} alt="" className="lazy-img" />
+                     {/* Was a template stock photo shown to every user; a neutral account
+                         icon until profile photos are supported here. */}
+                     <span className="pp-account-icon d-flex align-items-center justify-content-center w-100 h-100" aria-hidden="true">
+                        <i className="bi bi-person-fill"></i>
+                     </span>
                   </button>
                   <Profile />
                </div>

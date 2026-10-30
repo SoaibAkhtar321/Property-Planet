@@ -1,0 +1,308 @@
+/*-----------------------------------------------------------------------------------
+    Mobile + light/dark polish (UI audit, Oct 2026).
+
+    Loaded LAST (see style.scss) so these targeted fixes win over the theme
+    template. Every rule here fixes something measured on a 375px phone in
+    both themes: text with a contrast ratio under 3:1, controls that sat
+    off-screen, or floating elements covering content.
+-----------------------------------------------------------------------------------*/
+
+$pp-green: #1faa59;
+$pp-green-strong: #15803d;   // white text on this passes 4.5:1
+$pp-orange-strong: #c2410c;  // white text on this passes 4.5:1
+
+/* ===================================================================
+   1. Hero (home)
+   =================================================================== */
+// Light, no-video hero: the headline was white on the pale-blue section.
+[data-theme="light"] .hero-banner-two:not(.has-hero-video) .hero-heading {
+  color: #0d1a1c;
+}
+// Dark, no-video hero: text switched to light but the section stayed pale
+// blue, making the paragraph and "Explore Properties" invisible.
+[data-theme="dark"] .hero-banner-two:not(.has-hero-video) {
+  background: linear-gradient(178deg, #0f2a37 0%, #0d1a1c 100%);
+  &:after { background: none; }
+  .hero-heading { color: #f2f6f7; text-shadow: none; }
+  p { color: rgba(232, 238, 240, 0.86) !important; }
+  .btn-seven { color: #f2f6f7; border-color: rgba(255, 255, 255, 0.6); }
+}
+
+/* ===================================================================
+   2. Buttons that disappeared in dark mode / had weak contrast
+   =================================================================== */
+[data-theme="dark"] {
+  .btn-eight {
+    color: #f2f6f7;
+    border-color: rgba(255, 255, 255, 0.55);
+    background: transparent;
+    span, i { color: inherit; }
+    &:hover { background: #f2f6f7; color: #0d1a1c; }
+  }
+  // Black "See More" / "Get started" / "Ask questions" style buttons.
+  .btn-two, .btn-five, .btn-nine, .btn-ten {
+    &[class] { background-color: $pp-green-strong; border-color: $pp-green-strong; color: #fff; }
+  }
+}
+// White text on brand green / orange: darken the fill so it reads (was 2.7:1).
+.dashboard-body .btn-success,
+.dashboard-body .btn-success:disabled {
+  background-color: $pp-green-strong;
+  border-color: $pp-green-strong;
+  color: #fff;
+}
+.dashboard-body .btn-outline-warning { color: #b45309; border-color: #b45309; }
+.dashboard-body .btn-outline-warning:hover { background: #b45309; color: #fff; }
+[data-theme="dark"] .dashboard-body .btn-outline-warning { color: #fbbf24; border-color: #fbbf24; }
+[data-theme="dark"] .dashboard-body .btn-outline-primary { color: #93c5fd; border-color: #93c5fd; }
+.pp-header-seller-btn {
+  background-color: $pp-orange-strong !important;
+  border-color: $pp-orange-strong !important;
+  color: #fff !important;
+}
+.pp-card__tag {
+  background-color: $pp-green-strong !important;
+  color: #fff !important;
+  max-width: calc(100% - 56px);
+  white-space: normal;
+  line-height: 1.2;
+}
+
+/* ===================================================================
+   3. Sections that kept light-theme colours in dark mode
+   =================================================================== */
+[data-theme="dark"] {
+  // "Best plots, perfect match" band rendered muddy grey.
+  .fancy-banner-four .bg-line { background-color: #122226 !important; }
+  .fancy-banner-four .accordion-button,
+  .fancy-banner-four .accordion-button::after { filter: none; }
+
+  // "How our clients get benefited" image cards: keep the label dark on
+  // its own light card instead of white-on-pastel.
+  .card-style-two .content h5 { color: #0d1a1c; }
+
+  // Filter panel on /properties stayed white with white labels.
+  .advance-search-panel .main-bg {
+    background: var(--pp-surface) !important;
+    border-color: var(--pp-border) !important;
+    color: var(--pp-text);
+    h5, label, .fw-500 { color: var(--pp-text-strong) !important; }
+  }
+
+  // Blog cards: date chip, read time and category.
+  .blog-meta-one .date { background: #f2f6f7; color: #0d1a1c !important; }
+  .blog-meta-one .post-info, .blog-meta-two .post-info, .blog-post-meta .post-info { color: var(--pp-text-muted) !important; }
+  .blog-meta-one .post-info a, .blog-meta-two .post-info a, .blog-post-meta .post-info a { color: var(--pp-text-strong) !important; }
+
+  // About page cards and contact form labels.
+  .card-style-five h5, .card-style-five p { color: var(--pp-text-strong) !important; }
+  .card-style-five p { color: var(--pp-text) !important; }
+  .input-group-meta label { color: var(--pp-text-strong) !important; }
+  .accordion-body p { color: var(--pp-text) !important; }
+
+  .theme-breadcrumb li, .theme-breadcrumb li a { color: var(--pp-text) !important; }
+  .slick-dots li button { background: rgba(255, 255, 255, 0.35); }
+  .slick-dots li.slick-active button { background: $pp-green; }
+
+  // Leaflet map: zoom buttons + attribution vanished on the dark card.
+  .leaflet-bar a { background: #f2f6f7; color: #0d1a1c; border-color: rgba(0, 0, 0, 0.2); }
+  .leaflet-control-attribution { background: rgba(255, 255, 255, 0.85) !important; }
+  .leaflet-control-attribution, .leaflet-control-attribution a { color: #0d1a1c !important; }
+
+  .property-status { color: var(--pp-text-strong); }
+}
+
+/* Footer (both themes): phone number was dark text on the dark footer, and
+   the light-theme "footer-two/four" variants inherited dark headings. */
+.pp-call-link, .pp-call-link span { color: #ffffff !important; }
+.footer-two, .footer-four {
+  .footer-title, h2, h5 { color: #ffffff !important; }
+  .footer-nav-link a, .bottom-nav a, .contact-info a, .email { color: rgba(255, 255, 255, 0.82) !important; }
+  .footer-nav-link a:hover, .bottom-nav a:hover { color: $pp-green !important; }
+}
+// Long email addresses broke mid-word in a 30px+ serif.
+.footer-intro .email, .footer-intro a[href^="mailto:"], .bg-wrapper a[href^="mailto:"] {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+  .footer-intro .email, .bg-wrapper a[href^="mailto:"] { font-size: 20px !important; line-height: 1.4; }
+}
+
+/* ===================================================================
+   4. Mobile bottom navigation (MobileBottomNav.tsx)
+   =================================================================== */
+.pp-bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1045;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: var(--pp-header-bg, #fff);
+  border-top: 1px solid var(--pp-border);
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.06);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pp-bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 58px;
+  padding: 6px 2px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--pp-text-muted);
+  background: none;
+  border: 0;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  i { font-size: 21px; line-height: 1; }
+  &.is-active { color: $pp-green-strong; }
+  &:focus-visible { outline: 2px solid $pp-green; outline-offset: -4px; }
+}
+[data-theme="dark"] .pp-bottom-nav__item.is-active { color: #4ade80; }
+
+// When the bottom nav is on the page: keep content and every other
+// floating element clear of it.
+@media (max-width: 991px) {
+  body:has(.pp-bottom-nav) {
+    --pp-bottom-nav-h: calc(58px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: var(--pp-bottom-nav-h);
+
+    .property-planet-ai-fab { bottom: calc(var(--pp-bottom-nav-h) + 12px) !important; right: 12px !important; width: 48px !important; height: 48px !important; }
+    .property-planet-ai-panel { bottom: calc(var(--pp-bottom-nav-h) + 70px) !important; }
+    .scroll-top { bottom: calc(var(--pp-bottom-nav-h) + 72px) !important; right: 16px !important; }
+    .pp-visitor-assistance { bottom: calc(var(--pp-bottom-nav-h) + 10px) !important; }
+    .pp-sticky-cta { bottom: var(--pp-bottom-nav-h) !important; }
+  }
+  // The sticky "Send Inquiry" bar sits above the nav, so lift the AI
+  // button above that too on property pages.
+  body:has(.pp-bottom-nav):has(.pp-sticky-cta:not(.is-hidden)) .property-planet-ai-fab {
+    bottom: calc(var(--pp-bottom-nav-h) + 84px) !important;
+  }
+}
+// The open mobile menu must cover the floating buttons.
+.offcanvas.sidebar-nav.show { z-index: 1060; }
+
+/* ===================================================================
+   5. Dashboard + admin on phones
+   =================================================================== */
+// Account icon that replaced the template stock photo.
+.pp-account-icon {
+  border-radius: 50%;
+  background: var(--pp-surface-2);
+  color: var(--pp-text-strong);
+  font-size: 22px;
+}
+
+@media (max-width: 767px) {
+  // Tables -> labelled cards (labels come from ResponsiveTables.tsx), so
+  // status and action buttons are no longer cut off.
+  .dashboard-body {
+    .table-responsive { overflow: visible; padding-left: 0 !important; padding-right: 0 !important; }
+    table.table, table.property-list-table {
+      display: block;
+      width: 100%;
+      min-width: 0 !important;
+      thead { display: none; }
+      tbody { display: block; }
+      tr {
+        display: block;
+        margin: 0 0 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--pp-border);
+        border-radius: 14px;
+        background: var(--pp-card-bg, var(--pp-surface));
+      }
+      td {
+        // Block (not flex) so a cell holding several values (name, phone,
+        // email) stacks them instead of squeezing them side by side.
+        display: block;
+        overflow: hidden;
+        width: auto !important;
+        min-width: 0;
+        padding: 6px 0 !important;
+        border: 0 !important;
+        text-align: right;
+        overflow-wrap: anywhere;
+        &[data-label]::before {
+          content: attr(data-label);
+          float: left;
+          margin-right: 12px;
+          max-width: 42%;
+          text-align: left;
+          font-size: 12px;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          color: var(--pp-text-muted);
+        }
+        background: transparent !important;
+        &:first-child { text-align: left; font-weight: 500; }
+        &:first-child::before { display: none; }
+        &:first-child { display: block; padding-bottom: 8px !important; }
+        // Action cells: buttons wrap instead of overflowing.
+        .d-flex, form { flex-wrap: wrap; justify-content: flex-end; }
+      }
+    }
+  }
+  // Stat cards: equal heights so a wrapped label doesn't stagger the grid.
+  .dash-card-one { height: calc(100% - 15px); }
+  .dashboard-body h3, .dashboard-body .main-title { overflow-wrap: anywhere; }
+  // Long unbroken titles (e.g. a pasted URL) must not widen the page.
+  .pp-card h4, .pp-card h5, .pp-card a, .property-list-table td { overflow-wrap: anywhere; }
+}
+
+/* ===================================================================
+   6. General phone hygiene
+   =================================================================== */
+@media (max-width: 575px) {
+  // iOS zooms the page when focusing an input under 16px.
+  input, select, textarea { font-size: 16px; }
+  // Comfortable tap targets for small icon buttons.
+  .btn-sm { min-height: 36px; }
+}
+img, video, iframe { max-width: 100%; }
+
+/* ===================================================================
+   7. Remaining contrast fixes from the automated audit
+   =================================================================== */
+// About page "Buy a home / Sell" cards stayed white in dark mode.
+[data-theme="dark"] .card-style-five {
+  background: var(--pp-surface) !important;
+  border-color: var(--pp-border) !important;
+}
+// Status text (green on white was 2.7:1).
+.property-status { color: $pp-green-strong; }
+[data-theme="dark"] .property-status { color: #4ade80; }
+[data-theme="light"] .dashboard-body .btn-outline-primary { color: #1d4ed8; border-color: #1d4ed8; }
+[data-theme="light"] .dashboard-body .btn-outline-primary:hover { background: #1d4ed8; color: #fff; }
+[data-theme="light"] .theme-breadcrumb li, [data-theme="light"] .theme-breadcrumb li a { color: rgba(0, 0, 0, 0.62); }
+[data-theme="light"] .accordion-style-two .accordion-title { color: rgba(0, 0, 0, 0.62); }
+.search-filter-nav-one .nav-link { color: rgba(0, 0, 0, 0.62); }
+[data-theme="dark"] .search-filter-nav-one .nav-link:not(.active) { color: #0d1a1c; }
+[data-theme="dark"] .slick-dots li.slick-active button { background: #4ade80; }
+// Status pills: dark green on pale green (was 2.7:1), and a dark variant.
+.dashboard-body .property-status { color: #166534 !important; background: #d0f3da !important; }
+[data-theme="dark"] .dashboard-body .property-status { color: #bbf7d0 !important; background: rgba(34, 197, 94, 0.18) !important; }
+[data-theme="dark"] .card-style-five .btn-twelve { color: #f2f6f7 !important; border-color: rgba(255, 255, 255, 0.5) !important; }
+[data-theme="light"] .contact-meta a, [data-theme="light"] .d-xl-flex .text a.tran3s { color: rgba(0, 0, 0, 0.78); }
+
+// Seller table "more" (⋮) menu was invisible in dark mode.
+// Light hero: drop the white glow now that the heading is dark (looked blurry).
+[data-theme="light"] .hero-banner-two:not(.has-hero-video) .hero-heading { text-shadow: none; }
+// Seller "⋮" actions button: its dots are dark grey pseudo-elements,
+// invisible on the dark card. Its dropdown also stayed white.
+[data-theme="dark"] .action-dots .action-btn span,
+[data-theme="dark"] .action-dots .action-btn span::before,
+[data-theme="dark"] .action-dots .action-btn span::after { background: rgba(255, 255, 255, 0.75) !important; }
+[data-theme="dark"] .action-dots .dropdown-menu { background: var(--pp-surface-2); }
+[data-theme="dark"] .action-dots .dropdown-item { background: transparent; color: var(--pp-text-strong); }
+// Stacked table cards: one surface, no inner tinted block.
+@media (max-width: 767px) {
+  .dashboard-body table.table tbody, .dashboard-body table.property-list-table tbody { background: transparent !important; }
+}

@@ -23,7 +23,7 @@ const statusClass: Record<LeadStatus, string | undefined> = {
 };
 
 const formatDate = (iso: string) =>
-   new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+   new Date(iso).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" });
 
 /**
  * Seller view of buyer enquiries on their own properties. Shows who

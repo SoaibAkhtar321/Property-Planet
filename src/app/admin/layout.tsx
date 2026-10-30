@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/admin/auth";
 import AdminHeader from "@/components/admin/layout/AdminHeader";
+import ResponsiveTables from "@/components/common/ResponsiveTables";
 
 // Every /admin/** request already passes through src/middleware.ts before
 // reaching here. This call is defense-in-depth, not a duplicate gate —
@@ -28,6 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
          <div className="position-relative">
             <AdminHeader title="Property Planet Admin" adminEmail={session.email} />
             {children}
+            <ResponsiveTables />
          </div>
       </div>
    );

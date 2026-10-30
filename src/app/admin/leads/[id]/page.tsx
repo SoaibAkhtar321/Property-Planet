@@ -75,7 +75,7 @@ export default async function AdminLeadDetailPage({
                   <div className="fw-bold">{lead.buyer_name ?? "—"}</div>
                   <div>{lead.buyer_phone ?? "No phone on file"}</div>
                   <div>{lead.buyer_email ?? <span className="text-muted">No email on file</span>}</div>
-                  <div className="text-muted small mt-2">Inquired {new Date(lead.created_at).toLocaleString()}</div>
+                  <div className="text-muted small mt-2">Inquired {new Date(lead.created_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" })}</div>
                   {lead.requirement_type && (
                      <div className="mt-3">
                         <div className="text-muted small">Looking for</div>
@@ -199,7 +199,7 @@ export default async function AdminLeadDetailPage({
                      <tbody>
                         {lead.site_visits.map((v) => (
                            <tr key={v.id}>
-                              <td>{v.scheduled_at ? new Date(v.scheduled_at).toLocaleString() : "—"}</td>
+                              <td>{v.scheduled_at ? new Date(v.scheduled_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) : "—"}</td>
                               <td>{v.status}</td>
                               <td>{v.notes ?? "—"}</td>
                            </tr>

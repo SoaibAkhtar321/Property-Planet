@@ -28,7 +28,7 @@ const Sidebar = ({ property }: { property: Property }) => {
                   {property.sqft && (
                      <li className="d-flex justify-content-between mb-10">
                         <span>Area</span>
-                        <span className="fw-500 color-dark">{property.sqft} sqft</span>
+                        <span className="fw-500 color-dark">{property.sqft} {property.areaUnit ?? "sqft"}</span>
                      </li>
                   )}
                </ul>

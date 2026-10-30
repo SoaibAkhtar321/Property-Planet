@@ -67,7 +67,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
                            <td>
                               <span className={`badge ${roleBadgeClass[u.role] ?? "bg-secondary"}`}>{u.role}</span>
                            </td>
-                           <td className="text-muted small">{new Date(u.created_at).toLocaleDateString()}</td>
+                           <td className="text-muted small">{new Date(u.created_at).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })}</td>
                            <td>
                               {u.role === "buyer" && (
                                  <form action={grant}>

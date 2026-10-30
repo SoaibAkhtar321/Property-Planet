@@ -11,7 +11,7 @@ const visitStatusLabel: Record<SiteVisitStatus, string> = {
 };
 
 const formatDateTime = (iso: string) =>
-   new Date(iso).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
+   new Date(iso).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
 
 const statusLabel: Record<LeadStatus, string> = {
    new: "New",
@@ -34,7 +34,7 @@ const statusClass: Record<LeadStatus, string | undefined> = {
 };
 
 const formatDate = (iso: string) =>
-   new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+   new Date(iso).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" });
 
 const EnquiriesList = ({ enquiries }: { enquiries: MyEnquiry[] }) => {
    if (enquiries.length === 0) {

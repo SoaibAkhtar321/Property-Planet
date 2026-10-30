@@ -31,7 +31,10 @@ export interface Property {
    locality?: string;
    price: number;
    priceUnit?: string;
+   /** Area value (properties.area) — despite the legacy name, in `areaUnit`. */
    sqft?: number;
+   /** Unit of `sqft` as entered by the seller (sqft, sq yd, acres...). */
+   areaUnit?: string;
    bed?: number;
    bath?: number;
    images: string[];

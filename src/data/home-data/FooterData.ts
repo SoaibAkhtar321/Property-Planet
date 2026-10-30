@@ -40,7 +40,7 @@ const footer_data: DataType[] = [
       widget_class: "xs-mt-30",
       page: "home_1",
       widget_title: "New Listing",
-      footer_link: [{ link: "/properties", link_title: "​Buy Apartments" }, { link: "/properties", link_title: "Buy Condos" }, { link: "/properties", link_title: "Rent Houses" }, { link: "/properties", link_title: "Rent Industrial" }, { link: "/properties", link_title: "Buy Villas" }, { link: "/properties", link_title: "Rent Office" },]
+      footer_link: [{ link: "/properties?q=plots", link_title: "Plots for Sale" }, { link: "/properties?q=villas", link_title: "Villas for Sale" }, { link: "/properties?q=apartments", link_title: "Apartments for Sale" }, { link: "/properties?q=farm%20land", link_title: "Farm Land" }, { link: "/properties?q=commercial", link_title: "Commercial" }, { link: "/projects", link_title: "Featured Projects" },]
    },
 
    // home two
@@ -67,7 +67,7 @@ const footer_data: DataType[] = [
       // SEO fix (Stage 4): same /listing_01.."06 → /properties fix already
       // applied to the home_1 and home_5 blocks — missed this one (home_3,
       // live on /about via FooterTwo) in the earlier pass.
-      footer_link: [{ link: "/properties", link_title: "​Buy Apartments" }, { link: "/properties", link_title: "Buy Condos" }, { link: "/properties", link_title: "Rent Houses" }, { link: "/properties", link_title: "Rent Industrial" }, { link: "/properties", link_title: "Buy Villas" }, { link: "/properties", link_title: "Rent Office" },]
+      footer_link: [{ link: "/properties?q=plots", link_title: "Plots for Sale" }, { link: "/properties?q=villas", link_title: "Villas for Sale" }, { link: "/properties?q=apartments", link_title: "Apartments for Sale" }, { link: "/properties?q=farm%20land", link_title: "Farm Land" }, { link: "/properties?q=commercial", link_title: "Commercial" }, { link: "/projects", link_title: "Featured Projects" },]
    },
 
    // home four intentionally removed (Stage 4 dead-code cleanup): no Footer
@@ -106,7 +106,7 @@ const footer_data: DataType[] = [
       // Stage 3 location-SEO note on not inventing filter URLs), so — same
       // as the equivalent home_1 "New Listing" block — these all point at
       // the real /properties listing page rather than a guessed filter URL.
-      footer_link: [{ link: "/properties", link_title: "​Buy Apartments" }, { link: "/properties", link_title: "Buy Condos" }, { link: "/properties", link_title: "Rent Houses" }, { link: "/properties", link_title: "Rent Industrial" }, { link: "/properties", link_title: "Buy Villas" }, { link: "/properties", link_title: "Rent Office" },]
+      footer_link: [{ link: "/properties?q=plots", link_title: "Plots for Sale" }, { link: "/properties?q=villas", link_title: "Villas for Sale" }, { link: "/properties?q=apartments", link_title: "Apartments for Sale" }, { link: "/properties?q=farm%20land", link_title: "Farm Land" }, { link: "/properties?q=commercial", link_title: "Commercial" }, { link: "/projects", link_title: "Featured Projects" },]
    },
 ]
 

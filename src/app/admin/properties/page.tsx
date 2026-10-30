@@ -89,7 +89,7 @@ export default async function AdminPropertiesPage({ searchParams }: { searchPara
                               <span className={`badge ${statusBadgeClass[p.status] ?? "bg-secondary"}`}>{p.status}</span>
                            </td>
                            <td>{p.is_featured ? <span className="badge bg-success">Featured</span> : "—"}</td>
-                           <td className="text-muted small">{new Date(p.created_at).toLocaleDateString()}</td>
+                           <td className="text-muted small">{new Date(p.created_at).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })}</td>
                            <td>
                               <Link href={`/admin/properties/${p.id}`} className="btn btn-sm btn-outline-primary">
                                  Review

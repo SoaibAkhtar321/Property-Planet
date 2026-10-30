@@ -7,6 +7,8 @@ import ScrollToTop from "@/components/common/ScrollToTop";
 import PropertyPlanetAIWidget from "@/components/common/PropertyPlanetAIWidget";
 import InquiryDialog from "@/components/inquiry/InquiryDialog";
 import VisitorAssistance from "@/components/assistance/VisitorAssistance";
+import MobileBottomNav from "@/components/common/MobileBottomNav";
+import ResponsiveTables from "@/components/common/ResponsiveTables";
 
 const Wrapper = ({ children }: any) => {
     useEffect(() => {
@@ -47,6 +49,8 @@ const Wrapper = ({ children }: any) => {
             gated and engagement-triggered internally; renders nothing on
             ineligible pages or before its trigger conditions are met. */}
         <VisitorAssistance />
+        <MobileBottomNav />
+        <ResponsiveTables />
         <ToastContainer position="top-center" />
     </>;
 }

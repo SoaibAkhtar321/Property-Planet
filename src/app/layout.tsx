@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { EB_Garamond } from "next/font/google";
 import ReduxProvider from "@/redux/ReduxProvider";
 import GlobalJsonLd from "@/components/common/seo/GlobalJsonLd";
+import ThemeGuard from "@/components/common/ThemeGuard";
 import { OG_IMAGES, OG_IMAGE_URL } from "@/lib/site/seo";
 
 // SEO/perf fix: EB Garamond (the site's `.font-garamond` heading font —
@@ -116,6 +117,7 @@ export default function RootLayout({
             <div className="main-page-wrapper">
                <ReduxProvider>{children}</ReduxProvider>
             </div>
+            <ThemeGuard />
          </body>
       </html>
    );

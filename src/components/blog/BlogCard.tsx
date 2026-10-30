@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BlogPost } from "@/lib/blog/queries";
 
 const formatDate = (iso: string | null) =>
-   iso ? new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : null;
+   iso ? new Date(iso).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" }) : null;
 
 const BlogCard = ({ item }: { item: BlogPost }) => {
    return (

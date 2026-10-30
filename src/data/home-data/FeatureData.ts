@@ -36,6 +36,8 @@ interface DataType {
    title: string;
    desc?: string;
    tag?: string;
+   /** Where the card leads (defaults to /properties). */
+   link?: string;
    data_delay_time?: string;
    btn?: string;
    class_name?:string;
@@ -63,9 +65,11 @@ const feature_data: DataType[] = [
       id: 2,
       page: "home_1_feature_1",
       icon: featureIcon_2,
-      title: "RENT A HOME",
-      btn:"Rent Home",
-      desc: "Discover the right property with Property Planet, thanks to 35+ filters and tailored keywords.",
+      // Was "Rent a home": Property Planet does not offer rentals, and the
+      // "35+ filters" claim didn't match the site.
+      title: "EXPLORE PROJECTS",
+      btn:"View Projects",
+      desc: "Browse larger developments with their available plots and units, pricing and location in one place.",
    },
    {
       id: 3,
@@ -73,7 +77,7 @@ const feature_data: DataType[] = [
       icon: featureIcon_3,
       title: "SELL PROPERTY",
       btn:"Sell Property",
-      desc: "List, sell, thrive – with our top-notch real estate agency. It’s super easy & fun.",
+      desc: "List your land or property for free. Our team reviews every listing and connects you with genuine buyers.",
    },
 
    // home_1_feature_2
@@ -273,6 +277,7 @@ const feature_data: DataType[] = [
       imgUrl: "/assets/images/media/img_19.jpg",
       title: "Explore & buy Home",
       tag: "BUY HOME",
+      link: "/properties",
       data_delay_time: "0.2s",
    },
    {
@@ -281,6 +286,8 @@ const feature_data: DataType[] = [
       imgUrl: "/assets/images/media/img_20.jpg",
       title: "List & Sell quickly",
       tag: "Sell Now",
+      // Was /properties: "Sell now" took sellers to the buyer listing.
+      link: "/seller/register",
       data_delay_time: "0.1s",
    },
    {
@@ -289,6 +296,7 @@ const feature_data: DataType[] = [
       imgUrl: "/assets/images/media/plot_land_photo.jpg",
       title: "Explore Plots & Land",
       tag: "VIEW PLOTS",
+      link: "/properties?q=plots",
       data_delay_time: "0.2s",
    },
 

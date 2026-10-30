@@ -4,7 +4,7 @@ import { BlogPost } from "@/lib/blog/queries";
 import SimilarPosts from "./SimilarPosts";
 
 const formatDate = (iso: string | null) =>
-   iso ? new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : null;
+   iso ? new Date(iso).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" }) : null;
 
 // Article body is currently rendered as plain paragraphs, split on blank
 // lines — no rich-text/HTML rendering has been introduced in this phase
