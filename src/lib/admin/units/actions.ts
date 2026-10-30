@@ -147,7 +147,8 @@ export async function createProjectUnit(projectId: string, formData: FormData): 
          title,
          slug,
          property_type: propertyType,
-         listing_type: textOrNull(formData.get("listing_type")) ?? "sale",
+         // Sale-only site (Phase 20): never take listing_type from the form.
+         listing_type: "sale",
          price,
          area: numberOrNull(formData.get("area")),
          area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",
@@ -156,11 +157,11 @@ export async function createProjectUnit(projectId: string, formData: FormData): 
          description: textOrNull(formData.get("description")),
          city,
          locality,
-         status,
-         // properties_set_published_at (0002) is BEFORE UPDATE only, so an
-         // insert that goes straight to `published` has to set this here —
-         // same as createAdminPropertyListing().
-         published_at: status === "published" ? new Date().toISOString() : null,
+         // Always inserted as draft: the DB refuses to publish a property on
+         // creation before its location row exists (the location is written
+         // just below), so "Available" is applied by an UPDATE afterwards.
+         status: status === "published" ? "draft" : status,
+         published_at: null,
       })
       .select("id")
       .single();
@@ -192,6 +193,18 @@ export async function createProjectUnit(projectId: string, formData: FormData): 
       if (locationError) {
          revalidateUnitPaths(projectId);
          return { success: false, error: friendlyError(locationError, "The unit was created, but its location could not be saved. Please try saving the location again.", "admin.units.createProjectUnit") };
+      }
+   }
+
+   if (status === "published") {
+      if (!(exactAddress && exactLat !== null && exactLng !== null)) {
+         revalidateUnitPaths(projectId);
+         return { success: false, error: "The unit was saved as a draft. Add its exact address, latitude and longitude, then mark it available." };
+      }
+      const { error: publishError } = await supabase.from("properties").update({ status: "published" }).eq("id", data.id);
+      if (publishError) {
+         revalidateUnitPaths(projectId);
+         return { success: false, error: friendlyError(publishError, "The unit was saved as a draft but could not be marked available.", "admin.units.createProjectUnit") };
       }
    }
 

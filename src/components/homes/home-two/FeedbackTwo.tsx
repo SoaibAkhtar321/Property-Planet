@@ -20,29 +20,12 @@ interface DataType {
    initials: string;
 }
 
-const feedback_data: DataType[] = [
-   {
-      id: 1,
-      desc: (<>&quot;Found a well-located plot in Adibatla within my budget. <span>Verification and paperwork were handled properly</span>, no last-minute surprises.&quot;</>),
-      title: "Srinivas Reddy",
-      country: "Adibatla, Hyderabad",
-      initials: "SR",
-   },
-   {
-      id: 2,
-      desc: (<>&quot;Site visit was arranged quickly and the team was upfront about title status. <span>Straightforward process</span> from enquiry to registration.&quot;</>),
-      title: "Priya Chowdary",
-      country: "Kongara Kalan, Hyderabad",
-      initials: "PC",
-   },
-   {
-      id: 3,
-      desc: (<>&quot;Was comparing a few corridor villages for investment. <span>The team&apos;s local knowledge</span> of Maheshwaram and Mucherla made the decision easier.&quot;</>),
-      title: "Anil Kumar",
-      country: "Maheshwaram, Hyderabad",
-      initials: "AK",
-   },
-]
+// Empty until the client supplies real, consented reviews. The previous
+// entries were invented names/quotes, which can't be shown as client
+// feedback. While this is empty the whole testimonial block is hidden and
+// only the corridor stats below render. Add entries like:
+//   { id: 1, desc: (<>&quot;…&quot;</>), title: "Full name", country: "Area, Hyderabad", initials: "FN" },
+const feedback_data: DataType[] = []
 
 const FeedbackTwo = () => {
 
@@ -59,6 +42,7 @@ const FeedbackTwo = () => {
 
    return (
       <div className="feedback-section-three mt-170 xl-mt-150 lg-mt-100">
+         {feedback_data.length > 0 && (
          <div className="container">
             {/* Step 3F: pb-180/xl-pb-150 had no lg-/md- reduction, so this
                 section kept a 150px bottom pad all the way down through
@@ -105,6 +89,7 @@ const FeedbackTwo = () => {
                <Image src={feedbackShape_3} alt="" className="lazy-img shapes shape_02" />
             </div>
          </div>
+         )}
          <PropertyPlanetCorridorStats />
 
          <style jsx>{`

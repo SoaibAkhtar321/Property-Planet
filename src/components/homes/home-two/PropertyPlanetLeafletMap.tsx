@@ -1,5 +1,5 @@
 "use client"
-import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap, ZoomControl } from "react-leaflet"
+import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap, ZoomControl, LayersControl, LayerGroup } from "react-leaflet"
 import { useEffect } from "react"
 
 interface MarkerType {
@@ -41,10 +41,38 @@ const PropertyPlanetLeafletMap = ({ center, markers, airport, activeId, onSelect
          style={{ width: "100%", height: "100%" }}
          scrollWheelZoom={false}
       >
-         <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-         />
+         <ZoomControl position="topright" />
+         {/* Base-map switcher (top-right, under the zoom buttons). Satellite is
+             the default: buyers looking at land want to see the actual
+             ground. Its labels overlay keeps village/road names readable. */}
+         <LayersControl position="topright">
+            <LayersControl.BaseLayer checked name="Satellite">
+               <LayerGroup>
+                  <TileLayer
+                     attribution='Imagery &copy; <a href="https://www.esri.com/">Esri</a>, Maxar, Earthstar Geographics'
+                     url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                     maxZoom={19}
+                  />
+                  <TileLayer
+                     url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+                     maxZoom={19}
+                  />
+               </LayerGroup>
+            </LayersControl.BaseLayer>
+            <LayersControl.BaseLayer name="Terrain">
+               <TileLayer
+                  attribution='Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM | Style &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
+                  url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+                  maxZoom={17}
+               />
+            </LayersControl.BaseLayer>
+            <LayersControl.BaseLayer name="Map">
+               <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+               />
+            </LayersControl.BaseLayer>
+         </LayersControl>
 
          <CircleMarker
             center={[airport.lat, airport.lng]}
@@ -72,7 +100,6 @@ const PropertyPlanetLeafletMap = ({ center, markers, airport, activeId, onSelect
          ))}
 
          {active && <FlyToActive lat={active.lat} lng={active.lng} />}
-         <ZoomControl position="topright" />
       </MapContainer>
    );
 };

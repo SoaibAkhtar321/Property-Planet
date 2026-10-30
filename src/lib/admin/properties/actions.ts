@@ -1,4 +1,5 @@
 "use server";
+import { finalizeDraftSlug } from "@/lib/properties/slug";
 
 // src/lib/admin/properties/actions.ts
 //
@@ -316,6 +317,8 @@ export async function updateAdminProperty(id: string, formData: FormData): Promi
       .eq("id", id);
 
    if (error) return { success: false, error: friendlyError(error, "Could not save the property details. Please try again.", "admin.properties.updateAdminProperty") };
+
+   await finalizeDraftSlug(supabase, id, title, locality);
 
    // The Add Listing screen now collects exact address/lat/lng on this
    // same form (see PropertyLocation.tsx) instead of only on a later,

@@ -1,7 +1,7 @@
 import { StaticImageData } from "next/image";
 
 import featureIcon_1 from "@/assets/images/icon/icon_01.svg";
-import featureIcon_2 from "@/assets/images/icon/icon_02.svg";
+import featureIcon_2 from "@/assets/images/icon/icon_projects.svg";
 import featureIcon_3 from "@/assets/images/icon/icon_03.svg";
 
 import feature3Icon_1 from "@/assets/images/icon/icon_07.svg";

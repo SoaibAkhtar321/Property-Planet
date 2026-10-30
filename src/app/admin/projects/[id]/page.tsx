@@ -26,8 +26,9 @@ const MEDIA_SECTIONS: { type: AdminProjectMediaRow["media_type"]; label: string;
 
 export const dynamic = "force-dynamic";
 
-export default async function EditProjectPage(props: { params: Promise<{ id: string }> }) {
+export default async function EditProjectPage(props: { params: Promise<{ id: string }>; searchParams: Promise<{ unitError?: string }> }) {
    const params = await props.params;
+   const { unitError } = await props.searchParams;
    const result = await getProjectForAdmin(params.id);
    if (!result) notFound();
    const { project, location } = result;
@@ -305,6 +306,8 @@ export default async function EditProjectPage(props: { params: Promise<{ id: str
             </div>
          </form>
 
+         <div id="units" />
+         {unitError ? <div className="alert alert-danger mt-4" role="alert">{unitError}</div> : null}
          <ProjectUnits projectId={project.id} />
 
          <h5 className="mt-5 mb-3">Media</h5>

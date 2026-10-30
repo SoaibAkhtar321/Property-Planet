@@ -1,4 +1,5 @@
 "use server";
+import { finalizeDraftSlug } from "@/lib/properties/slug";
 
 // src/lib/properties/actions.ts
 //
@@ -201,6 +202,8 @@ export async function updatePropertyListing(id: string, formData: FormData): Pro
    if (error) {
       return { success: false, error: friendlyError(error, "Could not save your changes. Please try again.", "properties") };
    }
+
+   await finalizeDraftSlug(supabase, id, title, locality);
 
    // Upsert property_location. approx_lat/approx_lng are only set here as
    // the NOT NULL placeholder on first insert — apply_location_jitter()
