@@ -58,7 +58,14 @@ export async function getAdminOverviewMetrics(): Promise<AdminOverviewMetrics> {
       supabase.from("properties").select("id", { count: "exact", head: true }).eq("status", "published"),
       supabase.from("properties").select("id", { count: "exact", head: true }).eq("status", "pending"),
       supabase.from("properties").select("id", { count: "exact", head: true }).eq("status", "rejected"),
-      supabase.from("properties").select("id", { count: "exact", head: true }).eq("status", "draft"),
+      supabase
+         .from("properties")
+         .select("id", { count: "exact", head: true })
+         .eq("status", "draft")
+         // Exclude untouched "Untitled listing" placeholders created just by
+         // opening Add Property (see findReusablePlaceholder) — they are not
+         // real seller drafts and inflated this number.
+         .or("title.neq.Untitled listing,price.gt.0"),
       // Phase 22: the two counts that make the Individual Property vs
       // Project Unit split visible in admin, using the same project_id
       // invariant the public queries use.

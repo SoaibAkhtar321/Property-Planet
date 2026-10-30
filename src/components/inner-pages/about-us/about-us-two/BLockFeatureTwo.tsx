@@ -53,11 +53,11 @@ const BLockFeatureTwo = () => {
                <div className="row">
                   <div className="col-lg-6">
                      <div className="title-one md-mb-30 pe-xxl-4 wow fadeInLeft">
-                        <h2 className="font-garamond text-white star-shape">Easily Purchase, Sell, or Lease listings. <span className="star-shape"><Image src={featureShape_3} alt="" className="lazy-img" /></span></h2>
+                        <h2 className="font-garamond text-white star-shape">Buy and sell with confidence. <span className="star-shape"><Image src={featureShape_3} alt="" className="lazy-img" /></span></h2>
                      </div>
                   </div>
                   <div className="col-xxl-5 col-lg-6 ms-auto">
-                     <p className="text-white fs-24 m0 lh-lg  wow fadeInRight">Your leading real estate advocate, transforming houses into dreams. Trust us to expertly guide you home</p>
+                     <p className="text-white fs-24 m0 lh-lg  wow fadeInRight">From the first search to the site visit, our team is with you at every step across Hyderabad’s growth corridors.</p>
                   </div>
                </div>
 

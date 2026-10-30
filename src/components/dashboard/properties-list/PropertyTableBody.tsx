@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { SellerPropertyRow } from "@/lib/properties/queries"
-import { submitPropertyForReview, archivePropertyListing } from "@/lib/properties/actions"
+import { submitPropertyForReview, archivePropertyListing, reviseRejectedListing } from "@/lib/properties/actions"
+import { redirect } from "next/navigation"
 import { priceUnitSuffix } from "@/lib/properties/priceUnit"
 
 const statusLabel: Record<SellerPropertyRow["status"], string> = {
@@ -44,6 +45,19 @@ function ArchiveForm({ id }: { id: string }) {
    return (
       <form action={action} className="d-inline">
          <button type="submit" className="dropdown-item">Archive</button>
+      </form>
+   )
+}
+
+function ReviseForm({ id }: { id: string }) {
+   const action = async () => {
+      "use server"
+      const result = await reviseRejectedListing(id)
+      if (result.success) redirect(`/dashboard/edit-property/${id}`)
+   }
+   return (
+      <form action={action} className="d-inline">
+         <button type="submit" className="dropdown-item">Revise &amp; Resubmit</button>
       </form>
    )
 }
@@ -98,7 +112,13 @@ const PropertyTableBody = ({ properties }: { properties: SellerPropertyRow[] }) 
                               <li><ArchiveForm id={item.id} /></li>
                            </>
                         )}
-                        {item.status !== "draft" && (
+                        {item.status === "rejected" && (
+                           <>
+                              <li><ReviseForm id={item.id} /></li>
+                              <li><ArchiveForm id={item.id} /></li>
+                           </>
+                        )}
+                        {item.status !== "draft" && item.status !== "rejected" && (
                            <li><Link className="dropdown-item" href={`/dashboard/edit-property/${item.id}`}>Manage Photos</Link></li>
                         )}
                         {item.status === "published" && (

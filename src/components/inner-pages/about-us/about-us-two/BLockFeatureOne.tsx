@@ -3,7 +3,6 @@ import Image from "next/image"
 import Link from "next/link"
 
 import titleShape from "@/assets/images/shape/shape_37.svg"
-import featureImg from "@/assets/images/assets/screen_10.png"
 
 const BLockFeatureOne = () => {
    return (
@@ -26,7 +25,7 @@ const BLockFeatureOne = () => {
                <div className="col-xl-6 col-lg-5 d-lg-flex wow fadeInLeft">
                   <div className="media-block h-100 w-100 pe-xl-5">
                      <div className="bg-img position-relative" style={{ backgroundImage: `url(/assets/images/media/img_52.jpg)` }}>
-                        <Image src={featureImg} alt="" className="lazy-img shapes screen_01" />
+                        {/* Removed screen_10.png: template badge claiming "120k+ Happy Client". */}
                      </div>
                   </div>
                </div>

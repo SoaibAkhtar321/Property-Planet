@@ -260,13 +260,42 @@ export async function submitPropertyForReview(id: string): Promise<ActionResult>
       .update({ status: "pending" })
       .eq("id", id)
       .eq("owner_id", ctx.userId)
-      .eq("status", "draft");
+      // 0039: a rejected listing can be archived too.
+      .in("status", ["draft", "rejected"]);
 
    if (error) {
       return { success: false, error: friendlyError(error, "Could not save your changes. Please try again.", "properties") };
    }
 
    revalidatePath("/dashboard/properties-list");
+   return { success: true };
+}
+
+/**
+ * Business-rule fix (0039): a rejected listing used to be a dead end — the
+ * seller could read the rejection reason but never edit or resubmit it.
+ * This moves it back to draft so the seller can fix it and submit again;
+ * it still needs admin approval before it goes live. The admin's rejection
+ * reason is kept so the seller can see what to fix while editing.
+ */
+export async function reviseRejectedListing(id: string): Promise<ActionResult> {
+   const ctx = await requireRole(["seller"]);
+   const supabase = await createClient();
+
+   const { data, error } = await supabase
+      .from("properties")
+      .update({ status: "draft" })
+      .eq("id", id)
+      .eq("owner_id", ctx.userId)
+      .eq("status", "rejected")
+      .select("id");
+
+   if (error || !data?.length) {
+      return { success: false, error: friendlyError(error, "This listing can't be revised right now. Please try again.", "properties.revise") };
+   }
+
+   revalidatePath("/dashboard/properties-list");
+   revalidatePath(`/dashboard/edit-property/${id}`);
    return { success: true };
 }
 

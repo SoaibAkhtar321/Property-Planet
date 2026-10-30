@@ -118,4 +118,24 @@ select zz_t('E2 recipient can still mark a notification read',
   zz_try('00000000-0000-0000-0000-0000000000a1',
     $q$update notifications set read = true where id = '00000000-0000-0000-0000-0000000000e1'$q$) = 'ok');
 
+-- ============================================================ F. self-enquiry (0039)
+select zz_t('F1 seller CANNOT enquire on their own listing',
+  zz_try('00000000-0000-0000-0000-0000000000a1',
+    $q$insert into leads (buyer_id, property_id) values
+       ('00000000-0000-0000-0000-0000000000a1', '00000000-0000-0000-0000-00000000aa02')$q$) like 'blocked%');
+
+-- ============================================================ G. revise rejected listing (0039)
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000d1', false);
+update properties set status = 'rejected' where id = '00000000-0000-0000-0000-00000000aa02';
+select set_config('request.jwt.claim.sub', '', false);
+select zz_t('G1 seller CANNOT publish a rejected listing directly',
+  zz_try('00000000-0000-0000-0000-0000000000a1',
+    $q$update properties set status = 'published' where id = '00000000-0000-0000-0000-00000000aa02'$q$) like 'blocked%');
+select zz_t('G2 seller can take a rejected listing back to draft',
+  zz_try('00000000-0000-0000-0000-0000000000a1',
+    $q$update properties set status = 'draft' where id = '00000000-0000-0000-0000-00000000aa02'$q$) = 'ok');
+select zz_t('G3 seller still CANNOT unpublish/republish a live listing',
+  zz_try('00000000-0000-0000-0000-0000000000a1',
+    $q$update properties set status = 'draft' where id = '00000000-0000-0000-0000-00000000aa01'$q$) like 'blocked%');
+
 rollback;

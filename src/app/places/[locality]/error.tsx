@@ -15,10 +15,10 @@ export default function PlaceError({ error, reset }: { error: Error & { digest?:
          </p>
          {error.digest && <p className="fs-14 text-muted">Reference: {error.digest}</p>}
          <div className="d-flex flex-wrap gap-3 mt-30">
-            <button type="button" className="btn-four" onClick={reset}>
+            <button type="button" className="pp-card-btn pp-card-btn--primary px-4" onClick={reset}>
                Try again
             </button>
-            <Link href="/properties" className="btn-four">
+            <Link href="/properties" className="pp-card-btn pp-card-btn--ghost px-4">
                Browse all properties
             </Link>
          </div>

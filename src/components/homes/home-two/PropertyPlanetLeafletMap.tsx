@@ -1,5 +1,5 @@
 "use client"
-import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap } from "react-leaflet"
+import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap, ZoomControl } from "react-leaflet"
 import { useEffect } from "react"
 
 interface MarkerType {
@@ -35,6 +35,9 @@ const PropertyPlanetLeafletMap = ({ center, markers, airport, activeId, onSelect
       <MapContainer
          center={center}
          zoom={11}
+         // Default zoom buttons sat top-left, underneath the corridor info
+         // panel on desktop; they're rendered top-right below instead.
+         zoomControl={false}
          style={{ width: "100%", height: "100%" }}
          scrollWheelZoom={false}
       >
@@ -69,6 +72,7 @@ const PropertyPlanetLeafletMap = ({ center, markers, airport, activeId, onSelect
          ))}
 
          {active && <FlyToActive lat={active.lat} lng={active.lng} />}
+         <ZoomControl position="topright" />
       </MapContainer>
    );
 };

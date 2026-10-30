@@ -25,8 +25,8 @@ interface ContentType {
 // src/lib/site/contact.ts; this brings FooterTwo in line with the same
 // pattern instead of inventing new placeholder values.
 const footer_content: ContentType = {
-   title: "Our Newsletter",
-   desc_1: "Get instant news by subscribe to our newsletter",
+   title: "Have a question?",
+   desc_1: "Talk to our team about any property, project or site visit.",
    desc_2: "Hyderabad, Telangana",
 }
 
@@ -46,11 +46,14 @@ const FooterTwo = () => {
                         </div>
                      </div>
                      <div className="col-lg-6">
-                        <div className="form-wrapper me-auto ms-auto me-lg-0">
-                           <form onSubmit={(e) => e.preventDefault()}>
-                              <input type="email" placeholder="Your email address" />
-                              <button><i className="fa-light fa-arrow-right-long"></i></button>
-                           </form>
+                        {/* Was a newsletter form whose submit was preventDefault()-ed:
+                            emails were silently discarded while visitors thought
+                            they had subscribed. No newsletter system exists, so
+                            this links to the real contact form instead. */}
+                        <div className="text-center text-lg-end">
+                           <Link href="/contact" className="pp-card-btn pp-card-btn--primary d-inline-flex px-4">
+                              Contact us <i className="bi bi-arrow-right ms-2" aria-hidden="true"></i>
+                           </Link>
                         </div>
                      </div>
                   </div>

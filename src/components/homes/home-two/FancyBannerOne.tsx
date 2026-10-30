@@ -3,7 +3,6 @@ import FaqOne from "@/components/common/faq/FaqOne"
 
 import fancyImg_1 from "@/assets/images/shape/shape_19.svg"
 import fancyImg_2 from "@/assets/images/assets/ils_04.png"
-import fancyImg_3 from "@/assets/images/assets/screen_02.jpg"
 
 const FancyBannerOne = () => {
 
@@ -34,7 +33,8 @@ const FancyBannerOne = () => {
             </div>
          </div>
          <Image src={fancyImg_2} alt="" className="lazy-img shapes illustration" />
-         <Image src={fancyImg_3} alt="" className="lazy-img shapes screen_01" />
+         {/* Removed screen_02.jpg: a template image with a baked-in "120k+
+             Satisfied Client" badge, a figure with no basis in real data. */}
       </div>
    )
 }

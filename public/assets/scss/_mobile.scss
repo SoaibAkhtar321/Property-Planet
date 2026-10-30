@@ -79,7 +79,7 @@ $pp-orange-strong: #c2410c;  // white text on this passes 4.5:1
 
   // "How our clients get benefited" image cards: keep the label dark on
   // its own light card instead of white-on-pastel.
-  .card-style-two .content h5 { color: #0d1a1c; }
+  .card-style-two .content h5, .block-feature-seven .card-style-two .content h5 { color: #0d1a1c !important; text-shadow: none !important; opacity: 1 !important; }
 
   // Filter panel on /properties stayed white with white labels.
   .advance-search-panel .main-bg {
@@ -114,7 +114,8 @@ $pp-orange-strong: #c2410c;  // white text on this passes 4.5:1
 
 /* Footer (both themes): phone number was dark text on the dark footer, and
    the light-theme "footer-two/four" variants inherited dark headings. */
-.pp-call-link, .pp-call-link span { color: #ffffff !important; }
+// Footer only (the header uses the same class on a light background).
+.bg-wrapper .pp-call-link, .bg-wrapper .pp-call-link span, footer .pp-call-link, [class*="footer"] .pp-call-link, [class*="footer"] .pp-call-link span { color: #ffffff !important; }
 .footer-two, .footer-four {
   .footer-title, h2, h5 { color: #ffffff !important; }
   .footer-nav-link a, .bottom-nav a, .contact-info a, .email { color: rgba(255, 255, 255, 0.82) !important; }
@@ -306,3 +307,32 @@ img, video, iframe { max-width: 100%; }
 @media (max-width: 767px) {
   .dashboard-body table.table tbody, .dashboard-body table.property-list-table tbody { background: transparent !important; }
 }
+
+/* ===================================================================
+   8. Desktop
+   =================================================================== */
+// Template bug: from 1400px up the container was 1420px wide with zero
+// side padding, so on a 1440px laptop text sat 10px from the screen edge.
+@media (min-width: 1400px) {
+  .container { max-width: min(1420px, calc(100vw - 64px)); }
+  .container.container-large { max-width: min(1574px, calc(100vw - 64px)); }
+}
+// Card action buttons stay on one line.
+.pp-card-btn { white-space: nowrap; }
+// Dark: the black "Send Inquiry" block buttons sank into dark panels.
+[data-theme="dark"] .btn-four:not(.inverse) { background: #15803d; color: #fff; }
+[data-theme="dark"] .btn-four:not(.inverse):hover { background: #1faa59; }
+// Dashboard/admin sidebar: icon SVGs are black, invisible on the dark
+// sidebar. Active icons are their own coloured files, so leave those.
+[data-theme="dark"] .dash-aside-navbar .dasboard-main-nav a:not(.active) img,
+[data-theme="dark"] .dash-aside-navbar .plr > a:not(.active) img { filter: invert(1) brightness(1.4); opacity: 0.85; }
+// Status pills never wrap ("Pending / Review" on two lines).
+.property-status, .dashboard-body .badge, .dashboard-body span.d-inline-block { white-space: nowrap; }
+// Orange "Menu" header button (white on brand orange was 2.9:1).
+.theme-main-menu .btn-one { background-color: #c2410c; border-color: #c2410c; color: #fff; }
+// The FAQ CTA inherited the banner's link colour (text = button colour).
+.fancy-banner-two a.pp-card-btn--primary { color: #fff !important; background: #15803d !important; border-color: #15803d !important; }
+// Dashboard sidebar section labels ("Profile", "Listing").
+[data-theme="light"] .dash-aside-navbar .nav-title { color: rgba(0, 0, 0, 0.6); }
+// Admin overview "new" pill in dark mode.
+[data-theme="dark"] .dashboard-body .text-end span.d-inline-block { filter: brightness(1.45); }

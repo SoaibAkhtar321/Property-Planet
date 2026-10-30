@@ -9,6 +9,7 @@ import { OwnPropertyLocation, OwnPropertyMediaRow, SellerPropertyRow } from "@/l
 
 type EditableProperty = SellerPropertyRow & {
    description: string | null;
+   rejection_reason?: string | null;
    area: number | string | null;
    area_unit: string | null;
    bedrooms: number | null;
@@ -44,9 +45,25 @@ const EditPropertyBody = ({ property, media, error, onSubmit }: { property: Edit
 
             {error && <div className="alert alert-danger mb-30" role="alert">{error}</div>}
 
+            {/* The old banner told sellers every non-draft listing was "under
+                admin review", including published and rejected ones. */}
+            {property.status === "draft" && property.rejection_reason && (
+               <div className="alert alert-warning mb-30" role="alert">
+                  <strong>Our team&apos;s feedback on this listing:</strong> {property.rejection_reason}
+                  <div className="mt-5">Update the details, then choose <em>Submit for Review</em> from My Properties.</div>
+               </div>
+            )}
             {!fieldsEditable && (
                <div className="alert alert-warning mb-30" role="alert">
-                  This listing is <strong>{property.status}</strong> and is under admin review — details can no longer be edited here. Photos can still be updated below.
+                  {property.status === "pending" && <>This listing is <strong>waiting for admin review</strong>, so its details are locked. Photos can still be updated below.</>}
+                  {property.status === "published" && <>This listing is <strong>live</strong>. To change its details, contact the Property Planet team. Photos can still be updated below.</>}
+                  {property.status === "rejected" && (
+                     <>
+                        This listing was <strong>not approved</strong>
+                        {property.rejection_reason ? <>: {property.rejection_reason}</> : "."} Choose <em>Revise &amp; Resubmit</em> from My Properties to edit it and send it again.
+                     </>
+                  )}
+                  {!["pending", "published", "rejected"].includes(property.status) && <>This listing is <strong>{property.status}</strong>, so its details can no longer be edited.</>}
                </div>
             )}
 

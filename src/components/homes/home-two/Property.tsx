@@ -56,8 +56,20 @@ const Property = async () => {
 
                {hasFeatured ? (
                   <>
-                     {featuredProperties.length > 0 && <PropertyGridWithToggle items={featuredProperties} />}
-                     {featuredProjects.length > 0 && <ProjectGridWithToggle items={featuredProjects} />}
+                     {/* Two separate grids; without labels a lone project card on its
+                         own row looked like a broken layout. */}
+                     {featuredProperties.length > 0 && (
+                        <>
+                           {featuredProjects.length > 0 && <h3 className="fs-24 fw-500 mt-30 mb-0">Featured properties</h3>}
+                           <PropertyGridWithToggle items={featuredProperties} />
+                        </>
+                     )}
+                     {featuredProjects.length > 0 && (
+                        <>
+                           {featuredProperties.length > 0 && <h3 className="fs-24 fw-500 mt-50 mb-0">Featured projects</h3>}
+                           <ProjectGridWithToggle items={featuredProjects} />
+                        </>
+                     )}
                   </>
                ) : (
                   /* Polished empty state rather than placeholder listings —
@@ -69,7 +81,9 @@ const Property = async () => {
                         Our team hand-picks the strongest opportunities here. In the meantime, the full
                         inventory is open to browse.
                      </p>
-                     <Link href="/properties" className="btn-four d-inline-flex">
+                     {/* Was `btn-four`, the template's 50x50px icon-only square, which
+                         clipped this label to "xplor / opert" on desktop. */}
+                     <Link href="/properties" className="pp-card-btn pp-card-btn--primary d-inline-flex px-4">
                         Explore Properties
                      </Link>
                   </div>

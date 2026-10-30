@@ -2,7 +2,6 @@ import BreadcrumbTwo from "@/components/common/breadcrumb/BreadcrumbTwo";
 import HeaderTwo from "@/layouts/headers/HeaderTwo";
 import BLockFeatureOne from "./BLockFeatureOne";
 import BLockFeatureTwo from "./BLockFeatureTwo";
-import Brand from "./Brand";
 import FancyBanner from "./FancyBanner";
 import FooterTwo from "@/layouts/footers/FooterTwo";
 
@@ -20,7 +19,8 @@ const AboutUsTwo = () => {
          <BreadcrumbTwo title="About Agency" sub_title="About us" />
          <BLockFeatureOne />
          <BLockFeatureTwo />
-         <Brand />
+         {/* <Brand /> removed: it showed Google, Payoneer, Logitech, Airbnb and
+             Spotify logos as if they were clients or partners. */}
          <FancyBanner />
          <FooterTwo />
       </>

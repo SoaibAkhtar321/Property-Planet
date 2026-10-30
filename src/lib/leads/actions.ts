@@ -139,6 +139,18 @@ export async function createInquiry(
       return { success: false, error: "This property is no longer available." };
    }
 
+   // Business rule: a seller enquiring on their own listing created a fake
+   // lead, notified themselves, and inflated admin/insight lead counts.
+   // (Also enforced in the database: 0039_block_self_enquiry.sql.)
+   const { data: owned } = await supabase
+      .from("properties")
+      .select("owner_id")
+      .eq("id", propertyId)
+      .maybeSingle();
+   if (owned?.owner_id === buyer.userId) {
+      return { success: false, error: "This is your own listing, so you can't send an enquiry for it." };
+   }
+
    const { error: insertError } = await supabase.from("leads").insert({
       buyer_id: buyer.userId,
       property_id: propertyId,

@@ -447,22 +447,22 @@ const feature_data: DataType[] = [
       id: 1,
       page: "home_6_feature_1",
       icon:feature7Icon_1,
-      title: "Property Insurance",
-      desc: "Elit esse cillum dol fug nulla tur nos ullamo.",
+      title: "Verified Listings",
+      desc: "Every property and project is reviewed by our team before it goes live.",
    }, 
    {
       id: 2,
       page: "home_6_feature_1",
       icon:feature7Icon_2,
-      title: "Easy Payments",
-      desc: "quis nostrud exerct ulla security finibus ne derived.",
+      title: "Direct Enquiries",
+      desc: "Your enquiry reaches a real advisor who calls you back, with no middlemen.",
    }, 
    {
       id: 3,
       page: "home_6_feature_1",
       icon:feature7Icon_3,
-      title: "Quick Process",
-      desc: "Duis aute irure do reprehe de Cicero's voluptat velit.",
+      title: "Guided Site Visits",
+      desc: "Pick a date and time that suits you and we arrange the visit.",
    },
 ]
 

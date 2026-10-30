@@ -291,6 +291,8 @@ export async function getOwnPropertyById(
         area_unit: string | null;
         bedrooms: number | null;
         bathrooms: number | null;
+        /** Admin's note when the listing was rejected (0009); shown while revising. */
+        rejection_reason?: string | null;
         location: OwnPropertyLocation | null;
      })
    | null
@@ -304,7 +306,7 @@ export async function getOwnPropertyById(
 
    const { data, error } = await supabase
       .from("properties")
-      .select("id, title, slug, property_type, listing_type, price, price_unit, price_unit_label, area, area_unit, bedrooms, bathrooms, description, city, locality, status, created_at, updated_at")
+      .select("id, title, slug, property_type, listing_type, price, price_unit, price_unit_label, area, area_unit, bedrooms, bathrooms, description, city, locality, status, created_at, updated_at, rejection_reason")
       .eq("id", id)
       .eq("owner_id", user.id)
       .maybeSingle();
