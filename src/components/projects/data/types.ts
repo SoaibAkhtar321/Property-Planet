@@ -67,7 +67,7 @@ export interface ProjectUnit {
    price?: number;
    /** Formatted suffix from the shared price_unit system, e.g. "/ sq. ft." — already the exact string PropertyDetail/Sidebar append after the price. Undefined for a flat/total-priced unit (unchanged existing behavior). */
    priceUnit?: string;
-   listingType?: "Sale" | "Rent";
+   listingType?: "Sale";
    area?: number;
    areaUnit?: string;
    bed?: number;

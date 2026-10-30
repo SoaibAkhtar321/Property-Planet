@@ -305,7 +305,7 @@ export const generateAIResponse = (
    // 12. Rentals — not offered.
    if (includesAny(q, RENT_WORDS)) {
       return {
-         text: `Property Planet focuses on properties for sale — plots, land, villas and apartments — and doesn't list rentals. I can search sale listings by location, budget or type. For anything else: ${CONTACT_LINE}`,
+         text: `Property Planet only lists properties for sale — plots, land, villas and apartments. I can search sale listings by location, budget or type. For anything else: ${CONTACT_LINE}`,
       };
    }
 

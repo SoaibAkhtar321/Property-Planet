@@ -22,7 +22,7 @@ const formatPrice = (unit: ProjectUnit) => {
    // for this exact unit on its own /properties/[slug] page — without it
    // a ₹/sq. ft.-priced unit read as a flat total price in this table.
    if (unit.priceUnit) return `${amount}${unit.priceUnit}`;
-   return unit.listingType === "Rent" ? `${amount}/mo` : amount;
+   return amount;
 };
 
 const Units = ({

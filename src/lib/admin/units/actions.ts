@@ -235,7 +235,7 @@ export async function updateProjectUnit(projectId: string, unitId: string, formD
       .update({
          title,
          property_type: textOrNull(formData.get("property_type")),
-         listing_type: textOrNull(formData.get("listing_type")) ?? "sale",
+         listing_type: "sale",
          price,
          area: numberOrNull(formData.get("area")),
          area_unit: textOrNull(formData.get("area_unit")) ?? "sqft",

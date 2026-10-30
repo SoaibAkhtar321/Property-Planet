@@ -62,13 +62,7 @@ const UnitRow = ({ projectId, unit }: { projectId: string; unit: AdminUnitRow })
                <label className="form-label">Unit type</label>
                <input name="property_type" defaultValue={unit.property_type} className="form-control" placeholder="plot, villa, apartment" />
             </div>
-            <div className="col">
-               <label className="form-label">Listing type</label>
-               <select name="listing_type" defaultValue={unit.listing_type} className="form-select">
-                  <option value="sale">Sale</option>
-                  <option value="rent">Rent</option>
-               </select>
-            </div>
+            
          </div>
 
          <div className="row">
@@ -176,13 +170,7 @@ export default async function ProjectUnits({ projectId }: { projectId: string })
                   <label className="form-label">Unit type *</label>
                   <input name="property_type" className="form-control" required placeholder="plot, villa, apartment" />
                </div>
-               <div className="col">
-                  <label className="form-label">Listing type</label>
-                  <select name="listing_type" defaultValue="sale" className="form-select">
-                     <option value="sale">Sale</option>
-                     <option value="rent">Rent</option>
-                  </select>
-               </div>
+               
             </div>
 
             <div className="row">

@@ -94,7 +94,7 @@ const PropertyTableBody = ({ properties }: { properties: SellerPropertyRow[] }) 
                   </div>
                </td>
                <td>{new Date(item.created_at).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })}</td>
-               <td>{item.listing_type === "sale" ? "Sale" : "Rent"}</td>
+               <td>Sale</td>
                <td>
                   <div className={`property-status ${statusClass[item.status] ?? ""}`}>{statusLabel[item.status]}</div>
                </td>

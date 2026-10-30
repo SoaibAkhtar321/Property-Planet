@@ -298,6 +298,8 @@ export async function getProjectUnits(projectId: string): Promise<ProjectUnit[]>
    const { data, error } = await supabase
       .from("property_public")
       .select(PROJECT_UNIT_COLUMNS)
+      // Sale-only site: a legacy rental unit is never shown.
+      .eq("listing_type", "sale")
       .eq("project_id", projectId)
       .order("price", { ascending: true });
 
@@ -315,7 +317,7 @@ export async function getProjectUnits(projectId: string): Promise<ProjectUnit[]>
       unitType: row.property_type ? unitTitleCase(String(row.property_type)) : undefined,
       price: row.price !== null && row.price !== undefined ? Number(row.price) : undefined,
       priceUnit: priceUnitSuffix(row.price_unit as string | null, row.price_unit_label as string | null) || undefined,
-      listingType: row.listing_type === "rent" ? ("Rent" as const) : ("Sale" as const),
+      listingType: "Sale" as const,
       area: row.area !== null && row.area !== undefined ? Number(row.area) : undefined,
       areaUnit: (row.area_unit as string | null) ?? undefined,
       bed: (row.bedrooms as number | null) ?? undefined,
