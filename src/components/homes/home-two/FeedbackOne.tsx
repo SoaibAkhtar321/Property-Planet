@@ -1,97 +1,42 @@
 import Image from "next/image"
 
-import feedbackShape_1 from "@/assets/images/shape/shape_14.svg";
 import feedbackShape_2 from "@/assets/images/shape/shape_15.svg";
+import ReraCertificateViewer from "@/components/common/ReraCertificateViewer";
 import { getPublicSiteReraCertificate } from "@/lib/site/queries";
 
-// Server component (no "use client") so the RERA certificate — admin-
-// managed, site-wide, see 0014_site_rera_certificate.sql — can be fetched
-// directly here. Renders nothing extra when no certificate has been
-// uploaded yet; never fabricates a registration number or legal claim.
+// Homepage trust strip: one statement plus the RERA certificate (admin-
+// managed, 0014_site_rera_certificate.sql) as a small thumbnail that opens
+// full size. The old vague filler lines ("Plot listings across the
+// corridor", "Trusted by buyers…") are gone. Without an uploaded
+// certificate only the statement renders — no invented registration claim.
 const Feedback = async () => {
    const certificate = await getPublicSiteReraCertificate();
+   const title = certificate?.title || "RERA Registered";
 
    return (
-      <div className="feedback-section-two md-pb-40 position-relative z-1">
+      <section className="pp-trust-strip position-relative z-1">
          <div className="container">
-            <div className="row">
-               <div className="col-lg-8 order-lg-last">
-                  <div className="main-content position-relative z-1">
-                     <div className="feedback-block-two">
-                       <blockquote className="font-garamond text-white">Serving Hyderabad&apos;s real estate market since 2012 &mdash; every listing <span>reviewed by our team</span> before it goes live.</blockquote>
+            <div className={`pp-trust-strip__grid ${certificate ? "" : "pp-trust-strip__grid--solo"}`}>
+               <blockquote className="font-garamond text-white m0">
+                  Serving Hyderabad&apos;s real estate market since 2012 &mdash; every listing <span>reviewed by our team</span> before it goes live.
+               </blockquote>
+
+               {certificate && (
+                  <div className="pp-rera-card">
+                     <ReraCertificateViewer url={certificate.url} title={title} fileType={certificate.fileType} />
+                     <div className="pp-rera-card__text">
+                        <p className="pp-rera-card__title"><i className="bi bi-patch-check-fill" aria-hidden="true"></i> {title}</p>
+                        <p className="pp-rera-card__desc">
+                           {certificate.description || "Property Planet is RERA registered to operate as a real estate business."}
+                        </p>
+                        <span className="pp-rera-card__hint">Tap the certificate to view it full size</span>
                      </div>
                   </div>
-               </div>
-
-               <div className="col-lg-4 d-flex order-lg-first">
-                  <div className="bg-wrapper h-100 w-100 d-flex flex-column justify-content-center">
-                     <div className="row">
-                        <div className="col-lg-12 col-md-6">
-                           <div className="counter-block-two mb-85 xl-mb-50 md-mb-40">
-                              <p className="fs-20 fw-light m0">Plot listings across the Hyderabad corridor</p>
-                           </div>
-                        </div>
-                        <div className="col-lg-12 col-md-6">
-                           <div className="counter-block-two md-mb-40">
-                              <p className="fs-20 fw-light m0">Trusted by buyers and investors alike</p>
-                           </div>
-                        </div>
-                        {certificate && (
-                           <div className="col-lg-12">
-                              <div className="counter-block-two rera-trust-badge pt-3 border-top border-light border-opacity-25">
-                                 <div className="d-flex align-items-start gap-3 mb-10">
-                                    <i className="bi bi-patch-check-fill text-white fs-24 mt-1" aria-hidden="true"></i>
-                                    <div>
-                                       <p className="fs-18 text-white fw-normal m0">{certificate.title || "RERA Registered"}</p>
-<p className="fs-14 fw-light text-white opacity-75 mt-5 mb-0">
-   {certificate.description ||
-      "Property Planet is RERA registered to operate as a real estate business. View the certificate below for the registration details."}
-</p>
-                                    </div>
-                                 </div>
-
-                                 {certificate.fileType === "image" ? (
-                                    <a href={certificate.url} target="_blank" rel="noopener noreferrer" className="d-block">
-                                       <Image
-                                          src={certificate.url}
-                                          alt={certificate.title || "RERA Certificate"}
-                                          width={400}
-                                          height={280}
-                                          className="lazy-img w-100 rounded"
-                                          style={{ height: "auto", border: "1px solid rgba(255,255,255,0.2)" }}
-                                          unoptimized
-                                       />
-                                    </a>
-                                 ) : (
-                                    <div className="rounded overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.2)" }}>
-                                       <iframe
-                                          src={`${certificate.url}#toolbar=0`}
-                                          title={certificate.title || "RERA Certificate"}
-                                          className="w-100"
-                                          style={{ height: 260, border: "none" }}
-                                       />
-                                    </div>
-                                 )}
-
-                                 <a
-                                    href={certificate.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="fs-14 text-white text-decoration-underline mt-10 d-inline-block"
-                                 >
-                                    Open full certificate <i className="bi bi-arrow-up-right ms-1"></i>
-                                 </a>
-                              </div>
-                           </div>
-                        )}
-                     </div>
-                  </div>
-               </div>
+               )}
             </div>
          </div>
-         <Image src={feedbackShape_1} alt="" className="lazy-img shapes shape_01" />
-         <Image src={feedbackShape_2} alt="" className="lazy-img shapes shape_02" />
-      </div>
+         <Image src={feedbackShape_2} alt="" className="lazy-img shapes pp-trust-strip__shape" />
+      </section>
    )
 }
 

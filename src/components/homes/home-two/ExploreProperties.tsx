@@ -54,10 +54,25 @@ const ExploreProperties = async () => {
                {items.length > 0 ? (
                   <PropertyGridWithToggle items={items} />
                ) : (
-                  <p className="fs-20 mt-30">
-                     No standalone properties are published yet. Check back soon — new Property Planet listings will
-                     appear here as they&apos;re added.
-                  </p>
+                  /* Same card treatment as the empty "Featured Opportunities"
+                     state above, plus the two things a visitor can actually
+                     do right now: list a property, or ask the team. */
+                  <div className="pp-how pp-empty-card text-center py-5 mt-30">
+                     <span className="pp-empty-card__icon" aria-hidden="true"><i className="bi bi-house-add"></i></span>
+                     <h5 className="mb-10">New listings are on the way</h5>
+                     <p className="fs-18 mb-25 opacity-75">
+                        Standalone plots, villas and homes appear here as soon as our team approves them.
+                        Own one? List it free — or tell us what you&apos;re looking for.
+                     </p>
+                     <div className="d-flex flex-wrap justify-content-center gap-2">
+                        <Link href="/seller/login" className="pp-card-btn pp-card-btn--primary d-inline-flex px-4">
+                           List your property
+                        </Link>
+                        <Link href="/contact" className="pp-card-btn d-inline-flex px-4">
+                           Tell us what you need
+                        </Link>
+                     </div>
+                  </div>
                )}
 
                {hasMoreBeyondFetch && (
