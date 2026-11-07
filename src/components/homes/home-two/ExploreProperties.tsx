@@ -57,20 +57,14 @@ const ExploreProperties = async () => {
                   /* Same card treatment as the empty "Featured Opportunities"
                      state above, plus the two things a visitor can actually
                      do right now: list a property, or ask the team. */
-                  <div className="pp-how pp-empty-card text-center py-5 mt-30">
-                     <span className="pp-empty-card__icon" aria-hidden="true"><i className="bi bi-house-add"></i></span>
-                     <h5 className="mb-10">New listings are on the way</h5>
-                     <p className="fs-18 mb-25 opacity-75">
-                        Standalone plots, villas and homes appear here as soon as our team approves them.
-                        Own one? List it free — or tell us what you&apos;re looking for.
+                  <div className="pp-empty-note mt-30">
+                     <p className="pp-empty-note__lead">New listings are on the way.</p>
+                     <p className="pp-empty-note__body">
+                        Standalone plots, villas and homes appear here once our team approves them.
                      </p>
-                     <div className="d-flex flex-wrap justify-content-center gap-2">
-                        <Link href="/seller/login" className="pp-card-btn pp-card-btn--primary d-inline-flex px-4">
-                           List your property
-                        </Link>
-                        <Link href="/contact" className="pp-card-btn d-inline-flex px-4">
-                           Tell us what you need
-                        </Link>
+                     <div className="d-flex flex-wrap gap-4">
+                        <Link href="/seller/login" className="pp-empty-note__link">List your property free <i className="bi bi-arrow-right" aria-hidden="true"></i></Link>
+                        <Link href="/contact" className="pp-empty-note__link">Tell us what you need <i className="bi bi-arrow-right" aria-hidden="true"></i></Link>
                      </div>
                   </div>
                )}

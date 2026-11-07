@@ -75,17 +75,12 @@ const Property = async () => {
                   /* Polished empty state rather than placeholder listings —
                      showing invented inventory on the homepage of a
                      property marketplace is worse than showing nothing. */
-                  <div className="pp-how text-center py-5 mt-30">
-                     <h5 className="mb-10">Nothing featured right now</h5>
-                     <p className="fs-18 mb-25 opacity-75">
-                        Our team hand-picks the strongest opportunities here. In the meantime, the full
-                        inventory is open to browse.
+                  <div className="pp-empty-note mt-30">
+                     <p className="pp-empty-note__lead">Nothing featured right now.</p>
+                     <p className="pp-empty-note__body">
+                        Our team hand-picks the strongest opportunities here. Meanwhile, the full inventory is open.
                      </p>
-                     {/* Was `btn-four`, the template's 50x50px icon-only square, which
-                         clipped this label to "xplor / opert" on desktop. */}
-                     <Link href="/properties" className="pp-card-btn pp-card-btn--primary d-inline-flex px-4">
-                        Explore Properties
-                     </Link>
+                     <Link href="/properties" className="pp-empty-note__link">Browse all properties <i className="bi bi-arrow-right" aria-hidden="true"></i></Link>
                   </div>
                )}
             </div>

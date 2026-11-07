@@ -637,3 +637,118 @@ img, video, iframe { max-width: 100%; }
 .dash-aside-navbar .nav-title, .dashboard-body ~ * .nav-title, ul.style-none > li > .nav-title { color: #6b7280 !important; }
 [data-theme="dark"] ul.style-none > li > .nav-title { color: rgba(255, 255, 255, .6) !important; }
 .footer-one a[href^="mailto:"], .footer-one .email { overflow-wrap: anywhere; }
+
+/* ======================================================================
+   Less "everything is a card" (2026-11). Cards stay for actual listings;
+   explanatory sections use type, numbers and hairlines instead.
+   ====================================================================== */
+
+/* Empty listing sections: a plain editorial note, not a box. */
+.pp-empty-note {
+   max-width: 640px;
+   padding: 22px 0 4px;
+   border-top: 1px solid rgba(13, 26, 28, .14);
+   &__lead { font-family: $sub-font; font-size: 30px; line-height: 1.2; margin: 0 0 8px; color: #0d1a1c; }
+   &__body { font-size: 17px; color: #4b5563; margin: 0 0 14px; }
+   &__link {
+      display: inline-flex; align-items: center; gap: 8px; font-weight: 500; color: #15803d;
+      border-bottom: 1px solid currentColor; padding-bottom: 2px;
+      i { transition: transform .2s; }
+      &:hover i { transform: translateX(3px); }
+   }
+}
+[data-theme="dark"] .pp-empty-note {
+   border-top-color: rgba(255, 255, 255, .14);
+   .pp-empty-note__lead { color: #fff; }
+   .pp-empty-note__body { color: rgba(255, 255, 255, .7); }
+   .pp-empty-note__link { color: #4ade80; }
+}
+
+/* How it works: numbered columns separated by hairlines, no boxes. */
+.property-planet-how-it-works .pp-how {
+   background: transparent !important;
+   border-radius: 0;
+   padding: 0 !important;
+   box-shadow: none !important;
+   .pp-how__grid {
+      display: grid !important;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0 !important;
+      border-top: 1px solid rgba(13, 26, 28, .14);
+      margin: 0 !important; padding: 0 !important; overflow: visible !important;
+      &:before { display: none !important; }
+   }
+   .pp-how__step {
+      background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+      padding: 28px 28px 8px 0 !important;
+      & + .pp-how__step { padding-left: 28px !important; border-left: 1px solid rgba(13, 26, 28, .14) !important; }
+   }
+   .pp-how__num {
+      width: auto !important; height: auto !important; background: none !important; border-radius: 0 !important;
+      color: #15803d !important; font-family: $sub-font;
+      font-size: 44px !important; font-weight: 400 !important; line-height: 1; justify-content: flex-start !important; margin-bottom: 14px !important;
+   }
+   .pp-how__title { font-size: 20px; }
+}
+[data-theme="dark"] .property-planet-how-it-works .pp-how {
+   .pp-how__grid { border-top-color: rgba(255, 255, 255, .14); }
+   .pp-how__step + .pp-how__step { border-left-color: rgba(255, 255, 255, .14) !important; }
+   .pp-how__num { color: #4ade80 !important; }
+}
+@media (max-width: 991px) {
+   .property-planet-how-it-works .pp-how .pp-how__grid { grid-template-columns: 1fr 1fr; }
+   .property-planet-how-it-works .pp-how .pp-how__step:nth-child(3) { padding-left: 0 !important; border-left: 0 !important; }
+}
+@media (max-width: 767px) {
+   /* Phones: a vertical numbered list, number on the left. */
+   .property-planet-how-it-works .pp-how {
+      .pp-how__grid { grid-template-columns: 1fr !important; border-top: 0; }
+      .pp-how__step, .pp-how__step + .pp-how__step, .pp-how__step:last-child:nth-child(odd) {
+         display: grid !important; grid-template-columns: 52px 1fr; column-gap: 12px;
+         padding: 16px 0 !important; border-left: 0 !important; grid-column: auto;
+         border-top: 1px solid rgba(13, 26, 28, .12) !important;
+      }
+      .pp-how__num { grid-row: span 2; font-size: 34px !important; margin: 0 !important; }
+      .pp-how__title { margin: 2px 0 4px !important; font-size: 18px; }
+      .pp-how__desc { font-size: 14.5px; }
+   }
+   [data-theme="dark"] .property-planet-how-it-works .pp-how .pp-how__step { border-top-color: rgba(255, 255, 255, .12) !important; }
+}
+
+/* "Verified Listings / Direct enquiries / …" points: unboxed, with a rule. */
+.card-style-four {
+   background: transparent !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important;
+   border-top: 2px solid #16a34a !important; padding: 22px 0 0 !important;
+   .icon { width: 48px !important; height: 48px !important; }
+}
+
+/* Hero: Explore Properties and the AI button share one row on phones. */
+@media (max-width: 767px) {
+   .hero-banner-two {
+      .hero-cta-group { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+      .btn-seven { height: 48px !important; line-height: 46px !important; padding: 0 10px !important; font-size: 14px !important; }
+      .btn-seven i { display: none; }
+      .ai-assistant-cta { height: 48px; padding: 4px 8px 4px 4px !important; border-radius: 10px !important; animation: none; justify-content: flex-start; }
+      .ai-assistant-cta__icon { width: 38px !important; height: 38px !important; border-radius: 8px !important; flex: 0 0 auto; }
+      .ai-assistant-cta__tag { display: none !important; }
+      .ai-assistant-cta__text { margin-left: 8px !important; line-height: 1.1; }
+      .ai-assistant-cta__eyebrow { font-size: 9px !important; letter-spacing: .08em; }
+      .ai-assistant-cta__title { font-size: 13px !important; white-space: nowrap; }
+   }
+}
+[data-theme="dark"] .card-style-four { background: transparent !important; box-shadow: none !important; border: 0 !important; border-top: 2px solid #22c55e !important; }
+[data-theme="dark"] .property-planet-how-it-works .pp-how { border: 0 !important; }
+@media (max-width: 767px) {
+   .hero-banner-two .hero-cta-group > * { min-width: 0 !important; max-width: 100% !important; }
+   .hero-banner-two .ai-assistant-cta { width: 100% !important; min-width: 0 !important; overflow: hidden; }
+   .hero-banner-two .ai-assistant-cta__text { min-width: 0; overflow: hidden; }
+   .hero-banner-two .ai-assistant-cta__title { font-size: 12.5px !important; overflow: hidden; text-overflow: ellipsis; display: block; }
+   .card-style-four h5 { font-size: 19px !important; }
+   .card-style-four p { font-size: 15px !important; margin-bottom: 0 !important; }
+   .feature-scroll-row { gap: 22px !important; }
+}
+html[data-theme="dark"] .feature-scroll-row .card-style-four,
+html[data-theme="dark"] .feature-scroll-row .feature-scroll-item,
+html[data-theme="dark"] .feature-scroll-row { background: transparent !important; box-shadow: none !important; }
+@media (max-width: 767px) { .hero-banner-two .ai-assistant-cta__title { font-size: 15px !important; } }
+html[data-theme="dark"] .pp-empty-note a.pp-empty-note__link { color: #4ade80 !important; }

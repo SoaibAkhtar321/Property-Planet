@@ -50,8 +50,9 @@ const HeroBanner = () => {
                                  <span className="ai-assistant-cta__tag">AI</span>
                               </span>
                               <span className="ai-assistant-cta__text text-start">
-                                 <span className="ai-assistant-cta__eyebrow">Ask</span>
-                                 <strong className="ai-assistant-cta__title">Property Planet AI</strong>
+                                 <span className="ai-assistant-cta__eyebrow d-none d-md-block">Ask</span>
+                                 {/* Phones: shorter label so it fits beside Explore Properties. */}
+                                 <strong className="ai-assistant-cta__title"><span className="d-md-none">Ask </span><span className="d-none d-md-inline">Property Planet </span>AI</strong>
                               </span>
                            </button>
                         </div>
