@@ -2,7 +2,7 @@ import Image from "next/image"
 import FaqOne from "@/components/common/faq/FaqOne"
 
 import fancyImg_1 from "@/assets/images/shape/shape_19.svg"
-import fancyImg_2 from "@/assets/images/assets/ils_04.png"
+import fancyImg_2 from "@/assets/images/assets/pp-buildings.svg"
 
 const FancyBannerOne = () => {
 

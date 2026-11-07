@@ -72,10 +72,6 @@ $pp-orange-strong: #c2410c;  // white text on this passes 4.5:1
    3. Sections that kept light-theme colours in dark mode
    =================================================================== */
 [data-theme="dark"] {
-  // "Best plots, perfect match" band rendered muddy grey.
-  .fancy-banner-four .bg-line { background-color: #122226 !important; }
-  .fancy-banner-four .accordion-button,
-  .fancy-banner-four .accordion-button::after { filter: none; }
 
   // "How our clients get benefited" image cards: keep the label dark on
   // its own light card instead of white-on-pastel.
@@ -450,4 +446,44 @@ img, video, iframe { max-width: 100%; }
    [data-theme="dark"] .pp-hero-search {
       .pp-hs-toggle, .pp-hs-keyword .type-input, .nice-select { border-color: rgba(255, 255, 255, .2) !important; }
    }
+}
+
+/* ===== "Best plots, perfect match for you" (fancy-banner-four) ===== */
+.fancy-banner-four {
+   overflow: hidden;
+   .illustration { max-width: 44%; }
+   .accordion-style-one {
+      background: #fff !important;
+      border-radius: 18px;
+      padding: 8px 28px;
+      box-shadow: 0 20px 50px rgba(13, 26, 28, .08);
+      .accordion-item { background: transparent; border-color: rgba(13, 26, 28, .1); }
+      .accordion-button { background: transparent !important; box-shadow: none !important; }
+      .accordion-button::after {
+         background-color: #16a34a !important; border-radius: 8px; color: #fff !important;
+      }
+   }
+}
+[data-theme="dark"] .fancy-banner-four {
+   background: linear-gradient(180deg, #0f1f22 0%, #132a2e 100%) !important;
+   &::before { display: none !important; }
+   .bg-line { background-color: transparent !important; opacity: 1; }
+   .bg-line::after { content: none; }
+   .illustration { filter: brightness(.82) saturate(.9); }
+   .title-one h2, .fs-24 { color: #fff !important; }
+   .accordion-style-one {
+      background: #172e33 !important;
+      border: 1px solid rgba(255, 255, 255, .08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
+      .accordion-item { border-color: rgba(255, 255, 255, .1); }
+      .accordion-button { color: #fff !important; }
+      .accordion-body p, .accordion-body { color: rgba(255, 255, 255, .72) !important; }
+   }
+}
+@media (max-width: 991px) {
+   .fancy-banner-four .illustration { display: none; }
+   .fancy-banner-four .bg-line { padding-top: 56px !important; padding-bottom: 64px !important; }
+}
+@media (max-width: 575px) {
+   .fancy-banner-four .accordion-style-one { padding: 4px 16px; }
 }
