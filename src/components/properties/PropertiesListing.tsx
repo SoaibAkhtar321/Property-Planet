@@ -99,6 +99,15 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets, ai
                         </p>
                      </div>
 
+                     {/* Phones: the full filter panel sits below the results, so give
+                         a search box and a jump-to-filters button right at the top. */}
+                     <form action="/properties" method="get" className="pp-quick-search d-lg-none mb-25" role="search">
+                        <i className="bi bi-search" aria-hidden="true"></i>
+                        <input type="search" name="q" defaultValue={filters.q ?? ""} placeholder="Search plots, villas, areas…" aria-label="Search properties" />
+                        <button type="submit" className="pp-quick-search__go">Search</button>
+                        <a href="#pp-filters" className="pp-quick-search__filters" aria-label="All filters"><i className="bi bi-sliders"></i></a>
+                     </form>
+
 
                      {aiInfo && aiInfo.chips.length > 0 && (
                         <div className="pp-ai-search-banner bg-white border-20 mb-30" role="status" style={{ padding: "16px 20px" }}>
@@ -210,7 +219,7 @@ const PropertiesListing = ({ items, total, page, totalPages, filters, facets, ai
                   </div>
                </div>
 
-               <div className="col-lg-3 order-lg-first">
+               <div className="col-lg-3 order-lg-first" id="pp-filters">
                   <PropertyFilters
                      propertyTypes={facets.propertyTypes}
                      cities={facets.cities}

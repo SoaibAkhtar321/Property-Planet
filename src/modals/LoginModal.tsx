@@ -28,6 +28,8 @@ const LoginModal = (_props: any) => {
    const [isLoading, setIsLoading] = useState(false);
    const [agreed, setAgreed] = useState(false);
    const [showAgreementError, setShowAgreementError] = useState(false);
+   // Step 1 asks who is signing in; buyers then see Google sign-in.
+   const [step, setStep] = useState<"choose" | "buyer">("choose");
 
    const handleGoogleContinue = async () => {
       if (!agreed) {
@@ -52,53 +54,89 @@ const LoginModal = (_props: any) => {
             <div className="modal-dialog modal-fullscreen modal-dialog-centered">
                <div className="container">
                   <div className="user-data-form modal-content">
-                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                     <div className="form-wrapper m-auto">
-                        <div className="text-center mb-30">
-                           <h2>Welcome to Property Planet</h2>
-                           <p className="fs-20 color-dark">Continue with Google to browse and enquire about properties.</p>
-                        </div>
-
-                        <div className="agreement-checkbox d-flex justify-content-between align-items-center mt-20">
-                           <div>
-                              <input
-                                 type="checkbox"
-                                 id="buyerTermsAccepted"
-                                 checked={agreed}
-                                 onChange={(e) => {
-                                    setAgreed(e.target.checked);
-                                    if (e.target.checked) setShowAgreementError(false);
-                                 }}
-                              />
-                              <label htmlFor="buyerTermsAccepted">
-                                 I agree to the{" "}
-                                 <Link href="/terms-of-service" target="_blank">Terms &amp; Conditions</Link> and{" "}
-                                 <Link href="/privacy-policy" target="_blank">Privacy Policy</Link>
-                              </label>
-                              {showAgreementError && (
-                                 <p className="form_error">Please accept the Terms & Conditions and Privacy Policy to continue.</p>
-                              )}
-                           </div>
-                        </div>
-
-                        <button
-                           type="button"
-                           onClick={handleGoogleContinue}
-                           disabled={isLoading}
-                           className="social-use-btn d-flex align-items-center justify-content-center tran3s w-100 mt-10"
-                        >
-                           <Image src={googleIcon} alt="" />
-                           <span className="ps-3">{isLoading ? "Redirecting..." : "Continue with Google"}</span>
+                     <div className="pp-login-top">
+                        {step === "buyer" ? (
+                           <button type="button" className="pp-login-back" onClick={() => setStep("choose")}>
+                              <i className="bi bi-arrow-left" aria-hidden="true"></i> Back
+                           </button>
+                        ) : <span />}
+                        <button type="button" className="pp-login-close" data-bs-dismiss="modal" aria-label="Close">
+                           <i className="bi bi-x-lg" aria-hidden="true"></i> Close
                         </button>
+                     </div>
+                     <div className="form-wrapper m-auto">
+                        {step === "choose" ? (
+                           <>
+                              <div className="text-center mb-30">
+                                 <h2>Welcome to Property Planet</h2>
+                                 <p className="fs-18 color-dark">How would you like to sign in?</p>
+                              </div>
+                              <div className="pp-login-roles">
+                                 <button type="button" className="pp-login-role" onClick={() => setStep("buyer")}>
+                                    <span className="pp-login-role__icon"><i className="bi bi-house-heart" aria-hidden="true"></i></span>
+                                    <span className="pp-login-role__text">
+                                       <strong>Buyer login</strong>
+                                       <span>Save properties, send enquiries and book site visits</span>
+                                    </span>
+                                    <i className="bi bi-chevron-right" aria-hidden="true"></i>
+                                 </button>
+                                 <Link href="/seller/login" className="pp-login-role" data-bs-dismiss="modal">
+                                    <span className="pp-login-role__icon pp-login-role__icon--seller"><i className="bi bi-shop" aria-hidden="true"></i></span>
+                                    <span className="pp-login-role__text">
+                                       <strong>Seller / agent login</strong>
+                                       <span>List properties and manage your buyer leads</span>
+                                    </span>
+                                    <i className="bi bi-chevron-right" aria-hidden="true"></i>
+                                 </Link>
+                              </div>
+                              <p className="text-center fs-15 mt-25 mb-0 color-dark">
+                                 New seller? <Link href="/seller/register" data-bs-dismiss="modal">Create a seller account</Link>
+                              </p>
+                           </>
+                        ) : (
+                           <>
+                              <div className="text-center mb-30">
+                                 <h2>Buyer login</h2>
+                                 <p className="fs-18 color-dark">Continue with Google — new buyers get an account automatically.</p>
+                              </div>
 
-                        <div className="text-center mt-30">
-                           <p className="fs-16 color-dark">
-                              Are you a seller or agent?{" "}
-                              <Link href="/seller/login" data-bs-dismiss="modal">Login</Link>
-                              {" "}or{" "}
-                              <Link href="/seller/register" data-bs-dismiss="modal">register here</Link>.
-                           </p>
-                        </div>
+                              <div className="agreement-checkbox d-flex justify-content-between align-items-center mt-20">
+                                 <div>
+                                    <input
+                                       type="checkbox"
+                                       id="buyerTermsAccepted"
+                                       checked={agreed}
+                                       onChange={(e) => {
+                                          setAgreed(e.target.checked);
+                                          if (e.target.checked) setShowAgreementError(false);
+                                       }}
+                                    />
+                                    <label htmlFor="buyerTermsAccepted">
+                                       I agree to the{" "}
+                                       <Link href="/terms-of-service" target="_blank">Terms &amp; Conditions</Link> and{" "}
+                                       <Link href="/privacy-policy" target="_blank">Privacy Policy</Link>
+                                    </label>
+                                    {showAgreementError && (
+                                       <p className="form_error">Please accept the Terms & Conditions and Privacy Policy to continue.</p>
+                                    )}
+                                 </div>
+                              </div>
+
+                              <button
+                                 type="button"
+                                 onClick={handleGoogleContinue}
+                                 disabled={isLoading}
+                                 className="social-use-btn d-flex align-items-center justify-content-center tran3s w-100 mt-10"
+                              >
+                                 <Image src={googleIcon} alt="" />
+                                 <span className="ps-3">{isLoading ? "Redirecting..." : "Continue with Google"}</span>
+                              </button>
+
+                              <p className="text-center fs-15 mt-25 mb-0 color-dark">
+                                 Selling instead? <Link href="/seller/login" data-bs-dismiss="modal">Seller login</Link>
+                              </p>
+                           </>
+                        )}
                      </div>
                   </div>
                </div>

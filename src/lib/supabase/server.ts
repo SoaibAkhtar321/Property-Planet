@@ -20,6 +20,7 @@
 // never be imported from client.ts or any "use client" file.
 
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { timeoutFetch } from "./timeoutFetch";
 import { cookies } from "next/headers";
 
 export async function createClient() {
@@ -34,6 +35,7 @@ export async function createClient() {
    }
 
    return createServerClient(url, anonKey, {
+      global: { fetch: timeoutFetch },
       cookies: {
          getAll() {
             return cookieStore.getAll();
@@ -67,6 +69,7 @@ export function createServiceClient() {
    // Not cookie-based on purpose: this client acts with its own privileged
    // identity, not the end user's session.
    return createServerClient(url, serviceRoleKey, {
+      global: { fetch: timeoutFetch },
       cookies: { getAll: () => [], setAll: () => {} },
    });
 }

@@ -16,6 +16,7 @@
 // in-flight request's downstream server code.
 
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { timeoutFetch } from "./timeoutFetch";
 import { NextResponse, type NextRequest } from "next/server";
 
 interface CookieToSet {
@@ -35,6 +36,7 @@ export function createMiddlewareClient(request: NextRequest) {
    }
 
    const supabase = createServerClient(url, anonKey, {
+      global: { fetch: timeoutFetch },
       cookies: {
          getAll() {
             return request.cookies.getAll();

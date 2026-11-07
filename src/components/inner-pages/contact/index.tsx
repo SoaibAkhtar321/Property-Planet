@@ -1,13 +1,16 @@
-import FooterFour from '@/layouts/footers/FooterFour'
-import HeaderOne from '@/layouts/headers/HeaderOne'
+import FooterOne from '@/layouts/footers/FooterOne'
+import HeaderTwo from '@/layouts/headers/HeaderTwo'
 import ContactArea from './ContactArea'
 
+// Same header and footer as every other public page (this page used the
+// template's alternate HeaderOne/FooterFour, whose light illustration and
+// different menu looked out of place, especially in dark mode).
 const Contact = () => {
    return (
       <>
-         <HeaderOne style={true} />
+         <HeaderTwo style_1={false} style_2={false} />
          <ContactArea />
-         <FooterFour />
+         <FooterOne style={true} />
       </>
    )
 }
